@@ -1,0 +1,95 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+.nav-link.text-uppercase{
+    font-weight: 600;
+    color: black;
+}
+
+.nav-link.text-uppercase:hover{
+    color: #70000E;
+}
+
+.custom-link i{
+    font-size: 20px;
+    margin-right: 8px;
+}
+
+.custom-link {
+    font-size: 14px;
+    text-decoration: none;
+    color: black;
+}
+
+.custom-link span {
+    font-size: 12px;
+}
+
+.custom-link:hover {
+    color: #70000E;
+}
+
+.navbar{
+    box-shadow: 0 3px 9px 3px rgba(0, 0, 0, 0.1);
+}
+
+.row h1{
+    font-weight: 700;
+}
+
+.custom-carousel-bg {
+    background-color: #F1F1F3;
+}
+
+.custom-carousel{
+    color: #70000E;
+}
+
+.carousel-indicators button {
+    background-color: #70000E;
+    border-color: #70000E;     
+}
+
+.carousel-indicators .active {
+    background-color: #70000E; 
+}
+
+.custom-btn {
+    background-color: #70000e;
+    border-color: #70000e; 
+    color: white;
+}
+
+.card {
+    position: relative;
+    overflow: hidden;
+}
+
+.card-body {
+    transition: transform 0.3s ease-in-out;
+}
+
+.card:hover .card-body {
+    transform: translateY(-10px);
+}
+
+.custom-img{
+    mix-blend-mode: multiply;
+    max-width: 250px;
+}
+
+.custom-bg{
+    background-color: #F2F2F2;
+}
+
+.custom-footer{
+    background-color: #500009;
+}
+
