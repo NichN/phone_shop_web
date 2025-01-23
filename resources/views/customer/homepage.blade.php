@@ -31,7 +31,7 @@
                 </button>
             </div>
 
-                <!-- Navbar Toggler Button -->
+            <!-- Navbar Toggler Button -->
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -43,16 +43,13 @@
                         <a class="nav-link text-uppercase" href="#">Home</a>
                     </li>
                     <li class="nav-item mx-3">
-                        <a class="nav-link text-uppercase" href="#">Smartphones</a>
-                    </li>
-                    <li class="nav-item mx-3">
-                        <a class="nav-link text-uppercase" href="#">Accessories</a>
-                    </li>
-                    <li class="nav-item mx-3">
                         <a class="nav-link text-uppercase" href="#">About Us</a>
                     </li>
                     <li class="nav-item mx-3">
                         <a class="nav-link text-uppercase" href="#">Contact Us</a>
+                    </li>
+                    <li class="nav-item mx-3">
+                        <a class="nav-link text-uppercase" href="#">FAQ</a>
                     </li>
                 </ul>
             </div>
@@ -121,6 +118,24 @@
             </button>           
         </div>
     </header>
+
+    <!-- Smartphone Accessories -->
+    <section>
+        <div class="container my-5">
+            <h2 class="text-right mb-4">Popular Category</h2>
+            <div class="row">
+                <!-- Smartphone -->
+                <div class="col-12 col-md-6">
+                    <div class="category-card bg-dark text-white">
+                        <img src="{{ asset('image/phone.jpg') }}" class="card-img" alt="...">
+                        <h5 class="card-title">Card title</h5>
+                    </div>
+                </div>
+                <!-- Smartphone -->
+                
+            </div>
+        </div>
+    </section>
 
     <!-- Feature Products -->
     <section>
@@ -354,15 +369,14 @@
                 </div>
                 <!-- We Accept Column -->
                 <div class="col-md-2 my-3">
-                    <h5 class="fw-bold py-2">We Accept</h5>
-                    <ul class="d-flex align-items-center">
-                        <img src="{{ asset('image/aba.jpg') }}" alt="..." style="max-width: 100px;">
-                        <img src="{{ asset('image/delivery.jpg') }}" alt="..."style="max-width: 100px;">
+                    <h5 class="fw-bold py-2">Help</h5>
+                    <ul class="list-unstyled">
+                        <li class="py-2"><a href="#" class="text-white text-decoration-none">Privacy Policy</a></li>
+                        <li class="py-2"><a href="#" class="text-white text-decoration-none">Terms of Service</a></li>
                     </ul>
                 </div>
             </div>
         </div>
     </footer>
-
 </body>
 </html>
