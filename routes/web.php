@@ -10,10 +10,12 @@ Route::get('/customer/homepage', function () {
     return view('/customer/homepage');
 });
 
+
+
+
+
+
 // auth_form
-Route::get('/Layout',function(){
-    return view('Layout.auth_form');
-});
 Route::get('/register',function(){
     return view('authentication_form.register');
 })->name('register');
@@ -27,5 +29,15 @@ Route::get('/resetpassword',function(){
     return view('authentication_form.resetpw');
 })->name('resetpassword');
 
-
-
+Route::get('/aboutus',function(){
+    return view('customer.aboutus');
+});
+Route::get('/faq',function(){
+    return view('customer.FAQ');
+});
+Route::get('/contactus',function(){
+    return view('customer.contact');
+});
+Route::get('/wishlist',function(){
+    return view('customer.wishlist');
+});

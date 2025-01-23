@@ -14,7 +14,7 @@ body {
 }
 
 .nav-link.text-uppercase:hover{
-    color: #70000E;
+    color:  #4A4545;
 }
 
 .custom-link i{
@@ -33,7 +33,7 @@ body {
 }
 
 .custom-link:hover {
-    color: #70000E;
+    color:  #4A4545;
 }
 
 .navbar{
@@ -49,21 +49,21 @@ body {
 }
 
 .custom-carousel{
-    color: #70000E;
+    color:  #4A4545;
 }
 
 .carousel-indicators button {
-    background-color: #70000E;
-    border-color: #70000E;     
+    background-color:  #4A4545;
+    border-color:  #4A4545;     
 }
 
 .carousel-indicators .active {
-    background-color: #70000E; 
+    background-color:  #4A4545; 
 }
 
 .custom-btn {
-    background-color: #70000e;
-    border-color: #70000e; 
+    background-color:  #4A4545;
+    border-color:  #4A4545; 
     color: white;
 }
 
@@ -90,7 +90,6 @@ body {
 }
 
 .custom-footer{
-    background-color: #500009;
+    background-color: #4A4545;
 }
-
 
