@@ -38,3 +38,6 @@ Route::get('/faq',function(){
 Route::get('/contactus',function(){
     return view('customer.contact');
 });
+Route::get('/wishlist',function(){
+    return view('customer.wishlist');
+});
