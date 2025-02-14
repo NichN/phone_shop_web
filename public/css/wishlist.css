@@ -1,0 +1,28 @@
+.wishlist-item-card {
+    background-color: #f8f9fa;
+    border-left: 4px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.wishlist-item-card:hover {
+    background-color: #e9ecef;
+    border-left: 4px solid #007bff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.wishlist-item-card .btn:hover {
+    transform: scale(1.05);
+    transition: transform 0.2s ease-in-out;
+}
+
+.modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+.modal-content {
+    opacity: 1 !important;
+    transform: none !important;
+}
+.custom-fade {
+    opacity: 0.5 !important;
+}
