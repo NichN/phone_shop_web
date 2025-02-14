@@ -4,10 +4,8 @@
 
 @section('header')
 <div class="position-relative text-overlay-container">
-    <img src="{{ asset('picture/banerfaq.png') }}" class="img-fluid w-100 baner_img" alt="FAQ Banner">
+    {{-- <img src="{{ asset('picture/image') }}" class="img-fluid w-100 baner_img" alt="FAQ Banner"> --}}
     <div class="overlay-text position-absolute top-50 start-0 ms-4 text-secondary">
-        <h1 class="fw-bold">Frequently Asked Questions</h1>
-        <p class="fs-4">Your questions answered with clarity and ease</p>
     </div>
 </div>
 @endsection
@@ -17,7 +15,7 @@
     <h2 class="text-center mb-4 fw-bold">How Can We Help You?</h2>
     <p class="text-center text-muted mb-5">Browse through our most common questions or contact us for personalized assistance.</p>
 
-    <div class="accordion accordion-flush shadow-sm" id="faqAccordion">
+    <div class="accordion hadow-sm" id="faqAccordion">
         <!-- General Questions Section -->
         <div class="accordion-item border-0 mb-3">
             <h5 class="accordion-header" id="generalQuestion1">

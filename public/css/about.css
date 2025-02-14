@@ -1,12 +1,31 @@
 .baner_img{
-    height: 60vh;
+    height: 65vh;
 }
 /* faq */
 .text{
     color: rgb(65, 64, 64);
 }
-/* contact */
+.accordion-button {
+  background-color: #f8f9fa;
+  color: #333;
+  border-radius: 20px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
 
+.accordion-button:hover {
+  background-color: #70000e;
+  color: white;
+}
+
+.accordion-button:not(.collapsed) {
+  background-color: #70000e; 
+  color: white;
+}
+
+.accordion-button:focus {
+  box-shadow: none; 
+  outline: none;
+}
 .COL > .COL, .ROW > .col-lg-2 {
     width: 350px;
     height: 180px;
