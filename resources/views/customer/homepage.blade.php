@@ -124,18 +124,31 @@
         <div class="container my-5">
             <h2 class="text-right mb-4">Popular Category</h2>
             <div class="row">
-                <!-- Smartphone -->
-                <div class="col-12 col-md-6">
-                    <div class="category-card bg-dark text-white">
-                        <img src="{{ asset('image/phone.jpg') }}" class="card-img" alt="...">
-                        <h5 class="card-title">Card title</h5>
+                <!-- Smartphone 1 -->
+                <div class="col-md-6">
+                    <div class="category-card">
+                        <img src="{{ asset('image/phone.jpg') }}" alt="Smartphones" class="img-fluid custom-height">
+                        <div class="content">
+                            <h3 class="display-6 fw-bold">Smartphones</h3>
+                            <a href="#">Shop Now &gt;</a>
+                        </div>
                     </div>
                 </div>
-                <!-- Smartphone -->
-                
+    
+                <!-- Smartphone 2 -->
+                <div class="col-md-6">
+                    <div class="category-card">
+                        <img src="{{ asset('image/accessories.jpg') }}" alt="Accessories" class="img-fluid custom-height">
+                        <div class="content">
+                            <h3 class="display-6 fw-bold">Accessories</h3>
+                            <a href="#">Shop Now &gt;</a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
+    
 
     <!-- Feature Products -->
     <section>
@@ -327,7 +340,7 @@
         </div>
     </section>
 
-        <!-- footer -->
+    <!-- footer -->
     <footer class="custom-footer text-white py-4">
         <div class="container">
             <div class="row">

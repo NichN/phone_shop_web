@@ -23,13 +23,13 @@
 
             <!-- Icons -->
             <div class="order-lg-2 nav-btns"> 
-                <button type="button" class="btn position-relative">
+                <button type = "button" class="btn position-relative">
                     <a class="custom-link" href="#"><i class="fa-solid fa-heart"></i><span class="d-none d-lg-inline">My Wishlist</span></a>
                 </button>
-                <button type="button" class="btn position-relative">
+                <button type = "button" class="btn position-relative">
                     <a class="custom-link" href="#"><i class="fa-solid fa-cart-shopping"></i><span class="d-none d-lg-inline">My Cart</span></a>
                 </button>
-                <button type="button" class="btn position-relative">
+                <button type = "button" class="btn position-relative">
                     <a class="custom-link" href="#"><i class="fa-solid fa-user"></i><span class="d-none d-lg-inline">Hello Guest</span></a>
                 </button>
             </div>
@@ -40,8 +40,8 @@
             </button>
 
             <!-- Collapsible Navbar Links -->
-            <div class=" navbar-collape" id="navbarNav">
-                <ul class="navbar-nav mx-auto ">
+            <div class="collapse navbar-collapse order-lg-1" id="navbarNav">
+                <ul class="navbar-nav mx-auto text-center">
                     <li class="nav-item mx-3">
                         <a class="nav-link text-uppercase" href="#">Home</a>
                     </li>
@@ -57,7 +57,6 @@
                 </ul>
             </div>
         </div>
-        </div>
     </nav>
 
     <!-- Header Section -->
@@ -71,7 +70,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="custom-footer text-white">
+    <footer class="custom-footer text-white py-4">
         <div class="container">
             <div class="row">
                 <!-- Category Column -->
@@ -112,10 +111,10 @@
                 </div>
                 <!-- We Accept Column -->
                 <div class="col-md-2 my-3">
-                    <h5 class="fw-bold py-2">We Accept</h5>
-                    <ul class="d-flex align-items-center">
-                        <img src="{{ asset('image/aba.jpg') }}" alt="..." style="max-width: 100px;">
-                        <img src="{{ asset('image/delivery.jpg') }}" alt="..." style="max-width: 100px;">
+                    <h5 class="fw-bold py-2">Help</h5>
+                    <ul class="list-unstyled">
+                        <li class="py-2"><a href="#" class="text-white text-decoration-none">Privacy Policy</a></li>
+                        <li class="py-2"><a href="#" class="text-white text-decoration-none">Terms of Service</a></li>
                     </ul>
                 </div>
             </div>
