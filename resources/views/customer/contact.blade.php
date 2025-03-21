@@ -3,42 +3,37 @@
 @section('title', 'About Us')
 
 @section('header')
-<div class="position-relative text-overlay-container">
-    <div class="text-end picture">
-        <img src="{{ asset('picture/contact1.png') }}" class="img-fluid w-100 baner_img" alt="contact Banner">
-    </div>
-    <div class="overlay-text position-absolute top-0 mt-10 ms-12 mb-2 text-secondary">
-        <h1 class="fw-bold">Contact Us</h1>
-        <p>We value your feedback and are here to assist you<br> with any questions or concerns. </p>
-    </div>
-</div>
-@endsection
-@section('content')
-<div class="container">
-    <div class="row justify-content-md-center ROW">
-      <div class="col-lg-2 backround COL">
-        <div class="container">
-            <i class="fa-solid fa-location-arrow icon"></i>
-            <br>
-            <h4 class="fw-normal">Location</h4>
-        </div>
-      </div>
-      <div class="col-lg-2 bg-secondary COL">
-        <div class="container">
-            <i class="fa-solid fa-envelope icon text-white"></i>
-            <br>
-            <h4 class="fw-normal text-white">Email</h4>
-      </div>
-    </div>
-      <div class="col-lg-2 backround COL">
-        <div class="container">
-            <i class="fa-solid fa-phone icon"></i>
-            <br>
-            <h4 class="fw-normal">Phone</h4>
-        </div>
-      </div>
+<link rel="stylesheet" href="{{ asset('css/contact.css') }}">
+<!-- Image and Overlay Container -->
+<div class="text-overlay-container">
+  <img src="{{ asset('image/contactus3.jpg') }}" class="baner_img" alt="contact Banner">
+  <div class="border-frame">
+    <div class="overlay-text">
+      <h1 class="fw-bold">Contact Us</h1>
+      <p>We value your feedback and are here to assist you<br> with any questions or concerns.</p>
     </div>
   </div>
+</div>
+  
+@endsection
+@section('content')
+<div class="container py-4">
+  <div class="row justify-content-center">
+      <div class="col-lg-3 col-md-4 col-sm-6 text-center p-4 border rounded shadow">
+          <i class="fa-solid fa-location-arrow icon fs-2"></i>
+          <h4 class="fw-bold mt-3">Location</h4>
+      </div>
+      <div class="col-lg-3 col-md-4 col-sm-6 bg-secondary text-center p-4 border rounded shadow">
+          <i class="fa-solid fa-envelope icon text-white fs-2"></i>
+          <h4 class="fw-bold text-white mt-3">Email</h4>
+      </div>
+      <div class="col-lg-3 col-md-4 col-sm-6 text-center p-4 border rounded shadow">
+          <i class="fa-solid fa-phone icon fs-2"></i>
+          <h4 class="fw-bold mt-3">Phone</h4>
+      </div>
+  </div>
+</div>
+
   <div class="container mt-4">
     <div class="row">
       <div class="col">
@@ -55,7 +50,7 @@
               </div>
               <div class="mb-3 mt-3">
                 <label for="exampleInputEmail1" class="form-label fw-bold">Email address</label>
-                <input type="email" class="form-control border-secondary" id="exampleInputEmail1" aria-describedby="emailHelp"  placeholder="Enter Your Emial">
+                <input type="email" class="form-control border-secondary" id="exampleInputEmail1" aria-describedby="emailHelp"  placeholder="Enter Your Email">
                 <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
               </div>
             </div>

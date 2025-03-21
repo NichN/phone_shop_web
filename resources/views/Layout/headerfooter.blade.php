@@ -13,8 +13,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
-    <link href="{{ asset('css/about.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/mainstyle.css')}}" rel="stylesheet">
+    {{-- <link href="{{ asset('css/about.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/mainstyle.css')}}" rel="stylesheet"> --}}
     @yield('head')
 </head>
 <body>
@@ -25,17 +25,6 @@
             <a class="navbar-brand" style="color:#70000E">TayMeng</a>
     
             <!-- Icons -->
-<<<<<<< HEAD
-            <div class="order-lg-2 nav-btns"> 
-                <button type = "button" class="btn position-relative">
-                    <a class="custom-link" href="#"><i class="fa-solid fa-heart"></i><span class="d-none d-lg-inline">My Wishlist</span></a>
-                </button>
-                <button type = "button" class="btn position-relative">
-                    <a class="custom-link" href="#"><i class="fa-solid fa-cart-shopping"></i><span class="d-none d-lg-inline">My Cart</span></a>
-                </button>
-                <button type = "button" class="btn position-relative">
-                    <a class="custom-link" href="#"><i class="fa-solid fa-user"></i><span class="d-none d-lg-inline">Hello Guest</span></a>
-=======
             <div class="order-lg-2 nav-btns">
                 <!-- Wishlist Button -->
                 <button type="button" class="btn position-relative" id="wishlist-link">
@@ -56,17 +45,16 @@
                 </button>
     
                 <!-- User Button -->
-                <button class="btn position-relative dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fa-solid fa-user"></i> <span class="d-none d-lg-inline">Hello Guest</span>
->>>>>>> 15cb3d4335175d68a5c12d30b7e65fe5ba0d66e5
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                    <li><a class="dropdown-item" href="#"><i class="fa-solid fa-box"></i> Order History</a></li>
-                    <li><a class="dropdown-item" href="#"><i class="fa-solid fa-user-circle"></i> My Profile</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item text-danger" href="#"><i class="fa-solid fa-sign-out-alt"></i> Logout</a></li>
-                </ul>
-            </div>
+                    <button class="btn position-relative dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-user"></i> <span class="d-none d-lg-inline">Hello Guest</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                        <li><a class="dropdown-item" href="#"><i class="fa-solid fa-box"></i> Order History</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fa-solid fa-user-circle"></i> My Profile</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="#"><i class="fa-solid fa-sign-out-alt"></i> Logout</a></li>
+                    </ul>
+                </div>
     
             <!-- Navbar Toggler Button -->
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -86,7 +74,7 @@
                         <a class="nav-link text-uppercase" href="{{ route('aboutus') }}">About Us</a>
                     </li>
                     <li class="nav-item mx-3">
-                        <a class="nav-link text-uppercase" href="{{route('conatact_us')}}">Contact Us</a>
+                        <a class="nav-link text-uppercase" href="{{ route('conatact_us') }}">Contact Us</a>
                     </li>
                 </ul>
                 
@@ -135,12 +123,8 @@
         @yield('content')
     </main>
 
-    <!-- Footer -->
-<<<<<<< HEAD
-    <footer class="custom-footer text-white py-4">
-=======
+    <!-- footer -->
     <footer class="custom-footer">
->>>>>>> 15cb3d4335175d68a5c12d30b7e65fe5ba0d66e5
         <div class="container">
             <div class="row">
                 <!-- Category Column -->
@@ -179,19 +163,12 @@
                         <li class="py-2"><a href="#" class="text-decoration-none"><i class="fa-solid fa-globe"></i> Taymeng.com</a></li>
                     </ul>
                 </div>
-                <!-- We Accept Column -->
+                <!-- Help Column -->
                 <div class="col-md-2 my-3">
-<<<<<<< HEAD
-                    <h5 class="fw-bold py-2">Help</h5>
+                    <h5 class="fw-bold py-2" style="color:#70000E">Help</h5>
                     <ul class="list-unstyled">
-                        <li class="py-2"><a href="#" class="text-white text-decoration-none">Privacy Policy</a></li>
-                        <li class="py-2"><a href="#" class="text-white text-decoration-none">Terms of Service</a></li>
-=======
-                    <h5 class="fw-bold py-2" style="color:#70000E">We Accept</h5>
-                    <ul class="d-flex align-items-center mr-3">
-                        <img src="{{ asset('image/aba.jpg') }}" alt="..." style="max-width: 100px;">
-                        <img src="{{ asset('image/delivery.jpg') }}" alt="..." style="max-width: 100px;">
->>>>>>> 15cb3d4335175d68a5c12d30b7e65fe5ba0d66e5
+                        <li class="py-2"><a href="#" class="text-decoration-none">Privacy Policy</a></li>
+                        <li class="py-2"><a href="#" class="text-decoration-none">Terms of Service</a></li>
                     </ul>
                 </div>
             </div>

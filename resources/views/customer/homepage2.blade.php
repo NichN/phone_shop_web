@@ -18,7 +18,7 @@
         <div class="container">
             <!-- Brand Name -->
             <a class="navbar-brand" style="color:#70000E">TayMeng</a>
-    
+
             <!-- Icons -->
             <div class="order-lg-2 nav-btns">
                 <!-- Wishlist Button -->
@@ -40,16 +40,16 @@
                 </button>
     
                 <!-- User Button -->
-                    <button class="btn position-relative dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fa-solid fa-user"></i> <span class="d-none d-lg-inline">Hello Guest</span>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                        <li><a class="dropdown-item" href="#"><i class="fa-solid fa-box"></i> Order History</a></li>
-                        <li><a class="dropdown-item" href="#"><i class="fa-solid fa-user-circle"></i> My Profile</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="#"><i class="fa-solid fa-sign-out-alt"></i> Logout</a></li>
-                    </ul>
-                </div>
+                <button class="btn position-relative dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa-solid fa-user"></i> <span class="d-none d-lg-inline">Hello Guest</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                    <li><a class="dropdown-item" href="#"><i class="fa-solid fa-box"></i> Order History</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="fa-solid fa-user-circle"></i> My Profile</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger" href="#"><i class="fa-solid fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </div>
     
             <!-- Navbar Toggler Button -->
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -92,6 +92,7 @@
         </div>
     </nav>
     
+    {{-- Slide --}}
     <header>
         <div id="carouselExampleCaptions" class="carousel slide custom-carousel-bg" data-bs-ride="carousel">
             <div class="carousel-indicators">
@@ -99,28 +100,30 @@
                 <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
                 <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
             </div>
+
             <div class="carousel-inner">
+                {{-- Slide 1 --}}
                 <div class="carousel-item active">
                     <div class="container-fluid d-flex align-items-center" style="height: 75vh;">
                         <div class="container d-flex justify-content-between align-items-center">
                             <div class="text-container pt-5">
                                 <h2 class="display-4 fw-bold">Welcome to <br> TayMeng Phone Shop</h2>
                                 <p>Power Up Your Life with the Latest Electronic!</p>
-                                {{-- <a href="#" class="btn btn-primary px-4 py-2 d-inline-block custom-btn">Shop Now</a> --}}
                             </div>
                             <div class="image-container">
-                                <img src="{{ asset('image/img1.jpg') }}" alt="" class="img-fluid rounded-circle border border-dark border-3">
+                                <img src="{{ asset('image/slide.jpg') }}" alt="" class="img-fluid">
                             </div>
                         </div>
                     </div>
                 </div>
+
+                {{-- Slide 2 --}}
                 <div class="carousel-item">
                     <div class="container-fluid d-flex align-items-center" style="height: 75vh;">
                         <div class="container d-flex justify-content-between align-items-center">
                             <div class="text-container pt-5">
                                 <h2 class="display-4 fw-bold">Welcome to <br> TayMeng Phone Shop</h2>
                                 <p>Power Up Your Life with the Latest Electronic!</p>
-                                {{-- <a href="#" class="btn btn-primary px-4 py-2 d-inline-block custom-btn">Shop Now</a> --}}
                             </div>
                             <div class="image-container">
                                 <img src="{{ asset('image/img1.jpg') }}" alt="" class="img-fluid">
@@ -128,21 +131,24 @@
                         </div>
                     </div>
                 </div>
+
+                {{-- Slide 3 --}}
                 <div class="carousel-item">
                     <div class="container-fluid d-flex align-items-center" style="height: 75vh;">
                         <div class="container d-flex justify-content-between align-items-center">
                             <div class="text-container pt-5">
                                 <h2 class="display-4 fw-bold">Welcome to <br> TayMeng Phone Shop</h2>
                                 <p>Power Up Your Life with the Latest Electronic!</p>
-                                {{-- <a href="#" class="btn btn-primary px-4 py-2 d-inline-block custom-btn">Shop Now</a> --}}
                             </div>
                             <div class="image-container">
-                                <img src="{{ asset('image/img1.jpg') }}" alt="" class="img-fluid">
+                                <img src="{{ asset('image/slide2.jpg') }}" alt="" class="img-fluid">
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            {{-- Next & Previous Button --}}
             <button class="carousel-control-prev custom-carousel" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
                 <i class="fa-solid fa-circle-chevron-left fa-2x" aria-hidden="true"></i>
                 <span class="visually-hidden">Previous</span>
@@ -153,6 +159,8 @@
             </button>           
         </div>
     </header>
+
+    {{-- Wishlist --}}
     <section>
         <div class="modal" id="wishlistModal" aria-labelledby="wishlistModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -169,29 +177,37 @@
                 </div>
             </div>
         </div>
-    <div class="row d-flex justify-content-evenly ROW my-5">
-        <div class="col-lg-2 background COL rounded" style="background-image: url('{{ asset('image/phone_ps2.png') }}'); background-size: cover; background-position: center;">
-            <div class="overlay rounded"></div>
-            <div class="container">
-                <br>
-                <h4 class="fw-bold">Smartphones</h4>
-                <button type="button" class="Btn btn text-white">SHOP NOW <span><i class="fa-solid fa-arrow-right"></i></span></button>
+    </section>
+
+    <!-- Category Products -->
+    <section>
+        <div class="container my-5 scroll-animate">
+            <div class="row d-flex justify-content-center">
+                <div class="col-md-6 d-flex justify-content-center">
+                    <div class="shop-card">
+                        <img src="/image/phone_ps2.png" alt="Smartphone">
+                        <div class="shop-overlay d-flex align-items-center justify-content-center">
+                            <a href="{{ route('product', 'smartphone') }}" class="btn btn-primary px-4 py-2 d-inline-block custom-btn">Shop Now</a>
+                        </div>
+                        <h3 class="shop-title text-uppercase fs-4 fw-semibold">Smartphones</h3>
+                    </div>
+                </div>
+                <div class="col-md-6 d-flex justify-content-center">
+                    <div class="shop-card">
+                        <img src="image/accessories1.jpg" alt="Accessories">
+                        <div class="shop-overlay d-flex align-items-center justify-content-center">
+                            <a href="{{ route('product', 'accessories') }}" class="btn btn-primary px-4 py-2 d-inline-block custom-btn">Shop Now</a>
+                        </div>
+                        <h3 class="shop-title text-uppercase fs-4 fw-semibold">Accessories</h3>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="col-lg-2 background COL rounded" style="background-image: url('{{ asset('image/headcase.png') }}'); background-size: cover; background-position: center;">
-            <div class="overlay rounded"></div>
-            <div class="container">
-                <br>
-                <h4 class="fw-bold text-black">Accessories</h4>
-                <button type="button" class="Btn btn text-white">SHOP NOW <span><i class="fa-solid fa-arrow-right"></i></span></button>
-            </div>
-        </div>
-        </div>
-    </div>
-</section>
+    </section>
+
     <!-- Feature Products -->
     <section>
-        <div class="container my-5">
+        <div class="container my-5 scroll-animate">
             <h2 class="text-right mb-4">Feature Products</h2>
             <div class="row g-4">
                 @foreach ($products as $product)
@@ -214,33 +230,37 @@
             </div>
         </div>
     </section>
+
     <!-- Banner Products -->
     <section>
-        <div class="container my-5">
-            <div class="row g-3">
-                <!-- New Arrivals Section -->
-                <div class="col-md-6 position-relative">
-                    <img src="{{ asset('image/Mobile.jpg') }}" alt="" class="img-fluid" style="object-fit: cover; height: 100%; width: 100%; filter: brightness(65%);">
-                    <div class="position-absolute top-50 start-20 translate-middle-y text-white text-start p-3">
-                        <h3 class="fw-bold mb-3">Let's Order Now!</h3>
-                        <p class="mb-4">Special launch offers available for a limited time.</p>
-                    </div>
+    <div class="container my-5">
+        <div class="row g-3">
+            <!-- First Column -->
+            <div class="col-md-6 position-relative scroll-animate">
+                <img src="{{ asset('image/Mobile.jpg') }}" alt="" class="img-fluid" 
+                     style="object-fit: cover; height: 100%; width: 100%; filter: brightness(65%);">
+                <div class="position-absolute top-50 start-20 translate-middle-y text-white text-start p-3">
+                    <h3 class="fw-bold mb-3">Let's Order Now!</h3>
+                    <p class="mb-4">Special launch offers available for a limited time.</p>
                 </div>
-                <!-- New Arrivals Section -->
-                <div class="col-md-6 position-relative">
-                    <img src="{{ asset('image/airpods.jpg') }}" alt="" class="img-fluid" style="object-fit: cover; height: 100%; width: 100%; filter: brightness(65%);">
-                    <div class="position-absolute top-50 start-20 translate-middle-y text-white text-start p-3">
-                        <h3 class="fw-bold mb-3">Let's Order Now!</h3>
-                        <p class="mb-4">Special launch offers available for a limited time.</p>
-                    </div>
+            </div>
+
+            <!-- Second Column -->
+            <div class="col-md-6 position-relative scroll-animate">
+                <img src="{{ asset('image/airpods.jpg') }}" alt="" class="img-fluid" 
+                     style="object-fit: cover; height: 100%; width: 100%; filter: brightness(65%);">
+                <div class="position-absolute top-50 start-20 translate-middle-y text-white text-start p-3">
+                    <h3 class="fw-bold mb-3">Let's Order Now!</h3>
+                    <p class="mb-4">Special launch offers available for a limited time.</p>
                 </div>
             </div>
         </div>
+    </div>
     </section>
-    
+
     <!-- New Products -->
     <section>
-        <div class="container my-5">
+        <div class="container my-5 scroll-animate">
             <h2 class="text-right mb-4">New Products</h2>
             <div class="row g-4">
                 @foreach ($products as $product)
@@ -263,9 +283,10 @@
             </div>
         </div>
     </section>
+    
     <!-- Large Banner -->
     <section>
-        <div class="container my-5">
+        <div class="container my-5 scroll-animate">
             <div class="container-fluid text-black custom-bg">
                 <div class="row align-items-center">
                     <div class="col-md-6">
@@ -278,12 +299,13 @@
                     <div class="col-md-6 text-center text-md-start">
                         <h2 class="fw-bold">Upgrade to a Fully-fledged <span class="text-uppercase">Electromo!</span></h2>
                         <p class="lead">Featuring additional pages, plugins, beautiful pictures, and full functionality!</p>
-                        <a href="#" class="btn btn-primary px-4 py-2 d-inline-block custom-btn">Shop Now</a>
+                        <a href="#"class="btn btn-primary px-4 py-2 d-inline-block custom-btn">Shop Now</a>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
     <!-- footer -->
     <footer class="custom-footer">
         <div class="container">
@@ -324,12 +346,12 @@
                         <li class="py-2"><a href="#" class="text-decoration-none"><i class="fa-solid fa-globe"></i> Taymeng.com</a></li>
                     </ul>
                 </div>
-                <!-- We Accept Column -->
+                <!-- Help Column -->
                 <div class="col-md-2 my-3">
-                    <h5 class="fw-bold py-2" style="color:#70000E">We Accept</h5>
-                    <ul class="d-flex align-items-center mr-3">
-                        <img src="{{ asset('image/aba.jpg') }}" alt="..." style="max-width: 100px;">
-                        <img src="{{ asset('image/delivery.jpg') }}" alt="..." style="max-width: 100px;">
+                    <h5 class="fw-bold py-2" style="color:#70000E">Help</h5>
+                    <ul class="list-unstyled">
+                        <li class="py-2"><a href="#" class="text-decoration-none">Privacy Policy</a></li>
+                        <li class="py-2"><a href="#" class="text-decoration-none">Terms of Service</a></li>
                     </ul>
                 </div>
             </div>

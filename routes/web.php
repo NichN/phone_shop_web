@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\HomeController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -10,11 +12,6 @@ Route::get('/', function () {
 Route::get('/customer/homepage', function () {
     return view('/customer/homepage');
 });
-
-
-
-
-
 
 // auth_form
 Route::get('/register',function(){
@@ -42,5 +39,21 @@ Route::get('/contactus',function(){
 Route::get('/wishlist',function(){
     return view('customer.wishlist');
 })->name('wishlist');
-Route::get('/homepage', [ProductController::class, 'index'])->name('homepage');
+Route::get('/productdetail',function(){
+    return view('customer.productdetail');
+})->name('productdetail');
+
+Route::get('/homepage', [HomeController::class, 'index'])->name('homepage');
+
+Route::get('/product', [ProductController::class, 'index'])->name('product');
+
+Route::get('/product/{id}', [HomeController::class, 'show'])->name('product.show');
+
+// Route for displaying the list of products
+Route::get('/products', [ProductController::class, 'index'])->name('product.index');
+
+Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
+
+// Route::get('/homepage', [ProductController::class, 'index'])->name('homepage');
+// Route::get('/product', [ProductController::class, 'product'])->name('product');
 

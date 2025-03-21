@@ -4,96 +4,93 @@ body {
     padding: 0;
 }
 
-.navbar-brand {
+.navbar-brand { /* Brand Name */
     font-weight: bold;
 }
 
-.nav-link.text-uppercase{
-    font-weight: 600;
+
+.nav-link.text-uppercase{ /*Navigation Text*/
+    font-weight: 600; 
     color: black;
 }
 
-.nav-link.text-uppercase:hover{
+.nav-link.text-uppercase:hover{ /* Navigation Text Hover */
     color: #70000E;
 }
 
-.custom-link i{
-    font-size: 12px;
-    margin-right: 8px;
+.custom-link i{ /* Icon Size */
+    font-size: 13px;
+    margin-right: 5px;
 }
 
-.custom-link {
-    font-size: 12px;
+.custom-link { /* Link decoration */
+    font-size: 13px; 
     text-decoration: none;
     color: black;
 }
 
-.custom-link span {
-    font-size: 12px;
+.custom-link span { /* Text Size */
+    font-size: 13px;
 }
 
-.custom-link:hover {
+.custom-link:hover { /* Text Hover */
     color: #70000E;
 }
 
-.navbar{
+.navbar{ /* Navigation Box Shadow */
     box-shadow: 0 3px 9px 3px rgba(0, 0, 0, 0.1);
 }
 
-.row h1{
-    font-weight: 700;
-}
-
-.custom-carousel-bg {
+.custom-carousel-bg { /* Slide Background Color */
     background-color: #F1F1F3;
 }
 
-.custom-carousel{
+.custom-carousel{ /* Next Previous Color */
     color: #70000E;
 }
 
-.carousel-indicators button {
+.carousel-indicators button { /* Slide indicator Color */
     background-color: #70000E;
     border-color: #70000E;     
 }
 
-.carousel-indicators .active {
+.carousel-indicators .active { /* Slide indicator Color */
     background-color: #70000E; 
 }
 
-.custom-btn {
+.custom-btn { /* button Color */
     background-color: #70000e;
     border-color: #70000e; 
     color: white;
 }
 
-.card {
+.card { /* Card Width */
     position: relative;
     overflow: hidden;
 }
 
-.card-body {
+.card-body { /* Card move up and down */
     transition: transform 0.3s ease-in-out;
 }
 
-.card:hover .card-body {
-    transform: translateY(-10px);
+.card:hover .card-body { /* size move up down */
+    transform: translateY(-20px);
 }
 
-.custom-img{
+.custom-img{ /* image card */
     mix-blend-mode: multiply;
     max-width: 250px;
 }
 
 .custom-bg{
-    background-color: #F2F2F2;
+    background-color: #F1F1F3;
 }
 
 .custom-footer{
     background-color: #eee7e7;
     border-radius: 30px 30px 0px 0px;
-
 }
+
 .cart{
     position: fixed;
     top:0;	
@@ -189,6 +186,7 @@ body {
   .COL > .COL, .ROW > .col-lg-2:hover .overlay{
     opacity: 1;
   }
+  
 .shop-cate{
     text-decoration: none;
     color: #70000E;
@@ -212,7 +210,6 @@ body {
     position: relative;
 }
 
-<<<<<<< HEAD
 .category-card {
     position: relative;
     border-radius: 8px;
@@ -248,7 +245,7 @@ body {
 .category-card:hover a {
     text-decoration: underline;
 }
-=======
+
 .overlay {
     position: absolute;
     top: 0;
@@ -279,8 +276,67 @@ li a{
     transition: color 0.3s ease;
   }
 
-  .fa-heart:hover {
+.fa-heart:hover {
     color: #70000e;
-  }
+}
+
+/* Category-Product */
+.shop-card {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+}
+.shop-card img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+    filter: brightness(1);
+}
+.shop-card:hover img {
+    transform: scale(1.1);
+    filter: brightness(0.7);
+}
+.shop-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.shop-card:hover .shop-overlay {
+    opacity: 1;
+}
+.shop-title {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(76, 76, 76, 0.6);
+    color: white;
+    padding: 10px 20px;
+    font-size: 18px;
+    text-align: center;
+    width: 60%;
+}
+
+/* scroll animation */
+.scroll-animate {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 0.8s ease-in-out;
+}
+
+.scroll-animate.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
   
->>>>>>> 15cb3d4335175d68a5c12d30b7e65fe5ba0d66e5
+

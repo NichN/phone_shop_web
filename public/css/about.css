@@ -1,43 +1,12 @@
-.baner_img{
-    height: 65vh;
+.fixed-img {
+  width: 100%; /* Makes sure the image scales with its container */
+  max-width: 850px; /* Set a max-width to avoid excessive resizing */
+  height: auto; /* Maintains the aspect ratio */
+  display: block; /* Removes extra spacing */
+  object-fit: cover; /* Ensures the image fills its box properly */
 }
-/* faq */
-.text{
-    color: rgb(65, 64, 64);
+.section-spacing {
+  margin-bottom: 60px; /* Adds space between sections */
+  padding-top: 10px; /* Optional: Adds space inside sections */
+  padding-bottom: 30px;
 }
-.accordion-button {
-  background-color: #f8f9fa;
-  color: #333;
-  border-radius: 20px;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.accordion-button:hover {
-  background-color: #70000e;
-  color: white;
-}
-
-.accordion-button:not(.collapsed) {
-  background-color: #70000e; 
-  color: white;
-}
-
-.accordion-button:focus {
-  box-shadow: none; 
-  outline: none;
-}
-.COL > .COL, .ROW > .col-lg-2 {
-    width: 350px;
-    height: 180px;
-    padding: 15px; 
-    text-align: center;
-  }
-  .container {
-    margin-top: 20px;
-  }
-  .backround{
-    background-color: #D9D9D9;
-  }
-  .icon{
-    font-size: 40px;
-  }

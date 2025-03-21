@@ -134,3 +134,22 @@ function addProductToCart(title, price, productImgSrc) {
     cartbox.getElementsByClassName('cart-remove')[0].addEventListener('click', removeCartItem);
     cartbox.getElementsByClassName('cart-quantity')[0].addEventListener('change', quantityChange);
 }
+
+//scroll animation
+document.addEventListener("DOMContentLoaded", function() {
+    const elements = document.querySelectorAll(".scroll-animate");
+
+    function scrollHandler() {
+        elements.forEach((el) => {
+            const position = el.getBoundingClientRect().top;
+            const windowHeight = window.innerHeight;
+
+            if (position < windowHeight - 50) {
+                el.classList.add("active");
+            }
+        });
+    }
+
+    window.addEventListener("scroll", scrollHandler);
+    scrollHandler(); // Run initially
+});
