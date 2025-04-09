@@ -1,6 +1,6 @@
 @extends('Layout.headerfooter')
 
-@section('title', 'About Us')
+@section('title', 'Contact Us')
 
 @section('header')
 <link rel="stylesheet" href="{{ asset('css/contact.css') }}">

@@ -133,52 +133,35 @@
                 </div>
             </div>
         </div>
-    </div>
 
+    </div>
 </div>
 
-<script>
-    function changeImage(thumbnail) {
-        document.getElementById('mainImage').src = thumbnail.src;
-        
-        // Remove selected-thumbnail class from all thumbnails
-        document.querySelectorAll('.thumbnail-img').forEach(img => img.classList.remove('selected-thumbnail'));
-        
-        // Add selected-thumbnail class to clicked thumbnail
-        thumbnail.classList.add('selected-thumbnail');
-    }
-    
-</script>
+<!-- New Products Section -->
+<section>
+    <div class="container my-5 scroll-animate">
+        <h2 class="text-center mb-4">Similar Product</h2>
+        <div class="row g-4">
+            @foreach ($products as $product)
+            <!-- Product Card -->
+            <div class="col-md-3">
+                <div class="card product-card">
+                    <img src="{{ $product['image'] }}" class="card-img-top product-img" alt="{{ $product['name'] }}">
+                    <div class="card-body text-right bg-light">
+                        <p class="tag mb-0">{{ $product['category'] }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mt-2 product-title">{{ $product['name'] }}</h5>
+                            <i class="fa-regular fa-heart fs-5 add-wishlist"></i>
+                        </div>
+                        <p class="card-price">{{ $product['price'] }}</p>
+                        <a href="#" class="btn btn-primary px-4 py-2 d-inline-block custom-btn w-100 add-cart">Add to Cart</a>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</section>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const colorOptions = document.querySelectorAll("input[name='color']");
-        const storageOptions = document.querySelectorAll("input[name='storage']");
-
-        colorOptions.forEach(option => {
-            option.addEventListener("change", function () {
-                updateSelectedOption("color", this.id);
-            });
-        });
-
-        storageOptions.forEach(option => {
-            option.addEventListener("change", function () {
-                updateSelectedOption("storage", this.id);
-            });
-        });
-
-        function updateSelectedOption(type, selectedId) {
-            document.querySelectorAll(`input[name='${type}'] + label`).forEach(label => {
-                label.style.border = "1px solid black"; // Reset border for all labels
-            });
-
-            const selectedLabel = document.querySelector(`label[for='${selectedId}']`);
-            if (selectedLabel) {
-                selectedLabel.style.border = "2px solid red"; // Highlight selected option
-            }
-        }
-    });
-</script>
-
-
+<script src="{{ asset('js/productdetail.js') }}"></script>
 @endsection

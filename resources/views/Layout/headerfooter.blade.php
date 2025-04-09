@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/homepage.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/wishlist.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
@@ -50,7 +51,7 @@
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
                         <li><a class="dropdown-item" href="#"><i class="fa-solid fa-box"></i> Order History</a></li>
-                        <li><a class="dropdown-item" href="#"><i class="fa-solid fa-user-circle"></i> My Profile</a></li>
+                        <li><a class="dropdown-item" href="{{ route('profile') }}"><i class="fa-solid fa-user-circle"></i> My Profile</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item text-danger" href="#"><i class="fa-solid fa-sign-out-alt"></i> Logout</a></li>
                     </ul>
@@ -74,7 +75,7 @@
                         <a class="nav-link text-uppercase" href="{{ route('aboutus') }}">About Us</a>
                     </li>
                     <li class="nav-item mx-3">
-                        <a class="nav-link text-uppercase" href="{{ route('conatact_us') }}">Contact Us</a>
+                        <a class="nav-link text-uppercase" href="{{ route('contact_us') }}">Contact Us</a>
                     </li>
                 </ul>
                 
@@ -139,10 +140,10 @@
                 <div class="col-md-2 my-3">
                     <h5 class="fw-bold py-2" style="color:#70000E">Quick Links</h5>
                     <ul class="list-unstyled">
-                        <li class="py-2"><a href="#" class=" text-decoration-none">Home</a></li>
-                        <li class="py-2"><a href="#" class="text-decoration-none">About Us</a></li>
-                        <li class="py-2"><a href="#" class="text-decoration-none">Contact Us</a></li>
-                        <li class="py-2"><a href="#" class="text-decoration-none">FAQ</a></li>
+                        <li class="py-2"><a href="{{ route('homepage') }}" class=" text-decoration-none">Home</a></li>
+                        <li class="py-2"><a href="{{ route('aboutus') }}" class="text-decoration-none">About Us</a></li>
+                        <li class="py-2"><a href="{{ route('contact_us') }}" class="text-decoration-none">Contact Us</a></li>
+                        <li class="py-2"><a href="{{ route('faq') }}" class="text-decoration-none">FAQ</a></li>
                     </ul>
                 </div>
                 <!-- Get In Touch Column -->

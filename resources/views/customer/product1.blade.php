@@ -1,12 +1,12 @@
 @extends('Layout.headerfooter')
 
-@section('title', 'Product')
+@section('title', 'Accessories')
 
 @section('header')
 <div class="container mt-3">
     <nav>
         <a href="{{ route('homepage') }}" style="text-decoration: none; color: inherit;">Home</a> • 
-        <a href="{{ route('product') }}" style="text-decoration: none; color: inherit;">Smartphone</a>
+        <a href="{{ route('product') }}" style="text-decoration: none; color: inherit;">Product</a>
     </nav>
 </div>
 @endsection
@@ -15,7 +15,7 @@
 <div class="container mt-4">
     <!-- Title & Search Bar -->
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Smartphone</h2>
+        <h2>Product</h2>
         <div class="d-flex w-50">
             <form action="{{ route('product.index') }}" method="GET" class="d-flex w-100">
                 <input type="text" name="search" class="form-control w-100" placeholder="Search for product" value="{{ request('search') }}">
@@ -27,18 +27,18 @@
 
     <!-- Filters: Categories, Price, Sorting -->
     <div class="d-flex align-items-center mb-3">
-        <!-- Smartphone Category Dropdown -->
+        <!-- Accessories Category Dropdown -->
         <div class="dropdown me-3">
             <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                Smartphone
+                Accessories
             </button>
             <ul class="dropdown-menu p-3">
                 <li class="mb-4"><input type="radio" name="category" class="form-check-input me-2" checked>All Item</li>
-                <li class="mb-4"><input type="radio" name="category" class="form-check-input me-2">IPhone</li>
-                <li class="mb-4"><input type="radio" name="category" class="form-check-input me-2">Samsung</li>
-                <li class="mb-4"><input type="radio" name="category" class="form-check-input me-2">Oppo</li>
-                <li class="mb-4"><input type="radio" name="category" class="form-check-input me-2">Vivo</li>
-                <li class="mb-4"><input type="radio" name="category" class="form-check-input me-2">LG</li>
+                <li class="mb-4"><input type="radio" name="category" class="form-check-input me-2">Airport</li>
+                <li class="mb-4"><input type="radio" name="category" class="form-check-input me-2">Charger</li>
+                <li class="mb-4"><input type="radio" name="category" class="form-check-input me-2">Powerbank</li>
+                <li class="mb-4"><input type="radio" name="category" class="form-check-input me-2">Earphones</li>
+                <li class="mb-4"><input type="radio" name="category" class="form-check-input me-2">Phone cases</li>
                 <li class="mb-4"><button class="btn btn-secondary mt-2 w-100">Apply</button></li>
             </ul>
         </div>
@@ -66,6 +66,7 @@
             <!-- Product Card -->
             <div class="col-md-3">
                 <div class="card product-card">
+                    {{-- <img src="{{ $product['image'] }}" class="card-img-top product-img" alt="{{ $product['name'] }}"> --}}
                     <a href="{{ route('product.show', $product['id']) }}">
                         <img src="{{ $product['image'] }}" class="card-img-top product-img" alt="{{ $product['name'] }}">
                     </a>

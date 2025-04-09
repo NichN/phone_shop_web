@@ -154,8 +154,6 @@ class ProductController extends Controller
             $currentPage,
             ['path' => $request->url(), 'query' => $request->query()]
         );
-
-        // return view('customer.product', compact('products'));
         return view('customer.product', compact('paginatedProducts'));
     }
 }
