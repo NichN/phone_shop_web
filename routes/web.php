@@ -7,7 +7,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\CustomerController;
-
+use App\Http\Controllers\HistoryController;
+use App\Http\Controllers\OrderController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -29,9 +30,14 @@ Route::get('/products', [ProductController::class, 'index'])->name('product.inde
 
 Route::get('/products/{id}', [ProductController::class, 'show'])->name('product.show');
 
+Route::get('/history', [HistoryController::class, 'index'])->name('history');
+
+Route::get('/invoice/{id}', [OrderController::class, 'showInvoice'])->name('invoice.show');
+
+Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
 
 
-// Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
+
 
 
 
@@ -62,32 +68,6 @@ Route::get('/productdetail',function(){
     return view('customer.productdetail');
 })->name('productdetail');
 
-
-
-
-Route::get('/profile', function () {
-    return view('profile_detail.profile');
-})->name('profile');
-
-Route::get('/email', function () {
-    return view('profile_detail.email');
-})->name('email');
-
-Route::get('/password', function () {
-    return view('profile_detail.password');
-})->name('password');
-
-Route::get('/address', function () {
-    return view('profile_detail.address');
-})->name('address');
-
-Route::get('/product1', function () {
-    return view('customer.product1');
-})->name('product1');
-
-Route::put('/password/update', [PasswordController::class, 'update'])->name('password.update');
-
-Route::post('/address', [AddressController::class, 'store'])->name('address.store');
 
 Route::get('/productdetail', [ProductDetailController::class, 'index'])->name('productdetail');
 

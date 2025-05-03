@@ -3,6 +3,7 @@
 @section('title', 'Product')
 
 @section('header')
+<link rel="stylesheet" href="{{ asset('css/product.css') }}">
 <div class="container mt-3">
     <nav>
         <a href="{{ route('homepage') }}" style="text-decoration: none; color: inherit;">Home</a> • 
@@ -81,6 +82,7 @@
                 </div>
             </div>
             @endforeach
+            
         @else
             <p class="text-center text-muted">No products available.</p>
         @endif

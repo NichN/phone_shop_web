@@ -14,6 +14,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     {{-- <link href="{{ asset('css/about.css') }}" rel="stylesheet">
     <link href="{{ asset('css/mainstyle.css')}}" rel="stylesheet"> --}}
     @yield('head')
@@ -31,7 +32,7 @@
                 <button type="button" class="btn position-relative" id="wishlist-link">
                     <a class="custom-link" href="#" data-bs-toggle="modal" data-bs-target="#wishlistModal">
                         <i class="fa-solid fa-heart"></i>
-                        <span class="d-none d-lg-inline">My Wishlist</span>
+                        <span class="d-none d-lg-inline" style="font-size: 1rem;">My Wishlist</span>
                         <span id="count_heart_cart" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
                     </a>
                 </button>
@@ -40,22 +41,23 @@
                 <button type="button" class="btn position-relative">
                     <a class="custom-link" href="#">
                         <i class="fa-solid fa-cart-shopping" id="cart-icon"></i>
-                        <span class="d-none d-lg-inline">My Cart</span>
+                        <span class="d-none d-lg-inline" style="font-size: 1rem;">My Cart</span>
                         <span id="count_cart" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
                     </a>
                 </button>
     
                 <!-- User Button -->
-                    <button class="btn position-relative dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fa-solid fa-user"></i> <span class="d-none d-lg-inline">Hello Guest</span>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                        <li><a class="dropdown-item" href="#"><i class="fa-solid fa-box"></i> Order History</a></li>
-                        <li><a class="dropdown-item" href="{{ route('profile') }}"><i class="fa-solid fa-user-circle"></i> My Profile</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="#"><i class="fa-solid fa-sign-out-alt"></i> Logout</a></li>
-                    </ul>
-                </div>
+                <button class="btn position-relative dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa-solid fa-user"></i> <span class="d-none d-lg-inline">Hello Guest</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                    <li><a class="dropdown-item" href="{{ route('history') }}"><i class="fa-solid fa-box me-2"></i> Order History</a></li>
+                    {{-- <li><a class="dropdown-item" href="{{ route('profile') }}"><i class="fa-solid fa-user-circle"></i> My Profile</a></li> --}}
+                    <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileModal"><i class="fa-solid fa-gear me-2"></i> Setting</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger" href="#"><i class="fa-solid fa-sign-out-alt me-2"></i> Logout</a></li>
+                </ul>
+            </div>
     
             <!-- Navbar Toggler Button -->
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -88,7 +90,7 @@
                     </div>
                     <div class="total">
                         <div class="total-text">Total</div>
-                        <div class="total-price">25$</div>
+                        <div class="total-price">0$</div>
                     </div>
                     <div>
                         <button class="btn btn-buy">Checkout</button>
@@ -113,7 +115,151 @@
             </div>
         </div>
     </div>
-    
+
+    <!-- My Profile Modal -->
+    <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <div class="modal-header align-items-center">
+                    <div class="d-flex align-items-center">
+                        <img src="{{ asset('image/smphone.png') }}" alt="User Photo" class="rounded-circle me-3" width="35" height="35">
+                        <h5 class="modal-title mb-0" id="profileModalLabel">Hello, Youheang</h5>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="row">
+                        <!-- Sidebar -->
+                        <div class="col-md-3 border-end">
+                            <div class="list-group">
+                                <a href="#edit-profile" class="list-group-item list-group-item-action active">
+                                    <i class="bi bi-person me-2"></i> Edit Profile
+                                </a>
+                                <a href="#change-password" class="list-group-item list-group-item-action">
+                                    <i class="bi bi-shield-lock me-2"></i> Change Password
+                                </a>
+                                <a href="#address" class="list-group-item list-group-item-action">
+                                    <i class="bi bi-geo-alt me-2"></i> Address
+                                </a>
+                            </div>
+                        </div>
+  
+                        <!-- Main content -->
+                        <div class="col-md-9">
+                            <div id="profileContent">
+
+                                <!-- ✅ Success Alert Goes Here -->
+                                <div id="successMessage" class="alert alert-success alert-dismissible fade show d-none" role="alert">
+                                    <strong>Success!</strong> Changes saved successfully.
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+
+                                <div id="errorMessage" class="alert alert-danger alert-dismissible fade show d-none" role="alert">
+                                    <strong>Error!</strong> Please fill in all required fields.
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+
+                                <!-- Edit Profile Section (default visible) -->
+                                <div id="editProfileContent">
+                                    <div class="text-center mb-4">
+                                        <h3>My Profile</h3>
+                                        <p class="text-muted">Manage your personal information</p>
+                                        <img src="{{ asset('image/smphone.png') }}" class="rounded-circle mb-2" width="120" height="120" alt="Profile Picture">
+                                        <br>
+                                        <button class="btn btn-outline-danger btn-sm">Change Photo</button>
+                                    </div>
+                                    <form>
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold">Full Name</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" placeholder="Enter Your Name" required>
+                                                <button class="btn btn-danger" type="button">Edit</button>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold">Phone Number</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" placeholder="Enter Your Number" required>
+                                                <button class="btn btn-danger" type="button">Edit</button>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold">Email</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" placeholder="your@email.com" required>
+                                                <button class="btn btn-danger" type="button">Edit</button>
+                                            </div>
+                                            <small class="text-muted">We collect this in case of emergencies.</small>
+                                        </div>
+                                        <button type="submit" class="btn btn-success w-100">Save Changes</button>
+                                    </form>
+                                </div>
+
+                                <!-- Change Password Section (hidden by default) -->
+                                <div id="changePasswordContent" style="display: none;">
+                                    <div class="text-center mb-4">
+                                        <h3>Change Password</h3>
+                                        <p class="text-muted">Make sure your new password is strong and secure.</p>
+                                    </div>
+                                    <form>
+                                        <div class="mb-3">
+                                            <label class="form-label">Current Password</label>
+                                            <input type="password" class="form-control" placeholder="Enter current password" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">New Password</label>
+                                            <input type="password" class="form-control" placeholder="Enter new password" required>
+                                            <small class="text-muted">Minimum 8 characters with at least one number and one special character.</small>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Confirm New Password</label>
+                                            <input type="password" class="form-control" placeholder="Confirm new password" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-success w-100">Update Password</button>
+                                    </form>
+                                </div>
+
+                                <!-- Address Section (hidden by default) -->
+                                <div id="addressContent" style="display: none;">
+                                    <div class="text-center mb-4">
+                                        <h3>My Address</h3>
+                                        <p class="text-muted">Update your shipping or contact address here.</p>
+                                    </div>
+                                
+                                    <form>
+                                        <div class="mb-3">
+                                            <label class="form-label">Street Address</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" placeholder="Enter your street address" required>
+                                                <button class="btn btn-danger" type="button">Edit</button>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">City</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" placeholder="Enter your city" required>
+                                                <button class="btn btn-danger" type="button">Edit</button>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Province</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" placeholder="Enter your province" required>
+                                                <button class="btn btn-danger" type="button">Edit</button>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-success w-100">Save Address</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Header Section -->
     <header>
         @yield('header')
@@ -125,7 +271,7 @@
     </main>
 
     <!-- footer -->
-    <footer class="custom-footer">
+    <footer class="custom-footer ">
         <div class="container">
             <div class="row">
                 <!-- Category Column -->
@@ -177,5 +323,6 @@
     </footer>
     <script src="{{ asset('js/wishlist.js') }}"></script>
     <script src="{{ asset('js/homepage.js') }}"></script>
+    <script src="{{ asset('js/profile.js') }}"></script>
 </body>
 </html>
