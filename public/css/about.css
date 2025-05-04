@@ -1,12 +1,12 @@
 .fixed-img {
-  width: 100%; /* Makes sure the image scales with its container */
-  max-width: 850px; /* Set a max-width to avoid excessive resizing */
-  height: auto; /* Maintains the aspect ratio */
-  display: block; /* Removes extra spacing */
-  object-fit: cover; /* Ensures the image fills its box properly */
+  width: 100%;
+  max-width: 850px;
+  height: auto;
+  display: block;
+  object-fit: cover;
 }
 .section-spacing {
-  margin-bottom: 60px; /* Adds space between sections */
-  padding-top: 10px; /* Optional: Adds space inside sections */
+  margin-bottom: 60px;
+  padding-top: 10px;
   padding-bottom: 30px;
 }

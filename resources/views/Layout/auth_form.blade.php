@@ -35,7 +35,6 @@
           </button>
         </div>
       </div>
-
       <div class="col-md-6">
         <div class="p-3 border bg-light">
                 @yield('content')

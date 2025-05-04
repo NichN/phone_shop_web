@@ -125,10 +125,7 @@ class ProductController extends Controller
             ],
         ];
 
-        // Convert the array into a Laravel Collection
         $productsCollection = collect($products);
-
-        // Handle search (filtering)
         if ($request->has('search') && !empty($request->search)) {
             $searchTerm = strtolower($request->search);
             $productsCollection = $productsCollection->filter(function ($product) use ($searchTerm) {
@@ -136,17 +133,9 @@ class ProductController extends Controller
                        str_contains(strtolower($product['category']), $searchTerm);
             });
         }
-
-        // Get the current page from the request, default is 1
         $currentPage = LengthAwarePaginator::resolveCurrentPage();
-
-        // Define how many items you want per page
         $perPage = 12;
-
-        // Slice the collection to get the items to display in the current page
         $currentPageItems = $productsCollection->slice(($currentPage - 1) * $perPage, $perPage)->all();
-
-        // Create a LengthAwarePaginator instance
         $paginatedProducts = new LengthAwarePaginator(
             $currentPageItems,
             $productsCollection->count(),
@@ -154,8 +143,10 @@ class ProductController extends Controller
             $currentPage,
             ['path' => $request->url(), 'query' => $request->query()]
         );
-
-        // return view('customer.product', compact('products'));
         return view('customer.product', compact('paginatedProducts'));
+    }
+    public function show()
+    {
+        return view('Admin.product.listproduct');
     }
 }
