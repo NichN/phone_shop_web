@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductDetailController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\dashboardcontroller;
 use App\Http\Controllers\categoryController;
@@ -20,28 +21,25 @@ Route::get('/', function () {
 Route::get('/register',function(){
     return view('authentication_form.register');
 })->name('register');
+
 Route::get('/login',function(){
     return view('authentication_form.login');
 })->name('login');
+
 Route::get('/verifyemail',function(){
     return view('authentication_form.forgetpw');
 })->name('verifyemail');
+
 Route::get('/resetpassword',function(){
     return view('authentication_form.resetpw');
 })->name('resetpassword');
 
-Route::get('/aboutus',function(){
-    return view('customer.aboutus');
-})->name('aboutus');
-Route::get('/faq',function(){
-    return view('customer.FAQ');
-})->name('faq');
-Route::get('/contactus',function(){
-    return view('customer.contact');
-})->name('conatact_us');
+
+
 Route::get('/wishlist',function(){
     return view('customer.wishlist');
 })->name('wishlist');
+
 Route::get('/productdetail',function(){
     return view('customer.productdetail');
 })->name('productdetail');
