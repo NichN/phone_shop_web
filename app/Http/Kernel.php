@@ -43,6 +43,9 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
+            'twofactor' => [
+            \App\Http\Middleware\Verify2FAMiddleware::class,
+        ],
     ];
 
     /**
