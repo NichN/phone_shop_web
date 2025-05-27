@@ -64,7 +64,7 @@
                         @endif
                     </td>
                     <td>
-                        <a href="{{ url('/invoice/1') }}" class="btn btn-outline-primary btn-sm me-2">View</a>
+                        <a href="{{ url('/invoice') }}" class="btn btn-outline-primary btn-sm me-2">View</a>
                         <form action="#" method="POST" class="d-inline">
                             @csrf
                             @method('DELETE')
