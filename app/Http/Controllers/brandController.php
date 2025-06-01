@@ -56,6 +56,11 @@ class BrandController extends Controller
     {
         return view('Admin.brand.newbrand');
     }
+        public function getBrand($id)
+    {
+        $brand = Brand::findOrFail($id);
+        return response()->json($brand);
+    }
     public function delete(Request $request)
     {
         $brand = Brand::findOrFail($request->id);

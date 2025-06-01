@@ -77,6 +77,7 @@
         });
         $('#editsupplierForm').on('submit',function(e){
             e.preventDefault();
+            let id = $('#supplierId').val();
             let url = "{{ route('supplier.update', ':id') }}".replace(':id', id);
             var formData = new FormData(this);
             $.ajax({

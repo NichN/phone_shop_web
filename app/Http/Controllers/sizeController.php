@@ -6,7 +6,7 @@ use Illuminate\Auth\Events\Validated;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
-use App\Models\size;
+use App\Models\Size;
 class sizeController extends Controller
 {
     public function index(Request $request)
@@ -39,7 +39,7 @@ class sizeController extends Controller
             $data = [
                 'size' => $validated['size']
             ];
-            size::create($data);
+            Size::create($data);
             return response()->json([
                 'success' => true, 'message' => 'Data saved successfully','data' => $validated,
             ]);
@@ -51,5 +51,22 @@ class sizeController extends Controller
                 'error_details' => $e->getTraceAsString()
             ], 500);
         }
+    }
+    public function edit($id){
+        $size = Size::findOrFail($id);
+        return response()->json($size);
+   }
+   public function update(Request $request, $id){
+        $size = Size::findOrFail($id);
+        $size->update([
+            'size' => $request->size,
+        ]);
+        return response()->json(['success' => true]);
+    }
+
+    public function delete(Request $request){
+        $size = Size::findOrFail($request->id);
+        $size ->delete();
+        return response()->json(['success' => true, 'message' => 'Size deleted successfully!']);
     }
 }

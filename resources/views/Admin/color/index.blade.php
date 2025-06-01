@@ -45,7 +45,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="colorForm" action="{{ route('products.colorstore') }}"  method="POST" enctype="multipart/form-data">
+                <form id="colorForm" action="{{ route('color.colorstore') }}"  method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="row mb-4">
                         <div class="col-md-6">

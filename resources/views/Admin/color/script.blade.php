@@ -8,7 +8,7 @@
             var table = $('.data-table').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('products.colorlist') }}",
+                ajax: "{{ route('color.colorlist') }}",
                 columns: [
                     {data: 'id', name: 'id',render: function (data, type, row, meta) {
                         return meta.row + 1;}},
@@ -50,7 +50,7 @@
                                 title: 'Success!',
                                 text: 'Color added successfully!',
                                 willClose: () => {
-                                    window.location.href = "{{ route('products.colorlist') }}";
+                                    window.location.href = "{{ route('color.colorlist') }}";
                                 }
                             });
                         }
@@ -67,7 +67,7 @@
         }
         $('body').on('click','.deleteColor',function(){
             let id = $(this).data('id');
-            let url ="{{route('products.delete', ':id')}}";
+            let url ="{{route('color.delete', ':id')}}";
             if(confirm("Are You Sure ?")){
                 $.ajax({
                     url:url.replace(':id', id),
@@ -97,7 +97,7 @@
         })
         $('body').on('click', '.editColor', function() {
         let id = $(this).data('id');
-        let url = "{{ route('products.editcolor', ':id') }}".replace(':id', id);
+        let url = "{{ route('color.editcolor', ':id') }}".replace(':id', id);
         $.get(url, function(data) {
             $('#ColorId').val(data.id);
             $('#editName').val(data.name);
@@ -109,7 +109,7 @@
     $('#editColorForm').on('submit', function(e) {
         e.preventDefault();
         let id = $('#ColorId').val();
-        let url = "{{ route('products.updatecolor', ':id') }}".replace(':id', id);
+        let url = "{{ route('color.updatecolor', ':id') }}".replace(':id', id);
         var formData = new FormData(this);
         
         $.ajax({

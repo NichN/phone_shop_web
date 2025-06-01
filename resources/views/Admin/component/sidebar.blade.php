@@ -20,9 +20,10 @@
     <div class="w3-bar-item  w3-dropdown-click" onclick="toggleDropdown('productDropdown')">
         <i class="fa fa-product-hunt"></i> Product <i class="fa fa-caret-down" style="margin-left: 113px"></i>
     </div><div id="productDropdown" class="w3-dropdown-content" style="display: none;">
-        <a href="#" class="w3-bar-item w3-button"><i class="fa fa-list"></i> Product List</a>
-        <a href="#" class="w3-bar-item w3-button"><i class="fa fa-plus-circle"></i> Add Product</a>
-        <a href="{{ route('products.colorlist') }}" class="w3-bar-item w3-button"><i class="fa-solid fa-palette"></i> Color</a>
+        <a href="{{ route('products.product_index')}}" class="w3-bar-item w3-button"><i class="fa fa-list"></i> Product List</a>
+        <a href="{{ route('pr_detail.index')}}" class="w3-bar-item w3-button"><i class="fa-solid fa-circle-info"></i> Product Detail</a>
+        <a href="{{ route('pr_detail.add')}}" class="w3-bar-item w3-button"><i class="fa-solid fa-circle-info"></i> Add Product</a>
+        <a href="{{ route('color.colorlist') }}" class="w3-bar-item w3-button"><i class="fa-solid fa-palette"></i> Color</a>
         <a href="{{ route('size.index') }}" class="w3-bar-item w3-button"><i class="fa-solid fa-expand"></i> Size</a>
         <a href="{{ route('photo.index') }}" class="w3-bar-item w3-button"><i class="fa-solid fa-image"></i> Photo</a>     
     </div>
@@ -31,7 +32,7 @@
     </div>
     <div id="brandDropdown" class="w3-dropdown-content" style="display: none;">
         <a href="{{ route('brand.index') }}" class="w3-bar-item w3-button"><i class="fa fa-list"></i> Brand List</a>
-        <a href="{{route('brand.new')}}" class="w3-bar-item w3-button"><i class="fa fa-plus-circle"></i> Add Category</a>
+        <a href="{{route('brand.new')}}" class="w3-bar-item w3-button"><i class="fa fa-plus-circle"></i> Add Brand</a>
     </div>
     <div class="w3-bar-item  w3-dropdown-click" onclick="toggleDropdown('categoryDropdown')">
         <i class="fa fa-qrcode"></i> Category <i class="fa fa-caret-down" style="margin-left: 100px"></i>
@@ -40,24 +41,27 @@
         <a href="{{ route('category.index') }}" class="w3-bar-item w3-button"><i class="fa fa-list"></i> List Categories</a>
         <a href="{{route('category.new')}}" class="w3-bar-item w3-button"><i class="fa fa-plus-circle"></i> Add Category</a>
     </div>
-    <a href="#" class="w3-bar-item w3-button stock-link"><i class="fas fa-box"></i> Purchases</a>
+    <div class="w3-bar-item  w3-dropdown-click" onclick="toggleDropdown('purchasesDropdown')">
+        <i class="fas fa-box"></i> Purchases <i class="fa fa-caret-down" style="margin-left: 85px"></i>
+    </div>
+    <div id="purchasesDropdown" class="w3-dropdown-content" style="display: none;">
+        <a href="{{ route('purchase.add')}}" class="w3-bar-item w3-button"><i class="fa fa-list"></i> List Purchases</a>
+        <a href="{{ route('purchase.index')}}" class="w3-bar-item w3-button"><i class="fa fa-list"></i> ADD Purchases </a>
+    </div>
     <div class="w3-bar-item  w3-dropdown-click" onclick="toggleDropdown('supplierDropdown')">
         <i class="fa fa-qrcode"></i> Supplier <i class="fa fa-caret-down" style="margin-left: 100px"></i>
     </div>
+    <a href="#" class="w3-bar-item w3-button stock-link"><i class="fas fa-box"></i> Delivery</a>
     <div id="supplierDropdown" class="w3-dropdown-content" style="display: none;">
         <a href="{{ route('supplier.index') }}" class="w3-bar-item w3-button"><i class="fa fa-list"></i> List Supplier</a>
-        {{-- <a href="{{route('supplier.new')}}" class="w3-bar-item w3-button"><i class="fa fa-plus-circle"></i> Add Supplier</a> --}}
     </div>
-    <a href="#" class="w3-bar-item w3-button order-link"><i class="fa-solid fa-truck"></i> Delivery</a>
     <a href="#" class="w3-bar-item w3-button order-link"><i class="fas fa-shopping-cart"></i> Order</a>
     <a href="#" class="w3-bar-item w3-button customer-link"><i class="fas fa-user"></i> Customer</a>
-    <a href="#" class="w3-bar-item w3-button review-link"><i class="fas fa-comments"></i> Review</a>
     <a href="#" class="w3-bar-item w3-button payment-link"><i class="fas fa-money-bill-wave"></i> Payment</a>
     <a href="#" class="w3-bar-item w3-button report-link"><i class="fas fa-file-alt"></i> Report</a>
 
     <div class="sidebar-title mt-">Settings</div>
-    <a href="#" class="w3-bar-item w3-button role-link"><i class="fas fa-user-shield"></i> Role Management</a>
-    <a href="#" class="w3-bar-item w3-button user-link"><i class="fas fa-user-cog"></i> Manage User</a>
+    <a href="{{ route('user.index') }}" class="w3-bar-item w3-button user-link"><i class="fas fa-user-cog"></i> Manage User</a>
     <button type="button" class="btn btn-warning logout-btn">Logout</button>
 </div>
 <script>

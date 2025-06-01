@@ -4,73 +4,96 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Color;
-use Yajra\DataTables\Facades\DataTables;
+use App\Models\Product;
+use App\Models\Brand;
+use App\Models\Category;
+use App\Models\productdetail;
+use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\DataTables;
 
 class productAdminController extends Controller
 {
-    public function index(Request $request){
+    public function productindex(Request $request)
+    {
         if ($request->ajax()) {
-            $data = Color::select(['id', 'name', 'code', 'created_at']);
+            $data = DB::table('product')
+                ->join('brand', 'brand.id', '=', 'product.brand_id')
+                ->join('category', 'category.id', '=', 'product.cat_id')
+                ->select(
+                    'product.*',
+                    'brand.name as brandname',
+                    'category.name as categoryname'
+                )
+                ->orderBy('product.id', 'desc')
+                ->get();
+
             return DataTables::of($data)
-                ->addIndexColumn()
-                ->addColumn('action', function($row){
-                    return ' <button class="btn btn-primary btn-sm editColor" data-id="'. $row->id .'" data-toggle="tooltip" title="Edit">
-                                Edit
-                            </button>
-                            <button data-id="'.$row->id.'" class="btn btn-sm btn-danger deleteColor">Delete</button>';
+                ->addColumn('action', function ($row) {
+                    $btn = '<div>
+                                <button class="btn btn-primary btn-sm editProduct" data-id="' . $row->id . '" data-toggle="tooltip" title="Edit">
+                                    Edit
+                                </button>
+                                <button class="btn btn-danger btn-sm deleteProduct" data-id="' . $row->id . '" data-toggle="tooltip" title="Delete">
+                                    Delete
+                                </button>
+                            </div>';
+                    return $btn;
                 })
                 ->rawColumns(['action'])
                 ->make(true);
         }
-        return view('Admin.color.index');
+        $brands = Brand::all();
+        $category = Category::all();
+       return view('Admin.product.listproduct', compact('brands', 'category'));
     }
-    public function storecolor(Request $request)
-        {
-            try {
-                $validated = $request->validate([
-                    'name' => 'required|string|max:255|',
-                    'code' => 'nullable|string|regex:/^#([a-fA-F0-9]{6})$/',
-                ]);
-                $data = [
-                    'name' => $validated['name'],
-                    'code' => $validated['code'] ?? null,
-                ];
-                color::create($data);
-        
-                return response()->json([
-                    'success' => true,
-                    'message' => 'color created successfully',
-                    'data' => $data
-                ]);
-        
-            } catch (\Exception $e) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Operation failed: ' . $e->getMessage(),
-                    'error_details' => $e->getTraceAsString()
-                ], 500);
-            }
-    }
-    public function show(){
-        return view('Admin.color.index');
-    }
-    public function delete(Request $request){
-        $color = Color:: findOrFail($request->id);
-        $color->delete();
-        return response()->json(['success' => true, 'message' => 'color deleted successfully!']);
-    }
-    public function editcolor($id)
+    public function productstore(Request $request)
     {
-        $color= Color::findOrFail($id);
-        return response()->json($color);
-    }
-    public function updatecolor(Request $request, $id)
-    {
-        $color = Color::findOrFail($id);
-        $color->update([
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $data = [
             'name' => $request->name,
-            'code' => $request->code
+            'brand_id' => $request->brand_id,
+            'cat_id' => $request->cat_id,
+            'description' => $request->description,
+            'stock' => 0
+        ];
+
+        Product::create($data);
+        return response()->json(['success' => true, 'message' => 'Product added successfully!']);
+    }
+    public function editproduct($id){
+        $product = Product::findOrFail($id);
+        return response()->json($product);
+    }
+    public function updateproduct(Request $request, $id){
+        $product = Product::findOrFail($id);
+        $product->update([
+            'pro_id' => $request->name,
+            'color_id'=>$request->description,
+            'brand_id'=>$request->brand_id,
+            'cat_id'=>$request->cat_id
         ]);
         return response()->json(['success' => true]);
     }
+    public function deleteproduct($id){
+        $product = Product::find($id);
+        productdetail::where("pro_id",$id)->delete();
+        $product->delete();
+        return response()->json(['success' => true, 'message' => 'Size deleted successfully!']);
+    }
+   public function getproduct($id)
+    {
+        $product = Product::findOrFail($id);
+        $brandName = Brand::find($product->brand_id)->name ?? 'No Brand';
+        $categoryName = Category::find($product->cat_id)->name ?? 'No Category';
+
+        return response()->json([
+            'brand' => $brandName,
+            'category' => $categoryName
+        ]);
+    }
+
+
 }

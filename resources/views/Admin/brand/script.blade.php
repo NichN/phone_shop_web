@@ -23,8 +23,6 @@ $(document).ready(function(){
             { data: 'action', name: 'action', orderable: false, searchable: false }
         ]
     });
-
-    // Add Brand
     if ($('#brandForm').length) {
             $('#brandForm').on('submit', function(e) {
                 e.preventDefault();
