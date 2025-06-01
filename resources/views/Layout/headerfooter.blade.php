@@ -149,7 +149,7 @@
                         <div class="col-md-9">
                             <div id="profileContent">
 
-                                <!-- ✅ Success Alert Goes Here -->
+                                <!--  Success Alert -->
                                 <div id="successMessage" class="alert alert-success alert-dismissible fade show d-none" role="alert">
                                     <strong>Success!</strong> Changes saved successfully.
                                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -160,7 +160,7 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>
 
-                                <!-- Edit Profile Section (default visible) -->
+                                <!-- Edit Profile Section -->
                                 <div id="editProfileContent">
                                     <div class="text-center mb-4">
                                         <h3>My Profile</h3>
