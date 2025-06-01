@@ -20,7 +20,7 @@
 <div class="container my-3">
   <div class="row">
     <div class="col-md-6 offset-md-3 d-flex flex-column align-items-center text-center">
-      <h3 class="fw-bold mb-4 mt-4">Passion for Technology Dedication to You</h3>
+      <h3 class="fw-bold mb-4 mt-4">Passion for Technology Dedication to You.</h3>
       <p class="text-justify" style="line-height: 1.8; text-align: justify;">At TAY MENG, we bring you the latest electronics with quality you can trust and prices you’ll love. From top tech gadgets to everyday essentials, our mission is to make technology accessible and enjoyable for everyone. Shop with confidence at Tay Meng Phone Shop where quality meets innovation!</p>
     </div>
   </div>

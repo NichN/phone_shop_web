@@ -11,6 +11,10 @@
 |
 */
 
+use App\Http\Middleware\Verify2FAMiddleware;
+use GuzzleHttp\Middleware;
+use Illuminate\Auth\Events\Verified;
+
 $app = new Illuminate\Foundation\Application(
     $_ENV['APP_BASE_PATH'] ?? dirname(__DIR__)
 );
@@ -25,6 +29,12 @@ $app = new Illuminate\Foundation\Application(
 | incoming requests to this application from both the web and CLI.
 |
 */
+
+// ->withMiddleware(function(Middleware $middleware){
+//     $middleware->appendToGroup('twofactor', [
+//         Verify2FAMiddleware::class,
+//     ]);
+// })
 
 $app->singleton(
     Illuminate\Contracts\Http\Kernel::class,

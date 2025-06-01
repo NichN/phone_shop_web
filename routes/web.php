@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin_user_controller;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\OrderController;
+<<<<<<< HEAD
 use App\Http\Controllers\categoryController;
 use App\Http\Controllers\dashboardcontroller;
 use App\Http\Controllers\productAdminController;
@@ -21,6 +22,10 @@ use App\Http\Controllers\product_detailCotroller;
 use App\Http\Controllers\colorcontroller;
 use App\Http\Controllers\purchaseController;
 use App\Models\purchase;
+=======
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\TwoFactorController;
+>>>>>>> 55efda97d0017d0b6af5e2828812afdc4b83c8fd
 
 Route::get('/', function () {
     return view('welcome');
@@ -57,9 +62,8 @@ Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.s
 
 
 // auth_form
-Route::get('/register',function(){
-    return view('authentication_form.register');
-})->name('register');
+Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+Route::post('/register', [RegisterController::class, 'register']);
 
 Route::get('/login',function(){
     return view('authentication_form.login');
@@ -92,6 +96,7 @@ Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.s
 
 Route::get('/productdetail', [ProductDetailController::class, 'index'])->name('productdetail');
 
+<<<<<<< HEAD
 //Dashboard
 Route::prefix('dashboard')->name('dashboard.')->group(function () {
     Route::get('/sidebar', [dashboardcontroller::class, 'index'])->name('index');
@@ -183,3 +188,12 @@ Route::prefix('user')->name('user.')->group(function(){
     Route::get('/',[Admin_user_controller::class,'index'])->name('index');
 })
 ?>
+=======
+
+
+Route::middleware('auth')->group(function () {
+    Route::get('/two-factor', [TwoFactorController::class, 'index'])->name('two_factor.index');
+    Route::post('/two-factor', [TwoFactorController::class, 'verify'])->name('two_factor.verify');
+});
+
+>>>>>>> 55efda97d0017d0b6af5e2828812afdc4b83c8fd
