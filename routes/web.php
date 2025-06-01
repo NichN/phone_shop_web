@@ -7,6 +7,9 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\TwoFactorController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -67,9 +70,8 @@ Route::post('/payment/process', [CheckoutController::class, 'processPayment'])->
 // Route::get('/order-success', [CheckoutController::class, 'success'])->name('checkout.success');
 
 // auth_form
-Route::get('/register',function(){
-    return view('authentication_form.register');
-})->name('register');
+Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+Route::post('/register', [RegisterController::class, 'register']);
 
 Route::get('/login',function(){
     return view('authentication_form.login');
@@ -93,4 +95,8 @@ Route::get('/productdetail',function(){
     return view('customer.productdetail');
 })->name('productdetail');
 
+Route::middleware('auth')->group(function(){
+    Route::get('/two-factor', [TwoFactorController::class, 'index'])->name('two_factor.index');
+    Route::post('/two-factor', [TwoFactorController::class, 'verify'])->name('two_factor.verify');
+});
 
