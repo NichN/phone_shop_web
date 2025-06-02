@@ -100,3 +100,17 @@ Route::middleware('auth')->group(function(){
     Route::post('/two-factor', [TwoFactorController::class, 'verify'])->name('two_factor.verify');
 });
 
+Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
+
+Route::get('/checkout', [CheckoutController::class, 'showCheckout'])->name('checkout.page');
+
+Route::get('/checkout', function () {
+    // Provide dummy data or fetch from session/cart
+    return view('customer.checkout', [
+        'orderItems' => [], // Add real cart data here
+        'subtotal' => 0,
+        'deliveryFee' => 1.5,
+        'totalAmount' => 1.5
+    ]);
+})->name('checkout.page');
+
