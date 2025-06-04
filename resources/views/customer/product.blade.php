@@ -7,7 +7,7 @@
 <div class="container mt-3">
     <nav>
         <a href="{{ route('homepage') }}" style="text-decoration: none; color: inherit;">Home</a> • 
-        <a href="{{ route('product') }}" style="text-decoration: none; color: inherit;">Smartphone</a>
+        <a href="{{ route('product.index') }}" style="text-decoration: none; color: inherit;">Smartphone</a>
     </nav>
 </div>
 @endsection
@@ -23,7 +23,6 @@
                 <button type="submit" class="btn btn-dark ms-2">Search</button>
             </form>
         </div>
-        
     </div>
 
     <!-- Filters: Categories, Price, Sorting -->
@@ -68,7 +67,7 @@
             <div class="col-md-3">
                 <div class="card product-card">
                     <a href="{{ route('product.show', $product['id']) }}">
-                        <img src="{{ $product['image'] }}" class="card-img-top product-img" alt="{{ $product['name'] }}">
+                        <img src="{{ asset($product['image']) }}" class="card-img-top product-img" alt="{{ $product['name'] }}">
                     </a>
                     <div class="card-body text-right bg-light">
                         <p class="tag mb-0">{{ $product['category'] }}</p>
@@ -82,7 +81,6 @@
                 </div>
             </div>
             @endforeach
-            
         @else
             <p class="text-center text-muted">No products available.</p>
         @endif
@@ -93,7 +91,5 @@
         {{ $paginatedProducts->links('vendor.pagination.bootstrap-5') }}
     </div>
 </div>
-
-<script src="{{ asset('js/product.js') }}"></script>
 @endsection
 

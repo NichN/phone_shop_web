@@ -9,18 +9,20 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->integer('two_factor_code')->nullable();
+        Schema::table('product_item', function (Blueprint $table) {
+            $table->boolean('is_featured')->default(false);
+            $table->boolean('is_new')->default(false);
         });
     }
+
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('product_item', function (Blueprint $table) {
             //
         });
     }

@@ -107,59 +107,23 @@
                         <i class="fa-regular fa-heart fs-5 me-2 add-wishlist"></i> Add to Wishlist
                     </a>
                 </div>
-
-                <!-- Description -->
-                <div class="mt-4">
-                    <h5 class="fw-bold">SPECIFICATION</h5>
-                    <div class="accordion" id="specAccordion">
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#networkCollapse">
-                                    NETWORK
-                                </button>
-                            </h2>
-                            <div id="networkCollapse" class="accordion-collapse collapse"
-                                data-bs-parent="#specAccordion">
-                                <div class="accordion-body">
-                                    <!-- Network details go here -->
-                                </div>
-                            </div>
-                        </div>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#launchCollapse">
-                                    LAUNCH
-                                </button>
-                            </h2>
-                            <div id="launchCollapse" class="accordion-collapse collapse" data-bs-parent="#specAccordion">
-                                <div class="accordion-body">
-                                    <p><strong>Announced:</strong> 2021, September 14</p>
-                                    <p><strong>Status:</strong> Available. Released 2021, September 24</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#displayCollapse">
-                                    DISPLAY
-                                </button>
-                            </h2>
-                            <div id="displayCollapse" class="accordion-collapse collapse"
-                                data-bs-parent="#specAccordion">
-                                <div class="accordion-body">
-                                    <!-- display details go here -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
-
         </div>
     </div>
+
+    {{-- Description --}}
+    <section>
+        <div class="container my-5">
+            <h5>Product Description</h5>
+            <hr>
+            <p style="text-align: justify;">
+                Experience exceptional performance and sleek design with this state-of-the-art smartphone. Crafted with precision, it features a powerful processor that ensures smooth multitasking, fast app launches, and seamless navigation. Whether you're streaming your favorite shows, playing games, or browsing the web, this device delivers an immersive experience with its vibrant high-resolution display and advanced graphics.
+            </p>
+            <p style="text-align: justify;">
+                Experience exceptional performance and sleek design with this state-of-the-art smartphone. Crafted with precision, it features a powerful processor that ensures smooth multitasking, fast app launches, and seamless navigation. Whether you're streaming your favorite shows, playing games, or browsing the web, this device delivers an immersive experience with its vibrant high-resolution display and advanced graphics.
+            </p>
+        </div>
+    </section>
 
     <!-- New Products Section -->
     <section>

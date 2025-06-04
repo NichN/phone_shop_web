@@ -82,6 +82,12 @@ body {
     max-width: 250px;
 }
 
+.product-img {
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+}
+
 .custom-bg{
     background-color: #F1F1F3;
 }
