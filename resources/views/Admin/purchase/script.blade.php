@@ -1,0 +1,265 @@
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="{{ asset('css/dashboard.css') }}" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+$(document).ready(function () {
+    var purchaseTable = $('.data-table.purchase').DataTable({
+        processing: false,
+        serverSide: true,
+        ajax: {
+            url: "{{ route('purchase.index') }}",
+            dataSrc: 'data'
+        },
+        columns: [
+            { data: 'id', name: 'id', render: function (data, type, row, meta) {
+                return meta.row + 1;
+            }},
+            { data: 'name', name: 'name' },
+            { data: 'color', name: 'color' },
+            { data: 'size', name: 'size' },
+            { data: 'quantity', name: 'quantity' },
+            { data: 'cost_price', name: 'cost_price'},
+            { data: 'subtotal', name: 'subtotal' },
+            { data: 'action', orderable: false, searchable: false }
+        ],
+        footerCallback: function (row, data, start, end, display) {
+            var api = this.api();
+            var totalPaid = api.column(6, { page: 'f' }).data().reduce(function (a, b) {
+                var value = typeof b === 'string' ? b.replace(/[^0-9.-]+/g, "") : b;
+                return a + (parseFloat(value) || 0);
+            }, 0);
+            $('#totalPaymentFooter').html('Total: ' + totalPaid.toFixed(2));
+            localStorage.setItem('purchase_total', totalPaid.toFixed(2));
+            console.log(localStorage.getItem('purchase_total'));
+
+        }
+    });
+    $('#purForm').on('submit', function (e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+        $.ajax({
+            url: $(this).attr('action'),
+            type: 'POST',
+            data: formData,
+            dataType: 'json',
+            processData: false,
+            contentType: false,
+            success: function () {
+                purchaseTable.ajax.reload();
+                $('#purForm')[0].reset();
+            },
+            error: function (xhr) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: xhr.responseJSON?.message || 'An error occurred'
+                });
+            }
+        });
+    });
+    $('#pur_product').select2({
+        placeholder: "Search Product Name...",
+        allowClear: true,
+        maximumSelectionLength: 1
+    });
+
+    function loadProduct(searchTerm = '') {
+        $.ajax({
+            url: "{{ route('purchase.search-product') }}",
+            method: 'GET',
+            data: { search: searchTerm },
+            success: function(response) {
+                $('#pur_product').empty().append('<option value="">Select Product</option>');
+                response.forEach(function(item) {
+                    const label = `${item.product_name} ${item.color ? '- ' + item.color : ''} ${item.size ? '- ' + item.size : ''}`;
+                    $('#pur_product').append(`<option value="${item.id}">${label}</option>`);
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error("Error loading Product:", error);
+            }
+        });
+    }
+    loadProduct();
+
+    $(document).on('click', '.delete', function () {
+        var pr_itemID = $(this).data('id');
+        $.ajax({
+            url: "{{ route('purchase.destroy', ':id') }}".replace(':id', pr_itemID),
+            type: 'DELETE',
+            data: { _token: '{{ csrf_token() }}' },
+            success: function () {
+                purchaseTable.ajax.reload(null, false);
+            }
+        });
+    });
+    $('#qty').on('input', function () {
+        let qty = parseFloat($('#qty').val()) || 0;
+        let unit_price = parseFloat($('#unitprice').val()) || 0;
+        let total = qty * unit_price;
+        $('#unitprice').val(total.toFixed(2));
+    });
+
+    window.changeProduct = function () {
+        let pr_itemID = $('#pur_product').val();
+        $.ajax({
+            url: "{{ route('purchase.get_product_item', '') }}/" + pr_itemID,
+            method: 'GET',
+            success: function(data) {
+                $('#unitprice').val(data.cost_price);
+            },
+            error: function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Could not retrieve product details.'
+                });
+            }
+        });
+    };
+    var paymentTable = $('.data-table.payment').DataTable({
+        processing: false,
+        serverSide: true,
+        ajax: {
+            url: "{{ route('purchase.payment') }}",
+            dataSrc: 'data'
+        },
+        columns: [
+            { data: 'id', name: 'id', render: function (data, type, row, meta) {
+                return meta.row + 1;
+            }},
+            { data: 'reference_no', name: 'reference_no' },
+            { data: 'Grand_total', name: 'Grand_total' },
+            { data: 'paid', name: 'paid' },
+            { data: 'balance', name: 'balance'},
+            {data: 'payment_statuse',render: function(data, type, row) {
+            let color = '';
+            if (data === 'Paid') color = 'style="background-color:green;"';
+            else if (data === 'Partially') color = 'style="background-color:yellow;"';
+            else if (data === 'Unpaid') color = 'style="background-color:red;"';
+            return `<span ${color}>${data}</span>`;}
+            },
+            { data: 'action', orderable: false, searchable: false }
+        ],
+    });
+ //​​Get data from total in purchase_item
+    let grandTotal = localStorage.getItem('purchase_total');
+        if (grandTotal !== null) {
+            $('#grand_total').val(grandTotal);
+        }
+// end
+        $('#paymentForm').on('submit', function (e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: formData,
+                dataType: 'json',
+                processData: false,
+                contentType: false,
+                success: function () {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Purchase added successfully!'
+                    }).then(() => {
+                        window.location.href = "{{ route('purchase.add') }}";
+                    });
+                    paymentTable.ajax.reload();
+                    $('#paymentForm')[0].reset();
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: xhr.responseJSON?.message || 'An error occurred'
+                    });
+                }
+            });
+        });
+        //​គណនាតម្លៃ balance
+        $('#paid').on('input', function () {
+            let paid = parseFloat($('#paid').val()) || 0;
+            let grand_total = parseFloat($('#grand_total').val()) || 0;
+            let balance = grand_total - paid;
+            $('#balance').val(balance.toFixed(2));
+        });
+        // គណនាតម្លៃលុយនៅសល់ក្នុងក្នុង​Add Payment
+        
+        $(document).on('click', '.delete', function () {
+        var productID = $(this).data('id');
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This action cannot be undone!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "{{ route('purchase.delete_purchases', ':id') }}".replace(':id', productID),
+                    type: 'DELETE',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function (response) {
+                        Swal.fire('Deleted!', 'The product has been deleted.', 'success');
+                    },
+                    error: function (xhr) {
+                        Swal.fire('Error!', xhr.responseJSON?.message || 'Failed to delete.', 'error');
+                    }
+                });
+            }
+        });
+    });
+    //​សម្រាប់​Add Payment that URl មានក្នុង controller
+     $(document).on('click', '.addpayment', function () {
+        let url = $(this).data('url');
+        window.location.href = url;
+    });
+
+    $('body').on('click', '.showpurachse', function (e) {
+        e.preventDefault();
+        let id = $(this).data('id');
+        $("#pro_dt").val(id);
+        let url = "{{ route('purchase.invoiceshow', ['id' => ':id']) }}".replace(':id', id);
+        
+        $.get(url, function (data) {
+            if (data.success) {
+                let $modal = $('#invoiceModal');
+                $modal.find('.modal-body span').eq(0).text(data.purchase.supplier_name);
+                $modal.find('.modal-body span').eq(1).text(data.purchase.reference_no);
+                $modal.find('.modal-body span').eq(2).text(data.purchase.created_at);
+                
+                let $invoiceItems = $('#invoiceItems');
+                $invoiceItems.empty();
+                
+                $.each(data.items, function(index, item) {
+                    $invoiceItems.append(`
+                        <tr>
+                            <td>${item.name}</td>
+                            <td>${item.color}</td>
+                            <td>${item.size}</td>
+                            <td>${item.quantity}</td>
+                            <td>${item.unit_price}$</td>
+                            <td>${item.subtotal}$</td>
+                        </tr>
+                    `);
+                });
+                $('#invoiceSubtotal').text('$' + data.grand_total.toFixed(2));
+                $modal.modal('show');
+            }
+            }).fail(function () {
+                alert('Failed to fetch invoice data.');
+            });
+        });
+
+    });
+</script>

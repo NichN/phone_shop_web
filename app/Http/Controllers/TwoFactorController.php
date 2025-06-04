@@ -35,5 +35,4 @@ class TwoFactorController extends Controller
 
     return redirect()->route('two_factor.index')->withErrors(['code' => 'The provided code is incorrect.']);
     }
-
 }

@@ -10,36 +10,25 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $products = DB::table('product_item')->get()->map(function ($item) {
-            $images = json_decode($item->images, true);
-            $firstImage = is_array($images) && count($images) > 0 ? $images[0] : asset('image/default-image.jpg');
+        $products = DB::table('product')
+            ->join('product_item', function ($join) {
+                $join->on('product.id', '=', 'product_item.pro_id')
+                    ->whereRaw('product_item.id = (
+                        select min(id) from product_item as pi2 where pi2.pro_id = product.id
+                    )');
+            })
+            ->select('product.*', 'product_item.price', 'product_item.images')
+            ->get();
 
-            return [
-                'id' => $item->id,
-                'name' => $item->product_name,
-                'price' => '$' . number_format($item->price, 2),
-                'image' => $firstImage,
-                'category' => $item->color . ' / ' . $item->size,
-            ];
-        });
+        $productsCollection = collect($products);
 
-        // Apply search filter if needed
-        if ($request->has('search') && !empty($request->search)) {
-            $searchTerm = strtolower($request->search);
-            $products = $products->filter(function ($product) use ($searchTerm) {
-                return str_contains(strtolower($product['name']), $searchTerm) ||
-                    str_contains(strtolower($product['category']), $searchTerm);
-            });
-        }
-
-        // Pagination setup
         $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        $perPage = 16;
-        $currentPageItems = $products->slice(($currentPage - 1) * $perPage, $perPage)->values();
+        $perPage = 12;
+        $currentPageItems = $productsCollection->slice(($currentPage - 1) * $perPage, $perPage)->values();
 
         $paginatedProducts = new LengthAwarePaginator(
             $currentPageItems,
-            $products->count(),
+            $productsCollection->count(),
             $perPage,
             $currentPage,
             ['path' => $request->url(), 'query' => $request->query()]
@@ -47,4 +36,35 @@ class ProductController extends Controller
 
         return view('customer.product', ['paginatedProducts' => $paginatedProducts]);
     }
+
+    public function show($id)
+    {
+        $products = DB::table('product')
+            ->join('product_item', function ($join) {
+                $join->on('product.id', '=', 'product_item.pro_id')
+                    ->whereRaw('product_item.id = (
+                        select min(id) from product_item as pi2 where pi2.pro_id = product.id
+                    )');
+            })
+            ->select('product.*', 'product_item.price', 'product_item.images')
+            ->get();
+
+        $productsCollection = collect($products);
+
+        $product = $productsCollection->firstWhere('id', $id);
+        if (!$product) {
+            abort(404);
+        }
+
+        $similarProducts = $productsCollection
+            ->where('category', $products->category)
+            ->where('id', '!=', $id)
+            ->take(4);
+
+        return view('customer.productdetail', [
+            'product' => $product,
+            'products' => $similarProducts,
+        ]);
+    }
+    
 }

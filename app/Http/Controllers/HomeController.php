@@ -9,24 +9,15 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $products = DB::table('product_item')
-            ->limit(10) // fetch a few more to filter duplicates
-            ->get()
-            ->unique('product_name') // remove duplicates by product_name
-            ->take(4) // keep only 4 unique products
-            ->map(function ($item) {
-
-                $images = json_decode($item->images);
-                 $firstImage = $images[0] ?? null;
-                return [
-                    'id' => $item->id,
-                    'name' => $item->product_name,
-                    'price' => '$' . number_format($item->price),
-                    'image' => $firstImage ? asset($firstImage) : asset('images/placeholder.png'),
-                    'category' => $item->color . ' / ' . $item->size,
-                ];
-            });
-
+        $products = DB::table('product')
+            ->join('product_item', function ($join) {
+                $join->on('product.id', '=', 'product_item.pro_id')
+                    ->whereRaw('product_item.id = (
+                    select min(id) from product_item as pi2 where pi2.pro_id = product.id
+                )');
+            })
+            ->select('product.*', 'product_item.price', 'product_item.images')
+            ->get();
         return view('customer.homepage2', compact('products'));
     }
 }
