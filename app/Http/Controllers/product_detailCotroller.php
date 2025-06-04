@@ -26,25 +26,21 @@ use App\Models\productdetail;
                     'category.name as category'
                 )
                 ->get();
-
-            return DataTables::of($data)
-                ->addColumn('action', function ($row) {
-                    $btn = '<div>
-                                <button class="btn btn-primary btn-sm viewProduct" data-id="' . $row->id . '" data-toggle="tooltip" title="View">
-                                    <i class="fa fa-eye"></i>
-                                </button>
-                                <button class="btn btn-warning btn-sm editProduct_dt" data-id="' . $row->id . '" data-toggle="tooltip" title="Edit">
-                                    <i class="fa fa-pencil"></i>
-                                </button>
-                                <button class="btn btn-danger btn-sm delete" data-id="' . $row->id . '" data-toggle="tooltip" title="Delete">
-                                    <i class="fa fa-trash"></i>
-                                </button>
-                            </div>';
-                    return $btn;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
-        }
+                return DataTables::of($data)
+                    ->addColumn('action', function ($row) {
+                        $btn = '<div>
+                                    <button class="btn btn-warning btn-sm editProduct_dt" data-id="' . $row->id . '" data-toggle="tooltip" title="Edit">
+                                        <i class="fa fa-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-danger btn-sm delete" data-id="' . $row->id . '" data-toggle="tooltip" title="Delete">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </div>';
+                        return $btn;
+                    })
+                    ->rawColumns(['action'])
+                    ->make(true);
+            }
             $size = Size::all();
             $color = Color::all();
             $product = Product::all();
@@ -100,7 +96,6 @@ use App\Models\productdetail;
             ], 500);
         }
     }
-
     public function addproduct()
     {
         $size = Size::all();
@@ -146,6 +141,4 @@ use App\Models\productdetail;
         'cost_price' => $product_item->cost_price,
          ]);
     }
-
-
 }

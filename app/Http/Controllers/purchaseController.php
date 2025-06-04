@@ -250,12 +250,34 @@ public function addpayment($id){
 
     return view('Admin.purchase.addpayment', compact('purchase','suppliers'));
 }
-public function updatepayment(Request $request, $id){
-    $purchase = purchase:: findOrFail($id);
+public function updatepayment(Request $request, $id)
+{
+    $request->validate([
+        'paid' => 'required|numeric|min:0',
+    ]);
+
+    $purchase = Purchase::findOrFail($id);
+    $newPaid = $purchase->paid + $request->paid;
+    $newBalance = $purchase->balance - $request->paid;
+
+    if ($newBalance < 0) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Paid amount exceeds the total.',
+        ], 422);
+    }
     $purchase->update([
-        'balance'=>$request->remaining,
-        'paid' => $request->paid
+        'paid' => $newPaid,
+        'balance' => $newBalance,
+    ]);
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Payment updated successfully',
+        'data' => $purchase
     ]);
 }
+
+
 }
 

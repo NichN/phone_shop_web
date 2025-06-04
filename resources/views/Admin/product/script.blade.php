@@ -139,4 +139,106 @@
             }
         });
     });
+    $(document).on('click', '.viewProduct', function () {
+        const productId = $(this).data('id');
+        var url = "{{ route('pr_detail.product_items', ':id') }}".replace(':id', productId)
+        $.ajax({
+            url: url,
+            method: 'GET',
+            success: function (response) {
+                $('#product_name').text(response.product_name);
+                $('#viewModalLabel').text(response.product_name);
+                $('#stock_qty').text(response.stock);
+                $('#colorOptions').empty();
+                response.colors.forEach(function (color, index) {
+                    const cleanCode = color.toLowerCase();
+                    const colorId = cleanCode.replace('#', '');
+                    const input = `
+                        <input type="radio" class="btn-check" name="color" id="color_${colorId}" value="${cleanCode}" autocomplete="off" ${index === 0 ? 'checked' : ''} />
+                    `;
+                    const label = `
+                        <label class="btn d-flex align-items-center gap-2" for="color_${colorId}">
+                            <span style="display:inline-block; width:30px; height:30px; background-color:${cleanCode}; border-radius:50%;"></span>
+                            ${cleanCode}
+                        </label>
+                    `;
+                    $('#colorOptions').append(input + label);
+                });
+                $('#sizeOptions').empty();
+                response.sizes.forEach(function (size, index) {
+                    const input = `
+                        <input type="radio" class="btn-check" name="size" id="size_${size}" value="${size}" autocomplete="off" ${index === 0 ? 'checked' : ''} />
+                    `;
+                    const label = `
+                        <label class="btn btn-outline-dark" for="size_${size}">
+                            ${size}
+                        </label>
+                    `;
+                    $('#sizeOptions').append(input + label);
+                });
+                const allImages = response.images || [];
+                if (allImages.length > 0) {
+                    $('#mainProductImage').attr('src', '/storage/' + allImages[0]);
+                } else {
+                    $('#mainProductImage').attr('src', '/default-placeholder.jpg');
+                }
+
+                $('#thumbnailGallery').empty();
+                allImages.forEach((imgPath, index) => {
+                    const thumb = `
+                        <div class="col-3">
+                            <img src="/storage/${imgPath}" class="thumbnail-img img-fluid ${index === 0 ? 'selected-thumbnail' : ''}" 
+                                 alt="Thumbnail ${index + 1}" onclick="changeImage(this)">
+                        </div>
+                    `;
+                    $('#thumbnailGallery').append(thumb);
+                });
+                let allVariants = response.variants;
+
+                function updateVariantDisplay() {
+                    const selectedSize = $('input[name="size"]:checked').val();
+                    const variant = allVariants.find(item => item.size === selectedSize);
+
+                    if (variant) {
+                        $('#product_price').text(`$${variant.price}`);
+
+                        const images = variant.images || [];
+                        if (images.length > 0) {
+                            $('#mainProductImage').attr('src', '/storage/' + images[0]);
+                        } else {
+                            $('#mainProductImage').attr('src', '/default-placeholder.jpg');
+                        }
+
+                        $('#thumbnailGallery').empty();
+                        images.forEach((imgPath, index) => {
+                            const thumb = `
+                                <div class="col-3">
+                                    <img src="/storage/${imgPath}" class="thumbnail-img img-fluid ${index === 0 ? 'selected-thumbnail' : ''}" 
+                                         alt="Thumbnail ${index + 1}" onclick="changeImage(this)">
+                                </div>
+                            `;
+                            $('#thumbnailGallery').append(thumb);
+                        });
+                    } else {
+                        $('#product_price').text('N/A');
+                        $('#mainProductImage').attr('src', '/default-placeholder.jpg');
+                        $('#thumbnailGallery').empty();
+                    }
+                }
+                $(document).off('change.sizeOnly').on('change.sizeOnly', 'input[name="size"]', updateVariantDisplay);
+                updateVariantDisplay();
+                $('#viewDetailModal').modal('show');
+            },
+            error: function () {
+                alert('This Product is not Availible');
+            }
+        });
+    });
+    function changeImage(imgElement) {
+        const newSrc = $(imgElement).attr('src');
+        $('#mainProductImage').attr('src', newSrc);
+        $('.thumbnail-img').removeClass('selected-thumbnail');
+        $(imgElement).addClass('selected-thumbnail');
+    }
+    
 </script>

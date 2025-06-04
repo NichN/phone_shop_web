@@ -22,6 +22,8 @@ use App\Http\Controllers\sizeController;
 use App\Http\Controllers\product_detailCotroller;
 use App\Http\Controllers\colorcontroller;
 use App\Http\Controllers\purchaseController;
+use App\Http\Controllers\Admin_user_controller;
+use App\Http\Controllers\TwoFactorController;
 use App\Models\purchase;
 
 Route::get('/', function () {
@@ -43,7 +45,7 @@ Route::get('/contactus', [CustomerController::class, 'contact'])->name('contact_
 
 Route::get('/product', [ProductController::class, 'index'])->name('product');
 
-Route::get('/products', [ProductController::class, 'index'])->name('product.index');
+Route::get('/products_admin', [ProductController::class, 'index'])->name('product.index');
 
 Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
 
@@ -101,8 +103,6 @@ Route::get('/resetpassword',function(){
     return view('authentication_form.resetpw');
 })->name('resetpassword');
 
-
-
 Route::get('/wishlist',function(){
     return view('customer.wishlist');
 })->name('wishlist');
@@ -118,6 +118,7 @@ Route::get('/productdetail', [ProductDetailController::class, 'index'])->name('p
 Route::prefix('dashboard')->name('dashboard.')->group(function () {
     Route::get('/sidebar', [dashboardcontroller::class, 'index'])->name('index');
     Route::get('/', [dashboardcontroller::class, 'show'])->name('show');
+    Route::get('/product',[dashboardcontroller::class, 'product_count'])->name('product_count');
 });
 Route::prefix('products')->name('products.')->group(function () {
     Route::get('/color', [productAdminController::class, 'index'])->name('colorlist');
@@ -186,6 +187,7 @@ Route::prefix('product_detail')->name('pr_detail.')->group(function(){
     Route::get('/edit/{id}',[product_detailCotroller::class,'edit'])->name('edit');
     Route::post('/update/{id}',[product_detailCotroller::class,'update'])->name('update');
     Route::delete('/delete/{id}',[product_detailCotroller::class,'delete'])->name('delete');
+    Route::get('/show_product/{pro_id}',[productAdminController::class,'show_product'])->name('product_items');
 });
 Route::prefix('purchase')->name('purchase.')->group(function(){
     Route::get('/',[purchaseController::class,'index'])->name('index');
@@ -193,16 +195,17 @@ Route::prefix('purchase')->name('purchase.')->group(function(){
     Route::get('/add',[purchaseController::class,'show'])->name('add');
     Route::get('/get/{id}',[product_detailCotroller::class,'get_pr_item'])->name('get_product_item');
     Route::get('/search-product_it', [purchaseController::class, 'search'])->name('search-product');
+    Route::post('/update/{id}',[purchaseController::class,'updatepayment'])->name('updatepayment');
     Route::post('/store',[purchaseController::class,'store'])->name('store');
     Route::delete('/delete/{id}',[purchaseController::class,'destroy'])->name('destroy');
     Route::post('/storepayment',[purchaseController::class,'storepayment'])->name('storepayment');
     Route::get('/showinvoice/{id}',[purchaseController::class,'showinvoice'])->name('invoiceshow');
     Route::delete('/deletepurchase/{id}',[purchaseController::class,'delete_purchases'])->name('delete_purchases');
     Route::get('/addpayment/{id}',[purchaseController::class,'addpayment'])->name('addpayment');
-    Route::post('/update/{id}',[purchaseController::class,'updatepayment'])->name('updatepayment');
 });
 Route::prefix('user')->name('user.')->group(function(){
     Route::get('/',[Admin_user_controller::class,'index'])->name('index');
+    Route::get('/add',[Admin_user_controller::class,'add'])->name('new');
 });
 
 

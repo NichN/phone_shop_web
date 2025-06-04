@@ -45,9 +45,9 @@
 <div class="modal fade" id="invoiceModal" tabindex="-1" aria-labelledby="invoiceModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header bg-light text-black">
+            <div class="modal-header text-white" style="background-color: #70000e;">
                 <h5 class="mb-0"><i class="fas fa-file-invoice me-2"></i>Purchase Invoice</h5>
-                <button type="button" class="btn-close btn-close-black" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="editPr">
@@ -56,35 +56,35 @@
                     <div class="row mb-4">
                         <input type="hidden" id="pro_dt" name="id">
                         <div class="col-md-6">
-                            <p>Supplier Name : <span></span></p>
+                            <p>ឈ្មោះអ្នកផ្គត់ផ្គង់ : <span></span></p>
                             <p><strong>Reference :</strong> <span></span></p>
-                            <p><strong>Date:</strong> <span></span></p>
+                            <p><strong>កាលបរិច្ឆេទ:</strong> <span></span></p>
                         </div>
                     </div>
                     <div class="table-responsive mb-4">
                         <table class="table table-bordered">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Product</th>
-                                    <th>Color</th>
-                                    <th>Size</th>
-                                    <th>Quantity</th>
-                                    <th>Unit Price</th>
-                                    <th>Total</th>
+                                    <th style="background-color: #70000e !important; color: white !important;">ផលិតផល</th>
+                                    <th style="background-color: #70000e !important; color: white !important;">ពណ៌</th>
+                                    <th style="background-color: #70000e !important; color: white !important;">ទំហំ</th>
+                                    <th style="background-color: #70000e !important; color: white !important;">ចំនួន</th>
+                                    <th style="background-color: #70000e !important; color: white !important;">តម្លៃ</th>
+                                    <th style="background-color: #70000e !important; color: white !important;">សរុប</th>
                                 </tr>
                             </thead>
                             <tbody id="invoiceItems">
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colspan="5" class="text-end"><strong>Grand Total:</strong></td>
-                                    <td id="invoiceSubtotal" style="background-color: blue; color:white;">$0.00</td>
+                                    <td colspan="5" class="text-end"><strong>សរុបទាំងអស់:</strong></td>
+                                    <td id="invoiceSubtotal" style="background-color: #70000e; color:white;">$0.00</td>
                                 </tr>
                             </tfoot>
                         </table>
                     </div>
                     <div class="mb-3">
-                        <p id="invoiceNotes">Thank you for your business!</p>
+                        <p id="invoiceNotes"><b>Thank you for your business!</b></p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary" onclick="window.print()">

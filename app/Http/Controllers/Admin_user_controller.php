@@ -9,4 +9,7 @@ class Admin_user_controller extends Controller
    public function index(){
     return view('Admin.user.Add_form');
    }
+   public function add(){
+      return view('Admin.user.New_user');
+   }
 }

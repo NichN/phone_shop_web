@@ -9,8 +9,8 @@
 <div>
     <button class="w3-button w3-xlarge w3-hide-large" onclick="w3_open()">&#9776;</button>
     <div class="w3-main">
-        <div class="flex justify-between">
-            <h4 class="card-header">Product</h4>
+         <div class="flex justify-between">
+            <h4 class="card-header">Product List</h4>
         </div>
         <div class="d-flex justify-content-end mt-3">
             <a href="{{ route('pr_detail.add') }}">
@@ -27,6 +27,8 @@
                                 <th>Name</th>
                                 <th>Brand</th>
                                 <th>Category</th>
+                                <th>Color</th>
+                                <th>Size</th>
                                 <th>Quantity</th>
                                 <th>Price</th>
                                 <th>Action</th>
@@ -109,17 +111,6 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="mb-0"><i class="fas fa-tags me-2"></i>Product</h5>
-            </div>
-            <div class="modal-body">
-            <div>
-        </div>
-    </div>
-</div>
-
+<!-- Modal -->
 @include('Admin.productdetail.script')
 

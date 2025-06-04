@@ -10,7 +10,6 @@ use App\Models\Category;
 use App\Models\productdetail;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
-
 class productAdminController extends Controller
 {
     public function productindex(Request $request)
@@ -30,7 +29,10 @@ class productAdminController extends Controller
             return DataTables::of($data)
                 ->addColumn('action', function ($row) {
                     $btn = '<div>
-                                <button class="btn btn-primary btn-sm editProduct" data-id="' . $row->id . '" data-toggle="tooltip" title="Edit">
+                                <button class="btn btn-primary btn-sm viewProduct" data-id="' . $row->id . '" data-bs-toggle="tooltip" title="View">
+                                        <i class="fa fa-eye"></i>
+                                </button>
+                                <button class="btn btn-warning btn-sm editProduct" data-id="' . $row->id . '" data-toggle="tooltip" title="Edit">
                                     Edit
                                 </button>
                                 <button class="btn btn-danger btn-sm deleteProduct" data-id="' . $row->id . '" data-toggle="tooltip" title="Delete">
@@ -94,6 +96,28 @@ class productAdminController extends Controller
             'category' => $categoryName
         ]);
     }
-
-
+    public function show_product($pro_id)
+    {
+        $product_item = Productdetail::where('pro_id', $pro_id)->firstOrFail();
+        $related_items = Productdetail::where('pro_id', $pro_id)->get();
+        $colors = $related_items->pluck('color')->unique()->values();
+        $sizes = $related_items->pluck('size')->unique()->values();
+        $stock = $related_items->pluck('stock')->unique()->values();
+        $variants = $related_items->map(function ($item) {
+            return [
+                'color'  => $item->color,
+                'size'   => $item->size,
+                'price'  => $item->price,
+                'images' => $item->images,
+                'stock' => $item->stock,
+            ];
+        });
+        return response()->json([
+            'product_name' => $product_item->product_name,
+            'colors'       => $colors,
+            'sizes'        => $sizes,
+            'stock'        => $stock,
+            'variants'     => $variants,
+        ]);
+    }
 }

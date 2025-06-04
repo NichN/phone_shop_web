@@ -10,9 +10,11 @@
             <h4 class="card-header">User List</h4>
         </div>
         <div class="d-flex justify-content-end mt-3">
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">
-                <i class="fas fa-plus me-2"></i>
-            </button> 
+          <a href="{{ route('user.new') }}">
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">
+                    <i class="fas fa-plus me-2"></i>Add User
+                </button> 
+            </a>
         </div>   
         <div class="container no-print">
             <div class="card-body">                                 
@@ -22,9 +24,8 @@
                             <tr>
                                 <th>No</th>
                                 <th>Name</th>
-                                <th>Address</Address></th>
-                                <th>Phone</th>
                                 <th>Email</th>
+                                <th>Group</th>
                                 <th>Action</th>
                             </tr>
                         </thead>                                
@@ -34,45 +35,4 @@
         </div>
     </div>
 </div>
-{{-- Create form --}}
-<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addModalLabel">Add Supplier</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="supplierForm" action="{{ route('supplier.store') }}"  method="POST" enctype="multipart/form-data">
-                    @csrf
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            <label for="supplierName" class="form-label fw-bold">Supplier Name <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="supplier_Name" name="name" placeholder="Enter Supplier name" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="suppler_add" class="form-label fw-bold">Addres <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="supplier_address" name="address" required>
-                        </div>
-                    </div>
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            <label for="supplierphone" class="form-label fw-bold">Phone<span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="supplier_phone" name="phone" placeholder="Enter phone number" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="suppler_email" class="form-label fw-bold">Email<span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="supplier_email" name="email" required>
-                        </div>
-                    </div>
-
-                    <div class="d-flex justify-content-end border-top pt-4">
-                        <button type="submit" id="saveBtn" class="btn btn-primary px-4">
-                            <i class="fas fa-save me-2"></i> Save
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+@include('Admin.user.script')

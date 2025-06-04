@@ -15,11 +15,12 @@
 <body>
 <div class="w3-sidebar w3-bar-block w3-collapse w3-card w3-animate-left" style="width:250px;" id="mySidebar">
     <button class="w3-bar-item w3-button w3-large w3-hide-large text-white" onclick="w3_close()">Close &times;</button>
-    <div class="sidebar-title">Menu</div>
+    <div class="sidebar-title">TAYMENG PHONE SHOP</div>
     <a href="{{ route('dashboard.show') }}" class="w3-bar-item w3-button dashboard-link"><i class="fa fa-television"></i> Dashboard</a>
     <div class="w3-bar-item  w3-dropdown-click" onclick="toggleDropdown('productDropdown')">
         <i class="fa fa-product-hunt"></i> Product <i class="fa fa-caret-down" style="margin-left: 113px"></i>
-    </div><div id="productDropdown" class="w3-dropdown-content" style="display: none;">
+    </div>
+    <div id="productDropdown" class="w3-dropdown-content" style="display: none;">
         <a href="{{ route('products.product_index')}}" class="w3-bar-item w3-button"><i class="fa fa-list"></i> Product List</a>
         <a href="{{ route('pr_detail.index')}}" class="w3-bar-item w3-button"><i class="fa-solid fa-circle-info"></i> Product Detail</a>
         <a href="{{ route('pr_detail.add')}}" class="w3-bar-item w3-button"><i class="fa-solid fa-circle-info"></i> Add Product</a>
@@ -51,17 +52,22 @@
     <div class="w3-bar-item  w3-dropdown-click" onclick="toggleDropdown('supplierDropdown')">
         <i class="fa fa-qrcode"></i> Supplier <i class="fa fa-caret-down" style="margin-left: 100px"></i>
     </div>
-    <a href="#" class="w3-bar-item w3-button stock-link"><i class="fas fa-box"></i> Delivery</a>
     <div id="supplierDropdown" class="w3-dropdown-content" style="display: none;">
         <a href="{{ route('supplier.index') }}" class="w3-bar-item w3-button"><i class="fa fa-list"></i> List Supplier</a>
     </div>
+    <div href="#" class="w3-bar-item w3-button stock-link"><i class="fas fa-box"></i> Delivery</div>
     <a href="#" class="w3-bar-item w3-button order-link"><i class="fas fa-shopping-cart"></i> Order</a>
     <a href="#" class="w3-bar-item w3-button customer-link"><i class="fas fa-user"></i> Customer</a>
     <a href="#" class="w3-bar-item w3-button payment-link"><i class="fas fa-money-bill-wave"></i> Payment</a>
     <a href="#" class="w3-bar-item w3-button report-link"><i class="fas fa-file-alt"></i> Report</a>
 
     <div class="sidebar-title mt-">Settings</div>
-    <a href="{{ route('user.index') }}" class="w3-bar-item w3-button user-link"><i class="fas fa-user-cog"></i> Manage User</a>
+    <div class="w3-bar-item  w3-dropdown-click" onclick="toggleDropdown('userDropdown')">
+        <i class="fas fa-user-cog"></i> People <i class="fa fa-caret-down" style="margin-left: 100px"></i>
+    </div>
+    <div id="userDropdown" class="w3-dropdown-content" style="display: none;">
+        <a href="{{ route('user.index') }}" class="w3-bar-item w3-button"><i class="fa fa-list"></i> List User</a>
+    </div>
     <button type="button" class="btn btn-warning logout-btn">Logout</button>
 </div>
 <script>

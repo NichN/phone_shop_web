@@ -1,14 +1,14 @@
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <link href="{{ asset('css/dashboard.css') }}" rel="stylesheet" />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 $(document).ready(function() {
-    // Initialize DataTable
     var table = $('.data-table').DataTable({
         processing: true,
         serverSide: true,
@@ -24,6 +24,8 @@ $(document).ready(function() {
             { data: 'product_name', name: 'product_name' },
             { data: 'brand', name: 'brand' },
             { data: 'category', name: 'category' },
+            { data: 'color', name:'color'},
+            { data: 'size',name:'size'},
             { data: 'stock', name: 'stock' },
             { data: 'price', name: 'price' },
             { data: 'action', orderable: false, searchable: false }

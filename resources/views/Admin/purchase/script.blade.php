@@ -189,7 +189,12 @@ $(document).ready(function () {
             $('#balance').val(balance.toFixed(2));
         });
         // គណនាតម្លៃលុយនៅសល់ក្នុងក្នុង​Add Payment
-        
+        $('#paid1').on('input', function () {
+            let paid = parseFloat($('#paid1').val()) || 0;
+            let grand_total = parseFloat($('#remaining').val()) || 0;
+            let balance = grand_total - paid;
+            $('#balance').val(balance.toFixed(2));
+        });
         $(document).on('click', '.delete', function () {
         var productID = $(this).data('id');
 
@@ -224,7 +229,47 @@ $(document).ready(function () {
         let url = $(this).data('url');
         window.location.href = url;
     });
-
+    $('#addpaymentForm').on('submit', function(e){
+        e.preventDefault();
+        let id = $('#purchase_id').val();
+        let url = "{{ route('purchase.updatepayment', ':id') }}".replace(':id', id);
+        var formData = new FormData(this);
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                if(response.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        willClose: () => {
+                            location.reload();
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: response.message || 'Update failed'
+                    });
+                }
+                
+            },
+            error: function(xhr) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: xhr.responseJSON?.message || 'An error occurred during update'
+                });
+            }
+        });
+    });
     $('body').on('click', '.showpurachse', function (e) {
         e.preventDefault();
         let id = $(this).data('id');
