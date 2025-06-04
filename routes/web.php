@@ -42,11 +42,10 @@ Route::get('/aboutus', [CustomerController::class, 'aboutUs'])->name('aboutus');
 Route::get('/faq', [CustomerController::class, 'faq'])->name('faq');
 
 Route::get('/contactus', [CustomerController::class, 'contact'])->name('contact_us');
-
+// by nich
 Route::get('/product', [ProductController::class, 'index'])->name('product');
-
+Route::get('/product_acessory', [ProductController::class, 'product_acessory'])->name('product_acessory');
 Route::get('/products_admin', [ProductController::class, 'index'])->name('product.index');
-
 Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
 
 Route::get('/history', [HistoryController::class, 'index'])->name('history');

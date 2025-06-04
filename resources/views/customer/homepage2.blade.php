@@ -3,6 +3,7 @@
 @section('title', 'Homepage')
 
 @section('content')
+
 {{-- Slide --}}
 <header>
     <div id="carouselExampleCaptions" class="carousel slide custom-carousel-bg" data-bs-ride="carousel">
@@ -59,7 +60,7 @@
             </div>
         </div>
 
-        {{-- Next & Previous Button --}}
+        {{-- Controls --}}
         <button class="carousel-control-prev custom-carousel" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
             <i class="fa-solid fa-circle-chevron-left fa-2x" aria-hidden="true"></i>
             <span class="visually-hidden">Previous</span>
@@ -71,7 +72,7 @@
     </div>
 </header>
 
-{{-- Wishlist --}}
+{{-- Wishlist Modal --}}
 <section>
     <div class="modal" id="wishlistModal" aria-labelledby="wishlistModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -82,7 +83,7 @@
                 </div>
                 <div class="modal-body">
                     <ul id="listwish" class="list-group">
-                        <!-- Wishlist item card template -->
+                        <!-- Wishlist items here -->
                     </ul>
                 </div>
             </div>
@@ -90,7 +91,7 @@
     </div>
 </section>
 
-<!-- Category Products -->
+{{-- Category Products --}}
 <section>
     <div class="container my-5 scroll-animate">
         <div class="row d-flex justify-content-center">
@@ -107,7 +108,7 @@
                 <div class="shop-card">
                     <img src="image/accessories1.jpg" alt="Accessories">
                     <div class="shop-overlay d-flex align-items-center justify-content-center">
-                        <a href="{{ route('product', 'accessories') }}" class="btn btn-primary px-4 py-2 d-inline-block custom-btn">Shop Now</a>
+                        <a href="{{ route('product_acessory', 'accessories') }}" class="btn btn-primary px-4 py-2 d-inline-block custom-btn">Shop Now</a>
                     </div>
                     <h3 class="shop-title text-uppercase fs-4 fw-semibold">Accessories</h3>
                 </div>
@@ -116,107 +117,138 @@
     </div>
 </section>
 
-<!-- Feature Products -->
+{{-- Feature Products --}}
 <section>
     <div class="container my-5 scroll-animate">
-        <h2 class="text-right mb-4">Feature Products</h2>
+        <h2 class="text-right mb-4" style="font-size: 25px;"><b>New Products</b></h2>
         <div class="row g-4">
-            @foreach ($products as $product)
-            <!-- Product Card -->
-            <div class="col-md-3">
-                <div class="card product-card">
-                    <img src="{{ $product['image'] }}" class="card-img-top product-img" alt="{{ $product['name'] }}">
-                    <div class="card-body text-right bg-light">
-                        <p class="tag mb-0">{{ $product['category'] }}</p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="card-title mt-2 product-title">{{ $product['name'] }}</h5>
-                            <i class="fa-regular fa-heart fs-5 add-wishlist"></i>
+            @foreach ($products->take(10) as $product)
+                @php
+                    $images = json_decode($product->images, true);
+                @endphp
+                <div class="col-md-3">
+                    <div class="card product-card">
+                        @if (!empty($images) && isset($images[0]))
+                            <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img" alt="Product Image" style="height: 250px;">
+                        @endif
+                        <div class="card-body text-right bg-light">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mt-2 product-title">{{ $product->name }}</h5>
+                                <i class="fa-regular fa-heart fs-5 add-wishlist"></i>
+                            </div>
+                            <p class="card-price">{{ $product->price }}</p>
+                            <a href="#" class="btn btn-primary px-4 py-2 d-inline-block custom-btn w-100 add-cart">Add to Cart</a>
                         </div>
-                        <p class="card-price">{{ $product['price'] }}</p>
-                        <a href="#" class="btn btn-primary px-4 py-2 d-inline-block custom-btn w-100 add-cart">Add to Cart</a>
                     </div>
                 </div>
-            </div>
             @endforeach
         </div>
     </div>
 </section>
 
-<!-- Banner Products -->
+{{-- Banner Section --}}
 <section>
-<div class="container my-5">
-    <div class="row g-3">
-        <!-- First Column -->
-        <div class="col-md-6 position-relative scroll-animate">
-            <img src="{{ asset('image/Mobile.jpg') }}" alt="" class="img-fluid" 
-                 style="object-fit: cover; height: 100%; width: 100%; filter: brightness(65%);">
-            <div class="position-absolute top-50 start-20 translate-middle-y text-white text-start p-3">
-                <h3 class="fw-bold mb-3">Let's Order Now!</h3>
-                <p class="mb-4">Special launch offers available for a limited time.</p>
-            </div>
-        </div>
-
-        <!-- Second Column -->
-        <div class="col-md-6 position-relative scroll-animate">
-            <img src="{{ asset('image/airpods.jpg') }}" alt="" class="img-fluid" 
-                 style="object-fit: cover; height: 100%; width: 100%; filter: brightness(65%);">
-            <div class="position-absolute top-50 start-20 translate-middle-y text-white text-start p-3">
-                <h3 class="fw-bold mb-3">Let's Order Now!</h3>
-                <p class="mb-4">Special launch offers available for a limited time.</p>
-            </div>
-        </div>
-    </div>
-</div>
-</section>
-
-<!-- New Products -->
-<section>
-    <div class="container my-5 scroll-animate">
-        <h2 class="text-right mb-4">New Products</h2>
-        <div class="row g-4">
-            @foreach ($products as $product)
-            <!-- Product Card -->
-            <div class="col-md-3">
-                <div class="card product-card">
-                    <img src="{{ $product['image'] }}" class="card-img-top product-img" alt="{{ $product['name'] }}">
-                    <div class="card-body text-right bg-light">
-                        <p class="tag mb-0">{{ $product['category'] }}</p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="card-title mt-2 product-title">{{ $product['name'] }}</h5>
-                            <i class="fa-regular fa-heart fs-5 add-wishlist"></i>
-                        </div>
-                        <p class="card-price">{{ $product['price'] }}</p>
-                        <a href="#" class="btn btn-primary px-4 py-2 d-inline-block custom-btn w-100 add-cart">Add to Cart</a>
-                    </div>
+    <div class="container my-5">
+        <div class="row g-3">
+            <div class="col-md-6 position-relative scroll-animate">
+                <img src="{{ asset('image/Mobile.jpg') }}" alt="" class="img-fluid" style="object-fit: cover; height: 100%; width: 100%; filter: brightness(65%);">
+                <div class="position-absolute top-50 start-20 translate-middle-y text-white text-start p-3">
+                    <h3 class="fw-bold mb-3">Let's Order Now!</h3>
+                    <p class="mb-4">Special launch offers available for a limited time.</p>
                 </div>
             </div>
-            @endforeach
+            <div class="col-md-6 position-relative scroll-animate">
+                <img src="{{ asset('image/airpods.jpg') }}" alt="" class="img-fluid" style="object-fit: cover; height: 100%; width: 100%; filter: brightness(65%);">
+                <div class="position-absolute top-50 start-20 translate-middle-y text-white text-start p-3">
+                    <h3 class="fw-bold mb-3">Let's Order Now!</h3>
+                    <p class="mb-4">Special launch offers available for a limited time.</p>
+                </div>
+            </div>
         </div>
     </div>
 </section>
 
-<!-- Large Banner -->
+{{-- Accessories Section --}}
+<section class="my-5">
+    <div class="container scroll-animate">
+        <h2 class="text-right mb-4" style="font-size: 25px;"><b>Accessories</b></h2>
+        <div class="row g-4">
+            @if ($accessoryProducts->isNotEmpty())
+                @foreach ($accessoryProducts->take(4) as $product)
+                    @php
+                        $images = json_decode($product->images, true);
+                    @endphp
+                    <div class="col-md-3">
+                        <div class="card product-card">
+                            @if (!empty($images) && isset($images[0]))
+                                <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img" alt="Product Image" style="height: 250px;">
+                            @endif
+                            <div class="card-body text-right bg-light">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="card-title mt-2 product-title">{{ $product->name }}</h5>
+                                    <i class="fa-regular fa-heart fs-5 add-wishlist"></i>
+                                </div>
+                                <p class="card-price">{{ $product->price }}</p>
+                                <a href="#" class="btn btn-primary px-4 py-2 d-inline-block custom-btn w-100 add-cart">Add to Cart</a>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            @endif
+        </div>
+    </div>
+</section>
+<section class="my-5">
+    <div class="container scroll-animate">
+        <h2 class="text-right mb-4" style="font-size: 25px;"><b>Phone</b></h2>
+        <div class="row g-4">
+            @if ($phone->isNotEmpty())
+                @foreach ($phone->take(4) as $product)
+                    @php
+                        $images = json_decode($product->images, true);
+                    @endphp
+                    <div class="col-md-3">
+                        <div class="card product-card">
+                            @if (!empty($images) && isset($images[0]))
+                                <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img" alt="Product Image" style="height: 250px;">
+                            @endif
+                            <div class="card-body text-right bg-light">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="card-title mt-2 product-title">{{ $product->name }}</h5>
+                                    <i class="fa-regular fa-heart fs-5 add-wishlist"></i>
+                                </div>
+                                <p class="card-price">{{ $product->price }}</p>
+                                <a href="#" class="btn btn-primary px-4 py-2 d-inline-block custom-btn w-100 add-cart">Add to Cart</a>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            @endif
+        </div>
+    </div>
+</section>
+
+{{-- Call to Action --}}
 <section>
     <div class="container my-5 scroll-animate">
         <div class="container-fluid text-black custom-bg">
             <div class="row align-items-center">
                 <div class="col-md-6">
                     <div class="d-flex justify-content-center">
-                        <div class="position-relative">
-                            <img src="{{ asset('image/oppo2.jpg') }}" alt="...">
-                        </div>
+                        <img src="{{ asset('image/oppo2.jpg') }}" alt="..." class="img-fluid">
                     </div>
                 </div>
                 <div class="col-md-6 text-center text-md-start">
                     <h2 class="fw-bold">Upgrade to a Fully-fledged <span class="text-uppercase">Electromo!</span></h2>
                     <p class="lead">Featuring additional pages, plugins, beautiful pictures, and full functionality!</p>
-                    <a href="#"class="btn btn-primary px-4 py-2 d-inline-block custom-btn">Shop Now</a>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
+{{-- Scripts --}}
 <script src="{{ asset('js/wishlist.js') }}"></script>
 <script src="{{ asset('js/homepage.js') }}"></script>
+
 @endsection

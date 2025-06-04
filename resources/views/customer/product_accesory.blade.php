@@ -1,17 +1,11 @@
 @extends('Layout.headerfooter')
-
 @section('title', 'Product')
-
 @section('header')
 <link rel="stylesheet" href="{{ asset('css/product.css') }}">
 @endsection
-
 @section('content')
 <div class="container mt-4">
-    <!-- Title & Search Bar -->
     <div class="d-flex justify-content-between align-items-center mb-3">
-       <div class="d-flex align-items-center mb-3">
-        <!-- Smartphone Category Dropdown -->
         <div class="dropdown me-3">
             <button class="btn dropdown-toggle" style="background-color: #70000E; color:white;" type="button" data-bs-toggle="dropdown">
                 Find by
@@ -27,54 +21,46 @@
                 <li class="mb-4"><button class="btn mt-2 w-100" style="background-color: #70000E; color:white;">Apply</button></li>
             </ul>
         </div>
-    </div>
         <div class="d-flex w-50">
             <form action="{{ route('product.index') }}" method="GET" class="d-flex w-100">
                 <input type="text" name="search" class="form-control w-100" placeholder="Search for product" value="{{ request('search') }}">
                 <button type="submit" class="btn btn-dark ms-2">Search</button>
             </form>
-        </div>  
+        </div>
+        
     </div>
-   <!-- Product Grid -->
     <section class="my-5">
     <div class="container scroll-animate">
-    <div class="row g-4">
-        @if ($phone->isNotEmpty())
-            @foreach ($phone as $product)
-                @php
-                    $images = json_decode($product->images, true);
-                @endphp
-                <div class="col-md-3">
-                    <div class="card product-card">
-                        @if (!empty($images) && isset($images[0]))
+        <h2 class="text-right mb-4" style="font-size: 25px;"><b>Accessories</b></h2>
+        <div class="row g-4">
+            @if ($accessoryProducts->isNotEmpty())
+                @foreach ($accessoryProducts as $product)
+                    @php
+                        $images = json_decode($product->images, true);
+                    @endphp
+                    <div class="col-md-3">
+                        <div class="card product-card">
+                            @if (!empty($images) && isset($images[0]))
                             <a href="{{ route('product.show', $product->id) }}">
                                 <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img" alt="Product Image" style="height: 250px;">
                             </a>
-                        @endif
-                        <div class="card-body text-right bg-light">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h5 class="card-title mt-2 product-title">
-                                    <a href="{{ route('product.show', $product->id) }}" class="text-decoration-none text-dark">
-                                        {{ $product->name }}
-                                    </a>
-                                </h5>
-                                <i class="fa-regular fa-heart fs-5 add-wishlist"></i>
+                            @endif
+                            <div class="card-body text-right bg-light">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="card-title mt-2 product-title">{{ $product->name }}</h5>
+                                    <i class="fa-regular fa-heart fs-5 add-wishlist"></i>
+                                </div>
+                                <p class="card-price">{{ $product->price }}</p>
+                                <a href="#" class="btn btn-primary px-4 py-2 d-inline-block custom-btn w-100 add-cart">Add to Cart</a>
                             </div>
-                            <p class="card-price">{{ $product->price }}</p>
-                            <a href="#" class="btn btn-primary px-4 py-2 d-inline-block custom-btn w-100 add-cart">Add to Cart</a>
                         </div>
                     </div>
-                </div>
-            @endforeach
-        @endif
+                @endforeach
+            @endif
+        </div>
     </div>
-</div>
 </section>
-    <!-- Pagination -->
-    {{-- <div class="d-flex justify-content-center mt-4">
-        {{ $paginatedProducts->links('vendor.pagination.bootstrap-5') }}
-    </div> --}}
 </div>
-
 <script src="{{ asset('js/product.js') }}"></script>
 @endsection
+
