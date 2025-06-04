@@ -75,6 +75,5 @@
         {{ $paginatedProducts->links('vendor.pagination.bootstrap-5') }}
     </div> --}}
 </div>
-
 <script src="{{ asset('js/product.js') }}"></script>
 @endsection

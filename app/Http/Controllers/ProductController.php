@@ -84,33 +84,57 @@ public function product_acessory(){
                 ->distinct()
                 ->get();
             return view('customer.product_accesory', compact('products','accessoryProducts','brands'));
-}
-
-
+    }
     public function show($pro_id)
     {
         $product_item = Productdetail::where('pro_id', $pro_id)->firstOrFail();
         $related_items = Productdetail::where('pro_id', $pro_id)->get();
+
         $colors = $related_items->pluck('color')->unique()->values();
         $sizes = $related_items->pluck('size')->unique()->values();
         $stock = $related_items->pluck('stock')->unique()->values();
+
         $variants = $related_items->map(function ($item) {
             return [
                 'color'  => $item->color,
                 'size'   => $item->size,
                 'price'  => $item->price,
                 'images' => $item->images,
-                'stock' => $item->stock,
+                'stock'  => $item->stock,
             ];
         });
-        return response()->json([
-            'product_name' => $product_item->product_name,
-            'colors'       => $colors,
-            'sizes'        => $sizes,
-            'stock'        => $stock,
-            'variants'     => $variants,
+        $products = Productdetail::where('product_name', '!=', $product_item->product_name)
+                        ->inRandomOrder()
+                        ->take(4)
+                        ->get()
+                        ->map(function ($item) {
+                            return [
+                                'name'     => $item->product_name,
+                                'price'    => $item->price,
+                                'category' => $item->category,
+                                'created_at' => $item->created_at,
+                                'size' => $item->size,
+                                'image'    => $item->images[0] ?? null, 
+                            ];
+                        });
+
+        return view('customer.productdetail', [
+            'product'  => [
+                'name'  => $product_item->product_name,
+                'image' => $product_item->images, 
+                'price' => $product_item->price,
+                'created_at' =>$product_item->created_at,
+                'size' =>$product_item->size
+            ],
+            'colors'   => $colors,
+            'sizes'    => $sizes,
+            'stock'    => $stock,
+            'variants' => $variants,
+            'products' => $products,
         ]);
     }
+
+
     private function getAllProducts()
     {
         return [
