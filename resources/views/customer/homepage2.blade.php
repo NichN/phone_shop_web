@@ -12,63 +12,35 @@
             <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
             <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
         </div>
-
         <div class="carousel-inner">
-            {{-- Slide 1 --}}
-            <div class="carousel-item active">
-                <div class="container-fluid d-flex align-items-center" style="height: 75vh;">
-                    <div class="container d-flex justify-content-between align-items-center">
-                        <div class="text-container pt-5">
-                            <h2 class="display-4 fw-bold">Welcome to <br> TayMeng Phone Shop</h2>
-                            <p>Power Up Your Life with the Latest Electronic!</p>
-                        </div>
-                        <div class="image-container">
-                            <img src="{{ asset('image/slide.jpg') }}" alt="" class="img-fluid">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Slide 2 --}}
-            <div class="carousel-item">
-                <div class="container-fluid d-flex align-items-center" style="height: 75vh;">
-                    <div class="container d-flex justify-content-between align-items-center">
-                        <div class="text-container pt-5">
-                            <h2 class="display-4 fw-bold">Welcome to <br> TayMeng Phone Shop</h2>
-                            <p>Power Up Your Life with the Latest Electronic!</p>
-                        </div>
-                        <div class="image-container">
-                            <img src="{{ asset('image/img1.jpg') }}" alt="" class="img-fluid">
+            @foreach ([
+                'slide.jpg',
+                'img1.jpg',
+                'slide2.jpg'
+            ] as $index => $slide)
+                <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
+                    <div class="container-fluid d-flex align-items-center" style="height: 75vh;">
+                        <div class="container d-flex justify-content-between align-items-center">
+                            <div class="text-container pt-5">
+                                <h2 class="display-4 fw-bold">Welcome to <br> TayMeng Phone Shop</h2>
+                                <p>Power Up Your Life with the Latest Electronic!</p>
+                            </div>
+                            <div class="image-container">
+                                <img src="{{ asset('image/' . $slide) }}" alt="" class="img-fluid">
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            {{-- Slide 3 --}}
-            <div class="carousel-item">
-                <div class="container-fluid d-flex align-items-center" style="height: 75vh;">
-                    <div class="container d-flex justify-content-between align-items-center">
-                        <div class="text-container pt-5">
-                            <h2 class="display-4 fw-bold">Welcome to <br> TayMeng Phone Shop</h2>
-                            <p>Power Up Your Life with the Latest Electronic!</p>
-                        </div>
-                        <div class="image-container">
-                            <img src="{{ asset('image/slide2.jpg') }}" alt="" class="img-fluid">
-                        </div>
-                    </div>
-                </div>
-            </div>
+            @endforeach
         </div>
-
-        {{-- Controls --}}
         <button class="carousel-control-prev custom-carousel" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
-            <i class="fa-solid fa-circle-chevron-left fa-2x" aria-hidden="true"></i>
+            <i class="fa-solid fa-circle-chevron-left fa-2x"></i>
             <span class="visually-hidden">Previous</span>
         </button>
         <button class="carousel-control-next custom-carousel" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
-            <i class="fa-solid fa-circle-chevron-right fa-2x" aria-hidden="true"></i>
+            <i class="fa-solid fa-circle-chevron-right fa-2x"></i>
             <span class="visually-hidden">Next</span>
-        </button>           
+        </button>
     </div>
 </header>
 
@@ -95,41 +67,35 @@
 <section>
     <div class="container my-5 scroll-animate">
         <div class="row d-flex justify-content-center">
-            <div class="col-md-6 d-flex justify-content-center">
-                <div class="shop-card">
-                    <img src="/image/phone_ps2.png" alt="Smartphone">
-                    <div class="shop-overlay d-flex align-items-center justify-content-center">
-                        <a href="{{ route('product', 'smartphone') }}" class="btn btn-primary px-4 py-2 d-inline-block custom-btn">Shop Now</a>
+            @foreach ([
+                ['src' => 'image/phone_ps2.png', 'route' => 'product', 'name' => 'smartphone', 'label' => 'Smartphones'],
+                ['src' => 'image/accessories1.jpg', 'route' => 'product_acessory', 'name' => 'accessories', 'label' => 'Accessories']
+            ] as $item)
+                <div class="col-md-6 d-flex justify-content-center">
+                    <div class="shop-card">
+                        <img src="/{{ $item['src'] }}" alt="{{ $item['label'] }}">
+                        <div class="shop-overlay d-flex align-items-center justify-content-center">
+                            <a href="{{ route($item['route'], $item['name']) }}" class="btn btn-primary px-4 py-2 d-inline-block custom-btn">Shop Now</a>
+                        </div>
+                        <h3 class="shop-title text-uppercase fs-4 fw-semibold">{{ $item['label'] }}</h3>
                     </div>
-                    <h3 class="shop-title text-uppercase fs-4 fw-semibold">Smartphones</h3>
                 </div>
-            </div>
-            <div class="col-md-6 d-flex justify-content-center">
-                <div class="shop-card">
-                    <img src="image/accessories1.jpg" alt="Accessories">
-                    <div class="shop-overlay d-flex align-items-center justify-content-center">
-                        <a href="{{ route('product_acessory', 'accessories') }}" class="btn btn-primary px-4 py-2 d-inline-block custom-btn">Shop Now</a>
-                    </div>
-                    <h3 class="shop-title text-uppercase fs-4 fw-semibold">Accessories</h3>
-                </div>
-            </div>
+            @endforeach
         </div>
     </div>
 </section>
 
-{{-- Feature Products --}}
+{{-- New Products --}}
 <section>
     <div class="container my-5 scroll-animate">
-        <h2 class="text-right mb-4" style="font-size: 25px;"><b>New Products</b></h2>
+        <h2 class="text-right mb-4 fs-4"><b>New Products</b></h2>
         <div class="row g-4">
             @foreach ($products->take(10) as $product)
-                @php
-                    $images = json_decode($product->images, true);
-                @endphp
+                @php $images = json_decode($product->images, true); @endphp
                 <div class="col-md-3">
                     <div class="card product-card">
-                        @if (!empty($images) && isset($images[0]))
-                            <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img" alt="Product Image" style="height: 250px;">
+                        @if (!empty($images[0]))
+                            <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img" style="height: 250px;">
                         @endif
                         <div class="card-body text-right bg-light">
                             <div class="d-flex justify-content-between align-items-center">
@@ -150,20 +116,18 @@
 <section>
     <div class="container my-5">
         <div class="row g-3">
-            <div class="col-md-6 position-relative scroll-animate">
-                <img src="{{ asset('image/Mobile.jpg') }}" alt="" class="img-fluid" style="object-fit: cover; height: 100%; width: 100%; filter: brightness(65%);">
-                <div class="position-absolute top-50 start-20 translate-middle-y text-white text-start p-3">
-                    <h3 class="fw-bold mb-3">Let's Order Now!</h3>
-                    <p class="mb-4">Special launch offers available for a limited time.</p>
+            @foreach ([
+                'Mobile.jpg',
+                'airpods.jpg'
+            ] as $banner)
+                <div class="col-md-6 position-relative scroll-animate">
+                    <img src="{{ asset('image/' . $banner) }}" class="img-fluid" style="object-fit: cover; height: 100%; width: 100%; filter: brightness(65%);">
+                    <div class="position-absolute top-50 start-20 translate-middle-y text-white text-start p-3">
+                        <h3 class="fw-bold mb-3">Let's Order Now!</h3>
+                        <p class="mb-4">Special launch offers available for a limited time.</p>
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-6 position-relative scroll-animate">
-                <img src="{{ asset('image/airpods.jpg') }}" alt="" class="img-fluid" style="object-fit: cover; height: 100%; width: 100%; filter: brightness(65%);">
-                <div class="position-absolute top-50 start-20 translate-middle-y text-white text-start p-3">
-                    <h3 class="fw-bold mb-3">Let's Order Now!</h3>
-                    <p class="mb-4">Special launch offers available for a limited time.</p>
-                </div>
-            </div>
+            @endforeach
         </div>
     </div>
 </section>
@@ -171,22 +135,20 @@
 {{-- Accessories Section --}}
 <section class="my-5">
     <div class="container scroll-animate">
-        <h2 class="text-right mb-4" style="font-size: 25px;"><b>Accessories</b></h2>
+        <h2 class="text-right mb-4 fs-4"><b>Accessories</b></h2>
         <div class="row g-4">
             @if ($accessoryProducts->isNotEmpty())
                 @foreach ($accessoryProducts->take(4) as $product)
-                    @php
-                        $images = json_decode($product->images, true);
-                    @endphp
+                    @php $images = json_decode($product->images, true); @endphp
                     <div class="col-md-3">
                         <div class="card product-card">
-                            @if (!empty($images) && isset($images[0]))
-                                <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img" alt="Product Image" style="height: 250px;">
+                            @if (!empty($images[0]))
+                                <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img" style="height: 250px;">
                             @endif
                             <div class="card-body text-right bg-light">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <h5 class="card-title mt-2 product-title">{{ $product->name }}</h5>
-                                    <i class="fa-regular fa-heart fs-5 add-wishlist"></i>
+                                    <i class="add-wishlist fa-regular fa-heart fs-5" data-product-id="{{ $product->id }}"></i>
                                 </div>
                                 <p class="card-price">{{ $product->price }}</p>
                                 <a href="#" class="btn btn-primary px-4 py-2 d-inline-block custom-btn w-100 add-cart">Add to Cart</a>
@@ -198,57 +160,5 @@
         </div>
     </div>
 </section>
-<section class="my-5">
-    <div class="container scroll-animate">
-        <h2 class="text-right mb-4" style="font-size: 25px;"><b>Phone</b></h2>
-        <div class="row g-4">
-            @if ($phone->isNotEmpty())
-                @foreach ($phone->take(4) as $product)
-                    @php
-                        $images = json_decode($product->images, true);
-                    @endphp
-                    <div class="col-md-3">
-                        <div class="card product-card">
-                            @if (!empty($images) && isset($images[0]))
-                                <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img" alt="Product Image" style="height: 250px;">
-                            @endif
-                            <div class="card-body text-right bg-light">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <h5 class="card-title mt-2 product-title">{{ $product->name }}</h5>
-                                    <i class="fa-regular fa-heart fs-5 add-wishlist"></i>
-                                </div>
-                                <p class="card-price">{{ $product->price }}</p>
-                                <a href="#" class="btn btn-primary px-4 py-2 d-inline-block custom-btn w-100 add-cart">Add to Cart</a>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            @endif
-        </div>
-    </div>
-</section>
-
-{{-- Call to Action --}}
-<section>
-    <div class="container my-5 scroll-animate">
-        <div class="container-fluid text-black custom-bg">
-            <div class="row align-items-center">
-                <div class="col-md-6">
-                    <div class="d-flex justify-content-center">
-                        <img src="{{ asset('image/oppo2.jpg') }}" alt="..." class="img-fluid">
-                    </div>
-                </div>
-                <div class="col-md-6 text-center text-md-start">
-                    <h2 class="fw-bold">Upgrade to a Fully-fledged <span class="text-uppercase">Electromo!</span></h2>
-                    <p class="lead">Featuring additional pages, plugins, beautiful pictures, and full functionality!</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-{{-- Scripts --}}
-<script src="{{ asset('js/wishlist.js') }}"></script>
-<script src="{{ asset('js/homepage.js') }}"></script>
 
 @endsection

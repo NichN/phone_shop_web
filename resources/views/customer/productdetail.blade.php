@@ -10,10 +10,13 @@
         </nav>
     </div>
 @endsection
+
 @section('content')
     <link rel="stylesheet" href="{{ asset('css/productdetail.css') }}">
+
     <div class="container my-3">
         <div class="row mt-3">
+            <!-- Product Images -->
             <div class="col-md-6">
                 <div class="main-image-container border p-3">
                     <img id="mainImage" src="{{ asset('storage/' . $product['image'][0]) }}" alt="{{ $product['name'] }}" class="img-fluid">
@@ -35,6 +38,8 @@
                     <h4 class="mb-0">{{ $product['name'] }}</h4>
                 </div>
                 <h3 class="text-danger mb-4"><strong>{{ $product['price'] }}</strong></h3>
+
+                <!-- Color Selection -->
                 <div class="choose-color mb-4">
                     <h5 class="mb-4 fw-bold">CHOOSE YOUR COLOR</h5>
                     <div class="d-flex gap-3">
@@ -47,16 +52,19 @@
                         @endforeach
                     </div>
                 </div>
-                 <div class="choose-storage">
+
+                <!-- Storage Selection -->
+                <div class="choose-storage">
                     <h5 class="mb-4 fw-bold">CHOOSE YOUR STORAGE</h5>
-                   <div class="d-flex gap-3">
-                    @foreach ($sizes as $index => $size)
-                        <input type="radio" class="btn-check" name="storage" id="storage{{ $index }}" autocomplete="off" value="{{ $size }}" {{ $index == 0 ? 'checked' : '' }}>
-                        <label class="btn btn-outline-success" for="storage{{ $index }}">{{ $size }}</label>
-                    @endforeach
+                    <div class="d-flex gap-3">
+                        @foreach ($sizes as $index => $size)
+                            <input type="radio" class="btn-check" name="storage" id="storage{{ $index }}" autocomplete="off" value="{{ $size }}" {{ $index === 0 ? 'checked' : '' }}>
+                            <label class="btn btn-outline-success" for="storage{{ $index }}">{{ $size }}</label>
+                        @endforeach
+                    </div>
                 </div>
-                </div>
-                <!-- Add to Cart -->
+
+                <!-- Buttons -->
                 <div class="d-flex justify-content-between align-items-center add-to-cart mt-4 mb-4 gap-3">
                     <a href="#" class="btn btn-primary px-4 py-2 custom-btn w-100 add-cart"
                        data-title="{{ $product['name'] }}"
@@ -64,17 +72,15 @@
                        data-img="{{ asset('storage/' . $product['image'][0]) }}">
                         Add to Cart
                     </a>
-                    <a href="#" class="btn btn-primary px-4 py-2 custom-btn w-100 add-wishlist d-flex align-items-center justify-content-center">
-                        <i class="fa-regular fa-heart fs-5 me-2 add-wishlist"></i> Add to Wishlist
+                    <a href="#" class="btn btn-primary px-4 py-2 custom-btn w-100 d-flex align-items-center justify-content-center add-wishlist">
+                        <i class="fa-regular fa-heart fs-5 me-2"></i> Add to Wishlist
                     </a>
                 </div>
 
-                <!-- Description -->
+                <!-- Specification Accordion -->
                 <div class="mt-4">
                     <h5 class="fw-bold">SPECIFICATION</h5>
                     <div class="accordion" id="specAccordion">
-                        <div class="accordion-item">
-                        </div>
                         <div class="accordion-item">
                             <h2 class="accordion-header">
                                 <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#launchCollapse">
@@ -84,39 +90,46 @@
                             <div id="launchCollapse" class="accordion-collapse collapse" data-bs-parent="#specAccordion">
                                 <div class="accordion-body">
                                     <p><strong>Announced:</strong> {{ $product['created_at'] }}</p>
-                                    <p><strong>Status:</strong>Available</p>
+                                    <p><strong>Status:</strong> Available</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            </div>
-
+            </div> <!-- End of Product Info -->
         </div>
     </div>
+    </section>
+    <!-- Description -->
+    <section>
+        <div class="container my-5">
+            <h5>Product Description</h5>
+            <hr>
+            <p style="text-align: justify;">
+                Experience exceptional performance and sleek design with this state-of-the-art smartphone. Crafted with precision, it features a powerful processor that ensures smooth multitasking, fast app launches, and seamless navigation.
+            </p>
+            <p style="text-align: justify;">
+                Whether you're streaming your favorite shows, playing games, or browsing the web, this device delivers an immersive experience with its vibrant high-resolution display and advanced graphics.
+            </p>
+        </div>
+    </section>
 
-    <!-- New Products Section -->
+    <!-- Similar Products Section -->
     <section>
         <div class="container my-5 scroll-animate">
             <h2 class="text-center mb-4">Similar Product</h2>
             <div class="row g-4">
                 @foreach ($products as $product)
-                    <!-- Product Card -->
                     <div class="col-md-3">
                         <div class="card product-card">
-                            <img src="{{ $product['image'] }}" class="card-img-top product-img"
-                                alt="{{ $product['name'] }}">
+                            <img src="{{ $product['image'] }}" class="card-img-top product-img" alt="{{ $product['name'] }}">
                             <div class="card-body text-right bg-light">
-                                {{-- <p class="tag mb-0">{{ $product['category'] }}</p> --}}
                                 <div class="d-flex justify-content-between align-items-center">
                                     <h5 class="card-title mt-2 product-title">{{ $product['name'] }}</h5>
                                     <i class="fa-regular fa-heart fs-5 add-wishlist"></i>
                                 </div>
                                 <p class="card-price">{{ $product['price'] }}</p>
-                                <a href="#"
-                                    class="btn btn-primary px-4 py-2 d-inline-block custom-btn w-100 add-cart">Add to
-                                    Cart</a>
+                                <a href="#" class="btn btn-primary px-4 py-2 d-inline-block custom-btn w-100 add-cart">Add to Cart</a>
                             </div>
                         </div>
                     </div>
@@ -124,5 +137,6 @@
             </div>
         </div>
     </section>
+
     <script src="{{ asset('js/productdetail.js') }}"></script>
 @endsection

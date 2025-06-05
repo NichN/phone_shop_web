@@ -2,13 +2,11 @@
 
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\InvoiceController;
-use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\Auth\RegisterController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\ProductDetailController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\PasswordController;
-use App\Http\Controllers\AddressController;
+use App\Http\Controllers\Admin_user_controller;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\OrderController;
@@ -22,16 +20,12 @@ use App\Http\Controllers\sizeController;
 use App\Http\Controllers\product_detailCotroller;
 use App\Http\Controllers\colorcontroller;
 use App\Http\Controllers\purchaseController;
-use App\Http\Controllers\Admin_user_controller;
 use App\Http\Controllers\TwoFactorController;
 use App\Models\purchase;
 
 Route::get('/', function () {
     return view('welcome');
 });
-// Route::get('/customer/homepage', function () {
-//     return view('customer.homepage2');
-// });
 
 Route::get('/homepage', [HomeController::class, 'index'])->name('homepage');
 
@@ -48,13 +42,17 @@ Route::get('/product_acessory', [ProductController::class, 'product_acessory'])-
 Route::get('/products_admin', [ProductController::class, 'index'])->name('product.index');
 Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
 
-Route::get('/history', [HistoryController::class, 'index'])->name('history');
+Route::prefix('history')->controller(HistoryController::class)->group(function () {
+    Route::get('/', 'index')->name('history'); 
+    Route::delete('/{id}', 'destroy')->name('history.destroy');
+});
 
 Route::get('/invoice', [InvoiceController::class, 'showStaticInvoice'])->name('invoice');
 
 Route::get('/checkout', [CheckoutController::class, 'showCheckout'])->name('checkout.show');
 
 Route::post('/checkout', [CheckoutController::class, 'processCheckout'])->name('checkout.process');
+
 
 Route::get('/payment/invoice', function () {
     // Provide static data directly to the view
@@ -80,12 +78,6 @@ Route::get('/payment/card', [CheckoutController::class, 'showCardPayment'])->nam
 
 Route::post('/payment/process', [CheckoutController::class, 'processPayment'])->name('payment.process');
 
-// Route::get('/payment/card', function () {
-//     return view('customer.card'); // Create this file too
-// })->name('payment.card');
-
-// Route::get('/order-success', [CheckoutController::class, 'success'])->name('checkout.success');
-
 // auth_form
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
@@ -110,8 +102,6 @@ Route::get('/productdetail',function(){
     return view('customer.productdetail');
 })->name('productdetail');
 
-
-Route::get('/productdetail', [ProductDetailController::class, 'index'])->name('productdetail');
 
 //Dashboard
 Route::prefix('dashboard')->name('dashboard.')->group(function () {

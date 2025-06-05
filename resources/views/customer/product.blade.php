@@ -8,10 +8,8 @@
 
 @section('content')
 <div class="container mt-4">
-    <!-- Title & Search Bar -->
     <div class="d-flex justify-content-between align-items-center mb-3">
        <div class="d-flex align-items-center mb-3">
-        <!-- Smartphone Category Dropdown -->
         <div class="dropdown me-3">
             <button class="btn dropdown-toggle" style="background-color: #70000E; color:white;" type="button" data-bs-toggle="dropdown">
                 Find by
@@ -70,10 +68,9 @@
     </div>
 </div>
 </section>
-    <!-- Pagination -->
-    {{-- <div class="d-flex justify-content-center mt-4">
-        {{ $paginatedProducts->links('vendor.pagination.bootstrap-5') }}
-    </div> --}}
+   {{-- <div class="d-flex justify-content-center mt-4">
+            {{ $phone->links('vendor.pagination.bootstrap-5') }}
+        </div> --}}
 </div>
 <script src="{{ asset('js/product.js') }}"></script>
 @endsection
