@@ -9,9 +9,7 @@
             <h2 class="mb-0 text-center flex-grow-1">Checkout</h2>
             <div style="width: 90px;"></div>
         </div>
-
         <div class="row">
-            <!-- Order Summary -->
             <div class="col-md-6">
                 <h5 class="fw-bold">Order Summary</h5>
                 <div class="bg-light p-3 mb-3 rounded shadow-sm">
@@ -28,8 +26,6 @@
                     @endforeach
                 </div>
             </div>
-
-            <!-- Shipping and Payment -->
             <div class="col-md-6">
                 <h5 class="fw-bold">Shipping and Payment Method</h5>
                 <form id="checkoutForm" method="GET">
@@ -60,7 +56,6 @@
                             <span>${{ $totalAmount }}</span>
                         </div>
                     </div>
-
                     <div class="mb-3">
                         <label for="payment" class="form-label fw-bold">Payment Method</label>
                         <select class="form-select" name="payment_method" id="payment" required>
@@ -74,13 +69,10 @@
             </div>
         </div>
     </div>
-
     <script>
         document.getElementById('checkoutForm').addEventListener('submit', function(e) {
             e.preventDefault();
-
             const method = document.getElementById('payment').value;
-
             if (method === 'cash') {
                 window.location.href = "{{ route('invoice') }}";
             } else if (method === 'card') {

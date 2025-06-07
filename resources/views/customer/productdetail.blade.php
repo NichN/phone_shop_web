@@ -10,7 +10,6 @@
         </nav>
     </div>
 @endsection
-
 @section('content')
     <link rel="stylesheet" href="{{ asset('css/productdetail.css') }}">
 
@@ -96,25 +95,10 @@
                         </div>
                     </div>
                 </div>
-            </div> <!-- End of Product Info -->
+            </div>
         </div>
     </div>
     </section>
-    <!-- Description -->
-    <section>
-        <div class="container my-5">
-            <h5>Product Description</h5>
-            <hr>
-            <p style="text-align: justify;">
-                Experience exceptional performance and sleek design with this state-of-the-art smartphone. Crafted with precision, it features a powerful processor that ensures smooth multitasking, fast app launches, and seamless navigation.
-            </p>
-            <p style="text-align: justify;">
-                Whether you're streaming your favorite shows, playing games, or browsing the web, this device delivers an immersive experience with its vibrant high-resolution display and advanced graphics.
-            </p>
-        </div>
-    </section>
-
-    <!-- Similar Products Section -->
     <section>
         <div class="container my-5 scroll-animate">
             <h2 class="text-center mb-4">Similar Product</h2>
@@ -122,7 +106,9 @@
                 @foreach ($products as $product)
                     <div class="col-md-3">
                         <div class="card product-card">
-                            <img src="{{ $product['image'] }}" class="card-img-top product-img" alt="{{ $product['name'] }}">
+                            {{-- <a href="{{ route('product.show', $product->id) }}"> --}}
+                            <img src="{{ asset('storage/' . $product['image']) }}" class="card-img-top product-img" alt="{{ $product['name'] }}">
+                            {{-- </a> --}}
                             <div class="card-body text-right bg-light">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <h5 class="card-title mt-2 product-title">{{ $product['name'] }}</h5>
@@ -137,6 +123,5 @@
             </div>
         </div>
     </section>
-
     <script src="{{ asset('js/productdetail.js') }}"></script>
 @endsection

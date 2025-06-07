@@ -226,7 +226,6 @@ function addCartClicked(event) {
 //     localStorage.removeItem('cart');
 // }
 function checkoutClicked() {
-    // Just navigate to checkout page, do NOT clear the cart here
     window.location.href = 'checkout';
 }
 

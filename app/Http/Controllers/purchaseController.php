@@ -177,6 +177,13 @@ class purchaseController extends Controller
     DB::beginTransaction();
 
     try {
+        $status = 'Unpaid';
+        if ($request->paid >= $request->grand_total) {
+            $status = 'Paid';
+        } elseif ($request->paid > 0) {
+            $status = 'Partially';
+        }
+
         $purchase = purchase::create([
             'reference_no' => IdGenerator::generate([
                 'table' => 'purchase',
@@ -188,11 +195,14 @@ class purchaseController extends Controller
             'Grand_total' => $request->grand_total,
             'paid' => $request->paid,
             'balance' => $request->balance,
-            'payment_statuse' => $request->payment_st,
+            'payment_statuse' => $status,
             'supplier_id' => $request->supplier_id
         ]);
+
         purchses_item::whereNull('purchase_id')->update(['purchase_id' => $purchase->id]);
-        DB::commit(); 
+
+        DB::commit();
+
         $supplier = DB::table('purchase')
             ->join('supplier', 'purchase.supplier_id', '=', 'supplier.id')
             ->select('supplier.id', 'supplier.name')
@@ -214,6 +224,7 @@ class purchaseController extends Controller
         ], 500);
     }
 }
+
 public function delete_purchases(Request $request)
 {
     DB::transaction(function () use ($request) {

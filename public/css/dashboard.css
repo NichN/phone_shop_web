@@ -93,6 +93,14 @@ body {
     background-color: #555;
     width: 250px;
 }
+#deliveryDropdown{
+    background-color: #555;
+    width: 250px;
+}
+#reportDropdown{
+    background-color: #555;
+    width: 250px;
+}
 #supplierDropdown{
     background-color: #555;
     width: 250px;

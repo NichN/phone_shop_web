@@ -55,11 +55,31 @@
     <div id="supplierDropdown" class="w3-dropdown-content" style="display: none;">
         <a href="{{ route('supplier.index') }}" class="w3-bar-item w3-button"><i class="fa fa-list"></i> List Supplier</a>
     </div>
-    <div href="#" class="w3-bar-item w3-button stock-link"><i class="fas fa-box"></i> Delivery</div>
+    <div class="w3-bar-item  w3-dropdown-click" onclick="toggleDropdown('deliveryDropdown')">
+        <i class="fa fa-qrcode"></i> Delivery <i class="fa fa-caret-down" style="margin-left: 100px"></i>
+    </div>
+    <div id="deliveryDropdown" class="w3-dropdown-content" style="display: none;">
+        <a href="{{ route('delivery.index') }}" class="w3-bar-item w3-button"><i class="fa fa-list"></i>Delivery Fee</a>
+    </div>
     <a href="#" class="w3-bar-item w3-button order-link"><i class="fas fa-shopping-cart"></i> Order</a>
     <a href="#" class="w3-bar-item w3-button customer-link"><i class="fas fa-user"></i> Customer</a>
     <a href="#" class="w3-bar-item w3-button payment-link"><i class="fas fa-money-bill-wave"></i> Payment</a>
-    <a href="#" class="w3-bar-item w3-button report-link"><i class="fas fa-file-alt"></i> Report</a>
+    
+    {{-- report --}}
+    <div class="w3-bar-item w3-dropdown-click" onclick="toggleDropdown('reportDropdown')">
+    <i class="fa fa-qrcode"></i> Report <i class="fa fa-caret-down" style="margin-left: 100px"></i>
+    </div>
+
+    <div id="reportDropdown" class="w3-dropdown-content" style="display: none;">
+        <a href="{{ route('report.product_report') }}" class="w3-bar-item w3-button">
+            <i class="fa fa-list"></i> Product Report
+        </a>
+        <a href="{{ route('report.purchase_report') }}" class="w3-bar-item w3-button">
+            <i class="fa fa-list"></i> Purchase Report
+        </a>
+    </div>
+    {{-- end --}}
+
 
     <div class="sidebar-title mt-">Settings</div>
     <div class="w3-bar-item  w3-dropdown-click" onclick="toggleDropdown('userDropdown')">

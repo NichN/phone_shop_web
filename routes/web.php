@@ -21,6 +21,8 @@ use App\Http\Controllers\product_detailCotroller;
 use App\Http\Controllers\colorcontroller;
 use App\Http\Controllers\purchaseController;
 use App\Http\Controllers\TwoFactorController;
+use App\Http\Controllers\delivery_feeController;
+use App\Http\Controllers\reportController;
 use App\Models\purchase;
 
 Route::get('/', function () {
@@ -178,6 +180,14 @@ Route::prefix('product_detail')->name('pr_detail.')->group(function(){
     Route::delete('/delete/{id}',[product_detailCotroller::class,'delete'])->name('delete');
     Route::get('/show_product/{pro_id}',[productAdminController::class,'show_product'])->name('product_items');
 });
+
+Route::prefix('delivery')->name('delivery.')->group(function(){
+    Route::get('/',[delivery_feeController::class,'index'])->name('index');
+    Route::post('/edit/{id}',[delivery_feeController::class,'edit_fee'])->name('edit_fee');
+    Route::post('/update/{id}',[delivery_feeController::class,'update'])->name('update');
+    // Route::delete('/deleteExchange',[SettingController::class,'deleteExchange'])->name('deleteExchange')->middleware('permission:manage users');
+    Route::post('/store',[delivery_feeController::class,'store'])->name('store');
+});
 Route::prefix('purchase')->name('purchase.')->group(function(){
     Route::get('/',[purchaseController::class,'index'])->name('index');
     Route::get('/payment',[purchaseController::class,'payment'])->name('payment');
@@ -196,10 +206,15 @@ Route::prefix('user')->name('user.')->group(function(){
     Route::get('/',[Admin_user_controller::class,'index'])->name('index');
     Route::get('/add',[Admin_user_controller::class,'add'])->name('new');
 });
-
+Route::prefix('report')->name('report.')->group(function(){
+    Route::get('/',[reportController::class,'product_report'])->name('product_report');
+    Route::get('/purchase',[reportController::class,'purchase_report'])->name('purchase_report');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/two-factor', [TwoFactorController::class, 'index'])->name('two_factor.index');
     Route::post('/two-factor', [TwoFactorController::class, 'verify'])->name('two_factor.verify');
 });
+
+
 ?>
