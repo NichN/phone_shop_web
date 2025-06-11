@@ -22,10 +22,14 @@ use App\Http\Controllers\colorcontroller;
 use App\Http\Controllers\purchaseController;
 use App\Http\Controllers\TwoFactorController;
 use App\Models\purchase;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+
+Route::redirect('/', '/homepage');
 
 Route::get('/homepage', [HomeController::class, 'index'])->name('homepage');
 
@@ -81,11 +85,35 @@ Route::post('/payment/process', [CheckoutController::class, 'processPayment'])->
 
 // auth_form
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-Route::post('/register', [RegisterController::class, 'register']);
+Route::post('/register', [RegisterController::class, 'register'])->name('register');
+
 
 Route::get('/login',function(){
     return view('authentication_form.login');
 })->name('login');
+
+Route::post('/login', function (Request $request) {
+    $credentials = $request->only('email', 'password');
+
+    if (Auth::attempt($credentials)) {
+        $request->session()->regenerate();
+        return redirect()->intended('/'); // 👈 redirects to homepage
+    }
+
+    return back()->withErrors([
+        'email' => 'Invalid credentials.',
+    ]);
+})->name('login');
+
+
+Route::post('/logout', function (Request $request) {
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    return redirect('/login');
+})->name('logout');
+
+
 
 Route::get('/verifyemail',function(){
     return view('authentication_form.forgetpw');
@@ -202,4 +230,3 @@ Route::middleware('auth')->group(function () {
     Route::get('/two-factor', [TwoFactorController::class, 'index'])->name('two_factor.index');
     Route::post('/two-factor', [TwoFactorController::class, 'verify'])->name('two_factor.verify');
 });
-?>

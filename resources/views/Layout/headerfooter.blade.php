@@ -54,7 +54,9 @@
                 <!-- User Button -->
                 <button class="btn position-relative dropdown-toggle" type="button" id="profileDropdown"
                     data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fa-solid fa-user"></i> <span class="d-none d-lg-inline">Hello Guest</span>
+                    <h5 class="modal-title mb-0" id="profileModalLabel">
+                        Hello, {{ Auth::check() ? Auth::user()->name : 'Guest' }}
+                    </h5>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
                     <li><a class="dropdown-item" href="{{ route('history') }}"><i class="fa-solid fa-box me-2"></i>
@@ -130,14 +132,16 @@
 
     <!-- My Profile Modal -->
     <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel"
-        aria-hidden="true">
+        aria-hidden="true"> 
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
                 <div class="modal-header align-items-center">
                     <div class="d-flex align-items-center">
                         <img src="{{ asset('image/smphone.png') }}" alt="User Photo" class="rounded-circle me-3"
                             width="35" height="35">
-                        <h5 class="modal-title mb-0" id="profileModalLabel">Hello, Youheang</h5>
+                        <h5 class="modal-title mb-0" id="profileModalLabel">
+                            Hello, {{ Auth::check() ? Auth::user()->name : 'Guest' }}
+                        </h5>
                     </div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
