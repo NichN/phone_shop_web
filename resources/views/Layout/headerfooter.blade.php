@@ -17,6 +17,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     @yield('head')
 </head>
 
@@ -40,14 +42,14 @@
                 </button>
 
                 <!-- Cart Button -->
-                <button type="button" class="btn position-relative" >
-                    <a class="custom-link" href="#"id="cart-link">
-                        <i class="fa-solid fa-cart-shopping" id="cart-icon"></i>
+                <button type="button" class="btn position-relative">
+                    <a class="custom-link" href="#" id="cartLink">
+                        <i class="fa-solid fa-cart-shopping cart-icon" id="cart-icon"></i>
                         <span class="d-none d-lg-inline" style="font-size: 1rem;">My Cart</span>
-                        <span id="count_cart"
-                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+                        <span id="count_cart" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
                     </a>
                 </button>
+
 
                 <!-- User Button -->
                 <button class="btn position-relative dropdown-toggle" type="button" id="profileDropdown"
@@ -92,20 +94,18 @@
                 </ul>
 
                 <!-- Cart Details -->
-                <div class="cart">
+                <div class="cart" id="cartSidebar">
                     <i class="fa-solid fa-xmark" id="close-card"></i>
-                    <h4 class="cart-title">My Cart</h4>
-                    <div class="cart-content">
-                        {{-- <div class="cart-box"> </div> --}}
-                    </div>
+                    <div class="cart-content"></div>
                     <div class="total">
                         <div class="total-text">Total</div>
-                        <div class="total-price">0$</div>
+                        <div class="total-price">0.00</div>
                     </div>
                     <div>
                         <button class="btn btn-buy">Checkout</button>
                     </div>
                 </div>
+
             </div>
         </div>
     </nav>
@@ -215,8 +215,6 @@
                                         <button type="submit" class="btn btn-success w-100">Save Changes</button>
                                     </form>
                                 </div>
-
-                                <!-- Change Password Section (hidden by default) -->
                                 <div id="changePasswordContent" style="display: none;">
                                     <div class="text-center mb-4">
                                         <h3>Change Password</h3>
@@ -243,8 +241,6 @@
                                         <button type="submit" class="btn btn-success w-100">Update Password</button>
                                     </form>
                                 </div>
-
-                                <!-- Address Section (hidden by default) -->
                                 <div id="addressContent" style="display: none;">
                                     <div class="text-center mb-4">
                                         <h3>My Address</h3>
@@ -361,6 +357,15 @@
     <script src="{{ asset('js/homepage.js') }}"></script>
     <script src="{{ asset('js/profile.js') }}"></script>
     <script src="{{ asset('js/cart.js') }}"></script>
+    !-- Load jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Your cart script must be below jQuery -->
+<script src="{{ asset('js/cart.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    window.isAuthenticated = {{ Auth::check() ? 'true' : 'false' }};
+</script>
 </body>
 
 </html>

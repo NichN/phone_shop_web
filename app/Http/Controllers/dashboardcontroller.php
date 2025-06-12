@@ -17,9 +17,14 @@ use Illuminate\Support\Facades\DB;
             $totalProduct = DB::table('product_item')
                 ->select(DB::raw('COUNT(id) as total_product'))
                 ->first(); 
+            $totalPurchase = DB::table('purchase')
+                ->select(DB::raw('SUM(Grand_total) as Grand_total'))
+                ->first();
 
-            $data['total_product'] = $totalProduct;
-            return view('Admin.dasboard.index', $data);
+            return view('Admin.dasboard.index', [
+                'total_product' => $totalProduct->total_product ?? 0,
+                'Grand_total' => $totalPurchase->Grand_total ?? 0,
+            ]);
         }
 
         public function product_count()
@@ -32,5 +37,14 @@ use Illuminate\Support\Facades\DB;
                 'total_product' => $totalProduct->total_product ?? 0,
             ]);
         }
+            public function purchase()
+            {
+                $totalPurchase = DB::table('purchase')
+                    ->select(DB::raw('SUM(Grand_total) as Grand_total'))
+                    ->first();
+                return view('Admin.dasboard.index', [
+                    'Grand_total' => $totalPurchase->Grand_total ?? 0,
+                ]);
+            }
     }
 ?>

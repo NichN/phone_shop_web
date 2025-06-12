@@ -12,7 +12,6 @@ class CheckoutController extends Controller
 {
     public function showCheckout()
     {
-        // Static order items data
         $orderItems = [
             [
                 'name' => 'iPhone 16',

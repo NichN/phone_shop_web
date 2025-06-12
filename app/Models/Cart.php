@@ -2,23 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-class Order extends Model
+class Cart extends Model
 {
     use HasFactory;
-
-    protected $table = 'orders';
-
+    protected $table = 'cart';
     protected $fillable = [
         'user_id',
-        'delivery_id',
-        'subtotal',
-        'phone_number',
-        'address',
-        'delivery_fee',
-        'total_amount',
+        'product_id',
+        'quantity',
+        'price'
     ];
     protected $dates = [
         'created_at',

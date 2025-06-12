@@ -1,233 +1,227 @@
-let cartLink = document.querySelector('#cart-link');
-let cart = document.querySelector('.cart');
-let closecard = document.querySelector('#close-card');
 
-cartLink.onclick = (e) => {
-    e.preventDefault();
-    cart.classList.add('active');
-};
-
-closecard.onclick = () => {
-    cart.classList.remove('active');
-};
-
-
-if (document.readyState == 'loading') {
-    document.addEventListener('DOMContentLoaded', ready);
-} else {
-    ready();
-}
-
-function ready() {
-    loadCartFromLocalStorage();
-
-    var removeCartItemButtons = document.getElementsByClassName('cart-remove');
-    for (var i = 0; i < removeCartItemButtons.length; i++) {
-        var button = removeCartItemButtons[i];
-        button.addEventListener('click', removeCartItem);
+document.addEventListener('DOMContentLoaded', function () {
+    if (window.isAuthenticated) {
+        updateCartCount();
+        loadCartItems();
+    } else {
+        updateCartCountLocal();
+        loadCartFromLocalStorage();
     }
+    document.querySelectorAll('.add-cart').forEach(button => {
+        button.addEventListener('click', function (event) {
+            event.preventDefault();
 
-    var quantityInputs = document.getElementsByClassName('cart-quantity');
-    for (var i = 0; i < quantityInputs.length; i++) {
-        var input = quantityInputs[i];
-        input.addEventListener('change', quantityChange);
-    }
+            const productId = this.getAttribute('data-product-id');
+            const quantity = 1;
 
-    // Checkout button listener
-    document.getElementsByClassName('btn-buy')[0].addEventListener('click', checkoutClicked);
+            if (window.isAuthenticated) {
+                $.ajax({
+                    url: "/store-cart",
+                    type: "POST",
+                    data: {
+                        _token: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        product_id: productId,
+                        quantity: quantity
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            alert(response.message);
+                            updateCartCount();
+                            loadCartItems();
+                        } else {
+                            alert("Failed to add to cart.");
+                        }
+                    },
+                    error: function (xhr) {
+                        alert("Error: " + (xhr.responseJSON?.message || 'Unknown error'));
+                    }
+                });
+            } else {
+                const productCard = this.closest('.product-card');
+                const title = productCard.querySelector('.product-title').innerText;
+                const price = productCard.querySelector('.card-price').innerText;
+                const imgSrc = productCard.querySelector('.product-img').src;
 
-    // Add to cart button listener
-    var addcart = document.getElementsByClassName('add-cart');
-    for (let i = 0; i < addcart.length; i++) {
-        addcart[i].addEventListener('click', addCartClicked);
-    }
-}
+                addProductToCart(title, price, imgSrc);
+                alert("Added to cart.");
+            }
+        });
+    });
 
-// Load cart from localStorage and rebuild UI
-// function loadCartFromLocalStorage() {
-//     const cartDataJSON = localStorage.getItem('cart');
-//     if (!cartDataJSON) return;
+    // Sidebar toggle
+    const cartLink = document.getElementById("cartLink");
+    const cartSidebar = document.getElementById("cartSidebar");
+    const closeCart = document.getElementById("close-card");
 
-//     const cartData = JSON.parse(cartDataJSON);
-//     const cartItemContainer = document.querySelector('.cart-content');
+    cartLink.addEventListener("click", function (e) {
+        e.preventDefault();
+        cartSidebar.classList.add("active");
 
-//     cartData.forEach(item => {
-//         // Check if already added to avoid duplicates (if page reloads)
-//         let alreadyAdded = false;
-//         const existingTitles = cartItemContainer.getElementsByClassName('cart-product-title');
-//         for (let i = 0; i < existingTitles.length; i++) {
-//             if (existingTitles[i].innerText === item.title) {
-//                 alreadyAdded = true;
-//                 break;
-//             }
-//         }
-//         if (!alreadyAdded) {
-//             addProductToCart(item.title, item.price, item.imgSrc, item.quantity);
-//         }
-//     });
-//     updateTotal();
-//     updateCartCount();
-// }
+        if (window.isAuthenticated) {
+            loadCartItems();
+        } else {
+            loadCartFromLocalStorage();
+        }
+    });
+
+    closeCart.addEventListener("click", function () {
+        cartSidebar.classList.remove("active");
+    });
+});
+
+// =========================
+// Local Storage Functions
+// =========================
 
 function loadCartFromLocalStorage() {
-    const cartDataJSON = localStorage.getItem('cart');
-    if (!cartDataJSON) return;
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const cartContent = document.querySelector('.cart-content');
+    cartContent.innerHTML = '';
+    let total = 0;
 
-    const cartData = JSON.parse(cartDataJSON);
-
-    cartData.forEach(item => {
-        // Just add everything from localStorage, even duplicates
-        addProductToCart(item.title, item.price, item.imgSrc, item.quantity);
+    cart.forEach((item, index) => {
+        const itemHtml = `
+            <div class="cart-box">
+                <img src="${item.imgSrc}" class="cart-img" alt="${item.title}">
+                <div class="detail-box">
+                    <div class="cart-product-title">${item.title}</div>
+                    <div class="cart-price">${item.price}</div>
+                    <input type="number" value="${item.quantity}" class="cart-quantity" disabled>
+                </div>
+                <i class="bx bxs-trash-alt cart-remove" data-id="${index}" onclick="removeItemFromLocal(${index})"></i>
+            </div>
+        `;
+        cartContent.insertAdjacentHTML('beforeend', itemHtml);
+        total += parseFloat(item.price.replace(/[^\d.]/g, '')) * item.quantity;
     });
 
-    updateTotal();
-    updateCartCount();
+    document.getElementById('totalPrice').innerText = total.toFixed(2) + "$";
 }
 
+function addProductToCart(title, price, imgSrc) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const existing = cart.find(item => item.title === title);
 
-// Add product to cart, with optional quantity (default 1)
-function addProductToCart(title, price, productImgSrc, quantity = 1) {
-    var cartItem = document.getElementsByClassName('cart-content')[0];
-    var cartItemNames = cartItem.getElementsByClassName('cart-product-title');
-
-    // for (var i = 0; i < cartItemNames.length; i++) {
-    //     if (cartItemNames[i].innerText === title) {
-    //         alert('This item is already added to the cart');
-    //         return;
-    //     }
-    // }
-
-    var cartbox = document.createElement('div');
-    cartbox.classList.add('cart-box');
-    var cartboxContent = `
-        <img src="${productImgSrc}" alt="" class="img-fluid cart-img">
-        <div class="cart-detial">
-            <div class="cart-product-title">${title}</div>
-            <div class="cart-price">${price}</div>
-            <input type="number" value="${quantity}" min="1" max="10" class="cart-quantity text-center">
-        </div>
-        <i class="fa-solid fa-trash cart-remove"></i>`;
-
-    cartbox.innerHTML = cartboxContent;
-    cartItem.append(cartbox);
-
-    cartbox.querySelector('.cart-remove').addEventListener('click', removeCartItem);
-    cartbox.querySelector('.cart-quantity').addEventListener('change', quantityChange);
-
-    updateTotal();
-    updateCartCount();
-    saveCartToLocalStorage();
-}
-
-// Save current cart data to localStorage
-function saveCartToLocalStorage() {
-    const cartItemContainer = document.querySelector('.cart-content');
-    const cartBoxes = cartItemContainer.querySelectorAll('.cart-box');
-    const cartData = [];
-
-    cartBoxes.forEach(box => {
-        const title = box.querySelector('.cart-product-title').innerText;
-        const price = box.querySelector('.cart-price').innerText;
-        const quantity = box.querySelector('.cart-quantity').value;
-        const imgSrc = box.querySelector('img.cart-img').src;
-
-        cartData.push({ title, price, quantity, imgSrc });
-    });
-
-    localStorage.setItem('cart', JSON.stringify(cartData));
-}
-
-// Handle quantity input changes
-function quantityChange(event) {
-    var input = event.target;
-    if (isNaN(input.value) || input.value <= 0) {
-        input.value = 1;
-    }
-    updateTotal();
-    updateCartCount();
-    saveCartToLocalStorage();
-}
-
-// Remove item from cart UI & storage
-function removeCartItem(event) {
-    var buttonClicked = event.target;
-    buttonClicked.parentElement.remove();
-    updateTotal();
-    updateCartCount();
-    saveCartToLocalStorage();
-}
-
-// Update total price
-function updateTotal() {
-    var cartItemContainer = document.getElementsByClassName('cart-content')[0];
-    var cartBoxes = cartItemContainer.getElementsByClassName('cart-box');
-    var total = 0;
-
-    for (var i = 0; i < cartBoxes.length; i++) {
-        var cartBox = cartBoxes[i];
-        var priceElement = cartBox.getElementsByClassName('cart-price')[0];
-        var quantityElement = cartBox.getElementsByClassName('cart-quantity')[0];
-
-        var price = parseFloat(priceElement.innerText.replace('$', ''));
-        var quantity = quantityElement.value;
-
-        total += (price * quantity);
-    }
-
-    document.getElementsByClassName('total-price')[0].innerText = '$' + total.toFixed(2);
-}
-
-// Update the cart count badge
-function updateCartCount() {
-    const countLabel = document.getElementById("count_cart");
-    const cartItemContainer = document.querySelector('.cart-content');
-    const cartBoxes = cartItemContainer.querySelectorAll('.cart-box');
-    countLabel.textContent = cartBoxes.length;
-}
-
-// When the "Add to Cart" button is clicked on a product
-function addCartClicked(event) {
-    event.preventDefault();
-
-    var button = event.target;
-    var shopproduct = button.closest('.product-card');
-    var title = shopproduct.querySelector('.product-title').innerText;
-    var price = shopproduct.querySelector('.card-price').innerText;
-    var productImgElement = shopproduct.querySelector('.product-img');
-
-    if (productImgElement) {
-        var productImgSrc = productImgElement.src;
-        addProductToCart(title, price, productImgSrc);
-        updateTotal();
-
-        // Optionally remove from wishlist (if you have this function)
-        if (typeof removeProductFromWishlistByName === "function") {
-            removeProductFromWishlistByName(title);
-        }
+    if (existing) {
+        existing.quantity++;
     } else {
-        console.error("Image element not found.");
+        cart.push({ title, price, imgSrc, quantity: 1 });
+    }
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartCountLocal();
+    loadCartFromLocalStorage();
+}
+
+function removeItemFromLocal(index) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    cart.splice(index, 1);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartCountLocal();
+    loadCartFromLocalStorage();
+}
+
+function updateCartCountLocal() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    updateCartBadge(cart.length);
+}
+
+// =========================
+// Laravel Authenticated Functions
+// =========================
+
+function updateCartCount() {
+    $.ajax({
+        url: "/countcart",
+        method: "GET",
+        success: function (response) {
+            updateCartBadge(response.cart_count || 0);
+        },
+        error: function () {
+            console.error("Failed to count cart items");
+        }
+    });
+}
+
+function loadCartItems() {
+    $.ajax({
+        url: "/checkcart",
+        method: "GET",
+        success: function (response) {
+            const cartContent = document.querySelector('.cart-content');
+            cartContent.innerHTML = '';
+            let total = 0;
+
+            response.cartItems.forEach(item => {
+                const itemHtml = `
+                    <div class="cart-box" style="display: flex; align-items: center; gap: 15px; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9;">
+                        <img src="${item.image}" alt="${item.name}" class="product-img" style="height: 80px; width: 80px; object-fit: cover; border-radius: 6px;">
+                        <div class="detail-box" style="flex: 1;">
+                            <div class="cart-product-title" style="font-weight: 600; font-size: 1rem;">${item.name}</div>
+                            <div class="cart-price" style="color: red; font-size: 0.95rem; margin: 4px 0;">${item.price} $</div>
+                            <div style="display: flex; align-items: center; gap: 6px;">
+                                <span style="font-size: 0.85rem; color: #555;">Qty:</span>
+                                <input type="number" value="${item.quantity}" class="cart-quantity" disabled style="width: 60px; padding: 4px; font-size: 0.85rem;">
+                            </div>
+                        </div>
+                        <button class="cart-remove-btn" data-id="${item.id}" style="background-color: #dc3545; color: white; border: none; border-radius: 4px; padding: 6px 10px; font-size: 0.85rem; cursor: pointer;">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                cartContent.insertAdjacentHTML('beforeend', itemHtml);
+                total += parseFloat(item.price.replace(/[^\d.]/g, '')) * item.quantity;
+            });
+
+            const totalPriceElement = document.querySelector('.total-price');
+            if (totalPriceElement) {
+                totalPriceElement.innerText = total.toFixed(2) + "$";
+            }
+        },
+        error: function () {
+            console.error("Failed to load cart items");
+        }
+    });
+}
+
+$(document).ready(function () {
+    $(document).on('click', '.cart-remove-btn', function () {
+        const cartId = $(this).data('id');
+        removeItemFromServerCart(cartId);
+    });
+});
+
+function removeItemFromServerCart(cartId) {
+    $.ajax({
+        url: '/remove',
+        type: 'DELETE',
+        data: {
+            id: cartId,
+            _token: $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function (response) {
+            if (response.success) {
+                alert('Item removed successfully');
+                loadCartItems();
+            } else {
+                alert('Failed to remove item.');
+            }
+        },
+        error: function (xhr) {
+            console.error('Error removing item:', xhr.responseText);
+            alert('Something went wrong while removing the item.');
+        }
+    });
+}
+
+// =========================
+// Badge Count
+// =========================
+
+function updateCartBadge(count) {
+    const badge = document.getElementById('count_cart');
+    if (badge) {
+        badge.textContent = count;
+        badge.style.display = count > 0 ? 'inline-block' : 'none';
     }
 }
-
-// Checkout button handler
-// function checkoutClicked() {
-//     // Redirect to checkout page
-//     window.location.href = 'checkout';
-
-//     // Clear cart UI
-//     var cartItems = document.getElementsByClassName('cart-content')[0];
-//     while (cartItems.hasChildNodes()) {
-//         cartItems.removeChild(cartItems.firstChild);
-//     }
-//     updateTotal();
-//     updateCartCount();
-
-//     // Clear saved cart in localStorage
-//     localStorage.removeItem('cart');
-// }
-function checkoutClicked() {
-    window.location.href = 'checkout';
-}
-
-// Make addProductToCart globally accessible if needed
-window.addProductToCart = addProductToCart;

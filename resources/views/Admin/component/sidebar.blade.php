@@ -62,7 +62,8 @@
         <a href="{{ route('delivery.index') }}" class="w3-bar-item w3-button"><i class="fa fa-list"></i>Delivery Fee</a>
     </div>
     <a href="#" class="w3-bar-item w3-button order-link"><i class="fas fa-shopping-cart"></i> Order</a>
-    <a href="#" class="w3-bar-item w3-button customer-link"><i class="fas fa-user"></i> Customer</a>
+    {{-- <a href="#" class="w3-bar-item w3-button customer-link"><i class="fas fa-user"></i> Customer</a> --}}
+    <a href="{{ route('customer_admin.index') }}" class="w3-bar-item w3-button"><i class="fa fa-qrcode"></i> Customer</a>
     <a href="#" class="w3-bar-item w3-button payment-link"><i class="fas fa-money-bill-wave"></i> Payment</a>
     
     {{-- report --}}

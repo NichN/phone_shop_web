@@ -3,6 +3,7 @@
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\cartController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\HomeController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\Admin_user_controller;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\customer_admincontroller;
 use App\Http\Controllers\categoryController;
 use App\Http\Controllers\dashboardcontroller;
 use App\Http\Controllers\productAdminController;
@@ -51,9 +53,6 @@ Route::prefix('history')->controller(HistoryController::class)->group(function (
 
 Route::get('/invoice', [InvoiceController::class, 'showStaticInvoice'])->name('invoice');
 
-Route::get('/checkout', [CheckoutController::class, 'showCheckout'])->name('checkout.show');
-
-Route::post('/checkout', [CheckoutController::class, 'processCheckout'])->name('checkout.process');
 
 
 Route::get('/payment/invoice', function () {
@@ -68,7 +67,7 @@ Route::get('/payment/invoice', function () {
             ['name' => 'OPPO', 'price' => 799.00],
         ],
 
-        'total_usd' => 1299.00 + 799.00 + 1.50, // subtotal + delivery
+        'total_usd' => 1299.00 + 799.00 + 1.50,
         'total_khr' => number_format((1299.00 + 799.00 + 1.50) * 4100, 0),
         'cash' => 2100.00,
         'change_usd' => number_format(2100.00 - (1299.00 + 799.00 + 1.50), 2),
@@ -77,12 +76,16 @@ Route::get('/payment/invoice', function () {
 })->name('payment.invoice');
 
 Route::get('/payment/card', [CheckoutController::class, 'showCardPayment'])->name('payment.card');
-
 Route::post('/payment/process', [CheckoutController::class, 'processPayment'])->name('payment.process');
+Route::get('/checkout', [CheckoutController::class, 'showCheckout'])->name('checkout.show');
+Route::post('/checkout', [CheckoutController::class, 'processCheckout'])->name('checkout.process');
+
 
 // auth_form
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-Route::post('/register', [RegisterController::class, 'register']);
+// Route::post('/register', [RegisterController::class, 'register']);
+Route::post('/register', [RegisterController::class, 'register'])->name('register');
+
 
 Route::get('/login',function(){
     return view('authentication_form.login');
@@ -110,6 +113,7 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
     Route::get('/sidebar', [dashboardcontroller::class, 'index'])->name('index');
     Route::get('/', [dashboardcontroller::class, 'show'])->name('show');
     Route::get('/product',[dashboardcontroller::class, 'product_count'])->name('product_count');
+    Route::get('/purchase',[dashboardcontroller::class, 'purchase'])->name('purchase');
 });
 Route::prefix('products')->name('products.')->group(function () {
     Route::get('/color', [productAdminController::class, 'index'])->name('colorlist');
@@ -216,5 +220,28 @@ Route::middleware('auth')->group(function () {
     Route::post('/two-factor', [TwoFactorController::class, 'verify'])->name('two_factor.verify');
 });
 
+// Route::prefix('order')->name('order.')->group(function(){
+//     Route::get('/',[OrderController::class,'index'])->name('index');
+// });
+// Route::prefix('cart')->name('cart.')->group(function () {
+//     Route::get('/', [CartController::class, 'checkout'])->name('index'); 
+//     Route::post('/store', [CartController::class, 'store'])->name('store'); 
+//     Route::post('/sync', [CartController::class, 'sync'])->name('sync');
+//     Route::put('/{productId}', [CartController::class, 'update'])->name('update'); 
+//     Route::delete('/{productId}', [CartController::class, 'destroy'])->name('destroy');
+// });
 
+
+// Cart by nich
+Route::post('/store-cart', [CartController::class, 'storeCart'])
+    ->middleware('auth')->name('cart.store');
+// Route::get('/',[CartController::class, 'index'])->middleware('auth')->name('cart.index');
+Route::get('/countcart',[cartController::class,'countCart'])->name('cart.number');
+Route::get('/checkcart',[cartController::class,'checkcart'])->name('cart.check');
+Route::delete('/remove',[cartController::class,'remove'])->middleware('auth')->name('check');
+
+Route::prefix('customer_admin')->name('customer_admin.')->group(function(){
+    Route::get('/',[customer_admincontroller::class,'index'])->name('index');
+    Route::get('/add',[customer_admincontroller::class,'add'])->name('new');
+});
 ?>

@@ -13,17 +13,17 @@
                 <div class="card stat-card">
                     <div class="card-header1">Total Products</div>
                     <div class="card-body">
-                        <div class="stat-number">{{ $total_product->total_product ?? 0 }}</div>
+                        <div class="stat-number">{{ $total_product }}</div>
                         <div class="stat-label"><b>Products Available</b></div>
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="card stat-card">
-                    <div class="card-header1">Total Customers</div>
+                    <div class="card-header1">Total Purchase</div>
                     <div class="card-body">
-                        <div class="stat-number">512</div>
-                        <div class="stat-label"><b>Registered Users</b></div>
+                        <div class="stat-number" style="font-size:33px;">{{ $Grand_total}} $</div>
+                        <div class="stat-label"><b>Purchase Expend</b></div>
                     </div>
                 </div>
             </div>

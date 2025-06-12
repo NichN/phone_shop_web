@@ -152,10 +152,10 @@
                             <div class="card-body text-right bg-light">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <h5 class="card-title mt-2 product-title">{{ $product->name }}</h5>
-                                    <i class="add-wishlist fa-regular fa-heart fs-5" data-product-id="{{ $product->id }}"></i>
+                                    <i class="add-wishlist fa-regular fa-heart fs-5"></i>
                                 </div>
                                 <p class="card-price">{{ $product->price }}</p>
-                                <a href="#" class="btn btn-primary px-4 py-2 d-inline-block custom-btn w-100 add-cart">Add to Cart</a>
+                                <a href="#" class="btn btn-primary px-4 py-2 d-inline-block custom-btn w-100 add-cart" data-product-id="{{ $product->id }}">Add to Cart</a>
                             </div>
                         </div>
                     </div>
@@ -186,7 +186,7 @@
                                     <i class="fa-regular fa-heart fs-5 add-wishlist"></i>
                                 </div>
                                 <p class="card-price">{{ $product->price }}</p>
-                                <a href="#" class="btn btn-primary px-4 py-2 d-inline-block custom-btn w-100 add-cart">Add to Cart</a>
+                                <a href="#" class="btn btn-primary px-4 py-2 d-inline-block custom-btn w-100 add-cart" data-product-id="{{ $product->id }}">Add to Cart</a>
                             </div>
                         </div>
                     </div>
