@@ -25,11 +25,16 @@ use App\Http\Controllers\purchaseController;
 use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\delivery_feeController;
 use App\Http\Controllers\reportController;
+use App\Http\Controllers\Admin\UserController;
 use App\Models\purchase;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+
+Route::redirect('/', '/homepage');
 
 Route::get('/homepage', [HomeController::class, 'index'])->name('homepage');
 
@@ -90,6 +95,29 @@ Route::post('/register', [RegisterController::class, 'register'])->name('registe
 Route::get('/login',function(){
     return view('authentication_form.login');
 })->name('login');
+
+Route::post('/login', function (Request $request) {
+    $credentials = $request->only('email', 'password');
+
+    if (Auth::attempt($credentials)) {
+        $request->session()->regenerate();
+        return redirect()->intended('/'); // 👈 redirects to homepage
+    }
+
+    return back()->withErrors([
+        'email' => 'Invalid credentials.',
+    ]);
+})->name('login');
+
+
+Route::post('/logout', function (Request $request) {
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    return redirect('/login');
+})->name('logout');
+
+
 
 Route::get('/verifyemail',function(){
     return view('authentication_form.forgetpw');
@@ -220,16 +248,16 @@ Route::middleware('auth')->group(function () {
     Route::post('/two-factor', [TwoFactorController::class, 'verify'])->name('two_factor.verify');
 });
 
-// Route::prefix('order')->name('order.')->group(function(){
-//     Route::get('/',[OrderController::class,'index'])->name('index');
-// });
-// Route::prefix('cart')->name('cart.')->group(function () {
-//     Route::get('/', [CartController::class, 'checkout'])->name('index'); 
-//     Route::post('/store', [CartController::class, 'store'])->name('store'); 
-//     Route::post('/sync', [CartController::class, 'sync'])->name('sync');
-//     Route::put('/{productId}', [CartController::class, 'update'])->name('update'); 
-//     Route::delete('/{productId}', [CartController::class, 'destroy'])->name('destroy');
-// });
+Route::prefix('order')->name('order.')->group(function(){
+    Route::get('/',[OrderController::class,'index'])->name('index');
+});
+Route::prefix('cart')->name('cart.')->group(function () {
+    Route::get('/', [CartController::class, 'checkout'])->name('index'); 
+    Route::post('/store', [CartController::class, 'store'])->name('store'); 
+    Route::post('/sync', [CartController::class, 'sync'])->name('sync');
+    Route::put('/{productId}', [CartController::class, 'update'])->name('update'); 
+    Route::delete('/{productId}', [CartController::class, 'destroy'])->name('destroy');
+});
 
 
 // Cart by nich
@@ -244,4 +272,17 @@ Route::prefix('customer_admin')->name('customer_admin.')->group(function(){
     Route::get('/',[customer_admincontroller::class,'index'])->name('index');
     Route::get('/add',[customer_admincontroller::class,'add'])->name('new');
 });
+
+Route::prefix('admin')->middleware('auth')->group(function () {
+    Route::get('/users', [Admin_user_controller::class, 'index'])->name('user.index');
+    Route::get('/users/data', [Admin_user_controller::class, 'getData'])->name('user.data');
+    Route::get('/users/create', [Admin_user_controller::class, 'create'])->name('user.new');
+    Route::post('/users', [Admin_user_controller::class, 'store'])->name('user.store');
+    Route::get('/users/{user}/edit', [Admin_user_controller::class, 'edit'])->name('user.edit');
+    Route::put('/users/{user}', [Admin_user_controller::class, 'update'])->name('user.update');
+    Route::delete('/users/{user}', [Admin_user_controller::class, 'destroy'])->name('user.destroy');
+});
+
 ?>
+
+
