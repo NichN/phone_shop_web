@@ -25,13 +25,13 @@
                     <table class="table data-table payment mt-3" style="min-width: auto !important;">
                         <thead>
                             <tr>
-                                <th style="background-color: #70000e !important; color: white !important;">No</th>
-                                <th style="background-color: #70000e !important; color: white !important;">Reference No</th>
-                                <th style="background-color: #70000e !important; color: white !important;">Grand Total</th>
-                                <th style="background-color: #70000e !important; color: white !important;">Paid</th>
-                                <th style="background-color: #70000e !important; color: white !important;">Balance</th>
-                                <th style="background-color: #70000e !important; color: white !important;">Status</th>
-                                <th style="background-color: #70000e !important; color: white !important;">Action</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">No</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Reference No</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Grand Total</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Paid</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Balance</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Status</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Action</th>
                             </tr>
                         </thead>                                
                         <tbody>
@@ -45,7 +45,7 @@
 <div class="modal fade" id="invoiceModal" tabindex="-1" aria-labelledby="invoiceModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header text-white" style="background-color: #70000e;">
+            <div class="modal-header text-white" style="background-color: #2e3b56;">
                 <h5 class="mb-0"><i class="fas fa-file-invoice me-2"></i>Purchase Invoice</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -65,12 +65,12 @@
                         <table class="table table-bordered">
                             <thead class="table-light">
                                 <tr>
-                                    <th style="background-color: #70000e !important; color: white !important;">ផលិតផល</th>
-                                    <th style="background-color: #70000e !important; color: white !important;">ពណ៌</th>
-                                    <th style="background-color: #70000e !important; color: white !important;">ទំហំ</th>
-                                    <th style="background-color: #70000e !important; color: white !important;">ចំនួន</th>
-                                    <th style="background-color: #70000e !important; color: white !important;">តម្លៃ</th>
-                                    <th style="background-color: #70000e !important; color: white !important;">សរុប</th>
+                                    <th style="background-color: #2e3b56 !important; color: white !important;">ផលិតផល</th>
+                                    <th style="background-color: #2e3b56 !important; color: white !important;">ពណ៌</th>
+                                    <th style="background-color: #2e3b56 !important; color: white !important;">ទំហំ</th>
+                                    <th style="background-color: #2e3b56 !important; color: white !important;">ចំនួន</th>
+                                    <th style="background-color: #2e3b56 !important; color: white !important;">តម្លៃ</th>
+                                    <th style="background-color: #2e3b56 !important; color: white !important;">សរុប</th>
                                 </tr>
                             </thead>
                             <tbody id="invoiceItems">
@@ -78,7 +78,7 @@
                             <tfoot>
                                 <tr>
                                     <td colspan="5" class="text-end"><strong>សរុបទាំងអស់:</strong></td>
-                                    <td id="invoiceSubtotal" style="background-color: #70000e; color:white;">$0.00</td>
+                                    <td id="invoiceSubtotal" style="background-color: #2e3b56; color:white;">$0.00</td>
                                 </tr>
                             </tfoot>
                         </table>

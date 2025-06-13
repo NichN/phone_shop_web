@@ -15,7 +15,7 @@ body {
 }
 
 .nav-link.text-uppercase:hover{ /* Navigation Text Hover */
-    color: #70000E;
+    color: #2e3b56;
 }
 
 .custom-link i{ /* Icon Size */
@@ -34,7 +34,7 @@ body {
 }
 
 .custom-link:hover { /* Text Hover */
-    color: #70000E;
+    color: #2e3b56;
 }
 
 .navbar{ /* Navigation Box Shadow */
@@ -46,21 +46,21 @@ body {
 }
 
 .custom-carousel{ /* Next Previous Color */
-    color: #70000E;
+    color: #2e3b56;
 }
 
 .carousel-indicators button { /* Slide indicator Color */
-    background-color: #70000E;
-    border-color: #70000E;     
+    background-color: #2e3b56;
+    border-color: #2e3b56;     
 }
 
 .carousel-indicators .active { /* Slide indicator Color */
-    background-color: #70000E; 
+    background-color: #2e3b56; 
 }
 
 .custom-btn { /* button Color */
-    background-color: #70000e;
-    border-color: #70000e; 
+    background-color: #2e3b56;
+    border-color: #2e3b56; 
     color: white;
 }
 
@@ -202,7 +202,7 @@ body {
   
 .shop-cate{
     text-decoration: none;
-    color: #70000E;
+    color: #2e3b56;
 }
 .shop-cate:hover{
     color: black;
@@ -214,7 +214,7 @@ body {
     transform: translateX(-50%);
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
-    background-color: #70000E;
+    background-color: #2e3b56;
 }
 .COL > .COL, .ROW > .col-lg-2:hover .Btn {
     opacity: 1;
@@ -290,7 +290,7 @@ li a{
   }
 
 .fa-heart:hover {
-    color: #70000e;
+    color: #2e3b56;
 }
 
 /* Category-Product */

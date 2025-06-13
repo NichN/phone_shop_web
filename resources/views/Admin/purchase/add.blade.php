@@ -62,14 +62,14 @@
                     <table class="table data-table purchase mt-3" style="min-width: auto !important;" id="purchase-table">
                         <thead style="text-align:center;">
                             <tr>
-                                <th style="background-color: #70000e !important; color: white !important;">No</th>
-                                <th style="background-color: #70000e !important; color: white !important;">Product</th>
-                                <th style="background-color: #70000e !important; color: white !important;">Color</th>
-                                <th style="background-color: #70000e !important; color: white !important;">Size</th>
-                                <th style="background-color: #70000e !important; color: white !important;">QTY</th>
-                                <th style="background-color: #70000e !important; color: white !important;">Unit Cost</th>
-                                <th style="background-color: #70000e !important; color: white !important;">Subtotal</th>
-                                <th style="background-color: #70000e !important; color: white !important;">Action</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">No</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Product</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Color</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Size</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">QTY</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Unit Cost</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Subtotal</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Action</th>
                             </tr>
                         </thead> 
                         <tfoot>

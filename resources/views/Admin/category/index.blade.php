@@ -18,12 +18,12 @@
                         <table class="table data-table mt-3" style="min-width: auto !important;">
                             <thead>
                                 <tr>
-                                    <th style="background-color: #70000e !important; color: white !important;">No</th>
-                                    <th style="background-color: #70000e !important; color: white !important;">Picture</th>
-                                    <th style="background-color: #70000e !important; color: white !important;">Name</th>
-                                    <th style="background-color: #70000e !important; color: white !important;">Description</th>
-                                    <th style="background-color: #70000e !important; color: white !important;">Created Date</th>
-                                    <th style="background-color: #70000e !important; color: white !important;">Action</th>
+                                    <th style="background-color: #2e3b56 !important; color: white !important;">No</th>
+                                    <th style="background-color: #2e3b56 !important; color: white !important;">Picture</th>
+                                    <th style="background-color: #2e3b56 !important; color: white !important;">Name</th>
+                                    <th style="background-color: #2e3b56 !important; color: white !important;">Description</th>
+                                    <th style="background-color: #2e3b56 !important; color: white !important;">Created Date</th>
+                                    <th style="background-color: #2e3b56 !important; color: white !important;">Action</th>
                                 </tr>
                             </thead>                                
                         </table>

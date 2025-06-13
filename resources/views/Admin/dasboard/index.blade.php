@@ -2,7 +2,8 @@
 <link href="{{ asset('css/dashboard.css')}}" rel="stylesheet">
 <div class="w3-main">
     <div class="container mt-4">
-        <div class="w3-container" style="background-color: rgb(112, 0, 14) !important; color: white !important;height:70px;">
+        <div class="w3-container" style="background-color: #5972a5
+  !important; color: white !important;height:70px;">
             <div style="display: flex; justify-content: space-between;">
                 <h2 class="mt-3">TAYMENG PHONE SHOP</h2>
                 <p>Welcome Back</p>

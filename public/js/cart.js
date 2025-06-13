@@ -153,7 +153,7 @@ function loadCartItems() {
                             <div class="cart-product-title" style="font-weight: 600; font-size: 1rem;">${item.name}</div>
                             <div class="cart-price" style="color: red; font-size: 0.95rem; margin: 4px 0;">${item.price} $</div>
                             <div style="display: flex; align-items: center; gap: 6px;">
-                                <span style="font-size: 0.85rem; color: #555;">Qty:</span>
+                                <span style="font-size: 0.85rem; color: #5972a5;">Qty:</span>
                                 <input type="number" value="${item.quantity}" class="cart-quantity" disabled style="width: 60px; padding: 4px; font-size: 0.85rem;">
                             </div>
                         </div>

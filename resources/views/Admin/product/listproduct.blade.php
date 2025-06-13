@@ -22,12 +22,12 @@
                     <table class="table data-table mt-3" style="min-width: auto !important;">
                         <thead>
                             <tr>
-                                <th style="background-color: #70000e !important; color: white !important;">No</th>
-                                <th style="background-color: #70000e !important; color: white !important;">Name</th>
-                                <th style="background-color: #70000e !important; color: white !important;">Brand</th>
-                                <th style="background-color: #70000e !important; color: white !important;">Category</th>
-                                <th style="background-color: #70000e !important; color: white !important;">Description</th>
-                                <th style="background-color: #70000e !important; color: white !important;">Action</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">No</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Name</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Brand</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Category</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Description</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Action</th>
                             </tr>
                         </thead>                                
                         <tbody>
@@ -149,7 +149,7 @@
 <div class="modal fade" id="viewDetailModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <div class="modal-header" style="background-color: #70000e;">
+      <div class="modal-header" style="background-color: #2e3b56;">
         <h5 class="mb-0 text-white" id="viewModalLabel"><i class="fas fa-tags me-2"></i></h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
@@ -164,7 +164,7 @@
             </div>
             <div class="col-md-6">
               <div class="d-flex align-items-center justify-content-between mb-4">
-                <h2 class="mb-0" id="product_name" style="color:#70000e; font-size:25px;"></h2>
+                <h2 class="mb-0" id="product_name" style="color:#2e3b56; font-size:25px;"></h2>
                 <p class="mb-0" id="brand_name"></p>
               </div>
               <h3 class="text-danger mb-4" id="product_price" style="color:red; font-size:25px;"></><strong></strong></h3>

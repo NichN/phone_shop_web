@@ -54,9 +54,9 @@
                 <!-- User Button -->
                 <button class="btn position-relative dropdown-toggle" type="button" id="profileDropdown"
                     data-bs-toggle="dropdown" aria-expanded="false">
-                    <h5 class="modal-title mb-0" id="profileModalLabel">
+                    <h8 class="modal-title mb-0" id="profileModalLabel">
                         Hello, {{ Auth::check() ? Auth::user()->name : 'Guest' }}
-                    </h5>
+                    </h8>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
                     <li><a class="dropdown-item" href="{{ route('history') }}"><i class="fa-solid fa-box me-2"></i>
@@ -182,68 +182,56 @@
 
                                 <!-- Edit Profile Section -->
                                 <div id="editProfileContent">
-                                    <div class="text-center mb-4">
-                                        <h3>My Profile</h3>
-                                        <p class="text-muted">Manage your personal information</p>
-                                        <img src="{{ asset('image/smphone.png') }}" class="rounded-circle mb-2"
-                                            width="120" height="120" alt="Profile Picture">
-                                        <br>
-                                        <button class="btn btn-outline-danger btn-sm">Change Photo</button>
-                                    </div>
-                                    <form>
-                                        <div class="mb-3">
-                                            <label class="form-label fw-semibold">Full Name</label>
-                                            <div class="input-group">
-                                                <input type="text" class="form-control"
-                                                    placeholder="Enter Your Name" required>
-                                                <button class="btn btn-danger" type="button">Edit</button>
-                                            </div>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label fw-semibold">Phone Number</label>
-                                            <div class="input-group">
-                                                <input type="text" class="form-control"
-                                                    placeholder="Enter Your Number" required>
-                                                <button class="btn btn-danger" type="button">Edit</button>
-                                            </div>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label fw-semibold">Email</label>
-                                            <div class="input-group">
-                                                <input type="text" class="form-control"
-                                                    placeholder="your@email.com" required>
-                                                <button class="btn btn-danger" type="button">Edit</button>
-                                            </div>
-                                            <small class="text-muted">We collect this in case of emergencies.</small>
-                                        </div>
-                                        <button type="submit" class="btn btn-success w-100">Save Changes</button>
-                                    </form>
+<form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
+    @csrf
+    <div class="text-center mb-4">
+        <img src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('image/smphone.png') }}"
+             class="rounded-circle mb-2"
+             width="120" height="120" alt="Profile Picture">
+        <input type="file" name="profile_image" class="form-control mt-2" accept="image/*">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-semibold">Full Name</label>
+        <input type="text" name="name" class="form-control" value="{{ Auth::user()->name }}" required>
+    </div>
+    <div class="mb-3">
+        <label class="form-label fw-semibold">Phone Number</label>
+        <input type="text" name="phone_number" class="form-control" value="{{ Auth::user()->phone_number }}">
+    </div>
+    <div class="mb-3">
+        <label class="form-label fw-semibold">Email</label>
+        <input type="email" name="email" class="form-control" value="{{ Auth::user()->email }}" required>
+    </div>
+
+    <button type="submit" class="btn btn-success w-100">Save Changes</button>
+</form>
+
+
+
                                 </div>
                                 <div id="changePasswordContent" style="display: none;">
                                     <div class="text-center mb-4">
                                         <h3>Change Password</h3>
                                         <p class="text-muted">Make sure your new password is strong and secure.</p>
                                     </div>
-                                    <form>
+                                    <form action="{{ route('profile.password') }}" method="POST">
+                                        @csrf
                                         <div class="mb-3">
                                             <label class="form-label">Current Password</label>
-                                            <input type="password" class="form-control"
-                                                placeholder="Enter current password" required>
+                                            <input type="password" name="current_password" class="form-control" required>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">New Password</label>
-                                            <input type="password" class="form-control"
-                                                placeholder="Enter new password" required>
-                                            <small class="text-muted">Minimum 8 characters with at least one number and
-                                                one special character.</small>
+                                            <input type="password" name="new_password" class="form-control" required>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Confirm New Password</label>
-                                            <input type="password" class="form-control"
-                                                placeholder="Confirm new password" required>
+                                            <input type="password" name="new_password_confirmation" class="form-control" required>
                                         </div>
                                         <button type="submit" class="btn btn-success w-100">Update Password</button>
                                     </form>
+
                                 </div>
                                 <div id="addressContent" style="display: none;">
                                     <div class="text-center mb-4">
@@ -251,33 +239,28 @@
                                         <p class="text-muted">Update your shipping or contact address here.</p>
                                     </div>
 
-                                    <form>
-                                        <div class="mb-3">
-                                            <label class="form-label">Street Address</label>
-                                            <div class="input-group">
-                                                <input type="text" class="form-control"
-                                                    placeholder="Enter your street address" required>
-                                                <button class="btn btn-danger" type="button">Edit</button>
-                                            </div>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">City</label>
-                                            <div class="input-group">
-                                                <input type="text" class="form-control"
-                                                    placeholder="Enter your city" required>
-                                                <button class="btn btn-danger" type="button">Edit</button>
-                                            </div>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Province</label>
-                                            <div class="input-group">
-                                                <input type="text" class="form-control"
-                                                    placeholder="Enter your province" required>
-                                                <button class="btn btn-danger" type="button">Edit</button>
-                                            </div>
-                                        </div>
-                                        <button type="submit" class="btn btn-success w-100">Save Address</button>
-                                    </form>
+                                  <form action="{{ route('profile.address') }}" method="POST">
+    @csrf
+    <div class="mb-3">
+        <label class="form-label">Street Address Line 1</label>
+        <input type="text" name="address_line1" class="form-control" value="{{ Auth::user()->address_line1 }}" required>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Street Address Line 2</label>
+        <input type="text" name="address_line2" class="form-control" value="{{ Auth::user()->address_line2 }}">
+    </div>
+    <div class="mb-3">
+        <label class="form-label">City</label>
+        <input type="text" name="city" class="form-control" value="{{ Auth::user()->city }}" required>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">State/Province</label>
+        <input type="text" name="state" class="form-control" value="{{ Auth::user()->state }}" required>
+    </div>
+    <button type="submit" class="btn btn-success w-100">Save Address</button>
+</form>
+
+
                                 </div>
                             </div>
                         </div>
@@ -370,6 +353,34 @@
 <script>
     window.isAuthenticated = {{ Auth::check() ? 'true' : 'false' }};
 </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // Tab switching functionality
+    document.querySelectorAll('.list-group-item').forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Remove active class from all items
+            document.querySelectorAll('.list-group-item').forEach(i => {
+                i.classList.remove('active');
+            });
+            
+            // Add active class to clicked item
+            this.classList.add('active');
+            
+            // Hide all content sections
+            document.getElementById('editProfileContent').style.display = 'none';
+            document.getElementById('changePasswordContent').style.display = 'none';
+            document.getElementById('addressContent').style.display = 'none';
+            
+            // Show the selected content
+            const target = this.getAttribute('href').substring(1);
+            document.getElementById(target + 'Content').style.display = 'block';
+        });
+    });
+});
+</script>    
 </body>
 
 </html>
