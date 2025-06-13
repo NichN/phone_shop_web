@@ -59,13 +59,13 @@
                 <ul class="navbar-nav ms-auto d-flex align-items-center">
                     <!-- Wishlist -->
                     <li class="nav-item">
-                        <a class="nav-link position-relative px-3" href="{{ route('wishlist') }}">
+                        <a class="nav-link position-relative px-3" href="#" data-bs-toggle="modal" data-bs-target="#wishlistModal">
                             <i class="fa-solid fa-heart fs-5"></i>
                         </a>
                     </li>
                     <!-- Cart -->
                     <li class="nav-item">
-                        <a class="nav-link position-relative px-3" href="#" data-bs-toggle="modal" data-bs-target="#cartModal">
+                        <a class="nav-link position-relative px-3" href="#" id="cartLink">
                             <i class="fa-solid fa-cart-shopping fs-5"></i>
                             <span id="count_cart"></span>
                         </a>
@@ -154,7 +154,7 @@
             <div class="modal-content">
                 <div class="modal-header align-items-center">
                     <div class="d-flex align-items-center">
-                        <img src="{{ asset('image/smphone.png') }}" alt="User Photo" class="rounded-circle me-3"
+                        <img src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('image/smphone.png') }}" alt="User Photo" class="rounded-circle me-3"
                             width="35" height="35">
                         <h5 class="modal-title mb-0" id="profileModalLabel">
                             Hello, {{ Auth::check() ? Auth::user()->name : 'Guest' }}
