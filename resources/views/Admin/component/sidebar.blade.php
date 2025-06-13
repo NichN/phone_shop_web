@@ -89,7 +89,7 @@
     <div id="userDropdown" class="w3-dropdown-content" style="display: none;">
         <a href="{{ route('user.index') }}" class="w3-bar-item w3-button"><i class="fa fa-list"></i> List User</a>
     </div>
-    <button type="button" class="btn btn-warning logout-btn">Logout</button>
+    <button type="button" class="btn btn-danger logout-btn">Logout</button>
 </div>
 <script>
     function w3_open() {
