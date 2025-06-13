@@ -29,7 +29,6 @@ class RegisterController extends Controller
             'password' => Hash::make($validated['password']),
             
         ]);
-
         // Optional: log the user in immediately
     auth()->login($user);
     return redirect()->route('two_factor.index');
