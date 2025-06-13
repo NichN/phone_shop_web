@@ -6,12 +6,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class ProfileController extends Controller
 {
 public function updateProfile(Request $request)
 {
-    dd('Controller reached!', $request->all());
     $request->validate([
         'name' => 'required|string|max:255',
         'phone_number' => 'nullable|string|max:20',
@@ -20,9 +22,6 @@ public function updateProfile(Request $request)
     ]);
 
     $user = Auth::user();
-
-    // Dump request data to check what is coming
-    dd('Request Data:', $request->all());
 
     // Handle profile image upload
     if ($request->hasFile('profile_image')) {
@@ -41,14 +40,10 @@ public function updateProfile(Request $request)
     $user->phone_number = $request->phone_number;
     $user->email = $request->email;
 
-    // Dump user before saving to verify values
-    dd('User Before Save:', $user);
-
     if ($user->save()) {
-        // Dump user after save to verify update
-        dd('User Saved:', $user);
+        return back()->with('success', 'Profile updated successfully.');
     } else {
-        dd('Failed to save user:', $user);
+        return back()->with('error', 'Failed to update profile.');
     }
 }
 
@@ -58,21 +53,70 @@ public function updateProfile(Request $request)
 
     public function changePassword(Request $request)
 {
-    $request->validate([
-        'current_password' => 'required',
-        'new_password' => 'required|min:8|confirmed',
-    ]);
+    try {
+        // Validate input
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|min:8|confirmed',
+        ]);
 
-    $user = Auth::user();
+        $user = Auth::user();
 
-    if (!Hash::check($request->current_password, $user->password)) {
-        return back()->with('error', 'Current password is incorrect.');
+        // Debug log
+        \Log::info('Password change attempt for user: ' . $user->email);
+        \Log::info('Current password provided: ' . $request->current_password);
+        \Log::info('New password provided: ' . $request->new_password);
+
+        // Verify current password
+        if (!Hash::check($request->current_password, $user->password)) {
+            \Log::warning('Current password verification failed for user: ' . $user->email);
+            return response()->json([
+                'success' => false,
+                'message' => 'Current password is incorrect'
+            ], 422);
+        }
+
+        \Log::info('Current password verified successfully');
+
+        // Update password
+        try {
+            DB::beginTransaction();
+            
+            $user->password = Hash::make($request->new_password);
+            $saved = $user->save();
+
+            if (!$saved) {
+                throw new \Exception('Failed to save new password');
+            }
+
+            DB::commit();
+            \Log::info('Password updated successfully for user: ' . $user->email);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Password updated successfully'
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Failed to update password: ' . $e->getMessage());
+            throw $e;
+        }
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        \Log::error('Validation failed: ' . json_encode($e->errors()));
+        return response()->json([
+            'success' => false,
+            'message' => 'Validation failed',
+            'errors' => $e->errors()
+        ], 422);
+    } catch (\Exception $e) {
+        \Log::error('Password change error: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'An error occurred while updating your password'
+        ], 500);
     }
-
-    $user->password = Hash::make($request->new_password);
-    $user->save();
-
-    return back()->with('success', 'Password changed successfully.');
 }
 
 
