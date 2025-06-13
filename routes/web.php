@@ -83,7 +83,7 @@ Route::get('/payment/card', [CheckoutController::class, 'showCardPayment'])->nam
 
 Route::post('/payment/process', [CheckoutController::class, 'processPayment'])->name('payment.process');
 
-// auth_form
+// auth_form    
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register'])->name('register');
 
