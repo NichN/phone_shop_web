@@ -104,7 +104,7 @@
                         <div class="total-price">0.00</div>
                     </div>
                     <div>
-                        <button class="btn btn-buy">Checkout</button>
+                        <a href="{{ route('checkout.show') }}" class="btn btn-info mt-4 mr-0" style="text-align: center;">Checkout</a>
                     </div>
                 </div>
 

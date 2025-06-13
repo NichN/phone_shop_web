@@ -1,3 +1,5 @@
+
+
 @extends('Layout.auth_form')
 
 @section('title', 'Registration')

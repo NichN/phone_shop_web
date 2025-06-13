@@ -56,14 +56,6 @@
                             <span>${{ $totalAmount }}</span>
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="payment" class="form-label fw-bold">Payment Method</label>
-                        <select class="form-select" name="payment_method" id="payment" required>
-                            <option value="" disabled selected hidden>Select a payment method</option>
-                            <option value="cash">Cash</option>
-                            <option value="card">Credit Card</option>
-                        </select>
-                    </div>
                     <button type="submit" class="btn btn-success w-100">Order Now</button>
                 </form>
             </div>

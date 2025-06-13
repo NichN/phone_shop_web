@@ -33,7 +33,6 @@ class CartController extends Controller
                     'user_id' => Auth::id(),
                     'product_id' => $request->product_id,
                     'quantity' => 1
-
                 ]);
             }
             DB::commit();
@@ -100,11 +99,15 @@ class CartController extends Controller
                 'total' => $total ?? 0
             ]);
         }
-            public function remove(Request $request)
-        {
-            $cart = cart::findOrFail($request->id);
-            $cart ->delete();
-            return response()->json(['success' => true]);
-        }
+            public function remove($id)
+            {
+                $cart = Cart::find($id);
+                if (!$cart) {
+                    return response()->json(['success' => false, 'message' => 'Cart item not found'], 404);
+                }
+                $cart->delete();
+                return response()->json(['success' => true]);
+            }
+
 
 }

@@ -43,7 +43,6 @@ class CheckoutController extends Controller
 
     public function showCardPayment()
     {
-        // You can pass any necessary data, like the total amount
         $totalAmount = 1397.00;
 
         return view('customer.card', compact('totalAmount'));

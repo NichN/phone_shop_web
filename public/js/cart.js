@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
             event.preventDefault();
 
             const productId = this.getAttribute('data-product-id');
-            const quantity = 1;
+            const quantity = 0;
 
             if (window.isAuthenticated) {
                 $.ajax({
@@ -69,9 +69,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-// =========================
-// Local Storage Functions
-// =========================
 
 function loadCartFromLocalStorage() {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -86,7 +83,7 @@ function loadCartFromLocalStorage() {
                 <div class="detail-box">
                     <div class="cart-product-title">${item.title}</div>
                     <div class="cart-price">${item.price}</div>
-                    <input type="number" value="${item.quantity}" class="cart-quantity" disabled>
+                    <input type="number" value="${item}" class="cart-quantity" disabled>
                 </div>
                 <i class="bx bxs-trash-alt cart-remove" data-id="${index}" onclick="removeItemFromLocal(${index})"></i>
             </div>
@@ -125,10 +122,6 @@ function updateCartCountLocal() {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
     updateCartBadge(cart.length);
 }
-
-// =========================
-// Laravel Authenticated Functions
-// =========================
 
 function updateCartCount() {
     $.ajax({
@@ -193,7 +186,7 @@ $(document).ready(function () {
 
 function removeItemFromServerCart(cartId) {
     $.ajax({
-        url: '/remove',
+        url: '/remove/' + cartId,
         type: 'DELETE',
         data: {
             id: cartId,
@@ -213,11 +206,6 @@ function removeItemFromServerCart(cartId) {
         }
     });
 }
-
-// =========================
-// Badge Count
-// =========================
-
 function updateCartBadge(count) {
     const badge = document.getElementById('count_cart');
     if (badge) {

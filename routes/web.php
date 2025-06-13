@@ -86,9 +86,8 @@ Route::get('/checkout', [CheckoutController::class, 'showCheckout'])->name('chec
 Route::post('/checkout', [CheckoutController::class, 'processCheckout'])->name('checkout.process');
 
 
-// auth_form
+
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-// Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/register', [RegisterController::class, 'register'])->name('register');
 
 
@@ -251,13 +250,13 @@ Route::middleware('auth')->group(function () {
 Route::prefix('order')->name('order.')->group(function(){
     Route::get('/',[OrderController::class,'index'])->name('index');
 });
-Route::prefix('cart')->name('cart.')->group(function () {
-    Route::get('/', [CartController::class, 'checkout'])->name('index'); 
-    Route::post('/store', [CartController::class, 'store'])->name('store'); 
-    Route::post('/sync', [CartController::class, 'sync'])->name('sync');
-    Route::put('/{productId}', [CartController::class, 'update'])->name('update'); 
-    Route::delete('/{productId}', [CartController::class, 'destroy'])->name('destroy');
-});
+// Route::prefix('cart')->name('cart.')->group(function () {
+//     Route::get('/', [CartController::class, 'checkout'])->name('index'); 
+//     Route::post('/store', [CartController::class, 'store'])->name('store'); 
+//     Route::post('/sync', [CartController::class, 'sync'])->name('sync');
+//     Route::put('/{productId}', [CartController::class, 'update'])->name('update'); 
+//     // Route::delete('/{productId}', [CartController::class, 'remove'])->name('destroy');
+// });
 
 
 // Cart by nich
@@ -266,7 +265,7 @@ Route::post('/store-cart', [CartController::class, 'storeCart'])
 // Route::get('/',[CartController::class, 'index'])->middleware('auth')->name('cart.index');
 Route::get('/countcart',[cartController::class,'countCart'])->name('cart.number');
 Route::get('/checkcart',[cartController::class,'checkcart'])->name('cart.check');
-Route::delete('/remove',[cartController::class,'remove'])->middleware('auth')->name('check');
+Route::delete('/remove/{id}',[cartController::class,'remove'])->middleware('auth')->name('check');
 
 Route::prefix('customer_admin')->name('customer_admin.')->group(function(){
     Route::get('/',[customer_admincontroller::class,'index'])->name('index');
