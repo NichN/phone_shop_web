@@ -3,10 +3,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const wishlistIcons = document.querySelectorAll('.add-wishlist');
 
-    // Initial UI sync
+  
     updateWishlistCount();
     updateWishlistModal();
-    syncWishlistIcons(); // ← Make sure this comes after you select the icons
+    syncWishlistIcons();
 
     wishlistIcons.forEach(icon => {
         icon.addEventListener('click', function () {
@@ -45,46 +45,69 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function updateWishlistModal() {
-        const listwish = document.getElementById('listwish');
-        listwish.innerHTML = '';
+    const listwish = document.getElementById('listwish');
+    listwish.innerHTML = '';
 
-        wishlist.forEach(item => {
-            const listItem = document.createElement('li');
-            listItem.classList.add('list-group-item', 'wishlist-item-card', 'd-flex', 'justify-content-between', 'align-items-center', 'p-4', 'mb-3', 'rounded', 'shadow-sm', 'border-0');
-
-            listItem.innerHTML = `
-                <div class="d-flex align-items-center">
-                    <img src="${item.productImage}" alt="${item.productName}" class="img-fluid rounded-3" style="width: 80px; height: 80px; object-fit: cover;">
-                    <div class="ms-3">
-                        <h5 class="mb-1 fw-bold product-title">${item.productName}</h5>
-                        <p class="mb-1 text-muted card-price">${item.productPrice}</p>
-                    </div>
-                </div>
-                <div class="d-flex flex-column align-items-end">
-                    <button class="btn btn-danger btn-sm mb-3 position-absolute top-0 end-0" data-product-id="${item.productId}">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                    <button class="btn btn-outline-primary btn-sm" onclick="moveToBag('${item.productId}', '${item.productName}', '${item.productPrice}', '${item.productImage}')">
-                        Move To Bag
-                    </button>
-                </div>
-            `;
-
-            listwish.appendChild(listItem);
-
-            const removeButton = listItem.querySelector('.btn-danger');
-            removeButton.addEventListener('click', function () {
-                removeFromWishlist(item.productId);
-            });
-        });
+    if (wishlist.length === 0) {
+        listwish.innerHTML = `
+            <div class="text-center p-4">
+                <i class="fa-regular fa-heart fs-1 text-muted mb-2"></i>
+                <p class="text-muted mb-0">Your wishlist is empty.</p>
+                <small class="text-muted">Start adding items you love ❤️</small>
+            </div>
+        `;
+        return;
     }
+
+    wishlist.forEach(item => {
+        const listItem = document.createElement('li');
+        listItem.classList.add(
+            'list-group-item',
+            'wishlist-item-card',
+            'd-flex',
+            'justify-content-between',
+            'align-items-center',
+            'p-4',
+            'mb-3',
+            'rounded',
+            'shadow-sm',
+            'border-0'
+        );
+
+        listItem.innerHTML = `
+            <div class="d-flex align-items-center">
+                <img src="${item.productImage}" alt="${item.productName}" class="img-fluid rounded-3" style="width: 80px; height: 80px; object-fit: cover;">
+                <div class="ms-3">
+                    <h5 class="mb-1 fw-bold product-title">${item.productName}</h5>
+                    <p class="mb-1 text-muted card-price">${item.productPrice}</p>
+                </div>
+            </div>
+            <div class="d-flex flex-column align-items-end">
+                <button class="btn btn-danger btn-sm mb-3 position-absolute top-0 end-0" data-product-id="${item.productId}">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+                <button class="btn btn-outline-primary btn-sm" onclick="moveToBag('${item.productId}', '${item.productName}', '${item.productPrice}', '${item.productImage}')">
+                    Move To Bag
+                </button>
+            </div>
+        `;
+
+        listwish.appendChild(listItem);
+
+        const removeButton = listItem.querySelector('.btn-danger');
+        removeButton.addEventListener('click', function () {
+            removeFromWishlist(item.productId);
+        });
+    });
+}
+
 
     function removeFromWishlist(productId) {
         wishlist = wishlist.filter(item => item.productId !== productId);
         localStorage.setItem('wishlist', JSON.stringify(wishlist));
         updateWishlistCount();
         updateWishlistModal();
-        syncWishlistIcons(); // Reflect changes on icons
+        syncWishlistIcons();
     }
 
     function syncWishlistIcons() {
@@ -99,14 +122,10 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
-
-    // Update the moveToBag function to properly add to cart
     window.moveToBag = function (productId, productName, productPrice, productImage) {
         removeFromWishlist(productId);
         window.addProductToCart(productName, productPrice, productImage);
     };
 
-
-    window.addProductToCart(productName, productPrice, productImage);
 });
 

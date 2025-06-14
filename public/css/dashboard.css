@@ -7,7 +7,7 @@ body {
 .w3-sidebar {
     height: 100vh;
     padding-top: 20px;
-    background-color: #70000e;
+    background-color: #2e3b56;
     color: white;
     border-radius: 0 20px 20px 0;
     text-align: center;
@@ -69,14 +69,14 @@ body {
 }
 .card-header {
     font-weight: bold;
-    background-color: #70000e;
+    background-color: #2e3b56;
     padding: 1rem;
     color: white;
     border-radius: 10px 10px 0 0 !important;
 }
 .card-header1 {
     font-weight: bold;
-    background-color: #70000e;
+    background-color: #2e3b56;
     padding: 1rem;
     color: white;
     border-radius: 10px 10px 0 0 !important;
@@ -137,7 +137,7 @@ width: 250px;
 }
 
 .data-table thead th {
-    background-color: #70000e !important;
+    background-color: #2e3b56 !important;
     color: white !important;
     font-weight: 600;
     padding: 12px 15px;
@@ -205,13 +205,13 @@ width: 250px;
     text-decoration: none !important;
 }
 .dataTables_paginate .paginate_button.current {
-    background: #70000e !important;
+    background: #2e3b56 !important;
     color: white !important;
-    border-color: #70000e !important;
+    border-color: #2e3b56 !important;
 }
 
 .dataTables_processing {
-    background: rgba(112, 0, 14, 0.8) !important;
+    background: #2e3b56 !important;
     color: white !important;
     border-radius: 4px;
     padding: 15px !important;
@@ -231,7 +231,7 @@ width: 250px;
     }
 
     .data-table th {
-        background-color: #70000e !important;
+        background-color: #2e3b56;
         color: white !important;
         font-weight: 600;
     }

@@ -64,15 +64,12 @@
                 </div>
 
                 <!-- Buttons -->
-                <div class="d-flex justify-content-between align-items-center add-to-cart mt-4 mb-4 gap-3">
+                <div class="d-flex justify-content-between align-items-center mt-4 mb-4 gap-3">
                     <a href="#" class="btn btn-primary px-4 py-2 custom-btn w-100 add-cart"
                        data-title="{{ $product['name'] }}"
                        data-price="{{ $product['price'] }}"
                        data-img="{{ asset('storage/' . $product['image'][0]) }}">
                         Add to Cart
-                    </a>
-                    <a href="#" class="btn btn-primary px-4 py-2 custom-btn w-100 d-flex align-items-center justify-content-center add-wishlist">
-                        <i class="fa-regular fa-heart fs-5 me-2"></i> Add to Wishlist
                     </a>
                 </div>
 
@@ -105,23 +102,21 @@
             <div class="row g-4">
                 @foreach ($products as $product)
                     <div class="col-md-3">
-                        <div class="card product-card">
-                            {{-- <a href="{{ route('product.show', $product->id) }}"> --}}
+                        <div class="card product-card" style="height:400px;">
                             <img src="{{ asset('storage/' . $product['image']) }}" class="card-img-top product-img" alt="{{ $product['name'] }}">
-                            {{-- </a> --}}
-                            <div class="card-body text-right bg-light">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <h5 class="card-title mt-2 product-title">{{ $product['name'] }}</h5>
-                                    <i class="fa-regular fa-heart fs-5 add-wishlist"></i>
-                                </div>
-                                <p class="card-price">{{ $product['price'] }}</p>
-                                {{-- <a href="#" class="btn btn-primary px-4 py-2 d-inline-block custom-btn w-100 add-cart"data-product-id="{{ $product->id }}">Add to Cart</a> --}}
+                            <div class="card-body text-right" style="background-color: #e7d8d8; border-top-left-radius: 15px; border-top-right-radius: 15px;">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mt-2 product-title">{{ $product['name'] }}</h5>
+                                <i class="fa-regular fa-heart fs-5 add-wishlist"></i>
                             </div>
+                            <p class="card-price">{{ $product['price'] }}</p>
+                        </div>
                         </div>
                     </div>
                 @endforeach
             </div>
         </div>
     </section>
-    <script src="{{ asset('js/productdetail.js') }}"></script>
+    {{-- <script src="{{ asset('js/productdetail.js') }}"></script> --}}
+    <script src="{{ asset('js/cart.js') }}"></script>
 @endsection

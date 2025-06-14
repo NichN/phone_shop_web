@@ -22,7 +22,7 @@ class User extends Authenticatable
         'email_verified_at',
         'role_id',
         'phone_number',
-        'profile_picture',
+        'profile_image',
         'address',
         'two_factor_code', 
     ];

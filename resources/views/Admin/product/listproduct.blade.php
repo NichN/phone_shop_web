@@ -22,12 +22,12 @@
                     <table class="table data-table mt-3" style="min-width: auto !important;">
                         <thead>
                             <tr>
-                                <th style="background-color: #70000e !important; color: white !important;">No</th>
-                                <th style="background-color: #70000e !important; color: white !important;">Name</th>
-                                <th style="background-color: #70000e !important; color: white !important;">Brand</th>
-                                <th style="background-color: #70000e !important; color: white !important;">Category</th>
-                                <th style="background-color: #70000e !important; color: white !important;">Description</th>
-                                <th style="background-color: #70000e !important; color: white !important;">Action</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">No</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Name</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Brand</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Category</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Description</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Action</th>
                             </tr>
                         </thead>                                
                         <tbody>
@@ -44,11 +44,10 @@
 <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header" style="background-color: #2e3b56;">
                 <h5 class="modal-title" id="addModalLabel">Add Product</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-
             <div class="modal-body">
                 <form id="productForm" action="{{ route('products.productstore') }}" method="POST" enctype="multipart/form-data">
                     @csrf

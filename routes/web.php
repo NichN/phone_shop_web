@@ -26,6 +26,7 @@ use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\delivery_feeController;
 use App\Http\Controllers\reportController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\ProfileController;
 use App\Models\purchase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -248,7 +249,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::prefix('order')->name('order.')->group(function(){
-    Route::get('/',[OrderController::class,'index'])->name('index');
+    Route::get('/',[CheckoutController::class,'index'])->name('index');
 });
 // Route::prefix('cart')->name('cart.')->group(function () {
 //     Route::get('/', [CartController::class, 'checkout'])->name('index'); 
@@ -260,12 +261,12 @@ Route::prefix('order')->name('order.')->group(function(){
 
 
 // Cart by nich
-Route::post('/store-cart', [CartController::class, 'storeCart'])
-    ->middleware('auth')->name('cart.store');
-// Route::get('/',[CartController::class, 'index'])->middleware('auth')->name('cart.index');
-Route::get('/countcart',[cartController::class,'countCart'])->name('cart.number');
-Route::get('/checkcart',[cartController::class,'checkcart'])->name('cart.check');
-Route::delete('/remove/{id}',[cartController::class,'remove'])->middleware('auth')->name('check');
+// Route::post('/store-cart', [CartController::class, 'storeCart'])
+//     ->middleware('auth')->name('cart.store');
+// // Route::get('/',[CartController::class, 'index'])->middleware('auth')->name('cart.index');
+// Route::get('/countcart',[cartController::class,'countCart'])->name('cart.number');
+// Route::get('/checkcart',[cartController::class,'checkcart'])->name('cart.check');
+// Route::delete('/remove/{id}',[cartController::class,'remove'])->middleware('auth')->name('check');
 
 Route::prefix('customer_admin')->name('customer_admin.')->group(function(){
     Route::get('/',[customer_admincontroller::class,'index'])->name('index');
@@ -280,6 +281,12 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/users/{user}/edit', [Admin_user_controller::class, 'edit'])->name('user.edit');
     Route::put('/users/{user}', [Admin_user_controller::class, 'update'])->name('user.update');
     Route::delete('/users/{user}', [Admin_user_controller::class, 'destroy'])->name('user.destroy');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->name('profile.update');
+    Route::post('/profile/password', [ProfileController::class, 'changePassword'])->name('profile.password');
+    Route::post('/profile/address', [ProfileController::class, 'updateAddress'])->name('profile.address');
 });
 
 ?>

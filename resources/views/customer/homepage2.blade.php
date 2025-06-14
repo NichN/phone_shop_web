@@ -1,10 +1,6 @@
 @extends('Layout.headerfooter')
-
 @section('title', 'Homepage')
-
 @section('content')
-
-{{-- Slide --}}
 <header>
     <div id="carouselExampleCaptions" class="carousel slide custom-carousel-bg" data-bs-ride="carousel">
         <div class="carousel-indicators">
@@ -62,8 +58,6 @@
         </div>
     </div>
 </section>
-
-{{-- Category Products --}}
 <section>
     <div class="container my-5 scroll-animate">
         <div class="row d-flex justify-content-center">
@@ -84,8 +78,6 @@
         </div>
     </div>
 </section>
-
-{{-- New Products --}}
 <section>
     <div class="container my-5 scroll-animate">
         <h2 class="text-right mb-4 fs-4"><b>New Products</b></h2>
@@ -93,19 +85,18 @@
             @foreach ($products->take(10) as $product)
                 @php $images = json_decode($product->images, true); @endphp
                 <div class="col-md-3">
-                    <div class="card product-card">
+                    <div class="card product-card" style="height:400px;">
                         @if (!empty($images[0]))
-                        <a href="{{ route('product.show', $product->id) }}">
-                            <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img" style="height: 250px;">
-                        </a>
+                            <a href="{{ route('product.show', $product->id) }}">
+                                <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img" style="height: 270px;">
+                            </a>
                         @endif
-                        <div class="card-body text-right bg-light">
+                        <div class="card-body text-right" style="background-color: #e7d8d8; border-top-left-radius: 15px; border-top-right-radius: 15px;">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h5 class="card-title mt-2 product-title">{{ $product->name }}</h5>
-                                <i class="fa-regular fa-heart fs-5 add-wishlist"></i>
+                                <i class="fa-regular fa-heart fs-5 add-wishlist" data-product-id="{{ $product->id }}"></i> 
                             </div>
                             <p class="card-price">{{ $product->price }}</p>
-                            <a href="#" class="btn btn-primary px-4 py-2 d-inline-block custom-btn w-100 add-cart" data-product-id="{{ $product->id }}">Add to Cart</a>
                         </div>
                     </div>
                 </div>
@@ -113,7 +104,6 @@
         </div>
     </div>
 </section>
-
 {{-- Banner Section --}}
 <section>
     <div class="container my-5">
@@ -143,22 +133,21 @@
                 @foreach ($accessoryProducts->take(4) as $product)
                     @php $images = json_decode($product->images, true); @endphp
                     <div class="col-md-3">
-                        <div class="card product-card">
-                            @if (!empty($images[0]))
-                            <a href="{{ route('product.show', $product->id) }}">
-                                <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img" style="height: 250px;">
-                            </a>
-                            @endif
-                            <div class="card-body text-right bg-light">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <h5 class="card-title mt-2 product-title">{{ $product->name }}</h5>
-                                    <i class="add-wishlist fa-regular fa-heart fs-5"></i>
-                                </div>
-                                <p class="card-price">{{ $product->price }}</p>
-                                <a href="#" class="btn btn-primary px-4 py-2 d-inline-block custom-btn w-100 add-cart" data-product-id="{{ $product->id }}">Add to Cart</a>
+                    <div class="card product-card" style="height:400px;">
+                        @if (!empty($images[0]))
+                        <a href="{{ route('product.show', $product->id) }}">
+                            <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img" style="height: 270px;">
+                        </a>
+                        @endif
+                        <div class="card-body text-right" style="background-color: #e7d8d8; border-top-left-radius: 15px; border-top-right-radius: 15px;">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mt-2 product-title">{{ $product->name }}</h5>
+                                <i class="fa-regular fa-heart fs-5 add-wishlist" data-product-id="{{ $product->id }}"></i>
                             </div>
+                            <p class="card-price">{{ $product->price }}</p>
                         </div>
                     </div>
+                </div>
                 @endforeach
             @endif
         </div>
@@ -174,22 +163,21 @@
                         $images = json_decode($product->images, true);
                     @endphp
                     <div class="col-md-3">
-                        <div class="card product-card">
-                            @if (!empty($images) && isset($images[0]))
-                            <a href="{{ route('product.show', $product->id) }}">
-                                <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img" alt="Product Image" style="height: 250px;">
-                            </a>
-                            @endif
-                            <div class="card-body text-right bg-light">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <h5 class="card-title mt-2 product-title">{{ $product->name }}</h5>
-                                    <i class="fa-regular fa-heart fs-5 add-wishlist"></i>
-                                </div>
-                                <p class="card-price">{{ $product->price }}</p>
-                                <a href="#" class="btn btn-primary px-4 py-2 d-inline-block custom-btn w-100 add-cart" data-product-id="{{ $product->id }}">Add to Cart</a>
+                    <div class="card product-card" style="height:400px;">
+                        @if (!empty($images[0]))
+                        <a href="{{ route('product.show', $product->id) }}">
+                            <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img" style="height: 270px;">
+                        </a>
+                        @endif
+                        <div class="card-body text-right" style="background-color: #e7d8d8; border-top-left-radius: 15px; border-top-right-radius: 15px;">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mt-2 product-title">{{ $product->name }}</h5>
+                                <i class="fa-regular fa-heart fs-5 add-wishlist" data-product-id="{{ $product->id }}"></i>
                             </div>
+                            <p class="card-price">{{ $product->price }}</p>
                         </div>
                     </div>
+                </div>
                 @endforeach
             @endif
         </div>

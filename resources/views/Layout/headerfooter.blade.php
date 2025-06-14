@@ -24,15 +24,42 @@
 
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
         <div class="container">
-            <!-- Brand Name -->
-            <a class="navbar-brand" style="color:#70000E">TayMeng</a>
+            <!-- Logo -->
+            <a class="navbar-brand" href="{{ route('homepage') }}">
+                Taymeng
+                <!---<img src="{{ asset('image/tay_meng_logo.jpg') }}" alt="Logo" height="40"> -->
+            </a>
 
-            <!-- Icons -->
-            <div class="order-lg-2 nav-btns">
-                <!-- Wishlist Button -->
-                <button type="button" class="btn position-relative" id="wishlist-link">
+            <!-- Mobile Toggle Button -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Navbar Content -->
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <!-- Main Navigation -->
+                <ul class="navbar-nav mx-auto justify-content-center" style="flex: 1 1 0;">
+                    <li class="nav-item mx-2">
+                        <a class="nav-link text-uppercase" href="{{ route('homepage') }}">Home</a>
+                    </li>
+                    <li class="nav-item mx-2">
+                        <a class="nav-link text-uppercase" href="{{ route('faq') }}">FAQ</a>
+                    </li>
+                    <li class="nav-item mx-2">
+                        <a class="nav-link text-uppercase" href="{{ route('aboutus') }}">About Us</a>
+                    </li>
+                    <li class="nav-item mx-2">
+                        <a class="nav-link text-uppercase" href="{{ route('contact_us') }}">Contact Us</a>
+                    </li>
+                </ul>
+
+                <!-- Right Side Items -->
+                <ul class="navbar-nav ms-auto d-flex align-items-center">
+                    <!-- Wishlist -->
+                    <li class="nav-item">
+                    <button type="button" class="btn position-relative" id="wishlist-link">
                     <a class="custom-link" href="#" data-bs-toggle="modal" data-bs-target="#wishlistModal">
                         <i class="fa-solid fa-heart"></i>
                         <span class="d-none d-lg-inline" style="font-size: 1rem;">My Wishlist</span>
@@ -40,77 +67,78 @@
                             class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
                     </a>
                 </button>
-
-                <!-- Cart Button -->
-                <button type="button" class="btn position-relative">
+                    </li>
+                    <!-- Cart -->
+                    <li class="nav-item">
+                    <button type="button" class="btn position-relative">
                     <a class="custom-link" href="#" id="cartLink">
                         <i class="fa-solid fa-cart-shopping cart-icon" id="cart-icon"></i>
                         <span class="d-none d-lg-inline" style="font-size: 1rem;">My Cart</span>
                         <span id="count_cart" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
                     </a>
                 </button>
-
-
-                <!-- User Button -->
-                <button class="btn position-relative dropdown-toggle" type="button" id="profileDropdown"
-                    data-bs-toggle="dropdown" aria-expanded="false">
-                    <h5 class="modal-title mb-0" id="profileModalLabel">
-                        Hello, {{ Auth::check() ? Auth::user()->name : 'Guest' }}
-                    </h5>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                    <li><a class="dropdown-item" href="{{ route('history') }}"><i class="fa-solid fa-box me-2"></i>
-                            Order History</a></li>
-                    {{-- <li><a class="dropdown-item" href="{{ route('profile') }}"><i class="fa-solid fa-user-circle"></i> My Profile</a></li> --}}
-                    <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileModal"><i
-                                class="fa-solid fa-gear me-2"></i> Setting</a></li>
-                    <li>
-                        <hr class="dropdown-divider">
                     </li>
-                    <li><a class="dropdown-item text-danger" href="{{ route('login')}}"><i
-                                class="fa-solid fa-sign-out-alt me-2"></i> Logout</a></li>
+                    <!-- User Button -->
+                    <li class="nav-item">
+                        <button class="btn position-relative dropdown-toggle d-flex align-items-center gap-2 px-3" type="button" id="profileDropdown"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="profile-image-container position-relative">
+                                <img src="{{ (Auth::user() && Auth::user()->profile_image) ? asset('storage/' . Auth::user()->profile_image) : asset('image/smphone.png') }}"
+                                     class="rounded-circle border border-2 border-primary"
+                                     style="width: 35px; height: 35px; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"
+                                     alt="Profile Picture">
+                                <span class="position-absolute bottom-0 end-0 bg-success rounded-circle border border-2 border-white"
+                                      style="width: 10px; height: 10px;"></span>
+                            </div>
+                            <div class="d-flex flex-column align-items-start">
+                                <h8 class="modal-title mb-0 fw-bold" id="profileModalLabel">
+                                    {{ Auth::check() ? Auth::user()->name : 'Guest' }}
+                                </h8>
+                                <small class="text-muted" style="font-size: 0.75rem;">My Account</small>
+                            </div>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="profileDropdown" style="min-width: 200px;">
+                            <li class="px-3 py-2 border-bottom">
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ (Auth::user() && Auth::user()->profile_image) ? asset('storage/' . Auth::user()->profile_image) : asset('image/smphone.png') }}"
+                                         class="rounded-circle me-2"
+                                         style="width: 40px; height: 40px; object-fit: cover;"
+                                         alt="Profile Picture">
+                                    <div>
+                                        <h6 class="mb-0 fw-bold">{{ Auth::check() ? Auth::user()->name : 'Guest' }}</h6>
+                                        <small class="text-muted">{{ Auth::check() ? Auth::user()->email : '' }}</small>
+                                    </div>
+                                </div>
+                            </li>
+                            <li><a class="dropdown-item py-2" href="{{ route('history') }}">
+                                <i class="fa-solid fa-box me-2 text-primary"></i>Order History
+                            </a></li>
+                            <li><a class="dropdown-item py-2" href="#" data-bs-toggle="modal" data-bs-target="#profileModal">
+                                <i class="fa-solid fa-gear me-2 text-primary"></i>Settings
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item py-2 text-danger" href="{{ route('login')}}">
+                                <i class="fa-solid fa-sign-out-alt me-2"></i>Logout
+                            </a></li>
+                        </ul>
+                    </li>
                 </ul>
-            </div>
-
-            <!-- Navbar Toggler Button -->
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <!-- Collapsible Navbar Links -->
-            <div class="collapse navbar-collapse order-lg-1" id="navbarNav">
-                <ul class="navbar-nav mx-auto text-center">
-                    <li class="nav-item mx-3">
-                        <a class="nav-link text-uppercase" href="{{ route('homepage') }}">Home</a>
-                    </li>
-                    <li class="nav-item mx-3">
-                        <a class="nav-link text-uppercase" href="{{ route('faq') }}">FAQ</a>
-                    </li>
-                    <li class="nav-item mx-3">
-                        <a class="nav-link text-uppercase" href="{{ route('aboutus') }}">About Us</a>
-                    </li>
-                    <li class="nav-item mx-3">
-                        <a class="nav-link text-uppercase" href="{{ route('contact_us') }}">Contact Us</a>
-                    </li>
-                </ul>
-
-                <!-- Cart Details -->
-                <div class="cart" id="cartSidebar">
-                    <i class="fa-solid fa-xmark" id="close-card"></i>
-                    <div class="cart-content"></div>
-                    <div class="total">
-                        <div class="total-text">Total</div>
-                        <div class="total-price">0.00</div>
-                    </div>
-                    <div>
-                        <a href="{{ route('checkout.show') }}" class="btn btn-info mt-4 mr-0" style="text-align: center;">Checkout</a>
-                    </div>
-                </div>
-
             </div>
         </div>
     </nav>
+
+    <!-- Cart Sidebar -->
+    <div class="cart" id="cartSidebar">
+        <i class="fa-solid fa-xmark" id="close-card"></i>
+        <div class="cart-content"></div>
+        <div class="total">
+            <div class="total-text">Total</div>
+            <div class="total-price">0.00</div>
+        </div>
+        <div>
+            <a href="{{ route('checkout.show') }}" class="btn btn-info mt-4 mr-0" style="text-align: center;">Checkout</a>
+        </div>
+    </div>
 
     <div class="modal" id="wishlistModal" aria-labelledby="wishlistModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -129,13 +157,12 @@
     </div>
 
     <!-- My Profile Modal -->
-    <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel"
-        aria-hidden="true"> 
+    <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true"> 
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
                 <div class="modal-header align-items-center">
                     <div class="d-flex align-items-center">
-                        <img src="{{ asset('image/smphone.png') }}" alt="User Photo" class="rounded-circle me-3"
+                        <img src="{{ (Auth::user() && Auth::user()->profile_image) ? asset('storage/' . Auth::user()->profile_image) : asset('image/smphone.png') }}" alt="User Photo" class="rounded-circle me-3"
                             width="35" height="35">
                         <h5 class="modal-title mb-0" id="profileModalLabel">
                             Hello, {{ Auth::check() ? Auth::user()->name : 'Guest' }}
@@ -164,117 +191,92 @@
                         <!-- Main content -->
                         <div class="col-md-9">
                             <div id="profileContent">
-
-                                <!--  Success Alert -->
-                                <div id="successMessage"
-                                    class="alert alert-success alert-dismissible fade show d-none" role="alert">
+                                <!-- Success Alert -->
+                                <div id="successMessage" class="alert alert-success alert-dismissible fade show d-none" role="alert">
                                     <strong>Success!</strong> Changes saved successfully.
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                        aria-label="Close"></button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>
 
-                                <div id="errorMessage" class="alert alert-danger alert-dismissible fade show d-none"
-                                    role="alert">
+                                <div id="errorMessage" class="alert alert-danger alert-dismissible fade show d-none" role="alert">
                                     <strong>Error!</strong> Please fill in all required fields.
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                        aria-label="Close"></button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>
 
                                 <!-- Edit Profile Section -->
                                 <div id="editProfileContent">
-                                    <div class="text-center mb-4">
-                                        <h3>My Profile</h3>
-                                        <p class="text-muted">Manage your personal information</p>
-                                        <img src="{{ asset('image/smphone.png') }}" class="rounded-circle mb-2"
-                                            width="120" height="120" alt="Profile Picture">
-                                        <br>
-                                        <button class="btn btn-outline-danger btn-sm">Change Photo</button>
-                                    </div>
-                                    <form>
+                                    <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
+                                        @csrf
+                                        <div class="text-center mb-4">
+                                            <img src="{{ (Auth::user() && Auth::user()->profile_image) ? asset('storage/' . Auth::user()->profile_image) : asset('image/smphone.png') }}"
+                                                 class="rounded-circle mb-2"
+                                                 width="120" height="120" alt="Profile Picture">
+                                            <input type="file" name="profile_image" class="form-control mt-2" accept="image/*">
+                                        </div>
+
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">Full Name</label>
-                                            <div class="input-group">
-                                                <input type="text" class="form-control"
-                                                    placeholder="Enter Your Name" required>
-                                                <button class="btn btn-danger" type="button">Edit</button>
-                                            </div>
+                                            <input type="text" name="name" class="form-control" value="{{ Auth::user()->name ?? 'Guest'}}" required>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">Phone Number</label>
-                                            <div class="input-group">
-                                                <input type="text" class="form-control"
-                                                    placeholder="Enter Your Number" required>
-                                                <button class="btn btn-danger" type="button">Edit</button>
-                                            </div>
+                                            <input type="text" name="phone_number" class="form-control" value="{{ Auth::user()->phone_number ?? ''}}">
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">Email</label>
-                                            <div class="input-group">
-                                                <input type="text" class="form-control"
-                                                    placeholder="your@email.com" required>
-                                                <button class="btn btn-danger" type="button">Edit</button>
-                                            </div>
-                                            <small class="text-muted">We collect this in case of emergencies.</small>
+                                            <input type="email" name="email" class="form-control" value="{{ Auth::user()->email ?? ''}}" required>
                                         </div>
+
                                         <button type="submit" class="btn btn-success w-100">Save Changes</button>
                                     </form>
                                 </div>
-                                <div id="changePasswordContent" style="display: none;">
-                                    <div class="text-center mb-4">
-                                        <h3>Change Password</h3>
-                                        <p class="text-muted">Make sure your new password is strong and secure.</p>
-                                    </div>
-                                    <form>
+
+                                <!-- Change Password Section -->
+                                <div id="changePasswordContent" class="content-section" style="display: none;">
+                                    <form id="passwordChangeForm" class="needs-validation" novalidate>
+                                        @csrf
                                         <div class="mb-3">
-                                            <label class="form-label">Current Password</label>
-                                            <input type="password" class="form-control"
-                                                placeholder="Enter current password" required>
+                                            <label for="current_password" class="form-label">Current Password</label>
+                                            <input type="password" class="form-control" id="current_password" name="current_password" required>
+                                            <div class="invalid-feedback">Please enter your current password.</div>
                                         </div>
                                         <div class="mb-3">
-                                            <label class="form-label">New Password</label>
-                                            <input type="password" class="form-control"
-                                                placeholder="Enter new password" required>
-                                            <small class="text-muted">Minimum 8 characters with at least one number and
-                                                one special character.</small>
+                                            <label for="new_password" class="form-label">New Password</label>
+                                            <input type="password" class="form-control" id="new_password" name="new_password" required minlength="8">
+                                            <div class="invalid-feedback">Password must be at least 8 characters long.</div>
                                         </div>
                                         <div class="mb-3">
-                                            <label class="form-label">Confirm New Password</label>
-                                            <input type="password" class="form-control"
-                                                placeholder="Confirm new password" required>
+                                            <label for="new_password_confirmation" class="form-label">Confirm New Password</label>
+                                            <input type="password" class="form-control" id="new_password_confirmation" name="new_password_confirmation" required>
+                                            <div class="invalid-feedback">Passwords do not match.</div>
                                         </div>
-                                        <button type="submit" class="btn btn-success w-100">Update Password</button>
+                                        <div id="passwordAlert" class="alert" style="display: none;"></div>
+                                        <button type="submit" class="btn btn-primary">Update Password</button>
                                     </form>
                                 </div>
+
+                                <!-- Address Section -->
                                 <div id="addressContent" style="display: none;">
                                     <div class="text-center mb-4">
                                         <h3>My Address</h3>
                                         <p class="text-muted">Update your shipping or contact address here.</p>
                                     </div>
-
-                                    <form>
+                                    <form action="{{ route('profile.address') }}" method="POST">
+                                        @csrf
                                         <div class="mb-3">
-                                            <label class="form-label">Street Address</label>
-                                            <div class="input-group">
-                                                <input type="text" class="form-control"
-                                                    placeholder="Enter your street address" required>
-                                                <button class="btn btn-danger" type="button">Edit</button>
-                                            </div>
+                                            <label class="form-label">Street Address Line 1</label>
+                                            <input type="text" name="address_line1" class="form-control" value="{{ Auth::user()->address_line1 ?? ''}}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Street Address Line 2</label>
+                                            <input type="text" name="address_line2" class="form-control" value="{{ Auth::user()->address_line2 ?? ''}}">
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">City</label>
-                                            <div class="input-group">
-                                                <input type="text" class="form-control"
-                                                    placeholder="Enter your city" required>
-                                                <button class="btn btn-danger" type="button">Edit</button>
-                                            </div>
+                                            <input type="text" name="city" class="form-control" value="{{ Auth::user()->city ?? ''}}" required>
                                         </div>
                                         <div class="mb-3">
-                                            <label class="form-label">Province</label>
-                                            <div class="input-group">
-                                                <input type="text" class="form-control"
-                                                    placeholder="Enter your province" required>
-                                                <button class="btn btn-danger" type="button">Edit</button>
-                                            </div>
+                                            <label class="form-label">State/Province</label>
+                                            <input type="text" name="state" class="form-control" value="{{ Auth::user()->state ?? ''}}" required>
                                         </div>
                                         <button type="submit" class="btn btn-success w-100">Save Address</button>
                                     </form>
@@ -361,15 +363,12 @@
     <script src="{{ asset('js/homepage.js') }}"></script>
     <script src="{{ asset('js/profile.js') }}"></script>
     <script src="{{ asset('js/cart.js') }}"></script>
-    !-- Load jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<!-- Your cart script must be below jQuery -->
-<script src="{{ asset('js/cart.js') }}"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    window.isAuthenticated = {{ Auth::check() ? 'true' : 'false' }};
-</script>
+    <!-- Load jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        window.isAuthenticated = {{ Auth::check() ? 'true' : 'false' }};
+    </script>
 </body>
 
 </html>
