@@ -49,7 +49,7 @@
                                 <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img" alt="Product Image" style="height: 250px;">
                             </a>
                         @endif
-                        <div class="card-body text-right bg-light">
+                        <div class="card-body text-right" style="background-color: #ecdceb;">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h5 class="card-title mt-2 product-title">
                                     <a href="{{ route('product.show', $product->id) }}" class="text-decoration-none text-dark">
@@ -59,7 +59,7 @@
                                 <i class="fa-regular fa-heart fs-5 add-wishlist"></i>
                             </div>
                             <p class="card-price">{{ $product->price }}</p>
-                            <a href="#" class="btn btn-primary px-4 py-2 d-inline-block custom-btn w-100 add-cart" data-product-id="{{ $product->id }}">Add to Cart</a>
+                            {{-- <a href="#" class="btn btn-primary px-4 py-2 d-inline-block custom-btn w-100 add-cart" data-product-id="{{ $product->id }}">Add to Cart</a> --}}
                         </div>
                     </div>
                 </div>

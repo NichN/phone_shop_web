@@ -28,7 +28,6 @@ use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\delivery_feeController;
 use App\Http\Controllers\reportController;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\ProfileController;
 use App\Models\purchase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
