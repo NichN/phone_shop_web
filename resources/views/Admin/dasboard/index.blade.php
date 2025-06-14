@@ -148,7 +148,7 @@
                     <div class="card-header bg-white border-0 d-flex align-items-center justify-content-between py-3">
                         <h5 class="fw-bold mb-0 text-dark" style="font-size: 1.25rem;">Monthly Sale</h5>
                         <div>
-                            <button class="btn btn-sm btn-outline-secondary">Export</button>
+                            <button class="btn btn-sm btn-outline-secondary">Export </button>
                         </div>
                     </div>
                     <div class="card-body">
