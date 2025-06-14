@@ -8,6 +8,7 @@
         content="Tay Meng Phone Shop - Your one-stop shop for the latest smartphones and accessories.">
     <meta name="keywords" content="smartphones, accessories, phone shop, online shop">
     <meta name="author" content="Tay Meng">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'Tay Meng Phone Shop') }}</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -18,7 +19,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     
-    <meta name="csrf-token" content="{{ csrf_token() }}">
     @yield('head')
 </head>
 
@@ -59,23 +59,31 @@
                 <ul class="navbar-nav ms-auto d-flex align-items-center">
                     <!-- Wishlist -->
                     <li class="nav-item">
-                        <a class="nav-link position-relative px-3" href="#" data-bs-toggle="modal" data-bs-target="#wishlistModal">
-                            <i class="fa-solid fa-heart fs-5"></i>
-                        </a>
+                    <button type="button" class="btn position-relative" id="wishlist-link">
+                    <a class="custom-link" href="#" data-bs-toggle="modal" data-bs-target="#wishlistModal">
+                        <i class="fa-solid fa-heart"></i>
+                        <span class="d-none d-lg-inline" style="font-size: 1rem;">My Wishlist</span>
+                        <span id="count_heart_cart"
+                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+                    </a>
+                </button>
                     </li>
                     <!-- Cart -->
                     <li class="nav-item">
-                        <a class="nav-link position-relative px-3" href="#" id="cartLink">
-                            <i class="fa-solid fa-cart-shopping fs-5"></i>
-                            <span id="count_cart"></span>
-                        </a>
+                    <button type="button" class="btn position-relative">
+                    <a class="custom-link" href="#" id="cartLink">
+                        <i class="fa-solid fa-cart-shopping cart-icon" id="cart-icon"></i>
+                        <span class="d-none d-lg-inline" style="font-size: 1rem;">My Cart</span>
+                        <span id="count_cart" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+                    </a>
+                </button>
                     </li>
                     <!-- User Button -->
                     <li class="nav-item">
                         <button class="btn position-relative dropdown-toggle d-flex align-items-center gap-2 px-3" type="button" id="profileDropdown"
                             data-bs-toggle="dropdown" aria-expanded="false">
                             <div class="profile-image-container position-relative">
-                                <img src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('image/smphone.png') }}"
+                                <img src="{{ (Auth::user() && Auth::user()->profile_image) ? asset('storage/' . Auth::user()->profile_image) : asset('image/smphone.png') }}"
                                      class="rounded-circle border border-2 border-primary"
                                      style="width: 35px; height: 35px; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"
                                      alt="Profile Picture">
@@ -92,13 +100,13 @@
                         <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="profileDropdown" style="min-width: 200px;">
                             <li class="px-3 py-2 border-bottom">
                                 <div class="d-flex align-items-center">
-                                    <img src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('image/smphone.png') }}"
+                                    <img src="{{ (Auth::user() && Auth::user()->profile_image) ? asset('storage/' . Auth::user()->profile_image) : asset('image/smphone.png') }}"
                                          class="rounded-circle me-2"
                                          style="width: 40px; height: 40px; object-fit: cover;"
                                          alt="Profile Picture">
                                     <div>
-                                        <h6 class="mb-0 fw-bold">{{ Auth::user()->name }}</h6>
-                                        <small class="text-muted">{{ Auth::user()->email }}</small>
+                                        <h6 class="mb-0 fw-bold">{{ Auth::check() ? Auth::user()->name : 'Guest' }}</h6>
+                                        <small class="text-muted">{{ Auth::check() ? Auth::user()->email : '' }}</small>
                                     </div>
                                 </div>
                             </li>
@@ -120,15 +128,17 @@
     </nav>
 
     <!-- Cart Sidebar -->
+    <div class="cart-backdrop" id="cartBackdrop"></div>
     <div class="cart" id="cartSidebar">
         <i class="fa-solid fa-xmark" id="close-card"></i>
+        <h2 class="cart-title">My Cart</h2>
         <div class="cart-content"></div>
         <div class="total">
             <div class="total-text">Total</div>
             <div class="total-price">0.00</div>
         </div>
         <div>
-            <a href="{{ route('checkout.show') }}" class="btn btn-info mt-4 mr-0" style="text-align: center;">Checkout</a>
+            <a href="{{ route('checkout.show') }}" class="btn btn-info mt-4 w-100">Checkout</a>
         </div>
     </div>
 
@@ -154,7 +164,7 @@
             <div class="modal-content">
                 <div class="modal-header align-items-center">
                     <div class="d-flex align-items-center">
-                        <img src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('image/smphone.png') }}" alt="User Photo" class="rounded-circle me-3"
+                        <img src="{{ (Auth::user() && Auth::user()->profile_image) ? asset('storage/' . Auth::user()->profile_image) : asset('image/smphone.png') }}" alt="User Photo" class="rounded-circle me-3"
                             width="35" height="35">
                         <h5 class="modal-title mb-0" id="profileModalLabel">
                             Hello, {{ Auth::check() ? Auth::user()->name : 'Guest' }}
@@ -199,7 +209,7 @@
                                     <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
                                         @csrf
                                         <div class="text-center mb-4">
-                                            <img src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('image/smphone.png') }}"
+                                            <img src="{{ (Auth::user() && Auth::user()->profile_image) ? asset('storage/' . Auth::user()->profile_image) : asset('image/smphone.png') }}"
                                                  class="rounded-circle mb-2"
                                                  width="120" height="120" alt="Profile Picture">
                                             <input type="file" name="profile_image" class="form-control mt-2" accept="image/*">
@@ -207,15 +217,15 @@
 
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">Full Name</label>
-                                            <input type="text" name="name" class="form-control" value="{{ Auth::user()->name }}" required>
+                                            <input type="text" name="name" class="form-control" value="{{ Auth::user()->name ?? 'Guest'}}" required>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">Phone Number</label>
-                                            <input type="text" name="phone_number" class="form-control" value="{{ Auth::user()->phone_number }}">
+                                            <input type="text" name="phone_number" class="form-control" value="{{ Auth::user()->phone_number ?? ''}}">
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">Email</label>
-                                            <input type="email" name="email" class="form-control" value="{{ Auth::user()->email }}" required>
+                                            <input type="email" name="email" class="form-control" value="{{ Auth::user()->email ?? ''}}" required>
                                         </div>
 
                                         <button type="submit" class="btn btn-success w-100">Save Changes</button>
@@ -256,19 +266,19 @@
                                         @csrf
                                         <div class="mb-3">
                                             <label class="form-label">Street Address Line 1</label>
-                                            <input type="text" name="address_line1" class="form-control" value="{{ Auth::user()->address_line1 }}" required>
+                                            <input type="text" name="address_line1" class="form-control" value="{{ Auth::user()->address_line1 ?? ''}}" required>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Street Address Line 2</label>
-                                            <input type="text" name="address_line2" class="form-control" value="{{ Auth::user()->address_line2 }}">
+                                            <input type="text" name="address_line2" class="form-control" value="{{ Auth::user()->address_line2 ?? ''}}">
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">City</label>
-                                            <input type="text" name="city" class="form-control" value="{{ Auth::user()->city }}" required>
+                                            <input type="text" name="city" class="form-control" value="{{ Auth::user()->city ?? ''}}" required>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">State/Province</label>
-                                            <input type="text" name="state" class="form-control" value="{{ Auth::user()->state }}" required>
+                                            <input type="text" name="state" class="form-control" value="{{ Auth::user()->state ?? ''}}" required>
                                         </div>
                                         <button type="submit" class="btn btn-success w-100">Save Address</button>
                                     </form>
