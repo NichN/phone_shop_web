@@ -16,6 +16,8 @@ use App\Http\Controllers\categoryController;
 use App\Http\Controllers\dashboardcontroller;
 use App\Http\Controllers\productAdminController;
 use App\Http\Controllers\brandController;
+use App\Http\Controllers\ProfileController;
+
 use App\Http\Controllers\suppilerController;
 use App\Http\Controllers\imageController;
 use App\Http\Controllers\sizeController;
@@ -248,9 +250,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/two-factor', [TwoFactorController::class, 'verify'])->name('two_factor.verify');
 });
 
-Route::prefix('order')->name('order.')->group(function(){
-    Route::get('/',[CheckoutController::class,'index'])->name('index');
-});
+// Route::prefix('order')->name('order.')->group(function(){
+//     Route::get('/',[OrderController::class,'index'])->name('index');
+// });
 // Route::prefix('cart')->name('cart.')->group(function () {
 //     Route::get('/', [CartController::class, 'checkout'])->name('index'); 
 //     Route::post('/store', [CartController::class, 'store'])->name('store'); 
@@ -288,6 +290,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/profile/password', [ProfileController::class, 'changePassword'])->name('profile.password');
     Route::post('/profile/address', [ProfileController::class, 'updateAddress'])->name('profile.address');
 });
+
 
 ?>
 

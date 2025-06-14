@@ -7,7 +7,7 @@
         <div class="container" style="z-index: 999999999999999 !important;">
             <div class="card">
                 <div class="card-body">
-                    <div class="card-header d-flex rounded justify-content-between align-items-center" style="background-color: #70000E;">
+                    <div class="card-header d-flex rounded justify-content-between align-items-center" style="background-color: #2e3b56;">
                         <h4 style="font-size: 1.2rem; font-weight: bold; align-items: left;">
                             <i class="fa fa-users" aria-hidden="true"></i>Delivery Fee
                         </h4>
@@ -46,7 +46,7 @@
                             <label for="fee" class="fw-bold">Amount ($)</label>
                             <input type="text" class="form-control" id="fee" name="fee">
                         </div>
-                        <button type="submit" class="btn" style="background-color: #70000E; color:white;">Chnage</button>
+                        <button type="submit" class="btn" style="background-color: #2e3b56; color:white;">Chnage</button>
                     </form>
                 </div>
             </div>

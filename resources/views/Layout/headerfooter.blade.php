@@ -127,6 +127,70 @@
         </div>
     </nav>
 
+                <!-- Right Side Items -->
+                <ul class="navbar-nav ms-auto d-flex align-items-center">
+                    <!-- Wishlist -->
+                    <li class="nav-item">
+                        <a class="nav-link position-relative px-3" href="#" data-bs-toggle="modal" data-bs-target="#wishlistModal">
+                            <i class="fa-solid fa-heart fs-5"></i>
+                        </a>
+                    </li>
+                    <!-- Cart -->
+                    <li class="nav-item">
+                        <a class="nav-link position-relative px-3" href="#" id="cartLink">
+                            <i class="fa-solid fa-cart-shopping fs-5"></i>
+                            <span id="count_cart"></span>
+                        </a>
+                    </li>
+                    <!-- User Button -->
+                    <li class="nav-item">
+                        <button class="btn position-relative dropdown-toggle d-flex align-items-center gap-2 px-3" type="button" id="profileDropdown"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="profile-image-container position-relative">
+                                <img src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('image/smphone.png') }}"
+                                     class="rounded-circle border border-2 border-primary"
+                                     style="width: 35px; height: 35px; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"
+                                     alt="Profile Picture">
+                                <span class="position-absolute bottom-0 end-0 bg-success rounded-circle border border-2 border-white"
+                                      style="width: 10px; height: 10px;"></span>
+                            </div>
+                            <div class="d-flex flex-column align-items-start">
+                                <h8 class="modal-title mb-0 fw-bold" id="profileModalLabel">
+                                    {{ Auth::check() ? Auth::user()->name : 'Guest' }}
+                                </h8>
+                                <small class="text-muted" style="font-size: 0.75rem;">My Account</small>
+                            </div>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="profileDropdown" style="min-width: 200px;">
+                            <li class="px-3 py-2 border-bottom">
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('image/smphone.png') }}"
+                                         class="rounded-circle me-2"
+                                         style="width: 40px; height: 40px; object-fit: cover;"
+                                         alt="Profile Picture">
+                                    <div>
+                                        <h6 class="mb-0 fw-bold">{{ Auth::user()->name }}</h6>
+                                        <small class="text-muted">{{ Auth::user()->email }}</small>
+                                    </div>
+                                </div>
+                            </li>
+                            <li><a class="dropdown-item py-2" href="{{ route('history') }}">
+                                <i class="fa-solid fa-box me-2 text-primary"></i>Order History
+                            </a></li>
+                            <li><a class="dropdown-item py-2" href="#" data-bs-toggle="modal" data-bs-target="#profileModal">
+                                <i class="fa-solid fa-gear me-2 text-primary"></i>Settings
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item py-2 text-danger" href="{{ route('login')}}">
+                                <i class="fa-solid fa-sign-out-alt me-2"></i>Logout
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
     <!-- Cart Sidebar -->
     <div class="cart" id="cartSidebar">
         <i class="fa-solid fa-xmark" id="close-card"></i>
@@ -248,11 +312,18 @@
                                             <label for="new_password_confirmation" class="form-label">Confirm New Password</label>
                                             <input type="password" class="form-control" id="new_password_confirmation" name="new_password_confirmation" required>
                                             <div class="invalid-feedback">Passwords do not match.</div>
+                                            <label for="new_password_confirmation" class="form-label">Confirm New Password</label>
+                                            <input type="password" class="form-control" id="new_password_confirmation" name="new_password_confirmation" required>
+                                            <div class="invalid-feedback">Passwords do not match.</div>
                                         </div>
+                                        <div id="passwordAlert" class="alert" style="display: none;"></div>
+                                        <button type="submit" class="btn btn-primary">Update Password</button>
                                         <div id="passwordAlert" class="alert" style="display: none;"></div>
                                         <button type="submit" class="btn btn-primary">Update Password</button>
                                     </form>
                                 </div>
+
+                                <!-- Address Section -->
 
                                 <!-- Address Section -->
                                 <div id="addressContent" style="display: none;">
@@ -260,6 +331,8 @@
                                         <h3>My Address</h3>
                                         <p class="text-muted">Update your shipping or contact address here.</p>
                                     </div>
+                                    <form action="{{ route('profile.address') }}" method="POST">
+                                        @csrf
                                     <form action="{{ route('profile.address') }}" method="POST">
                                         @csrf
                                         <div class="mb-3">
@@ -363,6 +436,12 @@
     <script src="{{ asset('js/homepage.js') }}"></script>
     <script src="{{ asset('js/profile.js') }}"></script>
     <script src="{{ asset('js/cart.js') }}"></script>
+    <!-- Load jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        window.isAuthenticated = {{ Auth::check() ? 'true' : 'false' }};
+    </script>
     <!-- Load jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

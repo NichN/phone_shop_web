@@ -7,7 +7,7 @@
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div class="dropdown me-3">
-            <button class="btn dropdown-toggle" style="background-color: #70000E; color:white;" type="button" data-bs-toggle="dropdown">
+            <button class="btn dropdown-toggle" style="background-color: #2e3b56; color:white;" type="button" data-bs-toggle="dropdown">
                 Find by
             </button>
             <ul class="dropdown-menu p-3">
@@ -18,7 +18,7 @@
                         <label for="brand_{{ $brand->id }}">{{ $brand->name }}</label>
                     </li>
                 @endforeach
-                <li class="mb-4"><button class="btn mt-2 w-100" style="background-color: #70000E; color:white;">Apply</button></li>
+                <li class="mb-4"><button class="btn mt-2 w-100" style="background-color: #2e3b56; color:white;">Apply</button></li>
             </ul>
         </div>
         <div class="d-flex w-50">
