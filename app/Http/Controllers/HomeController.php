@@ -18,7 +18,7 @@ public function index()
                 )')
                 ->where('product_item.stock', '>', 0);
         })
-        ->select('product.*', 'product_item.price', 'product_item.images')
+        ->select('product.*', 'product_item.price', 'product_item.images','product_item.color_code',)
         ->get();
     $accessoryProducts = DB::table('product')
         ->join('category', 'product.cat_id', '=', 'category.id')
@@ -34,7 +34,8 @@ public function index()
             'product.*',
             'category.name as category_name',
             'product_item.price',
-            'product_item.images'
+            'product_item.images',
+            'product_item.color_code',
         )
         ->get();
     $phone = DB::table('product')
@@ -51,10 +52,33 @@ public function index()
             'product.*',
             'category.name as category_name',
             'product_item.price',
-            'product_item.images'
+            'product_item.images',
+            'product_item.color_code',
         )
         ->get();
+        foreach ($products as $product) {
+            $product->colors = DB::table('product_item')
+                ->where('pro_id', $product->id)
+                ->pluck('color_code')
+                ->unique()
+                ->values();
+        }
 
+        foreach ($accessoryProducts as $product) {
+            $product->colors = DB::table('product_item')
+                ->where('pro_id', $product->id)
+                ->pluck('color_code')
+                ->unique()
+                ->values();
+        }
+
+        foreach ($phone as $product) {
+            $product->colors = DB::table('product_item')
+                ->where('pro_id', $product->id)
+                ->pluck('color_code')
+                ->unique()
+                ->values();
+        }
     return view('customer.homepage2', compact('products','accessoryProducts','phone'));
 }
 }

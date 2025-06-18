@@ -17,7 +17,7 @@ use App\Http\Controllers\dashboardcontroller;
 use App\Http\Controllers\productAdminController;
 use App\Http\Controllers\brandController;
 use App\Http\Controllers\ProfileController;
-
+use App\Http\Controllers\faqController;
 use App\Http\Controllers\suppilerController;
 use App\Http\Controllers\imageController;
 use App\Http\Controllers\sizeController;
@@ -44,7 +44,6 @@ Route::get('/product/{id}', [HomeController::class, 'show'])->name('product.show
 
 Route::get('/aboutus', [CustomerController::class, 'aboutUs'])->name('aboutus');
 
-Route::get('/faq', [CustomerController::class, 'faq'])->name('faq');
 
 Route::get('/contactus', [CustomerController::class, 'contact'])->name('contact_us');
 // by nich
@@ -82,13 +81,6 @@ Route::get('/payment/invoice', function () {
     ]);
 })->name('payment.invoice');
 
-Route::get('/payment/card', [CheckoutController::class, 'showCardPayment'])->name('payment.card');
-Route::post('/payment/process', [CheckoutController::class, 'processPayment'])->name('payment.process');
-Route::get('/checkout', [CheckoutController::class, 'showCheckout'])->name('checkout.show');
-Route::post('/checkout', [CheckoutController::class, 'processCheckout'])->name('checkout.process');
-
-
-
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register'])->name('register');
 
@@ -102,7 +94,7 @@ Route::post('/login', function (Request $request) {
 
     if (Auth::attempt($credentials)) {
         $request->session()->regenerate();
-        return redirect()->intended('/'); // 👈 redirects to homepage
+        return redirect()->intended('/');
     }
 
     return back()->withErrors([
@@ -128,13 +120,18 @@ Route::get('/resetpassword',function(){
     return view('authentication_form.resetpw');
 })->name('resetpassword');
 
-Route::get('/wishlist',function(){
-    return view('customer.wishlist');
-})->name('wishlist');
+// Route::get('/wishlist',function(){
+//     return view('customer.wishlist');
+// })->name('wishlist');
+// Route::get('/wishlist',function(){
+//     return view('customer.wishlist');
+// })->name('wishlist');
 
 Route::get('/productdetail',function(){
     return view('customer.productdetail');
 })->name('productdetail');
+
+Route::get('/faq', [CustomerController::class, 'faq'])->name('faq');
 
 
 //Dashboard
@@ -143,6 +140,7 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
     Route::get('/', [dashboardcontroller::class, 'show'])->name('show');
     Route::get('/product',[dashboardcontroller::class, 'product_count'])->name('product_count');
     Route::get('/purchase',[dashboardcontroller::class, 'purchase'])->name('purchase');
+    Route::get('/customer',[dashboardcontroller::class, 'customer'])->name('customer');
 });
 Route::prefix('products')->name('products.')->group(function () {
     Route::get('/color', [productAdminController::class, 'index'])->name('colorlist');
@@ -248,7 +246,19 @@ Route::middleware('auth')->group(function () {
     Route::get('/two-factor', [TwoFactorController::class, 'index'])->name('two_factor.index');
     Route::post('/two-factor', [TwoFactorController::class, 'verify'])->name('two_factor.verify');
 });
+Route::prefix('faq')->name('faq.')->group(function(){
+    Route::get('/add',[faqController::class,'index'])->name('index');
+    Route::post('/store',[faqController::class,'store'])->name('store');
+    Route::delete('/delete/{id}',[faqController::class,'delete'])->name('delete');
+    Route::post('/update/{id}',[faqController::class,'update'])->name('update');
+    Route::get('/edit/{id}',[faqController::class,'edit'])->name('edit');
+});
 
+// nich
+Route::prefix('checkout')->name('checkout.')->group(function(){
+    Route::post('/', [CheckoutController::class, 'showCheckout'])->name('show');
+    Route::post('/store',[CheckoutController::class,'storeCheckout'])->name('store');
+});
 // Route::prefix('order')->name('order.')->group(function(){
 //     Route::get('/',[OrderController::class,'index'])->name('index');
 // });
@@ -260,18 +270,19 @@ Route::middleware('auth')->group(function () {
 //     // Route::delete('/{productId}', [CartController::class, 'remove'])->name('destroy');
 // });
 
-
+// Route::post('/store-cart', [CartController::class, 'storeCart'])
+//     ->middleware('auth')->name('cart.store');
 // Cart by nich
 // Route::post('/store-cart', [CartController::class, 'storeCart'])
 //     ->middleware('auth')->name('cart.store');
-// // Route::get('/',[CartController::class, 'index'])->middleware('auth')->name('cart.index');
+// Route::get('/',[CartController::class, 'index'])->middleware('auth')->name('cart.index');
 // Route::get('/countcart',[cartController::class,'countCart'])->name('cart.number');
 // Route::get('/checkcart',[cartController::class,'checkcart'])->name('cart.check');
 // Route::delete('/remove/{id}',[cartController::class,'remove'])->middleware('auth')->name('check');
 
-Route::prefix('customer_admin')->name('customer_admin.')->group(function(){
-    Route::get('/',[customer_admincontroller::class,'index'])->name('index');
-    Route::get('/add',[customer_admincontroller::class,'add'])->name('new');
+Route::prefix('customer_admin')->name('customer_admin.')->group(function () {
+    Route::get('/', [customer_admincontroller::class, 'index'])->name('index');
+    Route::get('/add', [customer_admincontroller::class, 'add'])->name('new');
 });
 
 Route::prefix('admin')->middleware('auth')->group(function () {

@@ -20,10 +20,14 @@ use Illuminate\Support\Facades\DB;
             $totalPurchase = DB::table('purchase')
                 ->select(DB::raw('SUM(Grand_total) as Grand_total'))
                 ->first();
+            $totalCustomer = DB::table('users')
+                ->select(DB::raw('COUNT(id) as total_customer'))
+                ->first();
 
             return view('Admin.dasboard.index', [
                 'total_product' => $totalProduct->total_product ?? 0,
                 'Grand_total' => $totalPurchase->Grand_total ?? 0,
+                'total_customer' => $totalCustomer->total_customer ?? 0,
             ]);
         }
 
@@ -44,6 +48,14 @@ use Illuminate\Support\Facades\DB;
                     ->first();
                 return view('Admin.dasboard.index', [
                     'Grand_total' => $totalPurchase->Grand_total ?? 0,
+                ]);
+            }
+            public function customer(){
+                $totalCustomer = DB::table('users')
+                ->select(DB::raw('COUNT(id) as total_customer'))
+                ->first();
+                return view('Admin.dasboard.index', [
+                    'total_customer' => $totalCustomer->total_customer ?? 0,
                 ]);
             }
     }

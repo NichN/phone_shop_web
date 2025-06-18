@@ -24,9 +24,11 @@
                         <thead style="text-align:center;">
                             <tr>
                                 <th>No</th>
+                                <th>Image</th>
                                 <th>Name</th>
                                 <th>Brand</th>
                                 <th>Category</th>
+                                <th>Type</th>
                                 <th>Color</th>
                                 <th>Size</th>
                                 <th>Quantity</th>

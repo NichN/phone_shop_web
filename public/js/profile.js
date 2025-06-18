@@ -266,10 +266,8 @@ function setupPasswordToggles() {
         }
     });
 }
-
-// Initialize password toggles when the change password section is shown
 document.querySelector('a[href="#changePasswordContent"]').addEventListener('click', function() {
-    setTimeout(setupPasswordToggles, 100); // Small delay to ensure DOM is ready
+    setTimeout(setupPasswordToggles, 100);
 });
 
 

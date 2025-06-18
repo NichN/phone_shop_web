@@ -20,8 +20,9 @@ class productdetail extends Model
         'stock',
         'images',
         'product_name',
-        'color',
-        'size'
+        'color_code',
+        'size',
+        'type'
     ];
     protected $dates = [
         'created_at',

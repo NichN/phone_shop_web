@@ -2,6 +2,7 @@ body {
     font-family: 'Poppins', sans-serif;
     margin: 0;
     padding: 0;
+    
 }
 
 .navbar-brand { /* Brand Name */
@@ -97,30 +98,99 @@ body {
     border-radius: 30px 30px 0px 0px;
 }
 
+/* Cart Sidebar Styles */
+.cart-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1040;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.cart-backdrop.active {
+    opacity: 1;
+    visibility: visible;
+}
+
 .cart {
     position: fixed;
     top: 0;
-    right: -100%;
+    right: -400px; /* Start off-screen */
     width: 400px;
-    height: 100vh;           /* Fix height to viewport */
+    height: 100vh;
     padding: 20px;
     background-color: white;
-    box-shadow: -2px 0 4px hsl(0 4% 15% / 20%);
-    border-radius: 10px;
-    overflow-y: auto;        /* Scrollbar on entire cart */
-    scrollbar-width: thin;   /* Optional: thinner scrollbar */
-}
-.cart-content {
-    margin-top: 1rem;
-    overflow: visible;
+    box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);
+    border-radius: 10px 0 0 10px;
+    overflow-y: auto;
+    z-index: 1050; /* Higher than backdrop */
+    transition: right 0.3s ease-in-out;
 }
 
-.cart-title{
-    text-align: center;
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-top: 2rem;
+.cart.active {
+    right: 0;
 }
+
+/* Ensure cart content is properly styled */
+.cart-content {
+    margin-top: 1rem;
+    overflow-y: auto;
+    max-height: calc(100vh - 200px);
+}
+
+/* Style the close button */
+#close-card {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: #666;
+    transition: color 0.2s ease;
+    z-index: 1051; /* Above cart content */
+}
+
+#close-card:hover {
+    color: #dc3545;
+}
+
+/* Ensure cart title is properly positioned */
+.cart-title {
+    margin-bottom: 1.5rem;
+    padding-right: 2rem; /* Make room for close button */
+}
+
+/* Style the total section */
+.total {
+    position: sticky;
+    bottom: 0;
+    background-color: white;
+    padding: 1rem 0;
+    border-top: 1px solid #eee;
+    margin-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Ensure body doesn't scroll when cart is open */
+body.cart-open {
+    overflow: hidden;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .cart {
+        width: 100%;
+        right: -100%;
+    }
+}
+
 .cart-box{
     display: grid;
     grid-template-columns: 32% 50% 18%;	
@@ -151,31 +221,8 @@ body {
     width: 5rem;
     border-radius: 10px;
 }
-.cart.active{
-    right: 0;
-}
 .cart-remove{
     color: red;
-    cursor: pointer;
-}
-.total{
-    display: flex;
-    justify-content: space-between;
-    margin-top: 1.5rem;
-    border-top: 1px solid black;
-
-}
-.total-text{
-    font-size: 1rem;
-    font-weight: 600;
-}
-.btn-buy{
-    display: flex;
-    margin: 1.5rem auto 0 auto;
-    padding: 10px 15px;
-    border: none;
-    background-color: #27822D;
-    font-weight: 500;
     cursor: pointer;
 }
 .total-item{

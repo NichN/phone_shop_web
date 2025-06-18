@@ -18,19 +18,37 @@
 @endsection
 @section('content')
 <div class="container py-4">
-  <div class="row justify-content-center">
-      <div class="col-lg-3 col-md-4 col-sm-6 text-center p-4 border rounded shadow">
+  <div class="row justify-content-center g-3"> <!-- added g-3 for gutter spacing -->
+    
+    <div class="col-lg-3 col-md-4 col-sm-6">
+      <a href="https://www.google.com/maps/@11.5720626,104.906753,14z/data=!4m2!10m1!1e1?hl=en&entry=ttu&g_ep=EgoyMDI1MDYxMS4wIKXMDSoASAFQAw%3D%3D" 
+         target="_blank" 
+         style="text-decoration: none; color: inherit;">
+        <div class="text-center p-4 border rounded shadow">
           <i class="fa-solid fa-location-arrow icon fs-2"></i>
           <h4 class="fw-bold mt-3">Location</h4>
-      </div>
-      <div class="col-lg-3 col-md-4 col-sm-6 bg-secondary text-center p-4 border rounded shadow">
+        </div>
+      </a>
+    </div>
+
+    <div class="col-lg-3 col-md-4 col-sm-6">
+      <a href="mailto:taymeng@gmail.com" style="text-decoration: none; color: inherit;">
+        <div class="bg-secondary text-center p-4 border rounded shadow">
           <i class="fa-solid fa-envelope icon text-white fs-2"></i>
           <h4 class="fw-bold text-white mt-3">Email</h4>
-      </div>
-      <div class="col-lg-3 col-md-4 col-sm-6 text-center p-4 border rounded shadow">
+        </div>
+      </a>
+    </div>
+
+    <div class="col-lg-3 col-md-4 col-sm-6">
+      <a href="tel:+85578640241" style="text-decoration: none; color: inherit;">
+        <div class="text-center p-4 border rounded shadow">
           <i class="fa-solid fa-phone icon fs-2"></i>
           <h4 class="fw-bold mt-3">Phone</h4>
-      </div>
+        </div>
+      </a>
+    </div>
+
   </div>
 </div>
 

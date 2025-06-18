@@ -19,6 +19,9 @@ class Order extends Model
         'address',
         'delivery_fee',
         'total_amount',
+        'guest_name',
+        'guest_address',
+        'phone_guest'
     ];
     protected $dates = [
         'created_at',

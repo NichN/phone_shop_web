@@ -59,24 +59,25 @@
     </div>
 </section>
 <section>
-    <div class="container my-5 scroll-animate">
-        <div class="row d-flex justify-content-center">
-            @foreach ([
-                ['src' => 'image/phone_ps2.png', 'route' => 'product', 'name' => 'smartphone', 'label' => 'Smartphones'],
-                ['src' => 'image/accessories1.jpg', 'route' => 'product_acessory', 'name' => 'accessories', 'label' => 'Accessories']
-            ] as $item)
-                <div class="col-md-6 d-flex justify-content-center">
-                    <div class="shop-card">
-                        <img src="/{{ $item['src'] }}" alt="{{ $item['label'] }}">
-                        <div class="shop-overlay d-flex align-items-center justify-content-center">
-                            <a href="{{ route($item['route'], $item['name']) }}" class="btn btn-primary px-4 py-2 d-inline-block custom-btn">Shop Now</a>
-                        </div>
-                        <h3 class="shop-title text-uppercase fs-4 fw-semibold">{{ $item['label'] }}</h3>
+    <div class="container my-5 scroll-animate position-relative">
+    <div class="row d-flex justify-content-center">
+        @foreach ([
+            ['src' => 'image/phone_ps2.png', 'route' => 'product', 'name' => 'smartphone', 'label' => 'Smartphones'],
+            ['src' => 'image/accessories1.jpg', 'route' => 'product_acessory', 'name' => 'accessories', 'label' => 'Accessories']
+        ] as $item)
+            <div class="col-md-6 d-flex justify-content-center position-relative">
+                <div class="shop-card">
+                    <img src="/{{ $item['src'] }}" alt="{{ $item['label'] }}" class="img-fluid">
+                    <div class="shop-overlay d-flex align-items-center justify-content-center">
+                        <a href="{{ route($item['route'], $item['name']) }}" class="btn btn-primary px-4 py-2 d-inline-block custom-btn">Shop Now</a>
                     </div>
+                    <h3 class="shop-title text-uppercase fs-4 fw-semibold">{{ $item['label'] }}</h3>
                 </div>
-            @endforeach
-        </div>
+            </div>
+        @endforeach
     </div>
+</div>
+
 </section>
 <section>
     <div class="container my-5 scroll-animate">
@@ -91,12 +92,21 @@
                                 <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img" style="height: 270px;">
                             </a>
                         @endif
-                        <div class="card-body text-right" style="background-color: #e7d8d8; border-top-left-radius: 15px; border-top-right-radius: 15px;">
+                        <div class="card-body text-right" style="background-color: #ecdceb;">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h5 class="card-title mt-2 product-title">{{ $product->name }}</h5>
                                 <i class="fa-regular fa-heart fs-5 add-wishlist" data-product-id="{{ $product->id }}"></i> 
                             </div>
                             <p class="card-price">{{ $product->price }}</p>
+                            <p class="color" style="text-align: right;">
+                            @foreach ($product->colors as $color)
+                                <span class="rounded-circle d-inline-block mx-1"
+                                    style="width: 20px; height: 20px; background-color: {{ strtolower($color) }}; margin-bottom: 20px;"
+                                    title="{{ $color }}">
+                                </span>
+                            @endforeach
+                        </p>
+
                         </div>
                     </div>
                 </div>
@@ -139,12 +149,21 @@
                             <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img" style="height: 270px;">
                         </a>
                         @endif
-                        <div class="card-body text-right" style="background-color: #e7d8d8; border-top-left-radius: 15px; border-top-right-radius: 15px;">
+                        <div class="card-body text-right" style="background-color: #ecdceb;">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h5 class="card-title mt-2 product-title">{{ $product->name }}</h5>
                                 <i class="fa-regular fa-heart fs-5 add-wishlist" data-product-id="{{ $product->id }}"></i>
                             </div>
                             <p class="card-price">{{ $product->price }}</p>
+                            <p class="color" style="text-align: right;">
+                                @foreach ($product->colors as $color)
+                                    <span class="rounded-circle d-inline-block mx-1"
+                                        style="width: 20px; height: 20px; background-color: {{ strtolower($color) }}; margin-bottom: 20px;"
+                                        title="{{ $color }}">
+                                    </span>
+                                @endforeach
+                            </p>
+
                         </div>
                     </div>
                 </div>
@@ -169,12 +188,23 @@
                             <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img" style="height: 270px;">
                         </a>
                         @endif
-                        <div class="card-body text-right" style="background-color: #e7d8d8; border-top-left-radius: 15px; border-top-right-radius: 15px;">
+                        <div class="card-body text-right" style="background-color: #ecdceb;">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h5 class="card-title mt-2 product-title">{{ $product->name }}</h5>
                                 <i class="fa-regular fa-heart fs-5 add-wishlist" data-product-id="{{ $product->id }}"></i>
                             </div>
                             <p class="card-price">{{ $product->price }}</p>
+                            <p class="color" style="text-align: right;">
+                                @foreach ($product->colors as $color)
+                                    <span class="rounded-circle d-inline-block mx-1"
+                                        style="width: 20px; height: 20px; background-color: {{ strtolower($color) }}; margin-bottom: 20px;"
+                                        title="{{ $color }}">
+                                    </span>
+                                @endforeach
+                            </p>
+
+
+
                         </div>
                     </div>
                 </div>

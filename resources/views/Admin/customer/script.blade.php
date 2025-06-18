@@ -19,7 +19,7 @@
                         return meta.row + 1;}},
                     {data: 'name', name:'name'},
                     {data:'email',name:'email'},
-                    {data:'phone',name:'phone'},
+                    {data:'phone_number',name:'phone_number'},
                     {data:'address',name:'address'},
                     {data: 'action', orderable: false, searchable: false}
                 ]

@@ -18,7 +18,17 @@ $(document).ready(function () {
                 return meta.row + 1;
             }},
             { data: 'name', name: 'name' },
-            { data: 'color', name: 'color' },
+            {data: 'color_code',name: 'color_code',
+                render: function(data, type, row) {
+                    if (!data) return '';
+
+                    return `
+                        <span class="d-inline-block rounded-circle" 
+                            style="width: 20px; height: 20px; background-color: ${data}; border: 1px solid #ccc;">
+                        </span>
+                    `;
+                }
+            },
             { data: 'size', name: 'size' },
             { data: 'quantity', name: 'quantity' },
             { data: 'cost_price', name: 'cost_price'},
@@ -74,7 +84,7 @@ $(document).ready(function () {
             success: function(response) {
                 $('#pur_product').empty().append('<option value="">Select Product</option>');
                 response.forEach(function(item) {
-                    const label = `${item.product_name} ${item.color ? '- ' + item.color : ''} ${item.size ? '- ' + item.size : ''}`;
+                    const label = `${item.product_name} ${item.size ? '- ' + item.size : ''} ${item.color_code ? '- ' + item.color_code : ''}`;
                     $('#pur_product').append(`<option value="${item.id}">${label}</option>`);
                 });
             },
@@ -111,13 +121,6 @@ $(document).ready(function () {
             success: function(data) {
                 $('#unitprice').val(data.cost_price);
             },
-            error: function() {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Could not retrieve product details.'
-                });
-            }
         });
     };
     var paymentTable = $('.data-table.payment').DataTable({
@@ -290,7 +293,7 @@ $(document).ready(function () {
                     $invoiceItems.append(`
                         <tr>
                             <td>${item.name}</td>
-                            <td>${item.color}</td>
+                            <td>${item.color_code}</td>
                             <td>${item.size}</td>
                             <td>${item.quantity}</td>
                             <td>${item.unit_price}$</td>

@@ -23,7 +23,7 @@ class purchaseController extends Controller
                 'purchase_item.*',
                 'product_item.product_name as name',
                 'product_item.size as size',
-                'product_item.color as color',
+                'product_item.color_code as color_code',
                 'product_item.cost_price as cost_price'
             )->whereNull('purchase_id')
             ->get();
@@ -49,7 +49,7 @@ class purchaseController extends Controller
         $search = $request->input('search');
         $product_item = DB::table('product_item')
             ->where('product_name', 'LIKE', "%{$search}%")
-            ->select('id','color', 'product_name','size')
+            ->select('id','color_code', 'product_name','size')
             ->get();
         return response()->json($product_item);
     }
@@ -76,7 +76,7 @@ class purchaseController extends Controller
                     'purchase_item.quantity',
                     'purchase_item.subtotal',
                     'product_item.product_name',
-                    'product_item.color',
+                    'product_item.color_code',
                     'product_item.size',
                     'product_item.cost_price',
                     'product_item.stock',
@@ -154,7 +154,7 @@ class purchaseController extends Controller
         ->join('product','product.id','=','product_item.pro_id')
         ->select(
             'product_item.pro_id as product_name',
-            'product_item.color',
+            'product_item.color_code',
             'product.name as name',
             'product_item.size',
             'purchase_item.quantity',

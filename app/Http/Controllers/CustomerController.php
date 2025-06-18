@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\faq;
 
 class CustomerController extends Controller
 {
@@ -13,7 +14,8 @@ class CustomerController extends Controller
 
     public function faq()
     {
-        return view('customer.FAQ');
+        $faqs = faq::latest()->get();
+        return view('customer.FAQ', compact('faqs'));
     }
 
     public function contact()

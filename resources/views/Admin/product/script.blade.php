@@ -151,6 +151,8 @@
                 $('#stock_qty').text(response.stock);
                 $('#colorOptions').empty();
                 response.colors.forEach(function (color, index) {
+                    if (!color) return;
+
                     const cleanCode = color.toLowerCase();
                     const colorId = cleanCode.replace('#', '');
                     const input = `
@@ -164,6 +166,7 @@
                     `;
                     $('#colorOptions').append(input + label);
                 });
+
                 $('#sizeOptions').empty();
                 response.sizes.forEach(function (size, index) {
                     const input = `
@@ -230,7 +233,7 @@
                 $('#viewDetailModal').modal('show');
             },
             error: function () {
-                alert('This Product is not Availible');
+                alert('This Product are not in stock yet');
             }
         });
     });

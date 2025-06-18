@@ -21,10 +21,39 @@ $(document).ready(function() {
                     return meta.row + 1;
                 }
             },
+           {
+                data: 'images',
+                name: 'images',
+             
+                render: function(data, type, row) {
+                    try {
+                        const images = typeof data === 'string' ? JSON.parse(data) : data;
+                        if (Array.isArray(images) && images.length > 0 && images[0]) {
+                            return `<img src="/storage/${images[0]}" height="50" />`;
+                        }
+                    } catch (e) {
+                        if (data) {
+                            return `<img src="/storage/${data}" height="50" />`;
+                        }
+                    }
+                    return 'No image';
+                }
+            },
             { data: 'product_name', name: 'product_name' },
             { data: 'brand', name: 'brand' },
             { data: 'category', name: 'category' },
-            { data: 'color', name:'color'},
+            { data:'type', name: 'type'},
+            {data: 'color_code',name: 'color_code',
+                render: function(data, type, row) {
+                    if (!data) return '';
+
+                    return `
+                        <span class="d-inline-block rounded-circle" 
+                            style="width: 20px; height: 20px; background-color: ${data}; border: 1px solid #ccc;">
+                        </span>
+                    `;
+                }
+            },
             { data: 'size',name:'size'},
             { data: 'stock', name: 'stock' },
             { data: 'price', name: 'price' },
@@ -226,4 +255,5 @@ function loadProduct_edit(searchTerm = '') {
         });
     }
     loadProduct_edit();
+    
 </script>

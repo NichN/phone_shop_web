@@ -102,6 +102,10 @@ body {
     background-color: #5972a5;
     width: 250px;
 }
+#setting{
+     background-color: #5972a5;
+     width: 250px;
+}
 #supplierDropdown{
     background-color: #5972a5;
     width: 250px;
@@ -232,7 +236,7 @@ width: 250px;
     }
 
     .data-table th {
-        background-color: #70000e !important;
+        background-color: #2e3b56  !important;
         color: white !important;
         font-weight: 600;
     }

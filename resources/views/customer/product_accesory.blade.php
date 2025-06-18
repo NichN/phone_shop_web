@@ -45,12 +45,20 @@
                                 <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img" alt="Product Image" style="height: 250px;">
                             </a>
                             @endif
-                            <div class="card-body text-right bg-light">
+                            <div class="card-body text-right" style="background-color: #ecdceb;">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <h5 class="card-title mt-2 product-title">{{ $product->name }}</h5>
                                     <i class="fa-regular fa-heart fs-5 add-wishlist"></i>
                                 </div>
                                 <p class="card-price">{{ $product->price }}</p>
+                                <p class="color" style="text-align: right;">
+                                    @foreach ($product->colors as $color)
+                                    <span class="rounded-circle d-inline-block mx-1"
+                                        style="width: 20px; height: 20px; background-color: {{ strtolower($color) }}; margin-bottom: 20px;"
+                                        title="{{ $color }}">
+                                    </span>
+                                @endforeach
+                                </p>
                             </div>
                         </div>
                     </div>

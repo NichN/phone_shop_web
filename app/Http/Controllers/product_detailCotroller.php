@@ -50,52 +50,56 @@ use App\Models\productdetail;
 
       public function store(Request $request)
     {
-        try {
-            $validated = $request->validate([
-                'cost_price' => 'required|numeric',
-                'price' => 'required|numeric',
-                'product_name' => 'required',
-                'color' => 'required|exists:color,id',
-                'size' => 'required|exists:size,id',
-                'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            ]);
-
-            $imagePaths = [];
-            if ($request->hasFile('images')) {
-                foreach ($request->file('images') as $image) {
-                    $path = $image->store('public/product_images');
-                    $relativePath = str_replace('public/', '', $path);
-                    $imagePaths[] = $relativePath;
-                }
+    try {
+        $validated = $request->validate([
+            'cost_price'     => 'required|numeric',
+            'price'          => 'required|numeric',
+            'product_name'   => 'required',
+            'size'           => 'required|exists:size,id',
+            'color'          => 'required|exists:color,id',
+            'images.*'       => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+        $imagePaths = [];
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('public/product_images');
+                $imagePaths[] = str_replace('public/', '', $path);
             }
-
-            $data = [
-                'pro_id' => $validated['product_name'],
-                'cost_price' => $validated['cost_price'],
-                'price' => $validated['price'],
-                'size_id' => $validated['size'],
-                'color_id' => $validated['color'],
-                'stock' => $request->stock ?? 0,
-                'product_name' => optional(Product::find($validated['product_name']))->name,
-                'color' => optional(Color::find($validated['color']))->name,
-                'size' => optional(Size::find($validated['size']))->size,
-                'images' => $imagePaths,
-            ];
-            $product = ProductDetail::create($data);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Product stored successfully!',
-                'data' => $product
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Operation failed: ' . $e->getMessage()
-            ], 500);
         }
+        $product = Product::find($validated['product_name']);
+        $color   = Color::find($validated['color']);
+        $size    = Size::find($validated['size']);
+
+        $data = [
+            'pro_id'       => $product->id,
+            'cost_price'   => $validated['cost_price'],
+            'price'        => $validated['price'],
+            'size_id'      => $size->id,
+            'color_id'     => $color->id,
+            'stock'        => $request->stock ?? 0,
+            'product_name' => $product->name,
+            'color_code'   => $color->code,
+            'size'         => $size->size,
+            'images'       => $imagePaths,
+            'type'         => $request->type
+        ];
+
+        $productDetail = ProductDetail::create($data);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Product stored successfully!',
+            'data' => $productDetail
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Operation failed: ' . $e->getMessage()
+        ], 500);
     }
+}
+
     public function addproduct()
     {
         $size = Size::all();

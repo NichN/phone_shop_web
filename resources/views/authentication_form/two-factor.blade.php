@@ -17,7 +17,6 @@
                     </ul>
                 </div>
             @endif
-
             <form method="POST" action="{{ route('two_factor.verify') }}">
                 @csrf
 

@@ -1,15 +1,6 @@
 @extends('Layout.headerfooter')
 
 @section('title', 'ProductDetail')
-
-@section('header')
-    <div class="container mt-3">
-        <nav>
-            <a href="{{ route('homepage') }}" style="text-decoration: none; color: inherit;">Home</a> •
-            <a href="{{ route('product') }}" style="text-decoration: none; color: inherit;">Smartphone</a>
-        </nav>
-    </div>
-@endsection
 @section('content')
     <link rel="stylesheet" href="{{ asset('css/productdetail.css') }}">
 
@@ -21,7 +12,7 @@
                     <img id="mainImage" src="{{ asset('storage/' . $product['image'][0]) }}" alt="{{ $product['name'] }}" class="img-fluid">
                 </div>
                 <div class="row thumbnail mt-3">
-                    @foreach ($product['image'] as $index => $img)
+                    @foreach ($images as $index => $img)
                         <div class="col-3">
                             <img src="{{ asset('storage/' . $img) }}"
                                  class="thumbnail-img img-fluid {{ $index === 0 ? 'selected-thumbnail' : '' }}"
@@ -35,24 +26,27 @@
             <div class="col-md-6">
                 <div class="d-flex align-items-center justify-content-between mb-4">
                     <h4 class="mb-0">{{ $product['name'] }}</h4>
+                    <h5 id="product-type" style="color: green;">
+                        {{ $product['type'] }}<span style="color: green;">*</span>
+                    </h5>
                 </div>
-                <h3 class="text-danger mb-4"><strong>{{ $product['price'] }}</strong></h3>
+                <h3 class="text-danger mb-4">
+                    <strong id="product-price">{{ $product['price'] }} USD</strong>
+                </h3>
 
-                <!-- Color Selection -->
                 <div class="choose-color mb-4">
                     <h5 class="mb-4 fw-bold">CHOOSE YOUR COLOR</h5>
                     <div class="d-flex gap-3">
-                        @foreach ($colors as $index => $color)
-                            <input type="radio" class="btn-check" name="color" id="color{{ $index }}" autocomplete="off" value="{{ $color }}" {{ $index === 0 ? 'checked' : '' }}>
-                            <label class="btn btn-outline-primary d-flex flex-column align-items-center justify-content-center" for="color{{ $index }}">
+                        @foreach ($color_code as $index => $color)
+                            @php $colorId = 'color_' . $index; @endphp
+                            <input type="radio" class="btn-check" name="color" id="{{ $colorId }}" value="{{ $color }}" autocomplete="off" {{ $index === 0 ? 'checked' : '' }}>
+                            <label class="btn d-flex flex-column align-items-center justify-content-center" for="{{ $colorId }}">
                                 <span class="rounded-circle d-block" style="width: 20px; height: 20px; background-color: {{ strtolower($color) }};"></span>
-                                {{ ucfirst($color) }}
                             </label>
                         @endforeach
                     </div>
                 </div>
 
-                <!-- Storage Selection -->
                 <div class="choose-storage">
                     <h5 class="mb-4 fw-bold">CHOOSE YOUR STORAGE</h5>
                     <div class="d-flex gap-3">
@@ -63,7 +57,7 @@
                     </div>
                 </div>
 
-                <!-- Buttons -->
+                <!-- Add to Cart Button -->
                 <div class="d-flex justify-content-between align-items-center mt-4 mb-4 gap-3">
                     <a href="#" class="btn btn-primary px-4 py-2 custom-btn w-100 add-cart"
                        data-title="{{ $product['name'] }}"
@@ -95,28 +89,46 @@
             </div>
         </div>
     </div>
-    </section>
-    <section>
-        <div class="container my-5 scroll-animate">
-            <h2 class="text-center mb-4">Similar Product</h2>
-            <div class="row g-4">
-                @foreach ($products as $product)
-                    <div class="col-md-3">
-                        <div class="card product-card" style="height:400px;">
-                            <img src="{{ asset('storage/' . $product['image']) }}" class="card-img-top product-img" alt="{{ $product['name'] }}">
-                            <div class="card-body text-right" style="background-color: #e7d8d8; border-top-left-radius: 15px; border-top-right-radius: 15px;">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h5 class="card-title mt-2 product-title">{{ $product['name'] }}</h5>
-                                <i class="fa-regular fa-heart fs-5 add-wishlist"></i>
-                            </div>
-                            <p class="card-price">{{ $product['price'] }}</p>
-                        </div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        </div>
-    </section>
-    {{-- <script src="{{ asset('js/productdetail.js') }}"></script> --}}
+
+    <!-- Add to cart JS -->
     <script src="{{ asset('js/cart.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const productItems = @json($variants);
+
+            const priceDisplay = document.getElementById('product-price');
+            const typeDisplay = document.getElementById('product-type');
+
+            let selectedColor = document.querySelector('input[name="color"]:checked')?.value;
+            let selectedSize = document.querySelector('input[name="storage"]:checked')?.value;
+
+            function updateDisplay() {
+                const selectedItem = productItems.find(item =>
+                    item.color_code.toLowerCase() === selectedColor.toLowerCase() &&
+                    item.size.toLowerCase() === selectedSize.toLowerCase()
+                );
+
+                if (selectedItem) {
+                    priceDisplay.innerHTML = `<strong>${selectedItem.price} USD</strong>`;
+                    typeDisplay.innerHTML = `${selectedItem.type}<span style="color: green;">*</span>`;
+                }
+            }
+
+            document.querySelectorAll('input[name="color"]').forEach(radio => {
+                radio.addEventListener('change', function () {
+                    selectedColor = this.value;
+                    updateDisplay();
+                });
+            });
+
+            document.querySelectorAll('input[name="storage"]').forEach(radio => {
+                radio.addEventListener('change', function () {
+                    selectedSize = this.value;
+                    updateDisplay();
+                });
+            });
+
+            updateDisplay();
+        });
+    </script>
 @endsection

@@ -59,7 +59,13 @@
                                 <i class="fa-regular fa-heart fs-5 add-wishlist"></i>
                             </div>
                             <p class="card-price">{{ $product->price }}</p>
-                            {{-- <a href="#" class="btn btn-primary px-4 py-2 d-inline-block custom-btn w-100 add-cart" data-product-id="{{ $product->id }}">Add to Cart</a> --}}
+                            <p> @foreach ($product->colors as $color)
+                                        <span class="rounded-circle d-inline-block mx-1"
+                                            style="width: 20px; height: 20px; background-color: {{ strtolower($color) }}; margin-bottom: 20px;"
+                                            title="{{ $color }}">
+                                        </span>
+                                    @endforeach
+                            </p>
                         </div>
                     </div>
                 </div>

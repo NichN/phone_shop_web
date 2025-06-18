@@ -2,20 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-class OrderItem extends Model
+class faq extends Model
 {
     use HasFactory;
-
-    protected $table = 'order_item';
-
+    protected $table = 'faqs';
     protected $fillable = [
-        'order_id',
-        'quantity',
-        'price',
-        'product_item_id'
+        'id',
+        'question',
+        'answer',
     ];
     protected $dates = [
         'created_at',

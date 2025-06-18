@@ -2,155 +2,107 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Delivery;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\Order;
 use App\Models\OrderItem;
 
 class CheckoutController extends Controller
 {
-    public function showCheckout()
+    public function showCheckout(Request $request)
     {
-        $orderItems = [
-            [
-                'name' => 'iPhone 16',
-                'category' => 'Mobile Phone',
-                'price' => '1299.00',
-                'image' => 'Iphone16.jpg',
-            ],
-            [
-                'name' => 'OPPO',
-                'category' => 'Mobile Phone',
-                'price' => '799.00',
-                'image' => 'oppo.jpg',
-            ],
-            [
-                'name' => 'OPPO',
-                'category' => 'Mobile Phone',
-                'price' => '899.00',
-                'image' => 'oppo1.jpg',
-            ],
-        ];
-
-        // Calculate totals
-        $subtotal = array_sum(array_column($orderItems, 'price'));
-        $deliveryFee = 1.50;
+        $request->validate([
+            'cart_data' => 'required|json',
+        ]);
+        
+        $cart = json_decode($request->cart_data, true);
+        
+        $subtotal = collect($cart)->sum(function ($item) {
+            return floatval(preg_replace('/[^\d.]/', '', $item['price'])) * $item['quantity'];
+        });
+        
+        $deliveryFee = Delivery::first()->fee;
         $totalAmount = $subtotal + $deliveryFee;
-
-        return view('customer.checkout', compact('orderItems', 'subtotal', 'deliveryFee', 'totalAmount'));
-    }
-
-    public function showCardPayment()
-    {
-        $totalAmount = 1397.00;
-
-        return view('customer.card', compact('totalAmount'));
-    }
-
-    public function processPayment(Request $request)
-    {
-        // Here, you can handle the payment processing logic
-
-        // For now, let's just return a response that shows the form data
-        return response()->json([
-            'card_number' => $request->input('card_number'),
-            'expiry_date' => $request->input('expiry_date'),
-            'cvv' => $request->input('cvv'),
-            'cardholder_name' => $request->input('cardholder_name'),
-            'total_amount' => $request->input('total_amount'), // Add the total amount to the form
+        
+        return view('customer.checkout', [
+            'orderItems' => $cart,
+            'subtotal' => number_format($subtotal, 2),
+            'deliveryFee' => number_format($deliveryFee, 2),
+            'totalAmount' => number_format($totalAmount, 2),
+            // Remove user registration options from view
         ]);
     }
 
+    public function storeCheckout(Request $request)
+    {
+        $request->validate([
+            'guest_name' => 'required|string|max:255',
+            'guest_address' => 'required|string|max:500',
+            'phone_guest' => 'required|string|max:20',
+            'cart_data' => 'required|json',
+        ]);
+        
+        DB::beginTransaction();
 
-    // public function processCheckout(Request $request)
-    // {
-    //     $validated = $request->validate([
-    //         'phone' => 'required|digits:10', 
-    //         'address' => 'required|string|max:255',
-    //         'payment_method' => 'required|in:1,2',
-    //     ]);
+        try {
+            // Parse cart items
+            $cartItems = json_decode($request->input('cart_data'), true);
+            $subtotal = floatval(str_replace(',', '', $request->subtotal));
+            $deliveryFee = floatval(str_replace(',', '', $request->delivery_fee));
+            $totalAmount = floatval(str_replace(',', '', $request->total_amount));
 
-    //     return redirect()->route('checkout.success')->with('success', 'Your order has been placed!');
-    // }
+            $order = Order::create([
+                'user_id' => null, // Always null for guest checkout
+                'delivery_id' => $request->delivery_id ?? 1,
+                'subtotal' => $subtotal,
+                'delivery_fee' => $deliveryFee,
+                'total_amount' => $totalAmount,
+                'guest_name' => $request->guest_name,
+                'guest_address' => $request->guest_address,
+                'phone_guest' => $request->phone_guest,
+                'status' => 'pending', // Add status field
+            ]);
 
-    // public function success()
-    // {
-    //     return view('order_success');
-    // }
+            foreach ($cartItems as $item) {
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_item_id' => $item['id'] ?? null,
+                    'quantity' => $item['quantity'],
+                    'price' => floatval(preg_replace('/[^\d.]/', '', $item['price'])),
+                ]);
+            }
+
+            DB::commit();
+            
+            // Clear cart after successful checkout
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true, 
+                    'order_id' => $order->id,
+                    'redirect' => route('checkout.success', ['order' => $order->id])
+                ]);
+            }
+            
+            return redirect()->route('checkout.success', ['order' => $order->id]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false, 
+                    'message' => 'Checkout failed: ' . $e->getMessage()
+                ], 500);
+            }
+            
+            return back()->withErrors('Checkout failed: ' . $e->getMessage());
+        }
+    }
+    
+    public function checkoutSuccess($orderId)
+    {
+        $order = Order::findOrFail($orderId);
+        return view('customer.checkout_success', compact('order'));
+    }
 }
-
-// class CheckoutController extends Controller
-// {
-//     public function process(Request $request)
-//     {
-//         // Step 1: Validate input
-//         $validated = $request->validate([
-//             'phone_number' => 'required|string',
-//             'address' => 'required|string',
-//             'payment_method' => 'required|in:cash,card',
-//             'cart_items' => 'required|array',
-//             'cart_items.*.product_id' => 'required|integer',
-//             'cart_items.*.quantity' => 'required|integer|min:1',
-//             'cart_items.*.price' => 'required|numeric|min:0',
-//             'subtotal' => 'required|numeric',
-//             'delivery_fee' => 'required|numeric',
-//             'total_amount' => 'required|numeric',
-//         ]);
-
-//         // Step 2: Get data
-//         $user_id = Auth::id(); // Assumes user is logged in
-//         $cartItems = $request->input('cart_items');
-//         $subtotal = $request->input('subtotal');
-//         $deliveryFee = $request->input('delivery_fee');
-//         $totalAmount = $request->input('total_amount');
-
-//         // Step 3: Create order and order items inside a transaction
-//         DB::beginTransaction();
-
-//         try {
-//             $order = Order::create([
-//                 'user_id' => $user_id,
-//                 'delivery_id' => 1, // you can customize this
-//                 'subtotal' => $subtotal,
-//                 'phone_number' => $request->input('phone_number'),
-//                 'address' => $request->input('address'),
-//                 'delivery_fee' => $deliveryFee,
-//                 'total_amount' => $totalAmount,
-//             ]);
-
-//             foreach ($cartItems as $item) {
-//                 OrderItem::create([
-//                     'order_id' => $order->id,
-//                     'quantity' => $item['quantity'],
-//                     'price' => $item['price'],
-//                 ]);
-//             }
-
-//             DB::commit();
-
-//             // Step 4: Redirect based on payment method
-//             if ($request->payment_method === 'cash') {
-//                 return redirect()->route('payment.invoice')->with('success', 'Order placed successfully!');
-//             } else {
-//                 return redirect()->route('payment.card')->with('success', 'Proceed to payment.');
-//             }
-
-//         } catch (\Exception $e) {
-//             DB::rollBack();
-//             return back()->with('error', 'Checkout failed: ' . $e->getMessage());
-//         }
-//     }
-
-//     public function showCheckout()
-// {
-//     // Load cart data here if needed
-//     $orderItems = []; // Replace this with actual cart data
-//     $subtotal = 0;
-//     $deliveryFee = 1.5;
-//     $totalAmount = $subtotal + $deliveryFee;
-
-//     return view('checkout', compact('orderItems', 'subtotal', 'deliveryFee', 'totalAmount'));
-// }
-
-// }

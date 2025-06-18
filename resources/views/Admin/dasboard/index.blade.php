@@ -10,11 +10,11 @@
         </div>
         <div class="row g-4">
             <div class="col-md-3">
-                <div class="card border-0 shadow-sm" style="border-radius: 12px; height: 150px;">
+                <div class="card border-0 shadow-sm" style="border-radius: 12px; height: 150px; background-color:#bdfff9 ;">
                     <div class="card-body d-flex flex-column justify-content-center">
                         <div class="d-flex align-items-center gap-3">
                             <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center"
-                                style="width: 50px; height: 50px;">
+                                style="width: 50px; height: 50px; background-color:white;">
                                 <i class="bi bi-box-seam text-primary fs-4"></i>
                             </div>
                             <div class="text-center text-md-start">
@@ -26,17 +26,18 @@
                     </div>
                 </div>
             </div>
+
             <div class="col-md-3">
-                <div class="card border-0 shadow-sm" style="border-radius: 12px; height: 150px;">
+                <div class="card border-0 shadow-sm" style="border-radius: 12px; height: 150px; background-color:#bdfff9 ;">
                     <div class="card-body d-flex flex-column justify-content-center">
                         <div class="d-flex align-items-center gap-3">
-                            <div class="bg-info bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center"
-                                style="width: 50px; height: 50px;">
-                                <i class="bi bi-people text-info fs-4"></i>
+                            <div class="bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center"
+                                style="width: 50px; height: 50px; background-color:white;">
+                                <i class="bi bi-people text-primary fs-4"></i>
                             </div>
                             <div class="text-center text-md-start">
-                                <div class="small mb-1 text-muted">Total Customers</div>
-                                <h3 class="fw-bold mb-0">2,512</h3>
+                                <div class="small mb-1 text-muted" style="color: black;"><b>Total Customers</b></div>
+                                <h3 class="fw-bold mb-0">{{$total_customer}}</h3>
                                 {{-- <span class="badge bg-success bg-opacity-10 text-success small">+8%</span> --}}
                             </div>
                         </div>
@@ -45,16 +46,16 @@
             </div>
 
             <div class="col-md-3">
-                <div class="card border-0 shadow-sm" style="border-radius: 12px; height: 150px;">
+                <div class="card border-0 shadow-sm" style="border-radius: 12px; height: 150px; background-color:#bdfff9 ;">
                     <div class="card-body d-flex flex-column justify-content-center">
                         <div class="d-flex align-items-center gap-3">
                             <div class="bg-warning bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center"
-                                style="width: 50px; height: 50px;">
+                                style="width: 50px; height: 50px; background-color:white;">
                                 <i class="bi bi-currency-dollar text-warning fs-4"></i>
                             </div>
                             <div class="text-center text-md-start">
                                 <div class="small mb-1 text-muted">Total purchase</div>
-                                <h3 class="fw-bold mb-0">{{$Grand_total}} $</h3>
+                               <h3 class="fw-bold mb-0">{{ number_format((float)$Grand_total, 0) }} $</h3>
                                 {{-- <span class="badge bg-success bg-opacity-10 text-success small">+24%</span> --}}
                             </div>
                         </div>
@@ -63,11 +64,11 @@
             </div>
 
             <div class="col-md-3">
-                <div class="card border-0 shadow-sm" style="border-radius: 12px; height: 150px;">
+                <div class="card border-0 shadow-sm" style="border-radius: 12px; height: 150px; background-color:#bdfff9 ;">
                     <div class="card-body d-flex flex-column justify-content-center">
                         <div class="d-flex align-items-center gap-3">
                             <div class="bg-danger bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center"
-                                style="width: 50px; height: 50px;">
+                                style="width: 50px; height: 50px; background-color:white;">
                                 <i class="bi bi-receipt text-danger fs-4"></i>
                             </div>
                             <div class="text-center text-md-start">
@@ -148,7 +149,7 @@
                     <div class="card-header bg-white border-0 d-flex align-items-center justify-content-between py-3">
                         <h5 class="fw-bold mb-0 text-dark" style="font-size: 1.25rem;">Monthly Sale</h5>
                         <div>
-                            <button class="btn btn-sm btn-outline-secondary">Export </button>
+                            <button class="btn btn-sm btn-outline-secondary">Export</button>
                         </div>
                     </div>
                     <div class="card-body">
