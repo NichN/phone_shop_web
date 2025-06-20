@@ -31,6 +31,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Models\purchase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Http\Controllers\RoleController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -94,7 +95,15 @@ Route::post('/login', function (Request $request) {
 
     if (Auth::attempt($credentials)) {
         $request->session()->regenerate();
-        return redirect()->intended('/');
+        $user = Auth::user();
+        // Role-based redirect
+        if ($user->role_id == 1) {
+            return redirect()->route('dashboard.show');
+        } elseif ($user->role_id == 2) {
+            return redirect()->route('delivery.index');
+        } else {
+            return redirect('/homepage');
+        }
     }
 
     return back()->withErrors([
@@ -135,7 +144,7 @@ Route::get('/faq', [CustomerController::class, 'faq'])->name('faq');
 
 
 //Dashboard
-Route::prefix('dashboard')->name('dashboard.')->group(function () {
+Route::prefix('dashboard')->middleware('auth')->name('dashboard.')->group(function () {
     Route::get('/sidebar', [dashboardcontroller::class, 'index'])->name('index');
     Route::get('/', [dashboardcontroller::class, 'show'])->name('show');
     Route::get('/product',[dashboardcontroller::class, 'product_count'])->name('product_count');
@@ -293,9 +302,16 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/users/{user}/edit', [Admin_user_controller::class, 'edit'])->name('user.edit');
     Route::put('/users/{user}', [Admin_user_controller::class, 'update'])->name('user.update');
     Route::delete('/users/{user}', [Admin_user_controller::class, 'destroy'])->name('user.destroy');
+    Route::get('/roles', [RoleController::class, 'index'])->name('role.index');
+    Route::get('/roles/data', [RoleController::class, 'getData']);
+    Route::post('/roles', [RoleController::class, 'store']);
+    Route::get('/roles/{role}/edit', [RoleController::class, 'edit']);
+    Route::put('/roles/{role}', [RoleController::class, 'update']);
+    Route::delete('/roles/{role}', [RoleController::class, 'destroy']);
 });
 
 Route::middleware(['auth'])->group(function () {
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->name('profile.update');
     Route::post('/profile/password', [ProfileController::class, 'changePassword'])->name('profile.password');
     Route::post('/profile/address', [ProfileController::class, 'updateAddress'])->name('profile.address');
