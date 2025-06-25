@@ -42,7 +42,7 @@
                         <div class="card product-card">
                             @if (!empty($images) && isset($images[0]))
                             <a href="{{ route('product.show', $product->id) }}">
-                                <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img" alt="Product Image" style="height: 250px;">
+                                <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img" style="height: 270px; object-fit: cover; object-position: center; width: 100%;">
                             </a>
                             @endif
                             <div class="card-body text-right" style="background-color: #ecdceb;">

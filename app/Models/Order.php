@@ -13,6 +13,7 @@ class Order extends Model
 
     protected $fillable = [
         'user_id',
+        'order_num',
         'delivery_id',
         'subtotal',
         'phone_number',
@@ -21,7 +22,8 @@ class Order extends Model
         'total_amount',
         'guest_name',
         'guest_address',
-        'phone_guest'
+        'phone_guest',
+        'status'
     ];
     protected $dates = [
         'created_at',

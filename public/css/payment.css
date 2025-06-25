@@ -1,0 +1,97 @@
+.payment-methods-container {
+        background: #fff;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    .payment-options {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-top: 15px;
+    }
+    
+    .payment-option {
+        position: relative;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        padding: 15px;
+        transition: all 0.3s ease;
+    }
+    
+    .payment-option:hover {
+        border-color: #4a6cf7;
+        box-shadow: 0 2px 8px rgba(74, 108, 247, 0.1);
+    }
+    
+    .payment-option .form-check-input {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        width: 18px;
+        height: 18px;
+        margin: 0;
+    }
+    
+    .payment-label {
+        display: block;
+        padding-left: 30px;
+        cursor: pointer;
+        margin: 0;
+    }
+    
+    .payment-content {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .payment-icon {
+        width: 50px;
+        height: 50px;
+        object-fit: contain;
+    }
+    
+    .payment-title {
+        display: block;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 3px;
+    }
+    
+    .payment-description {
+        display: block;
+        font-size: 0.85rem;
+        color: #666;
+    }
+    
+    .form-check-input:checked {
+        background-color: #4a6cf7;
+        border-color: #4a6cf7;
+    }
+    
+    .form-check-input:checked ~ .payment-label .payment-title {
+        color: #4a6cf7;
+    }
+    
+    .form-check-input:checked ~ .payment-label .payment-option {
+        border-color: #4a6cf7;
+        background-color: rgba(74, 108, 247, 0.05);
+    }
+    #confirmOrderBtn{
+        /* display: inline-block; */
+    padding: 8px 14px;
+    background-color: black;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    }
+    .center-container {
+        display: flex;
+        margin-top: 50px;
+        justify-content: center;
+        align-items: center;
+    }

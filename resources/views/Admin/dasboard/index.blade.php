@@ -26,7 +26,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="col-md-3">
                 <div class="card border-0 shadow-sm" style="border-radius: 12px; height: 150px; background-color:#bdfff9 ;">
                     <div class="card-body d-flex flex-column justify-content-center">
@@ -73,7 +72,7 @@
                             </div>
                             <div class="text-center text-md-start">
                                 <div class="small mb-1 text-muted">Total Orders</div>
-                                <h3 class="fw-bold mb-0">1,842</h3>
+                                <h3 class="fw-bold mb-0">{{$total_order}}</h3>
                                 {{-- <span class="badge bg-success bg-opacity-10 text-success small">+5%</span> --}}
                             </div>
                         </div>
@@ -175,5 +174,7 @@
             </div>
         </div>
     </div>
+    
 </div>
+
 @include('Admin.dasboard.script')

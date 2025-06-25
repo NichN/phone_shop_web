@@ -18,18 +18,18 @@ body {
 }
 
 .custom-link i{
-    font-size: 12px;
+    font-size: 10px;
     margin-right: 8px;
 }
 
 .custom-link {
-    font-size: 12px;
+    font-size: 10px;
     text-decoration: none;
     color: black;
 }
 
 .custom-link span {
-    font-size: 12px;
+    font-size: 10px;
 }
 
 .custom-link:hover {

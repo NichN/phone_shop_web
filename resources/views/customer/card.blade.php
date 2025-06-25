@@ -1,112 +1,127 @@
 @extends('Layout.headerfooter')
 
-@section('title', 'Credit Card Payment')
+@section('title', 'Payment & Delivery')
+<link href="{{ asset('css/payment.css') }}" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Load jQuery FIRST -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- THEN load other scripts that use jQuery -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+
 
 @section('content')
-    <style>
-        .payment-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 50px;
-            padding-bottom: 50px;
-            /* Added bottom padding for space */
-        }
+<div class="container py-4">
+    <form method="POST" action="{{ route('checkout.payment_store') }}">
+        @csrf
+        <div class="row justify-content-between">
+            {{-- Left Side - Order Summary --}}
+            <div class="col-md-8">
+                <h5 class="fw-bold mb-4 text-center">
+                    My Shopping Bag ({{ $orderItems->sum('quantity') }})
+                </h5>
 
-        /* Boxed Form Style */
-        .payment-box {
-            width: 60%;
-            padding: 30px;
-            border-radius: 10px;
-            background-color: #f9f9f9;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            border: 1px solid #ddd;
+                <div class="bg-light p-3 mb-3 rounded shadow-sm">
+                    @if(isset($orderItems) && $orderItems->isNotEmpty())
+                        @foreach ($orderItems as $item)
+                            @php
+                                $images = json_decode($item->imgSrc, true);
+                                $imgSrc = ($images && count($images) > 0) ? $images[0] : 'default-image.jpg';
+                                $title = $item->title ?? 'Unknown Product';
+                                $color = $item->color_code ?? '#ccc';
+                                $size = $item->size ?? 'N/A';
+                                $quantity = $item->quantity ?? 0;
+                                $price = $item->price ?? '0.00';
+                                $subtotal = $item->subtotal ?? '0.00';
+                                $deliveryFee = $item->delivery_fee ?? '0.00';
+                                $totalAmount = $item->total_amount ?? '0.00';
+                            @endphp
+                            <div class="d-flex align-items-center mb-3 p-2 rounded" style="border:1px solid #b35dae;">
+                                <img src="{{ asset('storage/' . $imgSrc) }}" alt="{{ $title }}" width="120" height="120"
+                                    class="me-3 rounded" style="object-fit: cover;">
+                                <div>
+                                    <div><strong>Product Name:</strong> {{ $title }}</div>
+                                    <div><strong>Color:</strong> 
+                                        <span style="display:inline-block; width:20px; height:20px; background-color: {{ $color }}; border: 1px solid #ccc;"></span>
+                                    </div>
+                                    <div><strong>Size:</strong> {{ $size }}</div>
+                                    <div><strong>Quantity:</strong> {{ $quantity }}</div>
+                                    <div class="text-danger"><strong>Price:</strong> ${{ $price }}</div>
+                                </div>
+                            </div>
+                        @endforeach
+                    @else
+                        <p>No items in cart</p>
+                    @endif
+                </div>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between">
+                        <span><b>Subtotal</b></span>
+                        <span><strong>${{ $subtotal ?? '0.00' }}</strong></span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-success"><b>Delivery fee</b></span>
+                        <span class="text-success"><strong>${{ $deliveryFee ?? '0.00' }}</strong></span>
+                    </div>
+                    <hr style="border-color: 1px solid black;">
+                    <div class="d-flex justify-content-between fw-bold mt-3">
+                        <span class="text-danger">Total Amount</span>
+                        <span style="color: red">${{ $totalAmount ?? '0.00' }}</span>
+                    </div>
 
-        }
+                    <input type="hidden" name="subtotal" value="{{ $subtotal ?? '0.00' }}">
+                    <input type="hidden" name="delivery_fee" value="{{ $deliveryFee ?? '0.00' }}">
+                    <input type="hidden" name="total_amount" value="{{ $totalAmount ?? '0.00' }}">
+                </div>
+            </div>
 
-        .payment-box h3 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .form-control {
-            border-radius: 4px;
-            margin-bottom: 15px;
-            width: 100%;
-            padding: 10px;
-            box-sizing: border-box;
-        }
-
-        .btn-pay {
-            width: 100%;
-            background-color: #2c7be5;
-            color: white;
-            padding: 15px;
-            font-size: 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .btn-pay:hover {
-            background-color: #1a6cb0;
-        }
-
-        .card-icons {
-            display: flex;
-            justify-content: flex-start;
-            /* Align icons to the left */
-            margin-bottom: 15px;
-        }
-
-        .card-icons img {
-            width: 5%;
-        }
-
-        /* Transaction Summary Box */
-        .transaction-summary {
-            width: 35%;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            background-color: #fff;
-        }
-
-        .transaction-summary h4 {
-            margin-bottom: 20px;
-        }
-    </style>
-
-    <div class="container payment-container">
-        <!-- Payment Box -->
-        <div class="payment-box">
-            <h3>Debit/Credit Card</h3>
-            <form action="{{ route('payment.process') }}" method="POST">
-                @csrf
-                <div class="card-icons">
-                    <img src="{{ asset('image/visa.png') }}" alt="Visa">
-                    <img src="{{ asset('image/master.png') }}" alt="MasterCard">
+            {{-- Right Side - Payment Form --}}
+            <div class="col-md-4">
+                <div class="payment-methods-container">
+                    <h5 class="fw-bold mb-3">Payment Method</h5>
+                    <div class="payment-options">
+                        <div class="payment-option mb-2">
+                            <input class="form-check-input" type="radio" name="payment_type" id="cash_on_delivery" value="cash on delivery" checked>
+                            <label class="payment-label" for="cash_on_delivery">
+                                <div class="payment-content d-flex align-items-center">
+                                    <img src="{{ asset('image/delivery.png') }}" alt="Cash on Delivery" class="payment-icon me-2">
+                                    <div>
+                                        <span class="payment-title">Cash on Delivery</span><br>
+                                        <small class="payment-description">Pay when you receive your items</small>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                        
+                        <div class="payment-option">
+                            <input class="form-check-input" type="radio" name="payment_type" id="kh_qr" value="kh_qr">
+                            <label class="payment-label" for="kh_qr">
+                                <div class="payment-content d-flex align-items-center">
+                                    <img src="{{ asset('image/barkog.png') }}" alt="KH QR Payment" class="payment-icon rounded me-2">
+                                    <div>
+                                        <span class="payment-title">KH QR Payment</span><br>
+                                        <small class="payment-description">Scan QR code to pay instantly</small>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Card Number -->
-                <label for="card_number">Card Number*</label>
-                <input type="text" name="card_number" id="card_number" class="form-control"
-                    placeholder="0000-0000-0000-0000" required>
+                <div class="mt-3">
+                    <label for="note"><strong>Note:</strong></label>
+                    <textarea class="form-control" id="note" name="note" rows="3" placeholder="Add a note (optional)"></textarea>
+                </div>
+                <input type="hidden" name="order_id" value="{{ $orderItems[0]->order_id ?? '' }}">
 
-                <!-- Card Holder Name -->
-                <label for="cardholder_name">Card Holder Name*</label>
-                <input type="text" name="cardholder_name" id="cardholder_name" class="form-control"
-                    placeholder="Your Name" required>
-
-                <!-- Expiry Date -->
-                <label for="expiry_date">Expiration Date*</label>
-                <input type="month" name="expiry_date" id="expiry_date" class="form-control" required>
-
-                <!-- CVV -->
-                <label for="cvv">CVV Number*</label>
-                <input type="text" name="cvv" id="cvv" class="form-control" placeholder="CVV" required>
-
-                <button type="submit" class="btn-pay">Confirm and Pay</button>
-            </form>
+                <div class="center-container mt-4">
+                    <button type="submit" id="confirmOrderBtn">Let's Order</button>
+                </div>
+            </div>
         </div>
-    </div>
+    </form>
+</div>
 @endsection
+@include('customer.script_payment')

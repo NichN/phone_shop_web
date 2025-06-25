@@ -107,6 +107,7 @@ class ProductController extends Controller
 
     $variants = $related_items->map(function ($item) {
         return [
+            'id'         => $item->id,
             'color_code' => $item->color_code,
             'size'       => $item->size,
             'price'      => $item->price,

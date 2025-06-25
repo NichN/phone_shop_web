@@ -26,7 +26,6 @@
         <a href="{{ route('pr_detail.add')}}" class="w3-bar-item w3-button"><i class="fa-solid fa-circle-info"></i> Add Product</a>
         <a href="{{ route('color.colorlist') }}" class="w3-bar-item w3-button"><i class="fa-solid fa-palette"></i> Color</a>
         <a href="{{ route('size.index') }}" class="w3-bar-item w3-button"><i class="fa-solid fa-expand"></i> Size</a>
-        <a href="{{ route('photo.index') }}" class="w3-bar-item w3-button"><i class="fa-solid fa-image"></i> Photo</a>     
     </div>
     <div class="w3-bar-item  w3-dropdown-click" onclick="toggleDropdown('brandDropdown')">
         <i class="fa fa-qrcode"></i> Brand <i class="fa fa-caret-down" style="float:right;"></i>
@@ -62,7 +61,7 @@
     <div id="deliveryDropdown" class="w3-dropdown-content" style="display: none;">
         <a href="{{ route('delivery.index') }}" class="w3-bar-item w3-button"><i class="fa-solid fa-truck"></i> Delivery Fee</a>
     </div>
-    <a href="#" class="w3-bar-item w3-button order-link"><i class="fas fa-shopping-cart"></i> Order</a>
+    <a href="{{ route('order_dashboard.index') }}" class="w3-bar-item w3-button order-link"><i class="fas fa-shopping-cart"></i> Order</a>
     <a href="{{ route('customer_admin.index') }}" class="w3-bar-item w3-button"><i class="fa-solid fa-person"></i> Customer</a>
     <a href="#" class="w3-bar-item w3-button payment-link"><i class="fas fa-money-bill-wave"></i> Payment</a>
     <div class="w3-bar-item w3-dropdown-click" onclick="toggleDropdown('setting')" style="cursor:pointer;">
@@ -72,6 +71,7 @@
 
     <div id="setting" class="w3-dropdown-content" style="display: none;">
         <a href="{{ route('faq.index') }}" class="w3-bar-item w3-button"><i class="fa-solid fa-person-circle-question"></i> FAQ</a>
+        <a href="{{ route('photo.index') }}" class="w3-bar-item w3-button"><i class="fa-solid fa-image"></i> Photo Upload</a>     
     </div>
     
     {{-- report --}}

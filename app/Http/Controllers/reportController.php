@@ -15,7 +15,7 @@ class reportController extends Controller
             ->select(
                 'product.id',
                 'product.name',
-                DB::raw('GROUP_CONCAT(DISTINCT product_item.color) as colors'),
+                DB::raw('GROUP_CONCAT(DISTINCT product_item.color_code) as colors_code'),
                 DB::raw('GROUP_CONCAT(DISTINCT product_item.size) as sizes'),
                 DB::raw('SUM(product_item.stock) as stock'),
                 DB::raw('SUM(purchase.Grand_total) as Grand_total')
@@ -23,7 +23,7 @@ class reportController extends Controller
             ->groupBy('product.id', 'product.name')
             ->get()
             ->map(function ($item) {
-                $item->colors = explode(',', $item->colors);
+                $item->colors_code = explode(',', $item->colors_code);
                 $item->sizes = explode(',', $item->sizes);
                 return $item;
             });

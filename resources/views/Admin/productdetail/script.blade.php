@@ -21,24 +21,24 @@ $(document).ready(function() {
                     return meta.row + 1;
                 }
             },
-           {
-                data: 'images',
-                name: 'images',
+        //    {
+        //         data: 'images',
+        //         name: 'images',
              
-                render: function(data, type, row) {
-                    try {
-                        const images = typeof data === 'string' ? JSON.parse(data) : data;
-                        if (Array.isArray(images) && images.length > 0 && images[0]) {
-                            return `<img src="/storage/${images[0]}" height="50" />`;
-                        }
-                    } catch (e) {
-                        if (data) {
-                            return `<img src="/storage/${data}" height="50" />`;
-                        }
-                    }
-                    return 'No image';
-                }
-            },
+        //         render: function(data, type, row) {
+        //             try {
+        //                 const images = typeof data === 'string' ? JSON.parse(data) : data;
+        //                 if (Array.isArray(images) && images.length > 0 && images[0]) {
+        //                     return `<img src="/storage/${images[0]}" height="50" />`;
+        //                 }
+        //             } catch (e) {
+        //                 if (data) {
+        //                     return `<img src="/storage/${data}" height="50" />`;
+        //                 }
+        //             }
+        //             return 'No image';
+        //         }
+        //     },
             { data: 'product_name', name: 'product_name' },
             { data: 'brand', name: 'brand' },
             { data: 'category', name: 'category' },

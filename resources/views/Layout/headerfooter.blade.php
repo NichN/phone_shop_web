@@ -110,11 +110,11 @@
                                     </div>
                                 </div>
                             </li>
-                            <li><a class="dropdown-item py-2" href="{{ route('history') }}">
+                            <li><a class="dropdown-item py-2" href="{{ route('checkout.history') }}">
                                 <i class="fa-solid fa-box me-2 text-primary"></i>Order History
                             </a></li>
                             <li><a class="dropdown-item py-2" href="#" data-bs-toggle="modal" data-bs-target="#profileModal">
-                                <i class="fa-solid fa-gear me-2 text-primary"></i>Settings
+                                <i class="fa-solid fa-gear me-2 text-primary"></i>My Profile
                             </a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item py-2 text-danger" href="{{ route('login')}}">
@@ -137,13 +137,18 @@
         <div class="total-price">0.00</div>
     </div>
     <div>
-        <form id="checkoutForm" method="GET" action="{{ route('checkout.show') }}">
-            @csrf
-            <input type="hidden" name="cart_data" id="cartData">
-            <button type="submit" class="btn mt-4 w-100" style="background-color: #dbb3d9;">
-                Checkout
-            </button>
-        </form>
+      <form id="checkoutRedirectForm" method="POST" action="{{ route('checkout.show') }}">
+    @csrf
+    <input type="hidden" name="cart_data" id="checkoutCartData">
+    <input type="hidden" name="user_id" id="checkoutUserId" value="{{ Auth::check() ? Auth::user()->id : '' }}">
+    @if (!Auth::check())
+        <input type="hidden" name="is_guest" value="1">
+    @endif
+
+    <button type="button" class="btn mt-4 w-100" style="background-color: black; color:white;" onclick="submitCheckoutForm()">
+        Checkout
+    </button>
+</form>
 
     </div>
 </div>

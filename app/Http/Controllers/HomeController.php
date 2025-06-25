@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Productdetail;
+use App\Models\Image;
+
+use function Laravel\Prompts\select;
 
 class HomeController extends Controller
 {
@@ -80,6 +83,25 @@ public function index()
                 ->values();
         }
     return view('customer.homepage2', compact('products','accessoryProducts','phone'));
+}
+public function search(Request $request)
+{
+    $query = $request->input('query');
+
+    $products = Product::where('name', 'LIKE', "%{$query}%")
+        ->orWhere('description', 'LIKE', "%{$query}%")
+        ->get()
+        ->map(function ($product) {
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'price' => $product->price,
+                'images' => json_decode($product->images, true),
+                'colors' => $product->colors,
+            ];
+        });
+
+    return response()->json($products);
 }
 }
 

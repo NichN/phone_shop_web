@@ -24,7 +24,7 @@
                         <thead style="text-align:center;">
                             <tr>
                                 <th>No</th>
-                                <th>Image</th>
+                                {{-- <th>Image</th> --}}
                                 <th>Name</th>
                                 <th>Brand</th>
                                 <th>Category</th>

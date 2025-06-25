@@ -5,21 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class image extends Model
+class refund extends Model
 {
     use HasFactory;
-    protected $table = 'image';
-    protected $fillable = [
-        'id',
-        'pr_item_id',
-        'file_name',
-        'file_path',
-        'name',
-        'img_type'
-    ];
+    protected $table = 'returns';
+    protected $fillable = ['id','order_id','return_status','return_reason','refund_amount'];
     protected $dates = [
         'created_at',
         'updated_at',
     ];
-
 }

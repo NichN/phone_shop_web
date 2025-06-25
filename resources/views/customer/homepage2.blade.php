@@ -2,6 +2,7 @@
 @section('title', 'Homepage')
 @section('content')
 <header>
+    <link href="{{ asset('css/dashboard.css')}}" rel="stylesheet">
     <div id="carouselExampleCaptions" class="carousel slide custom-carousel-bg" data-bs-ride="carousel">
         <div class="carousel-indicators">
             <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
@@ -17,6 +18,12 @@
                 <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
                     <div class="container-fluid d-flex align-items-center" style="height: 75vh;">
                         <div class="container d-flex justify-content-between align-items-center">
+                            <div class="position-absolute top-0 end-0 mt-3 me-3" style="width: 500px;">
+                            <form action="/search" method="GET" class="d-flex rounded-pill bg-white" id="searchForm">
+                                <input type="text" id="searchInput" class="form-control border-0 py-2 px-3 focus-ring focus-ring-primary" placeholder="Search for products..." name="query" aria-label="Search products">
+                                <button type="submit" class="btn rounded-end-pill px-3 border-0" aria-label="Search" style="background: black;"><i class="fas fa-search" style="color: white;"></i></button>
+                            </form>
+                        </div>
                             <div class="text-container pt-5">
                                 <h2 class="display-4 fw-bold">Welcome to <br> TayMeng Phone Shop</h2>
                                 <p>Power Up Your Life with the Latest Electronic!</p>
@@ -77,7 +84,6 @@
         @endforeach
     </div>
 </div>
-
 </section>
 <section>
     <div class="container my-5 scroll-animate">
@@ -86,15 +92,15 @@
             @foreach ($products->take(10) as $product)
                 @php $images = json_decode($product->images, true); @endphp
                 <div class="col-md-3">
-                    <div class="card product-card" style="height:400px;">
+                    <div class="card product-card" style="height:380px;">
                         @if (!empty($images[0]))
                             <a href="{{ route('product.show', $product->id) }}">
-                                <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img" style="height: 270px;">
+                                <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img" style="object-fit: cover; object-position: center; width: 100%; height:250px;">
                             </a>
                         @endif
                         <div class="card-body text-right" style="background-color: #ecdceb;">
                             <div class="d-flex justify-content-between align-items-center">
-                                <h5 class="card-title mt-2 product-title">{{ $product->name }}</h5>
+                                <h6 class="card-title mt-2 product-title">{{ $product->name }}</h6>
                                 <i class="fa-regular fa-heart fs-5 add-wishlist" data-product-id="{{ $product->id }}"></i> 
                             </div>
                             <p class="card-price">{{ $product->price }}</p>
@@ -133,7 +139,6 @@
         </div>
     </div>
 </section>
-
 {{-- Accessories Section --}}
 <section class="my-5">
     <div class="container scroll-animate">
@@ -143,15 +148,15 @@
                 @foreach ($accessoryProducts->take(4) as $product)
                     @php $images = json_decode($product->images, true); @endphp
                     <div class="col-md-3">
-                    <div class="card product-card" style="height:400px;">
+                    <div class="card product-card" style="height:380px;">
                         @if (!empty($images[0]))
                         <a href="{{ route('product.show', $product->id) }}">
-                            <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img" style="height: 270px;">
+                            <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img" style="object-fit: cover; object-position: center; width: 100%; height:250px;">
                         </a>
                         @endif
                         <div class="card-body text-right" style="background-color: #ecdceb;">
                             <div class="d-flex justify-content-between align-items-center">
-                                <h5 class="card-title mt-2 product-title">{{ $product->name }}</h5>
+                                <h6 class="card-title mt-2 product-title">{{ $product->name }}</h6>
                                 <i class="fa-regular fa-heart fs-5 add-wishlist" data-product-id="{{ $product->id }}"></i>
                             </div>
                             <p class="card-price">{{ $product->price }}</p>
@@ -182,15 +187,15 @@
                         $images = json_decode($product->images, true);
                     @endphp
                     <div class="col-md-3">
-                    <div class="card product-card" style="height:400px;">
+                    <div class="card product-card" style="height:380px;">
                         @if (!empty($images[0]))
                         <a href="{{ route('product.show', $product->id) }}">
-                            <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img" style="height: 270px;">
+                            <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img" style="object-fit: cover; object-position: center; width: 100%; height:250px;">
                         </a>
                         @endif
                         <div class="card-body text-right" style="background-color: #ecdceb;">
                             <div class="d-flex justify-content-between align-items-center">
-                                <h5 class="card-title mt-2 product-title">{{ $product->name }}</h5>
+                                <h6 class="card-title mt-2 product-title">{{ $product->name }}</h6>
                                 <i class="fa-regular fa-heart fs-5 add-wishlist" data-product-id="{{ $product->id }}"></i>
                             </div>
                             <p class="card-price">{{ $product->price }}</p>
@@ -202,9 +207,6 @@
                                     </span>
                                 @endforeach
                             </p>
-
-
-
                         </div>
                     </div>
                 </div>

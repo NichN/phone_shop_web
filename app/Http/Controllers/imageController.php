@@ -39,7 +39,8 @@ class imageController extends Controller
                'pr_item_id' => $request->input('pr_item_id'),
                'file_name' => $request->file('file_path')->getClientOriginalName(),
                'file_path' => $relativePath,
-               'name' => $request->name
+               'name' => $request->name,
+               'img_type' => $request->img_type
            ]);
    
            return response()->json([

@@ -28,6 +28,7 @@ use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\delivery_feeController;
 use App\Http\Controllers\reportController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Order_dashboard_controller;
 use App\Models\purchase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -38,10 +39,6 @@ use Illuminate\Http\Request;
 
 Route::redirect('/', '/homepage');
 
-Route::get('/homepage', [HomeController::class, 'index'])->name('homepage');
-
-Route::get('/product/{id}', [HomeController::class, 'show'])->name('product.show');
-
 Route::get('/aboutus', [CustomerController::class, 'aboutUs'])->name('aboutus');
 
 
@@ -51,36 +48,7 @@ Route::get('/product', [ProductController::class, 'index'])->name('product');
 Route::get('/product_acessory', [ProductController::class, 'product_acessory'])->name('product_acessory');
 Route::get('/products_admin', [ProductController::class, 'index'])->name('product.index');
 Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
-
-Route::prefix('history')->controller(HistoryController::class)->group(function () {
-    Route::get('/', 'index')->name('history'); 
-    Route::delete('/{id}', 'destroy')->name('history.destroy');
-});
-
 Route::get('/invoice', [InvoiceController::class, 'showStaticInvoice'])->name('invoice');
-
-
-
-Route::get('/payment/invoice', function () {
-    // Provide static data directly to the view
-    return view('customer.invoice', [
-        'date' => now()->format('Y-m-d H:i:s'),
-        'invoice_number' => 'INV' . rand(1000, 9999),
-        'customer' => 'John Doe',
-
-        'items' => [
-            ['name' => 'iPhone 16', 'price' => 1299.00],
-            ['name' => 'OPPO', 'price' => 799.00],
-        ],
-
-        'total_usd' => 1299.00 + 799.00 + 1.50,
-        'total_khr' => number_format((1299.00 + 799.00 + 1.50) * 4100, 0),
-        'cash' => 2100.00,
-        'change_usd' => number_format(2100.00 - (1299.00 + 799.00 + 1.50), 2),
-        'change_khr' => number_format((2100.00 - (1299.00 + 799.00 + 1.50)) * 4100, 0),
-    ]);
-})->name('payment.invoice');
-
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register'])->name('register');
 
@@ -141,6 +109,8 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
     Route::get('/product',[dashboardcontroller::class, 'product_count'])->name('product_count');
     Route::get('/purchase',[dashboardcontroller::class, 'purchase'])->name('purchase');
     Route::get('/customer',[dashboardcontroller::class, 'customer'])->name('customer');
+    Route::get('/order',[dashboardcontroller::class,'order'])->name('order');
+    Route::get('/order_dashboard', [dashboardcontroller::class, 'get_order'])->name('order_dashboard');
 });
 Route::prefix('products')->name('products.')->group(function () {
     Route::get('/color', [productAdminController::class, 'index'])->name('colorlist');
@@ -242,6 +212,11 @@ Route::prefix('report')->name('report.')->group(function(){
     Route::get('/purchase',[reportController::class,'purchase_report'])->name('purchase_report');
 });
 
+//homepage
+Route::get('/homepage', [HomeController::class, 'index'])->name('homepage');
+Route::get('/product-items/{productId}', [HomeController::class, 'getProductOptions']);
+Route::get('/search', [ProductController::class, 'search'])->name('search');
+
 Route::middleware('auth')->group(function () {
     Route::get('/two-factor', [TwoFactorController::class, 'index'])->name('two_factor.index');
     Route::post('/two-factor', [TwoFactorController::class, 'verify'])->name('two_factor.verify');
@@ -258,27 +233,22 @@ Route::prefix('faq')->name('faq.')->group(function(){
 Route::prefix('checkout')->name('checkout.')->group(function(){
     Route::post('/', [CheckoutController::class, 'showCheckout'])->name('show');
     Route::post('/store',[CheckoutController::class,'storeCheckout'])->name('store');
+    Route::get('/payment', [CheckoutController::class, 'processPayment'])->name('payment');
+    Route::post('/payment/store', [CheckoutController::class, 'storePayment'])->name('payment_store');
+    Route::get('/history', [CheckoutController::class, 'orderHistory'])->name('history');
+    Route::get('/history/{id}', [CheckoutController::class, 'orderDetails'])->name('history_details');
+    Route::get('/returns/{id}', [CheckoutController::class, 'returns'])->name('returns');
+    Route::post('/returns/{id}', [CheckoutController::class, 'processReturn'])->name('process_return');
 });
-// Route::prefix('order')->name('order.')->group(function(){
-//     Route::get('/',[OrderController::class,'index'])->name('index');
-// });
-// Route::prefix('cart')->name('cart.')->group(function () {
-//     Route::get('/', [CartController::class, 'checkout'])->name('index'); 
-//     Route::post('/store', [CartController::class, 'store'])->name('store'); 
-//     Route::post('/sync', [CartController::class, 'sync'])->name('sync');
-//     Route::put('/{productId}', [CartController::class, 'update'])->name('update'); 
-//     // Route::delete('/{productId}', [CartController::class, 'remove'])->name('destroy');
-// });
 
-// Route::post('/store-cart', [CartController::class, 'storeCart'])
-//     ->middleware('auth')->name('cart.store');
+
 // Cart by nich
-// Route::post('/store-cart', [CartController::class, 'storeCart'])
-//     ->middleware('auth')->name('cart.store');
-// Route::get('/',[CartController::class, 'index'])->middleware('auth')->name('cart.index');
-// Route::get('/countcart',[cartController::class,'countCart'])->name('cart.number');
-// Route::get('/checkcart',[cartController::class,'checkcart'])->name('cart.check');
-// Route::delete('/remove/{id}',[cartController::class,'remove'])->middleware('auth')->name('check');
+Route::post('/store-cart', [cartController::class, 'storeCart'])
+    ->middleware('auth')->name('cart.store');
+// Route::get('/',[cartController::class, 'index'])->middleware('auth')->name('cart.index');
+Route::get('/countcart',[cartController::class,'countCart'])->name('cart.number');
+Route::get('/checkcart',[cartController::class,'checkcart'])->name('cart.check');
+Route::delete('/remove',[cartController::class,'remove'])->middleware('auth')->name('check');
 
 Route::prefix('customer_admin')->name('customer_admin.')->group(function () {
     Route::get('/', [customer_admincontroller::class, 'index'])->name('index');
@@ -301,6 +271,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/profile/address', [ProfileController::class, 'updateAddress'])->name('profile.address');
 });
 
+Route::prefix('order_dashboard')->name('order_dashboard.')->group(function () {
+    Route::get('/', [Order_dashboard_controller::class, 'index'])->name('index');
+    // Route::get('/show/{id}', [OrderController::class, 'show'])->name('show');
+    // Route::post('/update/{id}', [OrderController::class, 'update'])->name('update');
+    // Route::delete('/delete/{id}', [OrderController::class, 'destroy'])->name('destroy');
+});
 
 ?>
 

@@ -13,6 +13,7 @@
                     {data: 'id', name: 'id',render: function (data, type, row, meta) {
                         return meta.row + 1;}},
                     {data: 'image', render: function(data) {
+                        console.log(data);
                         return data ? `<img src="/storage/${data}" width="50">` : 'No Image';
                     }},
                     {data: 'name'},

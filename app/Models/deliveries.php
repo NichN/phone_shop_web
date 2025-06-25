@@ -5,21 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class image extends Model
+class deliveries extends Model
 {
     use HasFactory;
-    protected $table = 'image';
-    protected $fillable = [
-        'id',
-        'pr_item_id',
-        'file_name',
-        'file_path',
-        'name',
-        'img_type'
-    ];
+    protected $table = 'deliveries';
+    protected $fillable = ['id','order_id','delivery_status','customer_name','customer_phone','address'];
     protected $dates = [
         'created_at',
         'updated_at',
     ];
-
 }

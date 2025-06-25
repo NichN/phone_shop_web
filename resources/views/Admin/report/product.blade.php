@@ -66,10 +66,15 @@
                         }
                     },
                     { data: 'name', name: 'name' },
-                    {
-                        data: 'colors', name: 'colors',
+                                        {
+                        data: 'colors_code', name: 'colors_code',
                         render: function (data) {
-                            return Array.isArray(data) ? data.join(', ') : data;
+                            if (Array.isArray(data)) {
+                                return data.map(function(color) {
+                                    return `<span style="display:inline-block;width:18px;height:18px;border-radius:50%;background:${color};border:1px solid #ccc;margin-right:3px;"></span>`;
+                                }).join('');
+                            }
+                            return `<span style="display:inline-block;width:18px;height:18px;border-radius:50%;background:${data};border:1px solid #ccc;"></span>`;
                         }
                     },
                     {

@@ -5,42 +5,44 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
-use App\Models\cart;
-use App\Models\Product;
-use App\Models\productdetail;
-use Illuminate\Validation\Rules\Can;
+use App\Models\Cart;
 
 class CartController extends Controller
 {
     public function storeCart(Request $request)
     {
         DB::beginTransaction();
-        
+
         try {
-            $request->validate([
-                'product_id' => 'required|exists:product,id',
+            $validated = $request->validate([
+                'product_item_id' => 'required|integer|exists:product_item,id',
+                'quantity' => 'nullable|integer|min:1'
             ]);
-            $product = Product::findOrFail($request->product_id);
-            $existingCartItem = Cart::where('user_id', Auth::id())
-                                ->where('product_id', $request->product_id)
-                                ->first();
+
+            $userId = Auth::id();
+            $productItemId = $validated['product_item_id'];
+            $quantity = $validated['quantity'] ?? 1;
+
+            $existingCartItem = Cart::where('user_id', $userId)
+                ->where('product_item_id', $productItemId)
+                ->first();
+
             if ($existingCartItem) {
-                $existingCartItem->quantity += $request->quantity;
+                $existingCartItem->quantity += $quantity;
                 $existingCartItem->save();
             } else {
                 Cart::create([
-                    'user_id' => Auth::id(),
-                    'product_id' => $request->product_id,
-                    'quantity' => 1
+                    'user_id' => $userId,
+                    'product_item_id' => $productItemId,
+                    'quantity' => $quantity
                 ]);
             }
+
             DB::commit();
+
             return response()->json([
                 'success' => true,
-                'message' => 'Product added to cart',
             ]);
-            
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
@@ -51,45 +53,46 @@ class CartController extends Controller
     }
     public function countCart()
     {
-        $count = Cart::where('user_id', Auth::id())->count();
+        $count = Cart::where('user_id', Auth::id())->sum('quantity');
         return response()->json(['cart_count' => $count]);
     }
     public function checkcart()
     {
         $userId = Auth::id();
         $cartItems = DB::table('cart')
-            ->join('product', 'cart.product_id', '=', 'product.id')
-            ->join('product_item', function ($join) {
-                $join->on('product.id', '=', 'product_item.pro_id')
-                    ->whereRaw('product_item.id = (
-                        select min(id) from product_item as pi2 
-                        where pi2.pro_id = product.id and pi2.stock > 0
-                    )');
-            })
+            ->join('product_item', 'cart.product_item_id', '=', 'product_item.id')
+            ->join('product', 'product_item.pro_id', '=', 'product.id')
             ->where('cart.user_id', $userId)
-            ->select('cart.quantity', 'product.name', 'product_item.price', 'product_item.images')
+            ->select(
+                'cart.id as cart_id',
+                'cart.quantity',
+                'product_item.id as product_item_id',
+                'product_item.product_name as name',
+                'product_item.images',
+                'product_item.color_code',
+                'product_item.size',
+                'product_item.price'
+            )
             ->get()
             ->map(function ($item) {
-                $images = json_decode($item->images);
-                $firstImage = $images && count($images) > 0 
-                            ? asset('storage/' . $images[0]) 
-                            : asset('default-image.jpg');
+            $images = json_decode($item->images, true) ?? [];
+            $firstImage = count($images) > 0
+                ? asset('storage/' . $images[0])
+                : asset('default-image.jpg');
 
-                return [
-                    'quantity' => $item->quantity,
-                    'name' => $item->name,
-                    'price' => $item->price,
-                    'image' => $firstImage,
-                ];
-            });
+            return [
+                'id' => $item->cart_id,
+                'quantity' => $item->quantity,
+                'name' => $item->name,
+                'price' => $item->price,
+                'images' => $firstImage,
+                'color' => $item->color_code,
+                'size' => $item->size,
+            ];
+        });
+
         $total = DB::table('cart')
-            ->join('product_item', function ($join) {
-                $join->on('cart.product_id', '=', 'product_item.pro_id')
-                    ->whereRaw('product_item.id = (
-                        select min(id) from product_item as pi2 
-                        where pi2.pro_id = cart.product_id and pi2.stock > 0
-                    )');
-            })
+            ->join('product_item', 'cart.product_item_id', '=', 'product_item.id')
             ->where('cart.user_id', $userId)
             ->select(DB::raw('SUM(cart.quantity * product_item.price) as total_price'))
             ->value('total_price');
@@ -99,12 +102,15 @@ class CartController extends Controller
             'total' => $total ?? 0
         ]);
     }
-    public function remove($id)
+    public function remove(Request $request)
     {
-        $cart = Cart::find($id);
-        if (!$cart) {
-            return response()->json(['success' => false, 'message' => 'Cart item not found'], 404);
-        }
+        $request->validate([
+            'id' => 'required|exists:cart,id',
+        ]);
+        $cart = Cart::where('id', $request->id)
+                    ->where('user_id', Auth::id())
+                    ->firstOrFail();
+
         $cart->delete();
         return response()->json(['success' => true]);
     }

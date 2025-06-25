@@ -41,8 +41,10 @@
                                 title: 'Success!',
                                 text: 'Product added successfully!',
                             });
+                            $('#productForm')[0].reset();
 
                             $('.data-table').DataTable().ajax.reload(null, false);
+                            $('#productForm select').val(null).trigger('change');
                             $('#addModal').modal('hide');
                         }
                     },

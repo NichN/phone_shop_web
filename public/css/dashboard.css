@@ -278,3 +278,28 @@ width: 250px;
     max-width: 100%;
     height: auto;
 }
+.arrow-button {
+    display: inline-block;
+    background-color: black;
+    color: white;
+    padding: 12px 25px;
+    font-weight: bold;
+    text-decoration: none;
+    border: none;
+    position: relative;
+    margin-top: 20px;
+    border-radius: 4px 0 0 4px;
+    transition: background 0.3s ease;
+}
+
+.arrow-button::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: -20px;
+    width: 0;
+    height: 0;
+    border-top: 25px solid transparent;
+    border-bottom: 25px solid transparent;
+    border-left: 20px solid black;
+}

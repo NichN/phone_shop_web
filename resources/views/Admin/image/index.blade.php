@@ -24,6 +24,7 @@
                                 <th>No</th>
                                 <th>image</th>
                                 <th>name</th>
+                                <th>Image Type</th>
                                 <th>Action</th>
                             </tr>
                         </thead>                                
@@ -50,6 +51,23 @@
                             <input type="text" class="form-control" id="image_Name" name="name" placeholder="Enter Supplier name" required>
                         </div>
                         <div class="col-md-6">
+                            <label for="img_type" class="form-label fw-bold">Image Type <span class="text-danger">*</span></label>
+                            <select class="form-select" id="img_type" name="img_type" required>
+                                <option value="">Select Image Type</option>
+                                <option value="Homepage Banner1">Homepage Banner1</option>
+                                <option value="Homepage Banner2">Homepage Banner2</option>
+                                <option value="Homepage Banner3">Homepage Banner3</option>
+                                <option value="Homepage Banner4">Homepage Banner4</option>
+                                <option value="Homepage Banner5">Homepage Banner5</option>
+                                <option value="bottom Banner">bottom Banner</option>
+                                <option value="Homepage box1">Homepage box1</option>
+                                <option value="Homepage box2">Homepage box2</option>
+                                <option value="About us Banner">About us Banner</option>
+                                <option value="Contact us Banner">Contact us Banner</option>
+                            </select>
+                        </div>
+                        <br>
+                        <div class="col-md-12 mt-3">
                             <label for="suppler_add" class="form-label fw-bold">Image<span class="text-danger">*</span></label>
                             <input type="file" class="form-control" id="file_path" name="file_path" required>
                         </div>

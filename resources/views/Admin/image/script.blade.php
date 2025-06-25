@@ -16,6 +16,7 @@
                         return data ? `<img src="/storage/${data}" width="50">` : 'No Image';
                     }},
                     {data: 'name' , name: 'name'},
+                    {data: 'img_type', name: 'img_type'},
                     {data: 'action', orderable: false, searchable: false}
                 ]
                 
@@ -70,6 +71,7 @@
             dataType: 'json',
             success: function(response) {
                 if (response.success) {
+                    $('#imageForm')[0].reset();
                     Swal.fire({
                         icon: 'success',
                         title: 'Success!',

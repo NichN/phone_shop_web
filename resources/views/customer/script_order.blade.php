@@ -8,8 +8,6 @@
 $(document).ready(function () {
     $('#checkoutForm').on('submit', function (e) {
     e.preventDefault();
-    
-    // Get cart data
     let cart = localStorage.getItem('cart');
     if (!cart) {
         Swal.fire('Error', 'Cart is empty!', 'error');

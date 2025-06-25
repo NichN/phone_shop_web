@@ -5,12 +5,13 @@
 <div class="w3-main">
     <div class="container-fluid py-4">
         <div class="card shadow-sm">
-            <div class="card-header text-white">
+            <div class="card-header text-white" style="background-color: blue">
                 <h5 class="mb-0"><i class="fas fa-tags me-2"></i>Add Product</h5>
             </div>
             <div class="card-body">
                 <form id="proForm" action="{{ route('pr_detail.store') }}" method="POST" enctype="multipart/form-data">
                     <!-- Hidden Inputs -->
+                    {{-- <input type="hidden" name="product_item_id" value="{{ $productItem->id }}"> --}}
                     <input type="hidden" name="name" id="Name">
                     <input type="hidden" name="size_id" id="size_hidden_id">
                     <input type="hidden" name="color_id" id="color_hidden_id">
