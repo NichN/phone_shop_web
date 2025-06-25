@@ -43,9 +43,6 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
-            'twofactor' => [
-            \App\Http\Middleware\Verify2FAMiddleware::class,
-        ],
     ];
 
     /**
@@ -66,5 +63,6 @@ class Kernel extends HttpKernel
         'signed' => \App\Http\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        'twofactor' => \App\Http\Middleware\Verify2FAMiddleware::class,
     ];
 }

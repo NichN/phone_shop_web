@@ -37,8 +37,9 @@
                             <label for="userRole" class="form-label fw-bold">Role <span class="text-danger">*</span></label>
                             <select class="form-select" id="userRole" name="role" required>
                                 <option value="">Select Role</option>
-                                <option value="admin">Admin</option>
-                                <option value="manager">Delivery</option>
+                                <option value="1">Admin</option>
+                                <option value="2">Manager</option>
+                                <option value="3">Delivery</option>
                             </select>
                         </div>
                     </div>

@@ -12,14 +12,18 @@ class Admin_user_controller extends Controller
 {
     public function index()
     {
-        $roles = Role::all();
+        $roles = Role::where('id', '!=', 4)->get(); // Exclude customer role (role_id = 4)
         return view('Admin.user.Add_form', compact('roles'));
     }
 
     public function getData(Request $request)
     {
         if ($request->ajax()) {
-            $data = User::with('role')->whereNotNull('role_id')->latest()->get();
+            $data = User::with('role')
+                ->whereNotNull('role_id')
+                ->where('role_id', '!=', 4) // Exclude customers (role_id = 4)
+                ->latest()
+                ->get();
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('group', function($row) {

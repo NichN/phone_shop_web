@@ -49,7 +49,7 @@
 
                 <!-- Links -->
                 <div class="mt-3 text-center">
-                    <a href="{{ route('verifyemail') }}" class="text-decoration-none text-danger">
+                    <a href="{{ route('password.request') }}" class="text-decoration-none text-danger">
                         Forgot your password?
                     </a>
                 </div>

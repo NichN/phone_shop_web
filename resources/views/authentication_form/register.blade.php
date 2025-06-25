@@ -9,6 +9,23 @@
         <div class="p-4 p-md-5">
             <h2 class="text-center mb-3 fw-bold">Registration</h2>
             <p class="text-center text-muted mb-4">Fill in the details to register</p>
+            
+            @if (session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
+            
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+            
             <form method="POST" action="{{ route('register') }}">
                 @csrf
 
@@ -17,9 +34,12 @@
                     <label for="name" class="form-label fw-semibold">Full Name</label>
                     <div class="input-group">
                         <span class="input-group-text bg-light"><i class="fas fa-user"></i></span>
-                        <input type="text" name="name" id="name" class="form-control"
-                            placeholder="Enter your full name" required>
+                        <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror"
+                            placeholder="Enter your full name" value="{{ old('name') }}" required>
                     </div>
+                    @error('name')
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <!-- Email -->
@@ -27,9 +47,12 @@
                     <label for="email" class="form-label fw-semibold">Email Address</label>
                     <div class="input-group">
                         <span class="input-group-text bg-light"><i class="fa-regular fa-envelope"></i></span>
-                        <input type="email" name="email" id="email" class="form-control fw-semibold"
-                            placeholder="Enter your email" required>
+                        <input type="email" name="email" id="email" class="form-control fw-semibold @error('email') is-invalid @enderror"
+                            placeholder="Enter your email" value="{{ old('email') }}" required>
                     </div>
+                    @error('email')
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <!-- Password -->
@@ -37,9 +60,12 @@
                     <label for="password" class="form-label fw-semibold">Password</label>
                     <div class="input-group">
                         <span class="input-group-text bg-light"><i class="fa-solid fa-lock"></i></span>
-                        <input type="password" name="password" id="password" class="form-control"
+                        <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror"
                             placeholder="Create a password" required>
                     </div>
+                    @error('password')
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <!-- Confirm Password -->

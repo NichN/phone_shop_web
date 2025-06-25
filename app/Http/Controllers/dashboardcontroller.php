@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\DB;
                 ->select(DB::raw('SUM(Grand_total) as Grand_total'))
                 ->first();
             $totalCustomer = DB::table('users')
+                ->where('role_id', '!=', 4) // Exclude customers (role_id = 4)
                 ->select(DB::raw('COUNT(id) as total_customer'))
                 ->first();
 
@@ -52,8 +53,9 @@ use Illuminate\Support\Facades\DB;
             }
             public function customer(){
                 $totalCustomer = DB::table('users')
-                ->select(DB::raw('COUNT(id) as total_customer'))
-                ->first();
+                    ->where('role_id', '!=', 4) // Exclude customers (role_id = 4)
+                    ->select(DB::raw('COUNT(id) as total_customer'))
+                    ->first();
                 return view('Admin.dasboard.index', [
                     'total_customer' => $totalCustomer->total_customer ?? 0,
                 ]);
