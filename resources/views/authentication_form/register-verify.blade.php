@@ -1,12 +1,20 @@
 @extends('Layout.auth_form')
 
-@section('title', 'Two-Factor Verification')
+@section('title', 'Registration Verification')
 
 @section('content')
     <div class="w-100">
         <div class="p-4 p-md-5">
-            <h2 class="text-center mb-3 fw-bold">Two-Factor Verification</h2>
-            <p class="text-center text-muted mb-4">Enter the 6-digit code sent to your email or phone</p>
+            <h2 class="text-center mb-3 fw-bold">Registration Verification</h2>
+            <p class="text-center text-muted mb-4">
+                Enter the 6-digit code sent to <strong>{{ session('registration_data.email') ?? 'your email' }}</strong>
+            </p>
+
+            @if (session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
 
             @if ($errors->any())
                 <div class="alert alert-danger">
@@ -17,7 +25,8 @@
                     </ul>
                 </div>
             @endif
-            <form method="POST" action="{{ route('two_factor.verify') }}">
+
+            <form method="POST" action="{{ route('register.verify') }}">
                 @csrf
 
                 <div class="mb-3">
@@ -44,9 +53,22 @@
                 </div>
 
                 <div class="d-grid mt-4">
-                    <button type="submit" class="btn btn-primary fw-bold">Verify</button>
+                    <button type="submit" class="btn btn-primary fw-bold">Complete Registration</button>
+                </div>
+
+                <div class="mt-3 text-center">
+                    <a href="{{ route('register') }}" class="text-decoration-none">Back to Registration</a>
                 </div>
             </form>
+
+            <div class="mt-4 text-center">
+                <form method="POST" action="{{ route('register.resend') }}" class="d-inline">
+                    @csrf
+                    <button type="submit" class="btn btn-link text-decoration-none">
+                        Didn't receive the code? Resend
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
-@endsection
+@endsection 

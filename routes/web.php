@@ -32,12 +32,21 @@ use App\Http\Controllers\Order_dashboard_controller;
 use App\Models\purchase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
 
 // Route::get('/', function () {
 //     return view('welcome');
 // });
 
 Route::redirect('/', '/homepage');
+
+Route::get('/homepage', [HomeController::class, 'index'])->name('homepage');
+
+// Authenticated homepage route
+Route::get('/dashboard/homepage', [HomeController::class, 'index'])->middleware(['auth', 'twofactor'])->name('dashboard.homepage');
+
+Route::get('/product/{id}', [HomeController::class, 'show'])->name('product.show');
 
 Route::get('/aboutus', [CustomerController::class, 'aboutUs'])->name('aboutus');
 
@@ -48,9 +57,18 @@ Route::get('/product', [ProductController::class, 'index'])->name('product');
 Route::get('/product_acessory', [ProductController::class, 'product_acessory'])->name('product_acessory');
 Route::get('/products_admin', [ProductController::class, 'index'])->name('product.index');
 Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
+
+Route::prefix('history')->middleware(['auth', 'twofactor'])->controller(HistoryController::class)->group(function () {
+    Route::get('/', 'index')->name('history'); 
+    Route::delete('/{id}', 'destroy')->name('history.destroy');
+});
+
 Route::get('/invoice', [InvoiceController::class, 'showStaticInvoice'])->name('invoice');
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register'])->name('register');
+Route::get('/register/verify', [RegisterController::class, 'showVerificationForm'])->name('register.verify');
+Route::post('/register/verify', [RegisterController::class, 'verifyRegistration'])->name('register.verify');
+Route::post('/register/resend', [RegisterController::class, 'resendCode'])->name('register.resend');
 
 
 Route::get('/login',function(){
@@ -62,7 +80,24 @@ Route::post('/login', function (Request $request) {
 
     if (Auth::attempt($credentials)) {
         $request->session()->regenerate();
-        return redirect()->intended('/');
+        $user = Auth::user();
+        
+        // Check if user has completed two-factor authentication
+        if (!session('two_factor_authenticated')) {
+            return redirect()->route('two_factor.index');
+        }
+        
+        // Role-based redirect after successful two-factor verification
+        if ($user->role_id == 1) {
+            return redirect()->route('dashboard.show');
+        } elseif ($user->role_id == 2) {
+            return redirect()->route('delivery.index');
+        } elseif ($user->role_id == 4) {
+            return redirect()->route('homepage');
+        } else {
+            // For users without role or any other role, redirect to homepage
+            return redirect()->route('homepage');
+        }
     }
 
     return back()->withErrors([
@@ -72,21 +107,31 @@ Route::post('/login', function (Request $request) {
 
 
 Route::post('/logout', function (Request $request) {
+    // Clear two-factor session before logout
+    session()->forget(['two_factor_authenticated', 'two_factor_expires_at']);
+    
     Auth::logout();
     $request->session()->invalidate();
     $request->session()->regenerateToken();
+    
     return redirect('/login');
 })->name('logout');
 
+// Password Reset Routes
+Route::get('/forgot-password', [ForgotPasswordController::class, 'showForgotPasswordForm'])->name('password.request');
+Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::get('/reset-password', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::post('/reset-password', [ForgotPasswordController::class, 'reset'])->name('password.update');
 
 
-Route::get('/verifyemail',function(){
-    return view('authentication_form.forgetpw');
-})->name('verifyemail');
+// Old routes - commented out to prevent conflicts
+// Route::get('/verifyemail',function(){
+//     return view('authentication_form.forgetpw');
+// })->name('verifyemail');
 
-Route::get('/resetpassword',function(){
-    return view('authentication_form.resetpw');
-})->name('resetpassword');
+// Route::get('/resetpassword',function(){
+//     return view('authentication_form.resetpw');
+// })->name('resetpassword');
 
 // Route::get('/wishlist',function(){
 //     return view('customer.wishlist');
@@ -103,14 +148,27 @@ Route::get('/faq', [CustomerController::class, 'faq'])->name('faq');
 
 
 //Dashboard
-Route::prefix('dashboard')->name('dashboard.')->group(function () {
-    Route::get('/sidebar', [dashboardcontroller::class, 'index'])->name('index');
-    Route::get('/', [dashboardcontroller::class, 'show'])->name('show');
-    Route::get('/product',[dashboardcontroller::class, 'product_count'])->name('product_count');
-    Route::get('/purchase',[dashboardcontroller::class, 'purchase'])->name('purchase');
-    Route::get('/customer',[dashboardcontroller::class, 'customer'])->name('customer');
-    Route::get('/order',[dashboardcontroller::class,'order'])->name('order');
-    Route::get('/order_dashboard', [dashboardcontroller::class, 'get_order'])->name('order_dashboard');
+Route::prefix('dashboard')->middleware(['auth', 'twofactor'])->name('dashboard.')->group(function () {
+    Route::get('/sidebar', function() {
+        if (auth()->user()->role_id != 1 && auth()->user()->role_id != 2) abort(403, 'Unauthorized');
+        return app(\App\Http\Controllers\dashboardcontroller::class)->index();
+    })->name('index');
+    Route::get('/', function() {
+        if (auth()->user()->role_id != 1 && auth()->user()->role_id != 2) abort(403, 'Unauthorized');
+        return app(\App\Http\Controllers\dashboardcontroller::class)->show();
+    })->name('show');
+    Route::get('/product', function() {
+        if (auth()->user()->role_id != 1 && auth()->user()->role_id != 2) abort(403, 'Unauthorized');
+        return app(\App\Http\Controllers\dashboardcontroller::class)->product_count();
+    })->name('product_count');
+    Route::get('/purchase', function() {
+        if (auth()->user()->role_id != 1 && auth()->user()->role_id != 2) abort(403, 'Unauthorized');
+        return app(\App\Http\Controllers\dashboardcontroller::class)->purchase();
+    })->name('purchase');
+    Route::get('/customer', function() {
+        if (auth()->user()->role_id != 1 && auth()->user()->role_id != 2) abort(403, 'Unauthorized');
+        return app(\App\Http\Controllers\dashboardcontroller::class)->customer();
+    })->name('customer');
 });
 Route::prefix('products')->name('products.')->group(function () {
     Route::get('/color', [productAdminController::class, 'index'])->name('colorlist');
@@ -230,7 +288,7 @@ Route::prefix('faq')->name('faq.')->group(function(){
 });
 
 // nich
-Route::prefix('checkout')->name('checkout.')->group(function(){
+Route::prefix('checkout')->middleware(['auth', 'twofactor'])->name('checkout.')->group(function(){
     Route::post('/', [CheckoutController::class, 'showCheckout'])->name('show');
     Route::post('/store',[CheckoutController::class,'storeCheckout'])->name('store');
     Route::get('/payment', [CheckoutController::class, 'processPayment'])->name('payment');
@@ -255,7 +313,7 @@ Route::prefix('customer_admin')->name('customer_admin.')->group(function () {
     Route::get('/add', [customer_admincontroller::class, 'add'])->name('new');
 });
 
-Route::prefix('admin')->middleware('auth')->group(function () {
+Route::prefix('admin')->middleware(['auth', 'twofactor'])->group(function () {
     Route::get('/users', [Admin_user_controller::class, 'index'])->name('user.index');
     Route::get('/users/data', [Admin_user_controller::class, 'getData'])->name('user.data');
     Route::get('/users/create', [Admin_user_controller::class, 'create'])->name('user.new');
@@ -263,20 +321,44 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/users/{user}/edit', [Admin_user_controller::class, 'edit'])->name('user.edit');
     Route::put('/users/{user}', [Admin_user_controller::class, 'update'])->name('user.update');
     Route::delete('/users/{user}', [Admin_user_controller::class, 'destroy'])->name('user.destroy');
+    Route::get('/roles', [RoleController::class, 'index'])->name('role.index');
+    Route::get('/roles/data', [RoleController::class, 'getData']);
+    Route::post('/roles', [RoleController::class, 'store']);
+    Route::get('/roles/{role}/edit', [RoleController::class, 'edit']);
+    Route::put('/roles/{role}', [RoleController::class, 'update']);
+    Route::delete('/roles/{role}', [RoleController::class, 'destroy']);
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'twofactor'])->group(function () {
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->name('profile.update');
     Route::post('/profile/password', [ProfileController::class, 'changePassword'])->name('profile.password');
     Route::post('/profile/address', [ProfileController::class, 'updateAddress'])->name('profile.address');
 });
 
-Route::prefix('order_dashboard')->name('order_dashboard.')->group(function () {
-    Route::get('/', [Order_dashboard_controller::class, 'index'])->name('index');
-    // Route::get('/show/{id}', [OrderController::class, 'show'])->name('show');
-    // Route::post('/update/{id}', [OrderController::class, 'update'])->name('update');
-    // Route::delete('/delete/{id}', [OrderController::class, 'destroy'])->name('destroy');
-});
+// Debug route to check 2FA session status (remove in production)
+Route::get('/debug/2fa-status', function () {
+    if (!auth()->check()) {
+        return 'Not logged in';
+    }
+    
+    $status = [
+        'user' => auth()->user()->email,
+        'two_factor_authenticated' => session('two_factor_authenticated'),
+        'two_factor_expires_at' => session('two_factor_expires_at'),
+        'current_time' => now()->toDateTimeString(),
+    ];
+    
+    if (session('two_factor_expires_at')) {
+        $expiresAt = \Carbon\Carbon::parse(session('two_factor_expires_at'));
+        $status['expires_at_parsed'] = $expiresAt->toDateTimeString();
+        $status['is_expired'] = now()->isAfter($expiresAt);
+        $status['days_remaining'] = now()->diffInDays($expiresAt, false);
+    }
+    
+    return response()->json($status);
+})->middleware('auth')->name('debug.2fa');
+
 
 ?>
 

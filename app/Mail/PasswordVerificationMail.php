@@ -10,16 +10,18 @@ class PasswordVerificationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $code;
+    public $token;
+    public $userName;
 
-    public function __construct($code)
+    public function __construct($token, $userName = null)
     {
-        $this->code = $code;
+        $this->token = $token;
+        $this->userName = $userName;
     }
 
     public function build()
     {
-        return $this->subject('Password Change Verification Code')
+        return $this->subject('Password Reset Link - Tay Meng Phone Shop')
                     ->view('emails.password-verification');
     }
 } 
