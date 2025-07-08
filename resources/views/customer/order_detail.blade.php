@@ -77,7 +77,6 @@
 </div>
     </div>
 </div>
-
 <!-- Invoice Modal -->
 <div class="modal fade" id="invoiceModal" tabindex="-1" aria-labelledby="invoiceModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" style="max-width: 35vw;">
@@ -86,20 +85,20 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <div class="receipt">
-            <div class="receipt-header">
                 <h5>
                     <img src="{{ asset('image/tayment_logo.png') }}" alt="Logo" style="width: 70px; height: 70px;">
                     TayMeng
                 </h5>
+                <div class="text-center mb-2">
+                <strong>វិក័យបត្រ / RECEIPT</strong>
+            </div>
+        <div class="receipt">
+            <div class="receipt-header">
                 <small>#78E0, ផ្លូវ13 សង្កាត់ផ្សារកណ្តាល I ខណ្ឌដូនពេញ រាជធានីភ្នំពេញ</small><br>
                 <small>096841 2222 / 076 333 3288 / 031 333 3288</small>
             </div>
 
             <hr class="my-2">
-            <div class="text-center mb-2">
-                <strong>វិក័យបត្រ / RECEIPT</strong>
-            </div>
 
                 <div class="d-flex justify-content-between mb-2">
                     <p class="mb-0"><strong>Date:</strong> {{ $order->created_at->format('d-m-Y') }}</p>
@@ -113,9 +112,10 @@
             <table class="table table-sm table-bordered" style="text-align: center; font-size: 0.9rem;">
                 <thead>
                     <tr>
-                        <th style="text-align: center; font-size: 0.9rem;">Item Name</th>
-                        <th style="text-align: center; font-size: 0.9rem;">Qty</th>
-                        <th style="text-align: center; font-size: 0.9rem;">Price</th>
+                        <th style="text-align: center; font-size: 0.9rem;">ឈ្មោះ</th>
+                        <th style="text-align: center; font-size: 0.9rem;">ចំនួន</th>
+                        <th style="text-align: center; font-size: 0.9rem;">តម្លៃ</th>
+                        <th style="text-align: center; font-size: 0.9rem;">ការធានា</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -124,6 +124,7 @@
                             <td style="text-align: center; font-size: 0.9rem;">{{ $item->product_name }}</td>
                             <td style="text-align: center; font-size: 0.9rem;">{{ $item->quantity }}</td>
                             <td style="text-align: center; font-size: 0.9rem;">${{ number_format($item->price, 2) }}</td>
+                            <td style="text-align: center; font-size: 0.9rem;">{{ $item->warranty}}</td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -137,7 +138,7 @@
 
             <div class="d-flex justify-content-between">
                 <small>Total (KHR):</small>
-                <span>{{ number_format($order->total_amount * 4100, 0) }} ៛</span>
+                <span>{{ number_format($order->total_amount * $order->rate) }} ៛</span>
             </div>
 
             <div class="mt-2">
@@ -146,16 +147,16 @@
                     <span>${{ $order->total_amount }}</span>
                 </div>
                 <div class="d-flex justify-content-between">
-                    <strong>អាត្រាប្តូរប្រាក់</strong>
-                    <span>$0.00 | ៛0</span>
+                    អាត្រាប្តូរប្រាក់
+                    <span>{{$order->rate}} ៛</span>
                 </div>
             </div>
 
             <hr class="my-2">
 
             <p class="text-center">
-                {{-- <small>VAT 10%, Exchange Rate: $1 = ៛4,100</small><br>
-                <strong>សូមអរគុណ! សូមអញ្ជើញមកម្តងទៀត</strong><br> --}}
+                {{-- <small>VAT 10%, Exchange Rate: $1 = ៛4,100</small><br> --}}
+                <strong>សូមរក្សាទុកវិក្ក័យប័ត្រនេះដើម្បីបញ្ជាក់ការធានា</strong><br>
                 <small>Thank you, please come back again.</small>
             </p>
         </div>

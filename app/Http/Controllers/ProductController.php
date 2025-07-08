@@ -116,8 +116,7 @@ class ProductController extends Controller
             'images'     => $item->images,
         ];
     });
-
-    //  Collect all images related to the same pro_id
+    
     $allImages = $related_items->pluck('images')->flatten()->unique()->values();
 
     $products = Productdetail::where('product_name', '!=', $product_item->product_name)
@@ -135,6 +134,7 @@ class ProductController extends Controller
                 'size'        => $item->size,
                 'type'        => $item->type,
                 'images'      => $item->images ?? null,
+                'warranty'    => $item->warranty,
             ];
         });
 
@@ -147,6 +147,7 @@ class ProductController extends Controller
             'description' => $product_item->description,
             'size'        => $product_item->size,
             'type'        => $product_item->type,
+            'warranty'    => $product_item->warranty
         ],
         'color_code' => $colors,
         'sizes'      => $sizes,
@@ -157,41 +158,4 @@ class ProductController extends Controller
     ]);
 }
 
-    public function search(Request $request)
-    {
-        $products = $this->getAllProducts();
-        $productsCollection = collect($products);
-
-        if ($request->has('search') && !empty($request->search)) {
-            $searchTerm = strtolower($request->search);
-            $productsCollection = $productsCollection->filter(function ($product) use ($searchTerm) {
-                return str_contains(strtolower($product['name']), $searchTerm) ||
-                       str_contains(strtolower($product['category']), $searchTerm);
-            });
-        }
-
-        $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        $perPage = 12;
-        $currentPageItems = $productsCollection->slice(($currentPage - 1) * $perPage, $perPage)->all();
-        $paginatedProducts = new LengthAwarePaginator(
-            $currentPageItems,
-            $productsCollection->count(),
-            $perPage,
-            $currentPage,
-            ['path' => $request->url(), 'query' => $request->query()]
-        );
-
-        return view('customer.product', compact('paginatedProducts'));
-    }
-
-    // Sample static product list
-    // private function getAllProducts()
-    // {
-    //     return [
-    //         ['id' => 1, 'name' => 'IPhone 15', 'category' => 'Smartphone, IPhone', 'price' => '$1059.00', 'image' => asset('image/Iphone16.jpg')],
-    //         ['id' => 2, 'name' => 'IPhone 16', 'category' => 'Smartphone, IPhone', 'price' => '$1059.00', 'image' => asset('image/Iphone16.jpg')],
-    //         // ... add other dummy items here if needed ...
-    //         ['id' => 16, 'name' => 'IPhone 16', 'category' => 'Smartphone, IPhone', 'price' => '$1059.00', 'image' => asset('image/Iphone16.jpg')],
-    //     ];
-    // }
 }

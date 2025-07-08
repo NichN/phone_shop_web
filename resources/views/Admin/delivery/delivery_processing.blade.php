@@ -7,11 +7,11 @@
 <div>
     <button class="w3-button w3-xlarge w3-hide-large" onclick="w3_open()">&#9776;</button>
     <div class="w3-main">
-        <div class="flex justify-between" style="background-color: aliceblue; padding: 10px;">
+        {{-- <div class="flex justify-between" style="background-color: aliceblue; padding: 10px;">
             <h4>Order List</h4>
-        </div>    
+        </div>     --}}
         <main style="padding:30px; gap:10px;" class="row">
-            <div style="background-color: #87ceeb; padding: 10px; border-radius: 8px; width: 185px;">
+            <div style="background-color: #f8e4a2; padding: 10px; border-radius: 8px; width: 160px;">
                     <div>
                         <p style="margin: 0; font-weight: bold;">Total Order</p>
                         <h2 id="total-income" style="margin: 20px auto 0; 
@@ -20,7 +20,7 @@
                     </h2>
                     </div>
             </div> 
-            <div style="background-color: #87ceeb; padding: 10px; border-radius: 8px; width: 185px;">
+            <div style="background-color: #f8e4a2; padding: 10px; border-radius: 8px; width: 160px;">
                 <div>
                     <p style="margin: 0; font-weight: bold;">Canceled Order</p>
                     <h2 id="total-income" style="margin: 20px auto 0; 
@@ -29,7 +29,7 @@
                     </h2>
                 </div>
             </div>
-            <div style="background-color: #87ceeb; padding: 10px; border-radius: 8px; width: 185px;">
+            <div style="background-color: #f8e4a2; padding: 10px; border-radius: 8px; width: 160px;">
                     <div>
                         <p style="margin: 0; font-weight: bold;">Processing Order</p>
                         <h2 id="total-income" style="margin: 20px auto 0; 
@@ -39,7 +39,7 @@
                         {{-- {{$totalprincipal?? 0}} --}}
                     </div>
             </div>
-            <div style="background-color: #87ceeb; padding: 10px; border-radius: 8px; width: 185px;">
+            <div style="background-color: #f8e4a2; padding: 10px; border-radius: 8px; width: 160px;">
                     <div>
                         <p style="margin: 0; font-weight: bold;">Completed Order</p>
                         <h2 id="total-income" style="margin: 20px auto 0; 
@@ -48,12 +48,22 @@
                     </h2>
                     </div>
             </div>
-            <div style="background-color: #87ceeb; padding: 10px; border-radius: 8px; width: 185px;">
+            <div style="background-color: #f8e4a2; padding: 10px; border-radius: 8px; width: 160px;">
                     <div>
-                        <p style="margin: 0; font-weight: bold;">Total Income</p>
+                        <p style="margin: 0; font-weight: bold;">Total Fee (Pending)</p>
                         <h2 id="total-income" style="margin: 20px auto 0; 
                             text-align: center; font-size: 20px; color: black; padding: 10px;"> USD
-                        {{$total_income ?? 0}}
+                        {{$total_feepending ?? 0}}
+                    </h2>
+                        {{-- {{ $due_status->due_count ?? 0 }} --}}
+                    </div>
+            </div>
+            <div style="background-color: #f8e4a2; padding: 10px; border-radius: 8px; width: 160px;">
+                    <div>
+                        <p style="margin: 0; font-weight: bold;">Total Fee Collection</p>
+                        <h2 id="total-income" style="margin: 20px auto 0; 
+                            text-align: center; font-size: 20px; color: black; padding: 10px;"> USD
+                        {{$total_fee ?? 0}}
                     </h2>
                         {{-- {{ $due_status->due_count ?? 0 }} --}}
                     </div>
@@ -79,7 +89,6 @@
                                 <th>Phone</th>
                                 <th>Address</th>
                                 <th>Amount</th>
-                                <th>Delivery Method</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -90,4 +99,4 @@
         </div>
     </div>
 </div>
-@include('Admin.order.script')
+@include('Admin.delivery.script')

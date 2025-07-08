@@ -36,7 +36,7 @@
                 </h5>
 
                 <div class="choose-color mb-4">
-                    <h5 class="mb-4 fw-bold">CHOOSE YOUR COLOR</h5>
+                    <h5 class="mb-4 fw-bold">CHOOSE COLOR</h5>
                     <div class="d-flex gap-3">
                         @foreach ($color_code as $index => $color)
                             @php $colorId = 'color_' . $index; @endphp
@@ -49,7 +49,7 @@
                 </div>
 
                 <div class="choose-storage">
-                    <h5 class="mb-4 fw-bold">CHOOSE YOUR STORAGE</h5>
+                    <h5 class="mb-4 fw-bold">CHOOSE STORAGE</h5>
                     <div class="d-flex gap-3">
                         @foreach ($sizes as $index => $size)
                             <input type="radio" class="btn-check" name="storage" id="storage{{ $index }}" autocomplete="off" value="{{ $size }}" {{ $index === 0 ? 'checked' : '' }}>
@@ -80,6 +80,7 @@
                                 <div class="accordion-body">
                                     <p><strong>Announced:</strong> {{ $product['created_at'] }}</p>
                                     <p><strong>Status:</strong> Available</p>
+                                    <p><strong>warranty</strong> {{$product['warranty']}}</p>
                                 </div>
                             </div>
                         </div>

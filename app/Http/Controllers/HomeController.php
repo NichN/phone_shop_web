@@ -87,11 +87,19 @@ public function index()
 public function search(Request $request)
 {
     $query = $request->input('query');
+    
+    if (empty($query)) {
+        return $request->expectsJson() 
+            ? response()->json([])
+            : redirect()->back()->with('error', 'Please enter a search term');
+    }
 
     $products = Product::where('name', 'LIKE', "%{$query}%")
         ->orWhere('description', 'LIKE', "%{$query}%")
-        ->get()
-        ->map(function ($product) {
+        ->get();
+
+    if ($request->has('json') || $request->expectsJson()) {
+        return response()->json($products->map(function ($product) {
             return [
                 'id' => $product->id,
                 'name' => $product->name,
@@ -99,9 +107,11 @@ public function search(Request $request)
                 'images' => json_decode($product->images, true),
                 'colors' => $product->colors,
             ];
-        });
+        }));
+    }
 
-    return response()->json($products);
+    return view('customer.homepage2', compact('products', 'query'));
 }
+
 }
 

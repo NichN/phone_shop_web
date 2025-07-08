@@ -23,7 +23,11 @@ class Order extends Model
         'guest_name',
         'guest_address',
         'phone_guest',
-        'status'
+        'guest_eamil',
+        'delivery_type',
+        'status',
+        'code_verify',
+        'rate_id'
     ];
     protected $dates = [
         'created_at',

@@ -3,18 +3,24 @@
 <div class="w3-main">
     <div class="container mt-4">
         <div class="w3-container">
-            <div class="mb-4">
-                <h1 class="fw-bold mb-2">Dashboard</h1>
-                <p class="text-muted mb-0">Welcome back! Here's what's happening with your store today.</p>
+             <div class="row">
+                <div class="col-12 mb-4 d-flex justify-content-between align-items-center welcome-message">
+                    <span>
+                        Welcome back,  {{ Str::limit(Auth::user()->name, 18) }}
+                    </span>
+                     <div class="position-relative" style="width: 60px; height: 60px;">
+                        <img src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('image/smphone.png') }}" class="rounded-circle shadow" style="width: 56px; height: 56px; object-fit: cover; border: 2px solid #007bff; box-shadow: 0 2px 8px rgba(0,0,0,0.12);  border : 2px solid rgb(39, 67, 158);">
+                    </div>
+                </div>
             </div>
         </div>
         <div class="row g-4">
             <div class="col-md-3">
-                <div class="card border-0 shadow-sm" style="border-radius: 12px; height: 150px; background-color:#bdfff9 ;">
+                <div class="card shadow-sm" style="border-radius: 12px; height: 150px;  box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1);   border : 2px solid rgb(39, 67, 158);">
                     <div class="card-body d-flex flex-column justify-content-center">
                         <div class="d-flex align-items-center gap-3">
-                            <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center"
-                                style="width: 50px; height: 50px; background-color:white;">
+                            <div class="bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center"
+                                style="width: 50px; height: 50px; background-color:rgb(233, 169, 116);">
                                 <i class="bi bi-box-seam text-primary fs-4"></i>
                             </div>
                             <div class="text-center text-md-start">
@@ -27,12 +33,12 @@
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card border-0 shadow-sm" style="border-radius: 12px; height: 150px; background-color:#bdfff9 ;">
+                 <div class="card shadow-sm" style="border-radius: 12px; height: 150px;  box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1);   border : 2px solid rgb(39, 67, 158);">
                     <div class="card-body d-flex flex-column justify-content-center">
                         <div class="d-flex align-items-center gap-3">
-                            <div class="bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center"
-                                style="width: 50px; height: 50px; background-color:white;">
-                                <i class="bi bi-people text-primary fs-4"></i>
+                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center"
+                                style="width: 50px; height: 50px;">
+                                <i class="bi bi-people text-white fs-4"></i>
                             </div>
                             <div class="text-center text-md-start">
                                 <div class="small mb-1 text-muted" style="color: black;"><b>Total Customers</b></div>
@@ -45,12 +51,12 @@
             </div>
 
             <div class="col-md-3">
-                <div class="card border-0 shadow-sm" style="border-radius: 12px; height: 150px; background-color:#bdfff9 ;">
+                 <div class="card shadow-sm" style="border-radius: 12px; height: 150px;  box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1);   border : 2px solid rgb(39, 67, 158);">
                     <div class="card-body d-flex flex-column justify-content-center">
                         <div class="d-flex align-items-center gap-3">
-                            <div class="bg-warning bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center"
-                                style="width: 50px; height: 50px; background-color:white;">
-                                <i class="bi bi-currency-dollar text-warning fs-4"></i>
+                            <div class="bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center"
+                                style="width: 50px; height: 50px; background-color:pink">
+                                <i class="bi bi-currency-dollar text-success fs-4"></i>
                             </div>
                             <div class="text-center text-md-start">
                                 <div class="small mb-1 text-muted">Total purchase</div>
@@ -63,12 +69,12 @@
             </div>
 
             <div class="col-md-3">
-                <div class="card border-0 shadow-sm" style="border-radius: 12px; height: 150px; background-color:#bdfff9 ;">
+                 <div class="card shadow-sm" style="border-radius: 12px; height: 150px;  box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1);   border : 2px solid rgb(39, 67, 158);">
                     <div class="card-body d-flex flex-column justify-content-center">
                         <div class="d-flex align-items-center gap-3">
-                            <div class="bg-danger bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center"
-                                style="width: 50px; height: 50px; background-color:white;">
-                                <i class="bi bi-receipt text-danger fs-4"></i>
+                            <div class="bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center"
+                                style="width: 50px; height: 50px; background-color: green;">
+                                <i class="bi bi-receipt text-white fs-4"></i>
                             </div>
                             <div class="text-center text-md-start">
                                 <div class="small mb-1 text-muted">Total Orders</div>
@@ -85,96 +91,109 @@
         <div class="row mt-4 g-4">
             <div class="col-md-6">
                 <div class="card border-0 shadow-sm h-100" style="border-radius: 12px;">
-                    <div class="card-header bg-white border-0 d-flex align-items-center justify-content-between py-3">
-                        <h5 class="fw-bold mb-0 text-dark" style="font-size: 1.25rem;">Stock & Purchase</h5>
-                        <div class="d-flex gap-2">
-                            <select id="yearSelect" class="form-select form-select-sm" style="width: 90px;">
-                                <option value="2023">2023</option>
-                                <option value="2024" selected>2024</option>
-                                <option value="2025">2025</option>
-                            </select>
-                            <select id="monthSelect" class="form-select form-select-sm" style="width: 120px;">
-                                <option value="1">January</option>
-                                <option value="2">February</option>
-                                <option value="3">March</option>
-                                <option value="4">April</option>
-                                <option value="5">May</option>
-                                <option value="6" selected>June</option>
-                                <option value="7">July</option>
-                                <option value="8">August</option>
-                                <option value="9">September</option>
-                                <option value="10">October</option>
-                                <option value="11">November</option>
-                                <option value="12">December</option>
-                            </select>
-                        </div>
+                    <div class="card-header bg-light border-0 d-flex align-items-center justify-content-between py-3">
+                        <h5 class="fw-bold mb-0 text-dark" style="font-size: 1.25rem;">Stock</h5>
                     </div>
                     <div class="card-body">
-                        <div style="height: 300px;">
+                        <div style="height: 200px;">
                             <canvas id="stockPieChart"></canvas>
                         </div>
                         <div class="mt-3 d-flex justify-content-center gap-4">
                             <div class="text-center">
                                 <div class="d-flex align-items-center justify-content-center gap-2">
                                     <span class="d-inline-block rounded-circle"
-                                        style="width: 12px; height: 12px; background-color: #3b82f6;"></span>
+                                        style="width: 12px; height: 12px; background-color: #0ea5e9;"></span>
                                     <span class="small">In Stock</span>
                                 </div>
-                                <div class="fw-bold">1,024 items</div>
+                                <div class="fw-bold">{{ $product_instock }}</div>
                             </div>
                             <div class="text-center">
                                 <div class="d-flex align-items-center justify-content-center gap-2">
                                     <span class="d-inline-block rounded-circle"
-                                        style="width: 12px; height: 12px; background-color: #93c5fd;"></span>
-                                    <span class="small">Low Stock</span>
-                                </div>
-                                <div class="fw-bold">156 items</div>
-                            </div>
-                            <div class="text-center">
-                                <div class="d-flex align-items-center justify-content-center gap-2">
-                                    <span class="d-inline-block rounded-circle"
-                                        style="width: 12px; height: 12px; background-color: #bfdbfe;"></span>
+                                        style="width: 12px; height: 12px; background-color: #ec4899;"></span>
                                     <span class="small">Out of Stock</span>
                                 </div>
-                                <div class="fw-bold">74 items</div>
+                                <div class="fw-bold">{{ $soldOutItems }}</div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
             <div class="col-md-6">
-                <div class="card border-0 shadow-sm h-100" style="border-radius: 12px;">
-                    <div class="card-header bg-white border-0 d-flex align-items-center justify-content-between py-3">
-                        <h5 class="fw-bold mb-0 text-dark" style="font-size: 1.25rem;">Monthly Sale</h5>
-                        <div>
-                            <button class="btn btn-sm btn-outline-secondary">Export</button>
+                    <div class="card border-0 shadow-sm h-100" style="border-radius: 16px; background: #fefefe;">
+                        <div class="card-header bg-light border-0 py-3 d-flex align-items-center justify-content-between">
+                            <h5 class="fw-bold text-dark mb-0" style="font-size: 1.3rem;">
+                                <i class="bi bi-clock-history me-2 text-primary"></i>Recent Orders
+                            </h5>
+                            <a href="/order_dashboard" class="text-decoration-none small text-primary">View all</a>
+                        </div>
+                        <div class="card-body">
+                            @forelse ($recentOrders as $order)
+                                <div class="d-flex align-items-center mb-4 p-2 rounded hover-shadow" style="background-color: #f8f9fa;">
+                                    {{-- User Profile Image --}}
+                                    <img src="{{ $order->profile_image 
+                                        ? asset('storage/' . $order->profile_image) 
+                                        : asset('image/smphone.png') }}"
+                                        alt="Profile" class="rounded-circle shadow-sm"
+                                        style="width: 50px; height: 50px; object-fit: cover;">
+
+                                    {{-- Guest Name and Order Info --}}
+                                    <div class="ms-3 flex-grow-1">
+                                        <div class="fw-semibold text-dark">{{ $order->guest_name }}</div>
+                                        <small class="text-muted">{{ \Carbon\Carbon::parse($order->created_at)->format('M d, Y') }}</small>
+                                    </div>
+
+                                    {{-- Order Total --}}
+                                    <div class="fw-bold text-dark">${{ number_format($order->total_amount, 2) }}</div>
+                                </div>
+                            @empty
+                                <p class="text-muted">No recent orders found.</p>
+                            @endforelse
                         </div>
                     </div>
-                    <div class="card-body">
-                        <div style="height: 300px;">
-                            <canvas id="salesBarChart"></canvas>
-                        </div>
-                        <div class="mt-3 d-flex justify-content-center gap-4">
-                            <div class="text-center">
-                                <div class="small text-muted">Today</div>
-                                <div class="fw-bold text-success">$1,245</div>
-                            </div>
-                            <div class="text-center">
-                                <div class="small text-muted">This Week</div>
-                                <div class="fw-bold">$8,752</div>
-                            </div>
-                            <div class="text-center">
-                                <div class="small text-muted">This Month</div>
-                                <div class="fw-bold">$23,456</div>
-                            </div>
-                        </div>
-                    </div>
+
+                </div>
+        </div>
+    </div>
+    <div style="display: flex; justify-content:space-between;" class="gap-3">
+        <div class="col-md-6 mt-3">
+        <div class="card border-0 shadow-sm h-300" style="border-radius: 12px;">
+            <div class="card-header bg-light border-0 d-flex align-items-center justify-content-between py-3">
+                <h5 class="fw-bold mb-0 text-dark" style="font-size: 1.25rem;">Orders Monthly (completed)</h5>
+            </div>
+            <div class="card-body">
+                <div style="height: 300px;">
+                    <canvas id="ordersBarChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
-    
+    <div class="col-md-6 mt-3">
+        <div class="card border-0 shadow-sm h-300" style="border-radius: 12px;">
+            <div class="card-header bg-light border-0 d-flex align-items-center justify-content-between py-3">
+                <h5 class="fw-bold mb-0 text-dark" style="font-size: 1.25rem;">Orders processing</h5>
+            </div>
+            <div class="card-body">
+                <div style="height: 300px;">
+                    <canvas id="pro_orderBarChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
 </div>
-
 @include('Admin.dasboard.script')
+<style>
+    .welcome-message{
+        color: black;
+        background-color: rgb(236, 184, 141);
+        text-align: center;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+        font-size: 24px;
+        font-weight: 700;
+}
+</style>

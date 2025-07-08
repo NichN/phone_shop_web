@@ -72,6 +72,12 @@
                             <i class="fas fa-times-circle me-2"></i>Cancel Order
                         </button>
                     </li>
+                    <li>
+                    <a class="dropdown-item text-success" href="{{ route('checkout.payment', $order->id) }}">
+                        <i class="fas fa-credit-card me-2"></i>Payment
+                    </a>
+                </li>
+
                 </ul>
             </div>
         </div>

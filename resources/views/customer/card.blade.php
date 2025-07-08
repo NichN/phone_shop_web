@@ -77,11 +77,27 @@
                 </div>
             </div>
 
-            {{-- Right Side - Payment Form --}}
+           {{-- <input type="hidden" name="rate_id" id="rate_id"> --}}
             <div class="col-md-4">
                 <div class="payment-methods-container">
-                    <h5 class="fw-bold mb-3">Payment Method</h5>
-                    <div class="payment-options">
+                <h5 class="fw-bold mb-3">Payment Method</h5>
+                <div class="payment-options">
+                    @if($deliveryType === 'pick up')
+                        {{-- Only KH QR Payment --}}
+                        <div class="payment-option">
+                            <input class="form-check-input" type="radio" name="payment_type" id="kh_qr" value="kh_qr" checked>
+                            <label class="payment-label" for="kh_qr">
+                                <div class="payment-content d-flex align-items-center">
+                                    <img src="{{ asset('image/barkog.png') }}" alt="KH QR Payment" class="payment-icon rounded me-2">
+                                    <div>
+                                        <span class="payment-title">KH QR Payment</span><br>
+                                        <small class="payment-description">Scan QR code to pay instantly</small>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    @else
+                        {{-- Cash on Delivery --}}
                         <div class="payment-option mb-2">
                             <input class="form-check-input" type="radio" name="payment_type" id="cash_on_delivery" value="cash on delivery" checked>
                             <label class="payment-label" for="cash_on_delivery">
@@ -94,7 +110,8 @@
                                 </div>
                             </label>
                         </div>
-                        
+
+                        {{-- KH QR Payment --}}
                         <div class="payment-option">
                             <input class="form-check-input" type="radio" name="payment_type" id="kh_qr" value="kh_qr">
                             <label class="payment-label" for="kh_qr">
@@ -107,8 +124,10 @@
                                 </div>
                             </label>
                         </div>
-                    </div>
+                    @endif
                 </div>
+            </div>
+
 
                 <div class="mt-3">
                     <label for="note"><strong>Note:</strong></label>

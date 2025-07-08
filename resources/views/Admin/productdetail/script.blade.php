@@ -13,6 +13,7 @@ $(document).ready(function() {
         processing: true,
         serverSide: true,
         ajax: "{{ route('pr_detail.index') }}",
+       order: [[0, 'desc']],
         columns: [
             {
                 data: 'id',
@@ -21,24 +22,6 @@ $(document).ready(function() {
                     return meta.row + 1;
                 }
             },
-        //    {
-        //         data: 'images',
-        //         name: 'images',
-             
-        //         render: function(data, type, row) {
-        //             try {
-        //                 const images = typeof data === 'string' ? JSON.parse(data) : data;
-        //                 if (Array.isArray(images) && images.length > 0 && images[0]) {
-        //                     return `<img src="/storage/${images[0]}" height="50" />`;
-        //                 }
-        //             } catch (e) {
-        //                 if (data) {
-        //                     return `<img src="/storage/${data}" height="50" />`;
-        //                 }
-        //             }
-        //             return 'No image';
-        //         }
-        //     },
             { data: 'product_name', name: 'product_name' },
             { data: 'brand', name: 'brand' },
             { data: 'category', name: 'category' },
@@ -57,6 +40,7 @@ $(document).ready(function() {
             { data: 'size',name:'size'},
             { data: 'stock', name: 'stock' },
             { data: 'price', name: 'price' },
+            { data: 'warranty', name:'warranty'},
             { data: 'action', orderable: false, searchable: false }
         ]
     });
@@ -98,14 +82,17 @@ $(document).ready(function() {
         let url = "{{ route('pr_detail.edit', ':id') }}".replace(':id', id);
         $.get(url, function(data) {
 
-           $('#edit_ProName').append(new Option( data.pro_id, true, true)).trigger('change');
+           $('#edit_ProName').val(data.product_name);
+        //    console.log(data.product_name);
             $('#edit_costPrice').val(data.cost_price);
+            $('#edit_type').val(data.type);
             $('#edit_sellPrice').val(data.price);
             $('#edit_brandName').val(data.brand).trigger('change');
-            $('#edit_Category').val(data.catgory).trigger('change');
+            $('#edit_Category').val(data.category).trigger('change');
             $('#edit_color_id').val(data.color_id);
             $('#edit_size_id').val(data.size_id);
-
+            $('#edit_warranty').val(data.warranty);
+            // $('#edit_images').val(data.images);
 
             $('#editModal').modal('show');
             $('#editPr').data('id', data.id);
@@ -255,5 +242,83 @@ function loadProduct_edit(searchTerm = '') {
         });
     }
     loadProduct_edit();
+    $(document).on('click', '.viewProduct', function () {
+    const itemId = $(this).data('id');
+    var url = "{{ route('pr_detail.product_items', ':id') }}".replace(':id', itemId);
+    
+    $.ajax({
+        url: url,
+        method: 'GET',
+        success: function (response) {
+            // Basic Details
+            $('#product_name').text(response.product_name);
+            $('#viewModalLabel').text(response.product_name);
+            $('#stock_qty').text(response.stock);
+            $('#product_price').text(`$${response.price}`);
+
+            $('#colorOptions').empty();
+            if (response.color) {
+                const colorCode = response.color;
+                const colorId = colorCode.replace('#', '');
+                const input = `
+                    <input type="radio" class="btn-check" name="color" id="color_${colorId}" value="${colorCode}" checked disabled />
+                `;
+                const label = `
+                    <label class="btn d-flex align-items-center gap-2 disabled" for="color_${colorId}">
+                        <span style="display:inline-block; width:30px; height:30px; background-color:${colorCode}; border-radius:50%;"></span>
+                    </label>
+                `;
+                $('#colorOptions').append(input + label);
+            }
+
+
+            // Size Display
+            $('#sizeOptions').empty();
+            if (response.size) {
+                const size = response.size;
+                const input = `
+                    <input type="radio" class="btn-check" name="size" id="size_${size}" value="${size}" checked disabled />
+                `;
+                const label = `
+                    <label class="btn btn-outline-primary disabled" for="size_${size}">
+                        ${size}
+                    </label>
+                `;
+                $('#sizeOptions').append(input + label);
+            }
+
+            // Images
+            const images = response.images || [];
+            if (images.length > 0) {
+                $('#mainProductImage').attr('src', '/storage/' + images[0]);
+            } else {
+                $('#mainProductImage').attr('src', '/default-placeholder.jpg');
+            }
+
+            $('#thumbnailGallery').empty();
+            images.forEach((imgPath, index) => {
+                const thumb = `
+                    <div class="col-3">
+                        <img src="/storage/${imgPath}" class="thumbnail-img img-fluid ${index === 0 ? 'selected-thumbnail' : ''}" 
+                             alt="Thumbnail ${index + 1}" onclick="changeImage(this)">
+                    </div>
+                `;
+                $('#thumbnailGallery').append(thumb);
+            });
+            $('#viewDetailModal').modal('show');
+        },
+        error: function () {
+            alert('This Product Item is not available');
+        }
+    });
+});
+
+function changeImage(imgElement) {
+    const newSrc = $(imgElement).attr('src');
+    $('#mainProductImage').attr('src', newSrc);
+    $('.thumbnail-img').removeClass('selected-thumbnail');
+    $(imgElement).addClass('selected-thumbnail');
+}
+
     
 </script>

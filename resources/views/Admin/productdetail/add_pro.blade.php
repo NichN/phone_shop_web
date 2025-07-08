@@ -5,7 +5,7 @@
 <div class="w3-main">
     <div class="container-fluid py-4">
         <div class="card shadow-sm">
-            <div class="card-header text-white" style="background-color: blue">
+            <div class="card-header text-white" style="background-color: rgb(30, 30, 95)">
                 <h5 class="mb-0"><i class="fas fa-tags me-2"></i>Add Product</h5>
             </div>
             <div class="card-body">
@@ -73,7 +73,7 @@
                             <div id="colorCirclePreview" class="mt-2"></div>
                         </div>
 
-                        <div class="form-group col-md-5">
+                        <div class="form-group col-md-3">
                             <label for="size_id" class="form-label fw-bold">Size <span class="text-danger">*</span></label>
                             <select class="form-select" id="size_id" name="size">
                                 <option value="">Choose Size</option>
@@ -82,6 +82,13 @@
                                 @endforeach
                             </select>
                         </div>
+                        <div class="form-group col-md-3">
+                        <label for="size_id" class="form-label fw-bold">
+                            Warranty
+                             <input type="text" name="warranty" id="warranty" class="form-control" value="" placeholder="Enter warranty" required>
+                        </label>
+                    </div>
+
                     </div>
 
                     <!-- Images -->

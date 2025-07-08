@@ -28,22 +28,40 @@ use App\Models\productdetail;
                 ->get();
                 return DataTables::of($data)
                     ->addColumn('action', function ($row) {
-                        $btn = '<div>
-                                    <button class="btn btn-warning btn-sm editProduct_dt" data-id="' . $row->id . '" data-toggle="tooltip" title="Edit">
-                                        <i class="fa fa-pencil"></i>
-                                    </button>
-                                    <button class="btn btn-danger btn-sm delete" data-id="' . $row->id . '" data-toggle="tooltip" title="Delete">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                </div>';
+                        $btn = '
+                        <div class="btn-group" role="group">
+                            <button 
+                                class="btn btn-primary btn-sm viewProduct" 
+                                data-id="' . $row->id . '" 
+                                data-bs-toggle="tooltip" 
+                                title="View">
+                                <i class="fa fa-eye"></i>
+                            </button>
+                            <button 
+                                class="btn btn-warning btn-sm editProduct_dt" 
+                                data-id="' . $row->id . '" 
+                                data-bs-toggle="tooltip" 
+                                title="Edit">
+                                <i class="fa fa-pencil"></i>
+                            </button>
+                            <button 
+                                class="btn btn-danger btn-sm delete" 
+                                data-id="' . $row->id . '" 
+                                data-bs-toggle="tooltip" 
+                                title="Delete">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </div>';
                         return $btn;
                     })
+
                     ->rawColumns(['action'])
                     ->make(true);
             }
             $size = Size::all();
             $color = Color::all();
             $product = Product::all();
+            // dd($product);
 
         return view('Admin.productdetail.index',compact('size', 'color','product'));
     }
@@ -58,6 +76,7 @@ use App\Models\productdetail;
             'size'           => 'required|exists:size,id',
             'color'          => 'required|exists:color,id',
             'images.*'       => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            // 'warranty'       => ''
         ]);
         $imagePaths = [];
         if ($request->hasFile('images')) {
@@ -81,7 +100,8 @@ use App\Models\productdetail;
             'color_code'   => $color->code,
             'size'         => $size->size,
             'images'       => $imagePaths,
-            'type'         => $request->type
+            'type'         => $request->type,
+            'warranty'     => $request->warranty
         ];
 
         $productDetail = ProductDetail::create($data);
@@ -113,7 +133,7 @@ use App\Models\productdetail;
         $product = DB::table('product')
             ->where('name', 'LIKE', "%{$search}%")
             ->select('id', 'name')
-            ->take(10)
+            // ->take(10)
             ->get();
         return response()->json($product);
     }
@@ -121,19 +141,41 @@ use App\Models\productdetail;
         $productz_dt = productdetail::findOrFail($id);
         return response()->json($productz_dt);
     }
-    public function update(Request $request, $id){
-       $productz_dt = productdetail::findOrFail($id);
-        $productz_dt->update([
-            'name' => $request->name,
-            'color_id'=>$request->color_id,
-            'size_id' =>$request->size_id,
-            'price'=>$request->price,
-            'brand_id'=>$request->brand_id,
-            'cost_price'=>$request->cost_price,
-            'cat_id'=>$request->cat_id
-        ]);
-        return response()->json(['success' => true]);
+    public function update(Request $request, $id)
+{
+    $productz_dt = productdetail::findOrFail($id);
+
+    // Validate if new images are uploaded
+    $validated = $request->validate([
+        'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        // other validations...
+    ]);
+
+    $imagePaths = $productz_dt->images ?? [];
+    if ($request->hasFile('images')) {
+        $imagePaths = [];
+        foreach ($request->file('images') as $image) {
+            $path = $image->store('public/product_images');
+            $imagePaths[] = str_replace('public/', '', $path);
+        }
     }
+
+    $productz_dt->update([
+        'product_name' => $request->name,
+        'color_id' => $request->color_id,
+        'size_id' => $request->size_id,
+        'price' => $request->price,
+        'brand_id' => $request->brand_id,
+        'cost_price' => $request->cost_price,
+        'cat_id' => $request->cat_id,
+        'type' => $request->type,
+        'images' => $imagePaths,
+        'warranty' => $request->warranty,
+    ]);
+
+    return response()->json(['success' => true]);
+}
+
      public function delete(Request $request){
         $product_dt = productdetail::findOrFail($request->id);
         $product_dt->delete();
@@ -145,4 +187,24 @@ use App\Models\productdetail;
         'cost_price' => $product_item->cost_price,
          ]);
     }
+   public function show_product($pro_id)
+{
+    $product_item = Productdetail::find($pro_id);
+
+    if (!$product_item) {
+        return response()->json(['message' => 'No product item found.'], 404);
+    }
+    return response()->json([
+        'product_name' => $product_item->product_name,
+        'color'        => $product_item->color_code,
+        'size'         => $product_item->size,
+        'stock'        => $product_item->stock,
+        'price'        => $product_item->price,
+        'images'       => $product_item->images ?? [],
+        'warranty'     =>$product_item->warranty,
+    ]);
+}
+
+
+
 }

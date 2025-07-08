@@ -20,7 +20,7 @@
                     {data: 'name', name:'name'},
                     {data:'email',name:'email'},
                     {data:'phone_number',name:'phone_number'},
-                    {data:'address',name:'address'},
+                    {data:'address_line1',name:'address_line1'},
                     {data: 'action', orderable: false, searchable: false}
                 ]
             });

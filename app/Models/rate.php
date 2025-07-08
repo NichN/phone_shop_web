@@ -5,13 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class deliveries extends Model
+class rate extends Model
 {
     use HasFactory;
-    protected $table = 'deliveries';
-    protected $fillable = ['id','order_id','delivery_status','customer_name','customer_phone','address','delivery_image'.'noted'];
+    protected $table = 'exchange_rates';
+    protected $fillable = ['id','rate'];
     protected $dates = [
         'created_at',
         'updated_at',
     ];
+
 }

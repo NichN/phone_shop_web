@@ -15,16 +15,15 @@
 <body>
 <div class="w3-sidebar w3-bar-block w3-collapse w3-card w3-animate-left" style="width:250px;" id="mySidebar">
     <button class="w3-bar-item w3-button w3-large w3-hide-large text-white" onclick="w3_close()">Close &times;</button>
-    <div class="sidebar-title">TAYMENG PHONE SHOP</div>
-    {{-- User Profile Section --}}
     @if(Auth::check())
     <div class="sidebar-profile d-flex align-items-center flex-row justify-content-center py-3 mb-3" style="background: inherit; margin: 10px 0 15px 0;">
-        <div class="position-relative" style="width: 56px; height: 56px;">
+        {{-- <div class="position-relative" style="width: 56px; height: 56px;">
             <img src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('image/smphone.png') }}" class="rounded-circle shadow" style="width: 56px; height: 56px; object-fit: cover; border: 2px solid #007bff; box-shadow: 0 2px 8px rgba(0,0,0,0.12);">
-        </div>
-        <div class="fw-bold ms-3" style="font-size: 1.12rem; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.18); letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+        </div> --}}
+        {{-- <div class="fw-bold ms-3" style="font-size: 1.12rem; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.18); letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
             {{ Str::limit(Auth::user()->name, 18) }}
-        </div>
+        </div> --}}
+        <h4>Tay Meng Shop</h4>
     </div>
     @endif
 
@@ -46,10 +45,9 @@
         <div id="productDropdown" class="w3-dropdown-content" style="display: none;">
             <a href="{{ route('products.product_index')}}" class="w3-bar-item w3-button"><i class="fa fa-list"></i> Product List</a>
             <a href="{{ route('pr_detail.index')}}" class="w3-bar-item w3-button"><i class="fa-solid fa-circle-info"></i> Product Variant</a>
-            <a href="{{ route('pr_detail.add')}}" class="w3-bar-item w3-button"><i class="fa-solid fa-circle-info"></i> Add Product</a>
+            {{-- <a href="{{ route('pr_detail.add')}}" class="w3-bar-item w3-button"><i class="fa-solid fa-circle-info"></i> Add Product</a> --}}
             <a href="{{ route('color.colorlist') }}" class="w3-bar-item w3-button"><i class="fa-solid fa-palette"></i> Color</a>
-            <a href="{{ route('size.index') }}" class="w3-bar-item w3-button"><i class="fa-solid fa-expand"></i> Size</a>
-            <a href="{{ route('photo.index') }}" class="w3-bar-item w3-button"><i class="fa-solid fa-image"></i> Photo</a>     
+            <a href="{{ route('size.index') }}" class="w3-bar-item w3-button"><i class="fa-solid fa-expand"></i> Size</a>   
         </div>
         <div class="w3-bar-item  w3-dropdown-click" onclick="toggleDropdown('brandDropdown')">
             <i class="fa fa-qrcode"></i> Brand <i class="fa fa-caret-down" style="float:right;"></i>
@@ -78,15 +76,35 @@
         <div id="supplierDropdown" class="w3-dropdown-content" style="display: none;">
             <a href="{{ route('supplier.index') }}" class="w3-bar-item w3-button"><i class="fa fa-list"></i> List Supplier</a>
         </div>
-        <a href="#" class="w3-bar-item w3-button order-link"><i class="fas fa-shopping-cart"></i> Order</a>
+        {{-- Delivery tab: only for Delivery role --}}
+        <a href="{{ route('order_dashboard.index')}}" class="w3-bar-item w3-button order-link"><i class="fas fa-shopping-cart"></i> Order</a>
+             @if(isset($roleId) && $roleId == 3)
+            <div class="w3-bar-item  w3-dropdown-click" onclick="toggleDropdown('deliveryDropdown')">
+                <i class="fa-solid fa-truck"></i> Delivery <i class="fa fa-caret-down" style="float:right;"></i>
+            </div>
+            <div id="deliveryDropdown" class="w3-dropdown-content" style="display: none;">
+                <a href="{{ route('delivery_option.index') }}" class="w3-bar-item w3-button"><i class="fa-solid fa-truck"></i>Order list</a>
+            </div>
+        @elseif(!isset($roleId) || $roleId != 3)
+            <div class="w3-bar-item  w3-dropdown-click" onclick="toggleDropdown('deliveryDropdown')">
+                <i class="fa-solid fa-truck"></i> Delivery <i class="fa fa-caret-down" style="float:right;"></i>
+            </div>
+            <div id="deliveryDropdown" class="w3-dropdown-content" style="display: none;">
+                <a href="{{ route('delivery_option.index') }}" class="w3-bar-item w3-button"><i class="fa-solid fa-truck"></i>Order list</a>
+            </div>
+        @endif
+        <a href="{{ route('pick_up.index')}}" class="w3-bar-item w3-button order-link"><i class="fas fa-shopping-cart"></i> Pick Up</a>
         <a href="{{ route('customer_admin.index') }}" class="w3-bar-item w3-button"><i class="fa-solid fa-person"></i> Customer</a>
-        <a href="#" class="w3-bar-item w3-button payment-link"><i class="fas fa-money-bill-wave"></i> Payment</a>
+        <a href="{{ route('payment.index')}}" class="w3-bar-item w3-button payment-link"><i class="fas fa-money-bill-wave"></i> Payment</a>
         <div class="w3-bar-item w3-dropdown-click" onclick="toggleDropdown('setting')" style="cursor:pointer;">
         <i class="fa fa-qrcode"></i> Setting
         <i class="fa fa-caret-down" style="float:right;"></i>
         </div>
         <div id="setting" class="w3-dropdown-content" style="display: none;">
             <a href="{{ route('faq.index') }}" class="w3-bar-item w3-button"><i class="fa-solid fa-person-circle-question"></i> FAQ</a>
+            <a href="{{ route('delivery.index') }}" class="w3-bar-item w3-button"><i class="fa-solid fa-truck"></i> Delivery Fee</a>
+            <a href="{{ route('photo.index') }}" class="w3-bar-item w3-button"><i class="fa-solid fa-image"></i> Photo</a>  
+            <a href="{{ route('exchange.exchange_index')}}" class="w3-bar-item w3-button"><i class="fa-solid fa-money-bill-wave"></i> Exchange Rate</a>
         </div>
         {{-- report --}}
         <div class="w3-bar-item w3-dropdown-click" onclick="toggleDropdown('reportDropdown')">
@@ -99,30 +117,16 @@
             <a href="{{ route('report.purchase_report') }}" class="w3-bar-item w3-button">
                 <i class="fa fa-list"></i> Purchase Report
             </a>
+            <a href="{{ route('report.daily_sale') }}" class="w3-bar-item w3-button">
+                <i class="fa fa-calendar"></i> Sale Report
+            </a>
+            
         </div>
         {{-- end --}}
     @endif
-
-    {{-- Delivery tab: only for Delivery role --}}
-    @if(isset($roleId) && $roleId == 3)
-        <div class="w3-bar-item  w3-dropdown-click" onclick="toggleDropdown('deliveryDropdown')">
-            <i class="fa-solid fa-truck"></i> Delivery <i class="fa fa-caret-down" style="float:right;"></i>
-        </div>
-        <div id="deliveryDropdown" class="w3-dropdown-content" style="display: none;">
-            <a href="{{ route('delivery.index') }}" class="w3-bar-item w3-button"><i class="fa-solid fa-truck"></i> Delivery Fee</a>
-        </div>
-    @elseif(!isset($roleId) || $roleId != 3)
-        <div class="w3-bar-item  w3-dropdown-click" onclick="toggleDropdown('deliveryDropdown')">
-            <i class="fa-solid fa-truck"></i> Delivery <i class="fa fa-caret-down" style="float:right;"></i>
-        </div>
-        <div id="deliveryDropdown" class="w3-dropdown-content" style="display: none;">
-            <a href="{{ route('delivery.index') }}" class="w3-bar-item w3-button"><i class="fa-solid fa-truck"></i> Delivery Fee</a>
-        </div>
-    @endif
-
     {{-- People tab: only for Admin (role_id==1) --}}
     @if(isset($roleId) && $roleId == 1)
-        <div class="sidebar-title mt-">Settings</div>
+        <div class="sidebar-title mt-">User</div>
         <div class="w3-bar-item  w3-dropdown-click" onclick="toggleDropdown('userDropdown')">
             <i class="fas fa-user-cog"></i> People <i class="fa fa-caret-down" style="float:right;"></i>
         </div>

@@ -313,8 +313,8 @@
         <!-- Illustration Section -->
         <div class="auth-illustration">
             <div class="illustration-content">
-                <h2>Welcome to Our Platform</h2>
-                <p>Join thousands of satisfied customers who trust our products and services.</p>
+                {{-- <h2>Welcome to Our Shop</h2> --}}
+                {{-- <p>Join thousands of satisfied customers who trust our products and services.</p> --}}
                 
                 <div id="productCarousel" class="carousel slide product-carousel" data-bs-ride="carousel">
                     <div class="carousel-inner">
@@ -344,7 +344,7 @@
         <!-- Form Section -->
         <div class="auth-form">
             <div class="form-container">
-                <div class="form-logo">
+                {{-- <div class="form-logo">
                     <!-- Replace with your logo -->
                     <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect width="40" height="40" rx="8" fill="#4361ee"/>
@@ -353,16 +353,16 @@
                         <path d="M10 20L15 15V25L10 20Z" fill="white"/>
                         <path d="M30 20L25 25V15L30 20Z" fill="white"/>
                     </svg>
-                </div>
+                </div> --}}
                 
-                <h1 class="form-title">Welcome Back</h1>
-                <p class="form-subtitle">Please enter your details to sign in</p>
+                {{-- <h1 class="form-title">Welcome Back</h1> --}}
+                {{-- <p class="form-subtitle">Please enter your details to sign in</p> --}}
                 
                 @yield('content')
                 
-                <div class="form-footer">
+                {{-- <div class="form-footer">
                     <p>Don't have an account? <a href="#">Sign up</a></p>
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>

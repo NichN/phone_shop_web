@@ -111,10 +111,10 @@
                                 </div>
                             </li>
                             <li><a class="dropdown-item py-2" href="{{ route('checkout.history') }}">
-                                <i class="fa-solid fa-box me-2 text-primary"></i>Order History
+                                <i class="fa-solid fa-box me-2 text-dark"></i>Order History
                             </a></li>
                             <li><a class="dropdown-item py-2" href="#" data-bs-toggle="modal" data-bs-target="#profileModal">
-                                <i class="fa-solid fa-gear me-2 text-primary"></i>My Profile
+                                <i class="fa-solid fa-gear me-2 text-dark"></i>My Profile
                             </a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item py-2 text-danger" href="{{ route('login')}}">
@@ -239,7 +239,7 @@
                                             <input type="email" name="email" class="form-control" value="{{ Auth::user()->email ?? ''}}" required>
                                         </div>
 
-                                        <button type="submit" class="btn btn-success w-100">Save Changes</button>
+                                        <button type="submit" class="btn btn-dark w-100">Save Changes</button>
                                     </form>
                                 </div>
 
@@ -263,7 +263,7 @@
                                             <div class="invalid-feedback">Passwords do not match.</div>
                                         </div>
                                         <div id="passwordAlert" class="alert" style="display: none;"></div>
-                                        <button type="submit" class="btn btn-primary">Update Password</button>
+                                        <button type="submit" class="btn btn-dark">Update Password</button>
                                     </form>
                                 </div>
 
@@ -291,7 +291,7 @@
                                             <label class="form-label">State/Province</label>
                                             <input type="text" name="state" class="form-control" value="{{ Auth::user()->state ?? ''}}" required>
                                         </div>
-                                        <button type="submit" class="btn btn-success w-100">Save Address</button>
+                                        <button type="submit" class="btn btn-dark w-100">Save Address</button>
                                     </form>
                                 </div>
                             </div>
