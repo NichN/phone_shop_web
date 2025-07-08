@@ -26,25 +26,25 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <label for="customer_name">Customer Name</label>
-                                    <input type="text" class="form-control" id="customer_name" name="name" placeholder="Enter Customer Name">
+                                    <input type="text" class="form-control" id="customer_name" name="guest_name" placeholder="Enter Customer Name">
                                 </div>
                                 <div class="col-md-4">
                                     <label for="paid_by">Paid By</label>
-                                    <select class="form-select" id="paid_by" name="paid_by">
+                                    <select class="form-select" id="paid_by" name="payment_type">
                                         <option value="">Select Payment Type</option>
-                                        <option value="cash">Delivery</option>
+                                        <option value="cash">cash on delivery</option>
                                         <option value="aba">Bank</option>
                                     </select>
                                 </div>
                                 <div class="col-md-4">
                                     <label for="inv_number">Order Number</label>
-                                    <input type="text" class="form-control" id="inv_number" name="inv_number" placeholder="Enter Invoice Number">
+                                    <input type="text" class="form-control" id="inv_number" name="order_num" placeholder="Enter Invoice Number">
                                 </div>
                             </div>
                             <div class="row mt-4">
                                 <div class="col-md-4">
-                                    <label for="payment_date">Payment Date</label>
-                                    <input type="date" class="form-control" id="payment_date" name="payment_date">
+                                    <label for="payment_date">Order Date</label>
+                                    <input type="date" class="form-control" id="payment_date" name="order_date">
                                 </div>
                             </div>
                             <br>
@@ -61,12 +61,12 @@
                                             <th>Date</th>
                                             <th>Customer</th>
                                             <th>Amount</th>
-                                            <th>Payment Type</th>
+                                            <th>Payment</th>
                                             <th>Order Status</th>
                                         </tr>
                                     </thead>
                                     <tfoot>
-                                        <!-- Optional: footer content -->
+                                        
                                     </tfoot>
                                 </table>
                             </div>
@@ -96,10 +96,24 @@
         var table = $('.data-table').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ route('report.daily_sale') }}",
+            ajax: {
+                url: "{{ route('report.daily_sale') }}",
+                data: function (d) {
+                    d.guest_name = $('#customer_name').val();
+                    d.payment_type = $('#paid_by').val();
+                    d.order_num = $('#inv_number').val();
+                    d.order_date = $('#payment_date').val();
+                }
+            },
             order: [[0, 'desc']],
             columns:[
-                {data: 'id', name: 'id'},
+                {
+                    data: 'id',
+                    name: 'id',
+                    render: function (data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
                 {data: 'order_num', name: 'order_num'},
                 {data: 'created_at', name: 'created_at'},
                 {data: 'guest_name', name: 'guest_name'},
@@ -108,5 +122,11 @@
                 {data: 'status', name: 'status'}
             ]
         });
+
+        // When clicking "Submit", reload table with new filters
+        $('#submit_btn').on('click', function() {
+            table.ajax.reload();
+        });
     });
 </script>
+

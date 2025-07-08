@@ -61,30 +61,45 @@ if ($request->ajax()) {
             }
         return view('Admin.report.purchase');
 }
+
+
 public function daily_sale(Request $request)
 {
     if ($request->ajax()) {
         $query = DB::table('orders')
+            ->join('payment', 'payment.order_id', '=', 'orders.id')
             ->select(
-                'orders.*',
+                'orders.id',
+                'orders.order_num',
+                'orders.created_at',
+                'orders.guest_name',
+                'orders.total_amount',
                 'payment.payment_type',
-            )
-            ->join('payment', 'payment.order_id', '=', 'orders.id');
-        if ($request->has('month')) {
-            $month = $request->input('month');
-            $year = date('Y');
-            $query->whereYear('orders.created_by', $year)
-                  ->whereMonth('orders.created_by', $month);
+                'orders.status'
+            );
+
+        if ($request->filled('order_date')) {
+            $query->whereDate('orders.created_at', $request->order_date);
         }
-        if ($request->has('guest_name')) {
+
+        if ($request->filled('guest_name')) {
             $query->where('orders.guest_name', 'like', '%' . $request->guest_name . '%');
         }
-        if ($request->has('payment_type')) {
+
+        if ($request->filled('payment_type')) {
             $query->where('payment.payment_type', $request->payment_type);
         }
-      
+
+        if ($request->filled('order_num')) {
+            $query->where('orders.order_num', 'like', '%' . $request->order_num . '%');
+        }
+
+        return DataTables::of($query)->make(true);
     }
+
     return view('Admin.report.daily_sale');
 }
+
+
 
 }
