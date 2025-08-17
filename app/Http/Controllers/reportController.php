@@ -305,16 +305,21 @@ public function income_expense(Request $request)
     } else {
         $output = 0;
     }
+
     $monthlyIncome = DB::table('orders')
     ->select(DB::raw('SUM(total_amount) as total_income'))
     ->whereIn('status', ['accepted', 'processing', 'paid', 'completed'])
     ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
-    ->first();
+    ->get();
 
-        if ($monthlyIncome->total_income) {
-            $monthlyOutput = number_format($monthlyIncome->total_income, 2);
+        if ($monthlyIncome->isNotEmpty()) {
+            $monthlyOutput = $monthlyIncome->map(function($item) {
+            return [
+                'total_income' => $item->total_income
+            ];
+            });
         } else {
-            $monthlyOutput = 0;
+            $monthlyOutput = [];
         }
     $weeklyIncome = DB::table('orders')
         ->select(
@@ -334,18 +339,240 @@ public function income_expense(Request $request)
                 ];
             });
         } else {
-            $weeklyOutput = 0;
+            $weeklyOutput = [];
         }
+        $weeklyIncome_paid = DB::table('orders')
+            ->select(
+                DB::raw('WEEK(created_at, 1) as week_number'),
+                DB::raw('SUM(total_amount) as total_income')
+            )
+            ->where('status', 'paid')
+            ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
+            ->groupBy(DB::raw('WEEK(created_at, 1)'))
+            ->orderBy('week_number', 'asc')
+            ->get();
+
+        if ($weeklyIncome_paid->isNotEmpty()) {
+            $weeklyOutput_paid = $weeklyIncome_paid->map(function($item) {
+                return [
+                    'week' => $item->week_number,
+                    'total_income' => number_format($item->total_income, 2)
+                ];
+            });
+        } else {
+            $weeklyOutput_paid = [];
+        }
+        $weeklyIncome_cancel = DB::table('orders')
+            ->select(
+                DB::raw('WEEK(created_at, 1) as week_number'),
+                DB::raw('SUM(total_amount) as total_income')
+            )
+            ->where('status', 'cancelled')
+            ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
+            ->groupBy(DB::raw('WEEK(created_at, 1)'))
+            ->orderBy('week_number', 'asc')
+            ->get();
+
+        if ($weeklyIncome_cancel->isNotEmpty()) {
+            $weeklyOutput_cancel = $weeklyIncome_cancel->map(function($item) {
+                return [
+                    'week' => $item->week_number,
+                    'total_income' => number_format($item->total_income, 2)
+                ];
+            });
+        } else {
+            $weeklyOutput_cancel = [];
+        }
+
     $recentOrders = DB::table('orders')
         ->orderBy('created_at', 'desc')
         ->take(5)
         ->get();
+
+
     $recentBill = DB::table('purchase')
         ->join('supplier', 'purchase.supplier_id', '=', 'supplier.id')
         ->select('purchase.*', 'supplier.name as supplier_name')
         ->orderBy('created_at', 'desc')
         ->take(5)
         ->get();
+        
+    $total_bill = DB::table('purchase')
+        ->select(
+            DB::raw('WEEK(created_at, 1) as week_number'),
+            DB::raw('SUM(Grand_total) as total')
+        )
+        ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
+        ->groupBy(DB::raw('WEEK(created_at, 1)'))
+        ->orderBy('week_number', 'asc')
+        ->get();
+        if ($total_bill->isNotEmpty()) {
+            $billOutput = $total_bill->map(function($item) {
+                return [
+                    'week' => $item->week_number,
+                    'total' => number_format($item->total, 2)
+                ];
+            });
+        } else {
+            $billOutput = [];
+        }
+    $total_bill_paid = DB::table('purchase')
+        ->select(
+            DB::raw('WEEK(created_at, 1) as week_number'),
+            DB::raw('SUM(Grand_total) as total')
+        )
+        ->whereIn('payment_statuse', ['Paid','Partially'])
+        ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
+        ->groupBy(DB::raw('WEEK(created_at, 1)'))
+        ->orderBy('week_number', 'asc')
+        ->get();
+        if ($total_bill_paid->isNotEmpty()) {
+            $billOutputpaid = $total_bill_paid->map(function($item) {
+                return [
+                    'week' => $item->week_number,
+                    'total' => number_format($item->total, 2)
+                ];
+            });
+        } else {
+            $billOutputpaid = [];
+        }
+    
+    $total_bill_cancel = DB::table('purchase')
+        ->select(
+            DB::raw('WEEK(created_at, 1) as week_number'),
+            DB::raw('SUM(Grand_total) as total')
+        )
+        ->whereIn('payment_statuse', ['Unpaid'])
+        ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
+        ->groupBy(DB::raw('WEEK(created_at, 1)'))
+        ->orderBy('week_number', 'asc')
+        ->get();
+        if ($total_bill_cancel->isNotEmpty()) {
+            $billOutputcancel = $total_bill_cancel->map(function($item) {
+                return [
+                    'week' => $item->week_number,
+                    'total' => number_format($item->total, 2)
+                ];
+            });
+        } else {
+            $billOutputcancel = [];
+        }
+        // Get monthly unpaid bills for current year
+    $monthlyUnpaidBills = DB::table('purchase')
+        ->select(
+            DB::raw('MONTH(created_at) as month_number'),
+            DB::raw('SUM(Grand_total) as total_amount')
+        )
+        ->where('payment_statuse', 'Unpaid')
+        ->whereBetween('created_at', [now()->startOfYear(), now()->endOfYear()])
+        ->groupBy(DB::raw('MONTH(created_at)'))
+        ->orderBy('month_number')
+        ->get();
+
+// Format results with total sum
+        $unpaidBills = [
+            'data' => $monthlyUnpaidBills->map(function($item) {
+                return [
+                    'month' => $item->month_number,
+                    'total' => number_format($item->total_amount, 2)
+                ];
+            }),
+            'total_sum' => number_format($monthlyUnpaidBills->sum('total_amount'), 2)
+        ];
+    $monthlyIncome_paid = DB::table('orders')
+            ->select(
+                DB::raw('MONTH(created_at) as month_number'),
+                DB::raw('SUM(total_amount) as total_income')
+            )
+            ->where('status', 'paid')
+            ->whereBetween('created_at', [now()->startOfYear(), now()->endOfYear()])
+            ->groupBy(DB::raw('MONTH(created_at)'))
+            ->orderBy('month_number', 'asc')
+            ->get();
+
+        if ($monthlyIncome_paid->isNotEmpty()) {
+            $monthlyOutput_paid = $monthlyIncome_paid->map(function($item) {
+                return [
+                    'month' => $item->month_number,
+                    'total_income' => number_format($item->total_income, 2)
+                ];
+            });
+        } else {
+            $monthlyOutput_paid = [];
+        }
+    $monthlyIncome_cancel = DB::table('orders')
+            ->select(
+                DB::raw('MONTH(created_at) as month_number'),
+                DB::raw('SUM(total_amount) as total_income')
+            )
+            ->where('status', 'cancelled')
+            ->whereBetween('created_at', [now()->startOfYear(), now()->endOfYear()])
+            ->groupBy(DB::raw('MONTH(created_at)'))
+            ->orderBy('month_number', 'asc')
+            ->get();
+
+        if ($monthlyIncome_cancel->isNotEmpty()) {
+            $monthlyOutput_cancel = $monthlyIncome_cancel->map(function($item) {
+                return [
+                    'month' => $item->month_number,
+                    'total_income' => number_format($item->total_income, 2)
+                ];
+            });
+        } else {
+            $monthlyOutput_cancel = [];
+        }
+    
+        // existing monthly breakdown query
+    $monthly_bill_paid = DB::table('purchase')
+        ->select(
+            DB::raw('MONTH(created_at) as month_number'),
+            DB::raw('SUM(Grand_total) as total')
+        )
+        ->whereBetween('created_at', [now()->startOfYear(), now()->endOfYear()])
+        ->whereIn('payment_statuse', ['Paid','Partially Paid'])
+        ->groupBy(DB::raw('MONTH(created_at)'))
+        ->orderBy('month_number', 'asc')
+        ->get();
+
+    // New query to get the total sum
+    $total_bill_paid = DB::table('purchase')
+        ->whereBetween('created_at', [now()->startOfYear(), now()->endOfYear()])
+        ->whereIn('payment_statuse', ['Paid', 'Partially Paid'])
+        ->sum('Grand_total');
+
+    // Format the results
+    if ($monthly_bill_paid->isNotEmpty()) {
+        $billOutput_partially_paid = $monthly_bill_paid->map(function($item) {
+            return [
+                'month' => $item->month_number,
+                'total' => number_format($item->total, 2)
+            ];
+        });
+    } else {
+        $billOutput_partially_paid = [];
+    }
+
+    $formatted_total = number_format($total_bill_paid, 2);
+
+$total_bill_balance = DB::table('purchase')
+        ->select(
+            DB::raw('WEEK(created_at, 1) as week_number'),
+            DB::raw('SUM(balance) as total')
+        )
+        ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
+        ->groupBy(DB::raw('WEEK(created_at, 1)'))
+        ->orderBy('week_number', 'asc')
+        ->get();
+        if ($total_bill_balance->isNotEmpty()) {
+            $billOutputbalance = $total_bill_balance->map(function($item) {
+                return [
+                    'week' => $item->week_number,
+                    'total' => number_format($item->total, 2)
+                ];
+            });
+        } else {
+            $billOutputbalance = [];
+        }
 
     // Prepare cards array dynamically
     $cards = [
@@ -375,7 +602,11 @@ public function income_expense(Request $request)
         ],
     ];
 
-    return view('Admin.report.income-expense', compact('cards','output','monthlyOutput','recentOrders','recentBill','weeklyOutput'));
+    return view('Admin.report.income-expense',
+     compact('cards','output','monthlyOutput','recentOrders',
+     'recentBill','weeklyOutput','weeklyOutput_paid','weeklyOutput_cancel',
+     'billOutputpaid','billOutputcancel','monthlyOutput_paid','monthlyOutput_cancel',
+     'billOutput','formatted_total','unpaidBills','billOutputbalance'));
 }
 
 }

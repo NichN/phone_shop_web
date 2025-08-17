@@ -40,7 +40,9 @@
                         </div>
                         <div class="col-6">
                             <small class="text-warning">Income This Month</small>
-                            <h5 class="text-warning">{{ $monthlyOutput }}</h5>
+                            @foreach ($monthlyOutput as $month)
+                            <span class="text-primary fw-bold"> ${{$month['total_income'] }}</span>
+                        @endforeach
                         </div>
                         <div class="col-6">
                             <small class="text-danger">Expense This Month</small>
@@ -53,8 +55,9 @@
 
         <!-- Recent Invoices Table -->
         <div class="card shadow-sm mb-4">
-            <div class="card-heade">
+            <div class="card-heade d-flex justify-content-between align-items-center">
                 <h6 class="mb-2 ml-2">Recent Invoices</h6>
+                <a href="/order_dashboard" style="text-decoration: none; color: ">More...</a>
             </div>
             <div class="card-body">
                 <table class="table table-bordered table-hover">
@@ -97,8 +100,9 @@
             </div>
         </div>
         <div class="card shadow-sm mb-4">
-        <div class="card-heade">
+        <div class="card-heade d-flex justify-content-between align-items-center">
                 <h6 class="mb-2 ml-2">Recent Purchases</h6>
+                <a href="/purchase/add" style="text-decoration: none; color: ">More...</a>
             </div>
             <div class="card-body">
                 <table class="table table-bordered table-hover">
@@ -107,7 +111,7 @@
                     <th style="text-align: center;">BILL NUMBER</th>
                     <th style="text-align: center;">SUPPLIER</th>
                     <th style="text-align: center;">ISSUE DATE</th>
-                    <th style="text-align: center;">GRAND TOTAL</th>
+                    <th style="text-align: center;">AMOUNT</th>
                     <th style="text-align: center;">PAID</th>
                     <th style="text-align: center;">STATUS</th>
                 </tr>
@@ -141,41 +145,145 @@
         </div>
     </div>
         <div class="row g-3">
-            <div class="col-md-6">
-                <div class="card shadow-sm p-3">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <button class="btn btn-sm btn-primary">Invoices Weekly</button>
-                            <button class="btn btn-sm btn-light">Invoices Monthly</button>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <p><strong>Total Generated:</strong> @foreach ($weeklyOutput as $week)
-                        <li class="list-group-item"> ${{$week['total_income'] }}</li>
-                    @endforeach</p>
-                        <p><strong>Total Paid:</strong> $2,035.99</p>
-                        <p><strong>Total Due:</strong> $12,080.00</p>
-                    </div>
+    <!-- Invoices Section -->
+    <div class="col-md-6">
+        <div class="card shadow-sm p-3">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <button class="btn btn-sm btn-primary" onclick="showSection('invoices', 'weekly')">Invoices Weekly</button>
+                    <button class="btn btn-sm btn-light" onclick="showSection('invoices', 'monthly')">Invoices Monthly</button>
                 </div>
+            <div class="d-flex justify-content-end mb-2">
+                <a href="/report/sale" class="btn btn-outline-primary">
+                    Detail
+                    <i class="bi bi-arrow-right ms-1"></i>
+                </a>
             </div>
-            <div class="col-md-6">
-                <div class="card shadow-sm p-3">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <button class="btn btn-sm btn-primary">Bills Weekly Statistics</button>
-                            <button class="btn btn-sm btn-light">Bills Monthly Statistics</button>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <p><strong>Total Bill Generated:</strong> $201.00</p>
-                        <p><strong>Total Paid:</strong> $95.00</p>
-                    </div>
+            </div>
+            <div class="mt-3">
+                <!-- Weekly Invoices -->
+                <div id="invoices-weekly" class="data-section">
+                    <p><strong>Total Generated:</strong>
+                        @foreach ($weeklyOutput as $week)
+                            <span class="text-primary fw-bold"> ${{$week['total_income'] }}</span>
+                        @endforeach
+                    </p>
+                    <p><strong>Total Paid:</strong>
+                        @foreach ($weeklyOutput_paid as $week_paid)
+                            <span class="text-primary fw-bold"> ${{ $week_paid['total_income'] ?? 0}}</span>
+                        @endforeach
+                    </p>
+                    <p><strong class="text-danger">Total Due:</strong>
+                        @foreach ($weeklyOutput_cancel as $week_cancel)
+                            <span class="text-primary fw-bold"> ${{ $week_cancel['total_income'] ?? 0}}</span>
+                        @endforeach
+                    </p>
+                </div>
+
+                <!-- Monthly Invoices -->
+                <div id="invoices-monthly" class="data-section d-none">
+                    <p><strong>Total Generated:</strong>
+                        @foreach ($monthlyOutput as $month)
+                            <span class="text-primary fw-bold"> ${{ $month['total_income'] }}</span>
+                        @endforeach
+                    </p>
+                    <p><strong>Total Paid:</strong>
+                        @foreach ($monthlyOutput_paid as $month_paid)
+                            <span class="text-primary fw-bold"> ${{ $month_paid['total_income'] ?? 0}}</span>
+                        @endforeach
+                    </p>
+                    <p><strong class="text-danger">Total Due:</strong>
+                        @foreach ($monthlyOutput_cancel as $month_cancel)
+                            <span class="text-primary fw-bold"> ${{ $month_cancel['total_income'] ?? 0}}</span>
+                        @endforeach
+                    </p>
                 </div>
             </div>
         </div>
+    </div>
 
+    <!-- Bills Section -->
+    <div class="col-md-6">
+        <div class="card shadow-sm p-3">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <button class="btn btn-sm btn-primary" onclick="showSection('bills', 'weekly')">Bills Weekly</button>
+                    <button class="btn btn-sm btn-light" onclick="showSection('bills', 'monthly')">Bills Monthly</button>
+                </div>
+                <div class="d-flex justify-content-end mb-2">
+                <a href="/report/supplier" class="btn btn-outline-primary">
+                    Detail
+                    <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+            </div>
+            <div class="mt-3">
+                <!-- Weekly Bills -->
+                <div id="bills-weekly" class="data-section">
+                    <p><strong>Total Bill Generated:</strong>
+                        @foreach ($billOutput as $bill)
+                            <span class="text-primary fw-bold"> ${{ $bill['total'] ?? 0}}</span>
+                        @endforeach
+                    </p>
+                    <p><strong>Total Balance:</strong>
+                        @foreach ($billOutputpaid as $bill)
+                            <span class="text-primary fw-bold"> ${{ $bill['total'] ?? 0}}</span>
+                        @endforeach
+                    </p>
+                    <p><strong class="text-danger">Total Unpaid:</strong>
+                            <span class="text-danger fw-bold"> ${{ $unpaidBills['total_sum'] ?? 0 }}</span>
+                    </p>
+                </div>
+
+                <!-- Monthly Bills -->
+                <div id="bills-monthly" class="data-section d-none">
+                    <p><strong>Total Bill Generated:</strong>
+                            <span class="text-primary fw-bold"> ${{ $formatted_total}}</span>
+                    </p>
+                    <p><strong>Total Balance:</strong>
+                        @foreach ($billOutputbalance as $bill)
+                            <span class="text-primary fw-bold"> ${{ $bill['total'] ?? 0}}</span>
+                        @endforeach
+                    </p>
+                    <p><strong class="text-danger">Total Due:</strong>
+                        @foreach ($billOutputcancel as $bill)
+                            <span class="text-danger fw-bold"> ${{ $bill['total'] ?? 0}}</span>
+                        @endforeach
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+</div>
+</div>
+<script>
+    function showSection(type, range) {
+        // Toggle the data sections
+        const weekly = document.getElementById(`${type}-weekly`);
+        const monthly = document.getElementById(`${type}-monthly`);
+        
+        if (range === 'weekly') {
+            weekly.classList.remove('d-none');
+            monthly.classList.add('d-none');
+        } else {
+            weekly.classList.add('d-none');
+            monthly.classList.remove('d-none');
+        }
+        
+        // Toggle the button states
+        const buttons = document.querySelectorAll(`[onclick^="showSection('${type}'"]`);
+        buttons.forEach(button => {
+            if (button.textContent.toLowerCase().includes(range)) {
+                button.classList.remove('btn-light');
+                button.classList.add('btn-primary');
+            } else {
+                button.classList.remove('btn-primary');
+                button.classList.add('btn-light');
+            }
+        });
+    }
+</script>
 <style>
     .bg-success-light {
         background-color: #d4edda;

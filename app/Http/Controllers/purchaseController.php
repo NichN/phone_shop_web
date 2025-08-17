@@ -213,52 +213,77 @@ public function delete_purchases(Request $request)
     });
     return response()->json(['message' => 'Purchase deleted']);
 }
-public function addpayment($id){
+public function addpayment($id)
+{
     $purchase = DB::table('purchase')
         ->join('supplier', 'purchase.supplier_id', '=', 'supplier.id')
         ->select(
-            'purchase.id',
-            'purchase.reference_no',
-            'purchase.supplier_id',
-            'supplier.name as supplier_name',
-            'purchase.Grand_total',
-            'purchase.balance',
-            'supplier.email',
-            'purchase.paid'
-        )
-        ->where('purchase.id', $id)
-        ->first();
+                'purchase.id',
+                'purchase.reference_no',
+                'purchase.supplier_id',
+                'supplier.name as supplier_name',
+                'purchase.Grand_total',
+                'purchase.balance',
+                'supplier.email',
+                'purchase.paid'
+            )
+            ->where('purchase.id', $id)
+            ->first();
         $suppliers = DB::table('supplier')->select('id', 'name')->get();
 
-    return view('Admin.purchase.addpayment', compact('purchase','suppliers'));
-}
-public function updatepayment(Request $request, $id)
-{
-    $request->validate([
-        'paid' => 'required|numeric|min:0',
-    ]);
-
-    $purchase = Purchase::findOrFail($id);
-    $newPaid = $purchase->paid + $request->paid;
-    $newBalance = $purchase->balance - $request->paid;
-
-    if ($newBalance < 0) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Paid amount exceeds the total.',
-        ], 422);
+        return view('Admin.purchase.addpayment', compact('purchase', 'suppliers'));
     }
-    $purchase->update([
-        'paid' => $newPaid,
-        'balance' => $newBalance,
-    ]);
 
-    return response()->json([
-        'success' => true,
-        'message' => 'Payment updated successfully',
-        'data' => $purchase
-    ]);
-}
+    public function updatepayment(Request $request, $id)
+    {
+        $request->validate([
+            'paid' => 'required|numeric|min:0',
+        ]);
+
+        $purchase = Purchase::findOrFail($id);
+        // dd($purchase);
+        $newPaid = $purchase->paid + $request->paid;
+
+        $newBalance = $purchase->Grand_total - $newPaid; // Use Grand_total for balance calculation
+
+        if ($newBalance < 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Paid amount exceeds the grand total.',
+            ], 422);
+        }
+
+        $updateData = [
+            'paid' => $newPaid,
+            'balance' => $newBalance,
+        ];
+
+        // Update status based on paid and balance
+        if ($newBalance == 0) {
+            $updateData['payment_statuse'] = 'Paid';
+        } elseif ($newPaid > 0 && $newBalance > 0) {
+            $updateData['payment_statuse'] = 'Partially';
+        } else {
+            $updateData['payment_statuse'] = 'Unpaid';
+        }
+
+        $purchase->update($updateData);
+
+        // Debug: Log the update
+        \Log::info('Payment updated', [
+            'id' => $id,
+            'paid' => $newPaid,
+            'balance' => $newBalance,
+            'payment_statuse' => $updateData['payment_statuse']
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Payment updated successfully',
+            'data' => $purchase->fresh() // Reload to get updated values
+        ]);
+    }
+
 public function purchase_invoice($id){
     $purchase = DB::table('purchase')
         ->join('supplier', 'purchase.supplier_id', '=', 'supplier.id')
