@@ -17,6 +17,7 @@ class payment extends Model
         'payment_type',
         'remark',
         'payment_status',
+        'img_verify'
     ];
     protected $dates = [
         'created_at',

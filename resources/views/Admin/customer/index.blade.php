@@ -17,13 +17,13 @@
                     <table class="table data-table mt-3">
                         <thead style="text-align:center;">
                             <tr>
-                                <th>Date</th>
-                                <th>No</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Phone</th>
-                                <th>Address</th>
-                                <th>Action</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Date</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">No</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Name</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Email</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Phone</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Address</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Action</th>
                             </tr>
                         </thead>  
                         <tbody></tbody>                              

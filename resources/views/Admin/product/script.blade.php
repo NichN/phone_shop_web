@@ -60,36 +60,38 @@
             });
         }
         });
-        $('body').on('click','.deleteProduct',function(){
-            let id = $(this).data('id');
-            let url ="{{route('products.deleteproduct', ':id')}}";
-            if(confirm("Are You Sure ?")){
+        $('body').on('click', '.deleteProduct', function() {
+                let id = $(this).data('id');
+                let url = "{{ route('products.deleteproduct', ':id') }}";
+
                 $.ajax({
-                    url:url.replace(':id', id),
-                    type:'DELETE',
-                    dataType:'json',
-                    data:{_token:'{{ csrf_token() }}'},
-                    success:function(response){
-                        if(response.success){
+                    url: url.replace(':id', id),
+                    type: 'DELETE',
+                    dataType: 'json',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        if (response.success) {
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Success!',
-                                text: 'Color deleted successfully!',
+                                text: 'Product deleted successfully!',
                                 willClose: () => {
                                     location.reload();
                                 }
                             });
-                        }else{
+                        } else {
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Error',
                                 text: response.message
                             });
                         }
-                    },
-                })
-            }
-        });
+                    }
+                });
+            });
+
         $('body').on('click', '.editProduct', function(e) {
         e.preventDefault();
         let id = $(this).data('id');
@@ -125,18 +127,20 @@
             dataType: 'json',
             success(res) {
                 if (res.success) {
+                    $('#editModal').modal('hide');
                     Swal.fire({
                         icon: 'success',
                         title: 'Success!',
-                        text: 'Size updated successfully!',
+                        text: 'Product updated successfully!',
                         willClose: () => window.location.href = "{{ route('products.product_index') }}"
                     });
                 }
             },
             error(xhr) {
+                $('#editModal').modal('hide');
                 Swal.fire({
                     icon: 'error',
-                    title: 'Error',
+                    title: 'Please Enter Brand',
                     text: xhr.responseJSON?.message || 'An error occurred'
                 });
             }

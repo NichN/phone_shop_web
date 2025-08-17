@@ -142,7 +142,6 @@ width: 250px;
 }
 
 .data-table thead th {
-    background-color: #2e3b56 !important;
     color: white !important;
     font-weight: 600;
     padding: 12px 15px;
@@ -236,7 +235,7 @@ width: 250px;
     }
 
     .data-table th {
-        background-color: #2e3b56  !important;
+        /* background-color: #2e3b56  !important; */
         color: white !important;
         font-weight: 600;
     }
@@ -303,3 +302,32 @@ width: 250px;
     border-bottom: 25px solid transparent;
     border-left: 20px solid black;
 }
+.export-btn {
+    background-color: white;
+    color: black;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+    input.form-control,
+    select.form-select
+    .form-control {
+        height: 43px;
+        font-size: 1rem;
+        border-color: gray;
+    }
+
+    label.form-label {
+        margin-bottom: 0.4rem;
+        font-weight: 600;
+    }
+
+
+    .form-group {
+        margin-bottom: 1rem;
+    }

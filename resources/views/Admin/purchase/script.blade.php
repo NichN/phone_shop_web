@@ -9,6 +9,9 @@ $(document).ready(function () {
     var purchaseTable = $('.data-table.purchase').DataTable({
         processing: false,
         serverSide: true,
+        paging: false,
+        searching: false,
+        info: false,
         ajax: {
             url: "{{ route('purchase.index') }}",
             dataSrc: 'data'
@@ -84,7 +87,7 @@ $(document).ready(function () {
             success: function(response) {
                 $('#pur_product').empty().append('<option value="">Select Product</option>');
                 response.forEach(function(item) {
-                    const label = `${item.product_name} ${item.size ? '- ' + item.size : ''} ${item.color_code ? '- ' + item.color_code : ''}`;
+                    const label = `${item.product_name} ${item.size ? '- ' + item.size : ''} ${item.colors ? '- ' + item.colors : ''}`;
                     $('#pur_product').append(`<option value="${item.id}">${label}</option>`);
                 });
             },
@@ -120,6 +123,7 @@ $(document).ready(function () {
             method: 'GET',
             success: function(data) {
                 $('#unitprice').val(data.cost_price);
+                $('#color').val(data.color_name);
             },
         });
     };
@@ -148,12 +152,10 @@ $(document).ready(function () {
             { data: 'action', orderable: false, searchable: false }
         ],
     });
- //​​Get data from total in purchase_item
     let grandTotal = localStorage.getItem('purchase_total');
         if (grandTotal !== null) {
             $('#grand_total').val(grandTotal);
         }
-// end
         $('#paymentForm').on('submit', function (e) {
             e.preventDefault();
             var formData = new FormData(this);
@@ -227,7 +229,6 @@ $(document).ready(function () {
             }
         });
     });
-    //​សម្រាប់​Add Payment that URl មានក្នុង controller
      $(document).on('click', '.addpayment', function () {
         let url = $(this).data('url');
         window.location.href = url;
@@ -273,41 +274,64 @@ $(document).ready(function () {
             }
         });
     });
-    $('body').on('click', '.showpurachse', function (e) {
+    $(document).on('click', '.showpurachse', function () {
+        let url = $(this).data('url');
+        window.location.href = url;
+    });
+    $('#showInvoice').on('submit', function(e){
         e.preventDefault();
-        let id = $(this).data('id');
-        $("#pro_dt").val(id);
-        let url = "{{ route('purchase.invoiceshow', ['id' => ':id']) }}".replace(':id', id);
-        
-        $.get(url, function (data) {
-            if (data.success) {
-                let $modal = $('#invoiceModal');
-                $modal.find('.modal-body span').eq(0).text(data.purchase.supplier_name);
-                $modal.find('.modal-body span').eq(1).text(data.purchase.reference_no);
-                $modal.find('.modal-body span').eq(2).text(data.purchase.created_at);
+        let id = $('#purchase_id').val();
+        let url = "{{ route('purchase.purchase_invoice', ':id') }}".replace(':id', id);
+        var formData = new FormData(this);
+        $.ajax({
+            url: url,
+            type: 'GET',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                if(response.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        willClose: () => {
+                            location.reload();
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: response.message || 'Update failed'
+                    });
+                }
                 
-                let $invoiceItems = $('#invoiceItems');
-                $invoiceItems.empty();
-                
-                $.each(data.items, function(index, item) {
-                    $invoiceItems.append(`
-                        <tr>
-                            <td>${item.name}</td>
-                            <td>${item.color_code}</td>
-                            <td>${item.size}</td>
-                            <td>${item.quantity}</td>
-                            <td>${item.unit_price}$</td>
-                            <td>${item.subtotal}$</td>
-                        </tr>
-                    `);
+            },
+            error: function(xhr) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: xhr.responseJSON?.message || 'An error occurred during update'
                 });
-                $('#invoiceSubtotal').text('$' + data.grand_total.toFixed(2));
-                $modal.modal('show');
             }
-            }).fail(function () {
-                alert('Failed to fetch invoice data.');
-            });
         });
+    });
 
     });
+    function printInvoice() {
+    var printContents = document.getElementById('invoiceModal').cloneNode(true);
+    var buttons = printContents.querySelectorAll('.btn-close, .btn-secondary');
+    buttons.forEach(function(button) {
+        button.remove();
+    });
+    var originalContents = document.body.innerHTML;
+    document.body.innerHTML = printContents.innerHTML;
+    window.print();
+    document.body.innerHTML = originalContents;
+    location.reload();
+}
+    
 </script>

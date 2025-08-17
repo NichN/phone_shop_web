@@ -13,7 +13,9 @@ use App\Models\productdetail;
 use App\Models\payment;
 use App\Models\refund;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use App\Mail\CustomerVerificationCodeMail;
+use Illuminate\Support\Facades\Validator;
 
 class CheckoutController extends Controller
 {
@@ -31,11 +33,9 @@ class CheckoutController extends Controller
     $subtotal = collect($cart)->sum(function ($item) {
         return floatval(preg_replace('/[^\d.]/', '', $item['price'])) * $item['quantity'];
     });
-    // dd($subtotal);
-
     $deliveryFee = Delivery::first()->fee ?? 0;
-    $deliveryMethod = $request->input('delivery_method', 'delivery');
-    if ($deliveryMethod = 'pick up') {
+    $deliveryMethod = $request->input('delivery_type', 'delivery');
+    if ($deliveryMethod =='pick up') {
             $totalAmount = $subtotal;
         } else{
             $totalAmount = $subtotal + $deliveryFee;
@@ -58,7 +58,6 @@ class CheckoutController extends Controller
 {
     $request->validate([
         'guest_name' => 'required|string|max:255',
-        // 'guest_address' => 'required|string|max:500',
         'phone_guest' => 'required|string|max:20',
         'email_guest' => 'required|email|max:255',
         'cart_data' => 'required|json',
@@ -71,8 +70,14 @@ class CheckoutController extends Controller
 
         $subtotal = floatval(str_replace(',', '', $request->subtotal));
         $deliveryFee = floatval(str_replace(',', '', $request->delivery_fee));
-        $totalAmount = floatval(str_replace(',', '', $request->total_amount));
+        // $totalAmount = floatval(str_replace(',', '', $request->total_amount));
+        $delivery_type = $request->input('delivery_method');
 
+        if ($delivery_type == "delivery") {
+                $totalAmount = $subtotal + $deliveryFee;
+            } else {
+                $totalAmount = $subtotal;
+            }
         $latestOrder = Order::orderBy('id', 'desc')->first();
         $nextNumber = 1;
 
@@ -93,6 +98,7 @@ class CheckoutController extends Controller
             'guest_address' => $request->guest_address,
             'phone_guest' => $request->phone_guest,
             'guest_eamil' => $request->email_guest,
+            'guest_token' => Str::uuid(),
             'delivery_type' => $request->delivery_method,
             'rate_id' => 1,
             // 'code_verify'  =>$request ->code_verify,
@@ -119,9 +125,11 @@ class CheckoutController extends Controller
                 'product_item.images'
             ])
             ->get();
-        \Mail::to('sreynichny220@gmail.com')->send(
-            new \App\Mail\OrderConfirmationMail($order, $orderItems)
-        );
+            $adminEmails = \App\Models\User::where('role_id', '1')->pluck('email')->toArray();
+
+            \Mail::to($adminEmails)->send(
+                new \App\Mail\OrderConfirmationMail($order, $orderItems)
+            );
 
         DB::commit();
 
@@ -129,11 +137,11 @@ class CheckoutController extends Controller
             return response()->json([
                 'success' => true,
                 'order_id' => $order->id,
-                'redirect' => route('checkout.payment', ['order' => $order->id]),
+                'redirect' => route('checkout.payment', ['orderId' => $order->id]),
             ]);
         }
 
-        return redirect()->route('checkout.payment', ['order' => $order->id]);
+        return redirect()->route('checkout.payment', ['orderId' => $order->id]);
 
     } catch (\Exception $e) {
         DB::rollBack();
@@ -148,20 +156,22 @@ class CheckoutController extends Controller
         return back()->withErrors('Checkout failed: ' . $e->getMessage());
     }
 }
-
-
-public function processPayment(Request $request)
+public function processPayment($orderId)
 {
-    $latestOrder = DB::table('orders')
+    $order = DB::table('orders')
+        ->where('id', $orderId)
         ->where('user_id', auth()->id())
-        ->where('status', 'processing')
-        ->orderByDesc('id')
         ->first();
-        
 
+    if (!$order) {
+        return redirect()->back()->with('error', 'Order not found or access denied.');
+    }
+
+    // Get items for the selected order
     $orderItems = DB::table('order_item')
         ->join('product_item', 'order_item.product_item_id', '=', 'product_item.id')
-        ->where('order_item.order_id', $latestOrder->id)
+        ->join('orders', 'order_item.order_id', '=', 'orders.id')
+        ->where('order_item.order_id', $order->id)
         ->select([
             'order_item.order_id',
             'product_item.product_name as title',
@@ -170,14 +180,16 @@ public function processPayment(Request $request)
             'order_item.price',
             'product_item.color_code',
             'product_item.size',
+            'orders.subtotal',
+            'orders.delivery_fee as fee'
         ])
         ->get();
+
     return view('customer.card', [
         'orderItems' => $orderItems,
-        'deliveryType' => $latestOrder->delivery_type,
+        'deliveryType' => $order->delivery_type,
     ]);
 }
-
 public function storePayment(Request $request)
 {
     $request->validate([
@@ -194,6 +206,7 @@ public function storePayment(Request $request)
             'payment_type' => $request->payment_type,
             'remark'       => $request->input('note', ''),
             'amount'       => $order->total_amount,
+            'img_verify' => $order->paymentProof,
             'payment_status' => 'pending',
         ]);
         DB::commit();
@@ -219,15 +232,65 @@ public function storePayment(Request $request)
     }
 }
 
+// public function orderHistory(Request $request)
+// {
+//     if (auth()->check()) {
+//         $orders = Order::where('user_id', auth()->id())
+//             ->orderBy('created_at', 'desc')
+//             ->get();
+
+//         return view('customer.history', compact('orders'));
+//     }
+
+//     $request->validate([
+//         'email' => 'required|email',
+//         'token' => 'required|uuid',
+//     ]);
+
+//     $email = $request->input('email');
+//     $token = $request->input('token');
+
+//     $orders = Order::whereNull('user_id')
+//         ->where('guest_eamil', $email)
+//         ->where('guest_token', $token)
+//         ->where('is_confirmed', true)
+//         ->orderBy('created_at', 'desc')
+//         ->get();
+
+//     return view('customer.history', compact('orders'));
+// }
 public function orderHistory(Request $request)
 {
-    $orders = Order::where('user_id', auth()->id())
+    if (auth()->check()) {
+        $orders = Order::where('user_id', auth()->id())
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('customer.history', compact('orders'));
+    }
+    $guestEmail = $request->query('guest_eamil');
+    $guestToken = $request->query('order_num');
+
+    if (!$guestEmail || !$guestToken) {
+        return view('customer.history', ['orders' => collect(), 'error' => 'Please provide both email and order number.']);
+    }
+
+    $orders = Order::where('guest_eamil', $guestEmail)
+        ->where('order_num', $guestToken)
         ->orderBy('created_at', 'desc')
         ->get();
+    if ($orders->isEmpty()) {
+        return view('customer.history', [
+            'orders' => $orders,
+            'error' => 'No orders found with provided credentials.',
+        ]);
+    }
 
-    return view('customer.history', compact('orders'));
+    return view('customer.history', [
+        'orders' => $orders,
+        'isGuest' => true
+    ]);
 }
-
 public function orderDetails($id)
 {
     $order = Order::where('orders.id', $id)
@@ -279,16 +342,15 @@ public function processReturn(Request $request, $id)
     Order::where('id', $id)->update([
         'status' => 'cancelled',
     ]);
-    deliveries::where('order_id', $id)->update([
-        'delivery_status' => 'cancelled',
-    ]);
+    // deliveries::where('order_id', $id)->update([
+    //     'delivery_status' => 'cancelled',
+    // ]);
 
     return redirect()->route('checkout.history')->with('success', 'Return request submitted.');
 }
 public function acceptOrder(Order $order)
 {
     if ($order->status === 'pending') {
-        // Generate verification code
         $code = rand(100000, 999999);
 
         $order->code_verify = $code;
@@ -302,7 +364,6 @@ public function acceptOrder(Order $order)
                 ->decrement('stock', $item->quantity);
         }
 
-        // Send verification email
         \Mail::to($order->guest_eamil)->send(
             new \App\Mail\CustomerVerificationCodeMail($order, $code)
         );
@@ -356,7 +417,8 @@ public function verifyCode(Request $request)
 
     return response()->json([
         'success' => true,
-        'message' => 'Code verified successfully.'
+        'message' => 'Code verified successfully.',
+        'order_id' => $order->id
     ]);
 }
 }

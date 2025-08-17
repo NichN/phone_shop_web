@@ -20,7 +20,7 @@
 <div class="container my-3">
   <div class="row">
     <div class="col-md-6 offset-md-3 d-flex flex-column align-items-center text-center">
-      <h3 class="fw-bold mb-4 mt-4">Passion for Technology Dedication to You.</h3>
+      <h4 class="mb-4 mt-4 fw-bold">Passion for Technology Dedication to You.</h4>
       <p class="text-justify" style="line-height: 1.8; text-align: justify;">At TAY MENG, we bring you the latest electronics with quality you can trust and prices you’ll love. From top tech gadgets to everyday essentials, our mission is to make technology accessible and enjoyable for everyone. Shop with confidence at Tay Meng Phone Shop where quality meets innovation!</p>
     </div>
   </div>
@@ -32,7 +32,7 @@
       <img src="{{ asset('image/shop.jpg') }}" class="fixed-img rounded shadow" alt="Shop Us">
     </div>
     <div class="col-md-6">
-      <h3 class="fw-bold">Our Mission: Helping Millions of Organizations Grow Better</h3>
+      <h4>Our Mission</h4>
       <p class="text-muted">
         We believe not just in growing bigger, but in growing better. And growing better means aligning 
         the success of your own business with the success of your customers. Win-win!
@@ -44,7 +44,7 @@
 <div class="container my-5 section-spacing">
   <div class="row align-items-center">
     <div class="col-md-6">
-      <h3 class="fw-bold">Our Mission: Helping Millions of Organizations Grow Better</h3>
+      <h4>Our Vission</h4>
       <p class="text-muted">
         To provide high-quality, reliable electronics at affordable prices, making technology accessible and enhancing the everyday lives of our customers.
         To be a trusted leader in electronics retail, known for innovation, exceptional customer service, and a commitment to delivering the best in technology.

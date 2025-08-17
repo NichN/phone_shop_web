@@ -1,6 +1,7 @@
 <script>
 $(document).ready(function () {
-    $('.data-table').DataTable({
+    // Initialize your DataTable
+    var table = $('.data-table').DataTable({
         processing: true,
         serverSide: true,
         ajax: "{{ route('pick_up.index') }}",
@@ -28,6 +29,56 @@ $(document).ready(function () {
             },
             { data: 'action', orderable: false, searchable: false }
         ]
+    });
+
+    // Handle Finish Order click
+    $(document).on('click', '.finish', function(e) {
+        e.preventDefault();
+
+        let id = $(this).data('id');
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This order will be marked as completed.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, finish it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: 'pick_up/finish-order/' + id,
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire(
+                                'Finished!',
+                                response.message,
+                                'success'
+                            );
+                            table.ajax.reload(null, false);
+                        } else {
+                            Swal.fire(
+                                'Error',
+                                response.message,
+                                'error'
+                            );
+                        }
+                    },
+                    error: function(xhr) {
+                        Swal.fire(
+                            'Error',
+                            xhr.responseJSON?.message || 'An error occurred.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
     });
 });
 </script>

@@ -46,6 +46,10 @@
                             <label for="brandName" class="form-label fw-bold"> Unit Price <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="unitprice" name="subtotal" required>
                     </div>
+                    <div class="col-md-2">
+                            <label for="colorName" class="form-label fw-bold"> Color <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="color" name="color" required>
+                    </div>
                     <div class="d-flex justify-content-end pt-4">
                         <button type="submit" id="saveBtn" class="btn btn-primary d-flex justify-content-center align-items-center"
                             style="height: 40px; width: 40px; border-radius: 50%;">
@@ -58,8 +62,8 @@
         </div>
         <div class="container no-print" style="z-index: 999999999999999 !important;">
             <div class="card-body">                                 
-                <div class="table-responsive"> 
-                    <table class="table data-table purchase mt-3" style="min-width: auto !important;" id="purchase-table">
+            <div class="table-responsive"> 
+                <table class="table data-table purchase mt-3" style="min-width: auto !important;" id="purchase-table">
                         <thead style="text-align:center;">
                             <tr>
                                 <th style="background-color: #2e3b56 !important; color: white !important;">No</th>
@@ -74,8 +78,8 @@
                         </thead> 
                         <tfoot>
                                 <tr>
-                                    <th colspan="6" style="background-color:wheat;"></th>
-                                    <th id="totalPaymentFooter"></th>
+                                    <th colspan="6" style="background-color:light;"></th>
+                                    <th style="background-color: #2e3b56 !important; color: white !important;" id="totalPaymentFooter"></th>
                                     <th></th>
                                 </tr>
                         </tfoot>                               

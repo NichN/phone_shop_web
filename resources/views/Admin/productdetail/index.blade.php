@@ -9,12 +9,15 @@
 <div>
     <button class="w3-button w3-xlarge w3-hide-large" onclick="w3_open()">&#9776;</button>
     <div class="w3-main">
-         <div class="flex justify-between">
-            <h4 class="card-header">Product List</h4>
+         <div class="flex items-center justify-between bg- px-4 py-2 rounded-md shadow-sm">
+            <h4 class="text-lg font-semibold text-gray-800">Product Variant List</h4>
         </div>
         <div class="d-flex justify-content-end mt-3">
             <a href="{{ route('pr_detail.add') }}">
-                <button class="btn btn-primary"><i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                <button class="btn btn-outline-primary bg-light">
+                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                </button>
+
             </a>
         </div>    
         <div class="container no-print">
@@ -23,18 +26,18 @@
                     <table class="table data-table mt-3">
                         <thead style="text-align:center;">
                             <tr>
-                                <th>No</th>
-                                {{-- <th>Image</th> --}}
-                                <th>Name</th>
-                                <th>Brand</th>
-                                <th>Category</th>
-                                <th>Type</th>
-                                <th>Color</th>
-                                <th>Size</th>
-                                <th>Stock</th>
-                                <th>Price</th>
-                                <th>Warranty</th>
-                                <th>Action</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">No</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Image</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Name</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Brand</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Category</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Type</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Color</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Size</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Stock</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Price</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Warranty</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Action</th>
                             </tr>
                         </thead>                                
                     </table>
@@ -46,12 +49,14 @@
 <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="mb-0"><i class="fas fa-tags me-2"></i>Edit Product</h5>
+            <div class="modal-header bg-light">
+                <h5 class="mb-0"><i class="fas fa-tags me-2"></i>Edit</h5>
+                <button type="button" class="btn-close btn-close-black" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            
             <div class="modal-body">
                 <form id="editPr">
-                     @method('GET')
+                     @method('POST')
                     @csrf
                     <div class="row mb-4">
                         <input type="hidden" id="pro_dt" name="id">
@@ -122,14 +127,14 @@
                     <div class="row mb-4">
                         <div class="col-md-10">
                             <label for="images" class="form-label fw-bold">Product Images <span class="text-danger">*</span></label>
-                            <input type="file" class="form-control" id="edit_images" name="images[]" multiple accept="image/*" required onchange="previewImages(this)">
+                            <input type="file" class="form-control" id="edit_images" name="images" multiple accept="image/*" required onchange="previewImages(this)">
                             <small class="form-text text-muted">You can select multiple images.</small>
                         </div>
                     </div>
                     <div id="imagePreview" class="d-flex flex-wrap gap-3 mt-3"></div>
                     <div class="d-flex justify-content-end border-top pt-4">
                         <button type="submit" id="saveBtn2" class="btn btn-primary px-4">
-                            <i class="fas fa-save me-2"></i> Save
+                            <i class="fas fa-save me-2"></i>Edit
                         </button>
                     </div>
                 </form>
@@ -140,9 +145,9 @@
 <div class="modal fade" id="viewDetailModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <div class="modal-header" style="background-color: #2e3b56;">
-        <h5 class="mb-0 text-white" id="viewModalLabel"><i class="fas fa-tags me-2"></i></h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div class="modal-header bg-light">
+        <h5 class="mb-0 text-black" id="viewModalLabel"><i class="fas fa-tags me-2"></i></h5>
+        <button type="button" class="btn-close btn-close-black" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <div class="container my-3">
@@ -167,7 +172,13 @@
               <div class="choose-storage">
                 <h5 class="mb-4">Storage</h5>
                 <div id="sizeOptions" class="d-flex gap-2"></div>
-              </div><br><br>
+              </div>
+              <br><br>
+              <div>
+                <h5 class="mb-4">Warranty</h5>
+                <div id="warrantyOptions" class="d-flex gap-2"></div>
+              </div>
+              <br><br>
               <div class="check_stock p-3 border rounded bg-light shadow-sm">
                 <p class="mb-2 fw-bold text-dark">
                     Stock <span class="text-danger">*</span>

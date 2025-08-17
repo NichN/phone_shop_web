@@ -17,10 +17,10 @@
                             <table class="table table-bordered data-table text-center" style="min-width: auto !important;">
                                 <thead>
                                     <tr>
-                                        <th>No</th>
-                                        <th>Date</th>
-                                        <th>Delivery Fee ($)</th>
-                                        <th>Action</th>
+                                        <th style="background-color: #2e3b56 !important; color: white !important;">No</th>
+                                        <th style="background-color: #2e3b56 !important; color: white !important;">Date</th>
+                                        <th style="background-color: #2e3b56 !important; color: white !important;">Delivery Fee ($)</th>
+                                        <th style="background-color: #2e3b56 !important; color: white !important;">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>

@@ -7,7 +7,7 @@
 @section('content')
     <div class="w-100">
         <div class="p-4 p-md-5">
-            <h2 class="text-center mb-3 fw-bold">Registration</h2>
+            <h5 class="text-center mb-3 fw-bold">Registration</h5>
             <p class="text-center text-muted mb-4">Fill in the details to register</p>
             
             @if (session('success'))
@@ -80,7 +80,7 @@
 
                 <!-- Submit Button -->
                 <div class="d-grid mt-4">
-                    <button type="submit" class="btn btn-primary fw-bold">Register</button>
+                    <button type="submit" class="btn btn-dark fw-bold">Register</button>
                 </div>
 
                 <!-- Redirect to Login -->

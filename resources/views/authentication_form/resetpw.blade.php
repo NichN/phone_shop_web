@@ -61,7 +61,7 @@
 
       <!-- Submit Button -->
       <div class="d-grid mt-4">
-        <button type="submit" class="btn btn-primary fw-bold">Reset Password</button>
+        <button type="submit" class="btn btn-dark fw-bold">Reset Password</button>
       </div>
     </form>
   </div>

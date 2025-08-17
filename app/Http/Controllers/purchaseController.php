@@ -19,6 +19,7 @@ class purchaseController extends Controller
     if ($request->ajax()) {
         $data = DB::table('purchase_item')
             ->join('product_item', 'product_item.id', '=', 'purchase_item.pr_item_id')
+            ->join('color','product_item.color_id','=','color.id')
             ->select(
                 'purchase_item.*',
                 'product_item.product_name as name',
@@ -117,17 +118,23 @@ class purchaseController extends Controller
         return DataTables::of($data)
             ->addColumn('action', function ($row) {
                 $addPaymentUrl = route('purchase.addpayment', $row->id);
+                $invoiceUrl = route('purchase.purchase_invoice', $row->id);
                 
                 return '
-                    <button class="btn btn-info btn-sm showpurachse" data-id="' . $row->id . '">
-                        <i class="fa-solid fa-eye"></i>
-                    </button>
-                    <button class="btn btn-success btn-sm addpayment" data-url="' . $addPaymentUrl . '">
-                        <i class="fa-solid fa-money-bill-wave"></i>
-                    </button>
-                    <button class="btn btn-danger btn-sm delete" data-id="' . $row->id . '">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
+                    <div style="display: flex; gap: 4px;">
+                        <button class="btn btn-sm showpurachse" data-url="' . $invoiceUrl . '" data-toggle="tooltip" title="View"
+                            style="background-color: #e3f2fd; border: 1px solid #90caf9; color: #1565c0; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                        <button class="btn btn-sm addpayment" data-url="' . $addPaymentUrl . '" data-toggle="tooltip" title="Add Payment"
+                            style="background-color: #e8f5e9; border: 1px solid #a5d6a7; color: #2e7d32; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;">
+                            <i class="fa-solid fa-money-bill-wave"></i>
+                        </button>
+                        <button class="btn btn-sm delete" data-id="' . $row->id . '" data-toggle="tooltip" title="Delete"
+                            style="background-color: #ffebee; border: 1px solid #ef9a9a; color: #c62828; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
                 ';
             })
             ->rawColumns(['action'])
@@ -135,42 +142,6 @@ class purchaseController extends Controller
     }
         $suppleir = suppiler::all();
         return view('Admin.purchase.payment',compact('suppleir'));
-    }
-    public function showinvoice($id)
-{
-    $purchase = DB::table('purchase')
-        ->join('supplier', 'purchase.supplier_id', '=', 'supplier.id')
-        ->select(
-            'purchase.*',
-            'supplier.name as supplier_name',
-            'purchase.reference_no as reference_no',
-            'purchase.created_at as created_at'
-        )
-        ->where('purchase.id', $id)
-        ->first();
-
-    $items = DB::table('purchase_item')
-        ->join('product_item', 'purchase_item.pr_item_id', '=', 'product_item.id')
-        ->join('product','product.id','=','product_item.pro_id')
-        ->select(
-            'product_item.pro_id as product_name',
-            'product_item.color_code',
-            'product.name as name',
-            'product_item.size',
-            'purchase_item.quantity',
-            'product_item.cost_price as unit_price',
-            'purchase_item.subtotal'
-        )
-        ->where('purchase_item.purchase_id', $id)
-        ->get();
-        $grandTotal = $items->sum('subtotal');
-        return response()->json([
-            'success' => true,
-            'purchase' => $purchase,
-            'items' => $items,
-            'grand_total' => $grandTotal
-        ]);
-        return view('Admin.purchase.index', compact('purchase', 'items'));
     }
     public function storepayment(Request $request)
 {
@@ -288,7 +259,37 @@ public function updatepayment(Request $request, $id)
         'data' => $purchase
     ]);
 }
+public function purchase_invoice($id){
+    $purchase = DB::table('purchase')
+        ->join('supplier', 'purchase.supplier_id', '=', 'supplier.id')
+        ->select(
+            'purchase.*',
+            'supplier.name as supplier_name',
+            'purchase.reference_no as reference_no',
+            'purchase.created_at as created_at'
+        )
+        ->where('purchase.id', $id)
+        ->first();
+    // dd($purchase);
 
+    $items = DB::table('purchase_item')
+        ->join('product_item', 'purchase_item.pr_item_id', '=', 'product_item.id')
+        ->join('product', 'product.id', '=', 'product_item.pro_id')
+        ->join('color', 'product_item.color_id', '=', 'color.id')
+        ->select(
+            'product_item.pro_id as product_name',
+            'product.name as name',
+            'product_item.size',
+            'color.name as color_name',
+            'purchase_item.quantity',
+            'product_item.cost_price as unit_price',
+            'purchase_item.subtotal'
+        )
+        ->where('purchase_item.purchase_id', $id)
+        ->get();
+    // dd($items);
+        $grandTotal = $items->sum('subtotal');
+        return view('Admin.purchase.purchhase_invoice', compact('purchase', 'items'));
 
-}
+}}
 

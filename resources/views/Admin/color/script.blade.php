@@ -17,7 +17,7 @@
                         data: 'code',
                         render: function(data, type, row) {
                             if (data) {
-                                return `<div style="width: 30px; height: 30px; background-color: ${data}; border: 1px solid #ccc;"></div>`;
+                                return `<div style="width: 30px; height: 30px; background-color: ${data}; border: 1px solid #ccc; border-radius: 50%;"></div>`;
                             }
                             return '';
                         }

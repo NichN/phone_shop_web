@@ -11,9 +11,9 @@
             <h4 class="card-header">FAQ List</h4>
         </div>
         <div class="d-flex justify-content-end mt-3">
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">
+            <button class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#addModal">
                 <i class="fas fa-plus me-2"></i>
-            </button> 
+            </button>
         </div>   
         <div class="container no-print">
             <div class="card-body">                                 
@@ -21,11 +21,11 @@
                     <table class="table data-table mt-3">
                         <thead style="text-align:center;">
                             <tr>
-                                <th>No</th>
-                                <th>Date</th>
-                                <th>Qustion</th>
-                                <th>Answer</th>
-                                <th>Action</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">No</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Date</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Qustion</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Answer</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Action</th>
                             </tr>
                         </thead>                                
                     </table>
@@ -38,7 +38,7 @@
 <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content border-0 shadow">
-            <div class="modal-heade text-white" style="background-color: #5972a5;">
+            <div class="modal-header">
                 <h5 class="modal-title" id="addModalLabel">Create FAQ</h5>
                 {{-- <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button> --}}
             </div>
@@ -71,8 +71,8 @@
                     </div>
 
                     <div class="d-flex justify-content-end mt-4 border-top pt-3">
-                        <button type="submit" id="saveBtn" class="btn btn-primary px-4">
-                            <i class="fas fa-save me-2"></i> Save FAQ
+                        <button type="submit" id="saveBtn" class="btn btn-outline-primary">
+                            <i class="fas fa-save me-2"></i> Save
                         </button>
                     </div>
                 </form>
@@ -83,7 +83,7 @@
 <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content border-0 shadow">
-            <div class="modal-header text-white" style="background-color: #5972a5;">
+            <div class="modal-header bg-light">
                 <h5 class="modal-title" id="addModalLabel">Edit FAQ</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -117,8 +117,8 @@
                     </div>
 
                     <div class="d-flex justify-content-end mt-4 border-top pt-3">
-                        <button type="submit" id="saveBtn" class="btn btn-primary px-4">
-                            <i class="fas fa-save me-2"></i> Save FAQ
+                        <button type="submit" id="saveBtn" class="btn btn-outline-primary">
+                            <i class="fas fa-save me-2"></i> Update
                         </button>
                     </div>
                 </form>

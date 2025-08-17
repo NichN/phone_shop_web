@@ -49,15 +49,15 @@
                     <table class="table data-table mt-3">
                         <thead style="text-align:center;">
                             <tr>
-                                <th>Date</th>
-                                <th>Order</th>
-                                <th>Cutomer</th>
-                                <th>Amount</th>
-                                <th>Payment Type</th>
-                                <th>Remark</th>
-                                <th>Status</th>
-                                {{-- <th>Delivery</th> --}}
-                                <th>Action</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Date</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Order</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Cutomer</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Amount</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Payment Type</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Remark</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Status</th>
+                                {{-- <th style="background-color: #2e3b56 !important; color: white !important;">Delivery</th> --}}
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Action</th>
                             </tr>
                         </thead>                                
                     </table>

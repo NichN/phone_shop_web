@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const selectedLabel = document.querySelector(`label[for='${selectedId}']`);
         if (selectedLabel) {
-            selectedLabel.style.border = "2px solid red"; // Highlight selected option
+            selectedLabel.style.border = "2px solid blue"; // Highlight selected option
         }
     }
 });

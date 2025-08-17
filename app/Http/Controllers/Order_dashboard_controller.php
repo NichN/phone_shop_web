@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
+use App\Models\Order;
+
 
 class Order_dashboard_controller extends Controller
 {
@@ -25,6 +27,10 @@ class Order_dashboard_controller extends Controller
         $totalCompleted = DB::table('orders')
             ->where('status', 'completed')
             ->count();
+         $totalpending = DB::table('orders')
+            ->where('status', 'pending')
+            ->count();
+        
 
         $totalIncome = DB::table('orders')
             ->where('status', 'completed')
@@ -36,54 +42,78 @@ class Order_dashboard_controller extends Controller
             'total_processing'=> $totalProcessing,
             'total_completed' => $totalCompleted,
             'total_income'    => $totalIncome,
+            'total_pending'   => $totalpending,
         ]);
     }
     public function getData(Request $request)
     {
-        if ($request->ajax()) {
-            $data = DB::table('orders')->get();
-            // dd($data);
-            return DataTables::of($data)
-        ->addColumn('action', function ($row) {
-            $id = $row->id;
-            $dropdown = '
+        $currentMonth = $request->input('current_month', now()->month);
+        $currentYear = $request->input('current_year', now()->year);
+
+        $query = Order::query()
+            ->whereMonth('created_at', $currentMonth)
+            ->whereYear('created_at', $currentYear);
+
+        return DataTables::eloquent($query)
+            ->addColumn('action', function ($order) {
+                return '
                 <div class="dropdown">
-                    <a class="text-dark" href="#" role="button" id="dropdownMenu' . $id . '" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="text-dark" href="#" role="button" data-bs-toggle="dropdown">
                         <i class="fas fa-ellipsis-v"></i>
                     </a>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu' . $id . '">
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="'.route('order_dashboard.order_detail', $order->id).'">
+                            <i class="fa fa-eye text-primary"></i> View
+                        </a></li>
                         <li>
-                            <a class="dropdown-item vieworder" href="' . route('delivery_option.show', ['id' => $id]) . '" data-id="' . $id . '">
-                                <i class="fa fa-eye text-primary"></i> Order Detail
-                            </a>
-                        </li>
-                        <li>
-                            <form action="' . route('checkout.accept', $id) . '" method="POST" onsubmit="return confirm(\'Accept this order?\');">
-                                ' . csrf_field() . '
+                            <form action="'.route('checkout.accept', $order->id).'" method="POST">
+                                '.csrf_field().'
                                 <button type="submit" class="dropdown-item text-success">
-                                    <i class="fas fa-check-circle"></i> Accept Order
+                                    <i class="fas fa-check-circle"></i> Accept
                                 </button>
                             </form>
                         </li>
                         <li>
-                            <li>
-                            <form action=" ' . route('checkout.decline', $id) .'" method="POST" onsubmit="return confirm(\'Decline this order? \');">
-                                ' . csrf_field() . '
-                                <button type="submit" class="dropdown-item text-danger decline-button">
-                                    <i class="fas fa-times-circle"></i> Decline Order
+                            <form action="'.route('checkout.decline', $order->id).'" method="POST">
+                                '.csrf_field().'
+                                <button type="submit" class="dropdown-item text-danger">
+                                    <i class="fas fa-times-circle"></i> Decline
                                 </button>
                             </form>
-                        </li>
                         </li>
                     </ul>
                 </div>';
-
-            return $dropdown;
-        })
-        ->rawColumns(['action'])
-        ->make(true);
-        }
-        return response()->json(['error' => 'Unauthorized request.'], 403);
+            })
+            ->rawColumns(['action'])
+            ->make(true);
     }
+        public function order_detail($id)
+        {
+        $order = Order::findOrFail($id);
 
+        $orderItems = DB::table('order_item')
+            ->join('product_item', 'order_item.product_item_id', '=', 'product_item.id')
+            ->where('order_item.order_id', $order->id)
+            ->select([
+                'order_item.quantity',
+                'order_item.price',
+                'product_item.product_name',
+                'product_item.images as imgSrc',
+                'product_item.color_code',
+                'product_item.size',
+                'product_item.warranty'
+            ])
+            ->get();
+
+        // $delivery = Delivery::find($order->delivery_id);
+        $payment = DB::table('payment')
+            ->where('order_id', $order->id)
+            ->select('payment_type')
+            ->first();
+
+        return view('Admin.order.order_detail', compact('order', 'orderItems', 'payment'));
+    }
 }
+
+
+

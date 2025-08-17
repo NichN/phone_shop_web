@@ -9,27 +9,74 @@
     <meta name="keywords" content="smartphones, accessories, phone shop, online shop">
     <meta name="author" content="Tay Meng">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ config('app.name', 'Tay Meng Phone Shop') }}</title>
+    <title>{{ config('Tay Meng Phone Shop') }}</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/homepage.css') }}">
     <link rel="stylesheet" href="{{ asset('css/wishlist.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/footerheader.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     
     @yield('head')
-</head>
+    <style>
+        .custom-footer {
+            font-size: 0.85rem;
+        }
+        
+        /* Order History Modal Styles */
+        #orderHistoryModal .modal-content {
+            border-radius: 10px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
 
+        #orderHistoryModal .modal-header {
+            border-bottom: 1px solid #eee;
+            padding: 1.5rem;
+        }
+
+        #orderHistoryModal .modal-title {
+            font-weight: 600;
+        }
+
+        #orderHistoryModal .modal-body {
+            padding: 1.5rem;
+        }
+
+        #orderHistoryModal .form-control {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        #orderHistoryModal .form-control:focus {
+            border-color: #70000E;
+            box-shadow: 0 0 0 0.25rem rgba(112, 0, 14, 0.1);
+        }
+        #close-card {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 1000;
+        }
+
+        #orderHistoryModal label {
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
         <div class="container">
             <!-- Logo -->
             <a class="navbar-brand" href="{{ route('homepage') }}">
+                <img src="{{ asset('image/tay_meng_logo.jpg') }}" alt="Logo" height="70">
                 Taymeng
-                <!---<img src="{{ asset('image/tay_meng_logo.jpg') }}" alt="Logo" height="40"> -->
             </a>
 
             <!-- Mobile Toggle Button -->
@@ -84,7 +131,7 @@
                             data-bs-toggle="dropdown" aria-expanded="false">
                             <div class="profile-image-container position-relative">
                                 <img src="{{ (Auth::user() && Auth::user()->profile_image) ? asset('storage/' . Auth::user()->profile_image) : asset('image/smphone.png') }}"
-                                     class="rounded-circle border border-2 border-primary"
+                                     class="rounded-circle border border-2"
                                      style="width: 35px; height: 35px; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"
                                      alt="Profile Picture">
                                 <span class="position-absolute bottom-0 end-0 bg-success rounded-circle border border-2 border-white"
@@ -110,24 +157,36 @@
                                     </div>
                                 </div>
                             </li>
-                            <li><a class="dropdown-item py-2" href="{{ route('checkout.history') }}">
-                                <i class="fa-solid fa-box me-2 text-dark"></i>Order History
-                            </a></li>
+                            <li>
+                                <a class="dropdown-item py-2" href="#" id="orderHistoryLink">
+                                    <i class="fa-solid fa-box me-2 text-dark"></i>Order History
+                                </a>
+                            </li>
                             <li><a class="dropdown-item py-2" href="#" data-bs-toggle="modal" data-bs-target="#profileModal">
-                                <i class="fa-solid fa-gear me-2 text-dark"></i>My Profile
+                                <i class="fa-solid fa-user"></i> My Profile
                             </a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item py-2 text-danger" href="{{ route('login')}}">
-                                <i class="fa-solid fa-sign-out-alt me-2"></i>Logout
-                            </a></li>
+                            <li>
+                                @auth
+                                    <a class="dropdown-item py-2 text-danger" href="{{ route('logout') }}"
+                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                        <i class="fa-solid fa-sign-out-alt me-2"></i>Logout
+                                    </a>
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                        @csrf
+                                    </form>
+                                @else
+                                    <a class="dropdown-item py-2" href="{{ route('login') }}">
+                                        <i class="fa-solid fa-sign-in-alt me-2"></i>Login
+                                    </a>
+                                @endauth
+                            </li>
                         </ul>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
-
-    <!-- Cart Sidebar -->
     <div class="cart-backdrop" id="cartBackdrop"></div>
     <div class="cart" id="cartSidebar">
     <i class="fa-solid fa-xmark" id="close-card"></i>
@@ -137,7 +196,7 @@
         <div class="total-price">0.00</div>
     </div>
     <div>
-      <form id="checkoutRedirectForm" method="POST" action="{{ route('checkout.show') }}">
+<form id="checkoutRedirectForm" method="POST" action="{{ route('checkout.show') }}">
     @csrf
     <input type="hidden" name="cart_data" id="checkoutCartData">
     <input type="hidden" name="user_id" id="checkoutUserId" value="{{ Auth::check() ? Auth::user()->id : '' }}">
@@ -152,18 +211,51 @@
 
     </div>
 </div>
-
     <div class="modal" id="wishlistModal" aria-labelledby="wishlistModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="wishlistModalLabel">My Wishlist</h5>
+                    <h5 class="modal-title" id="wishlistModalLabel">
+                        <i class="fas fa-heart text-danger me-1"></i> My Wishlist
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <ul id="listwish" class="list-group">
                         <!-- Wishlist item card template -->
                     </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order History Modal for Guests -->
+    <div class="modal fade" id="orderHistoryModal" tabindex="-1" aria-labelledby="orderHistoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="orderHistoryModalLabel">Check Order History</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="guestOrderForm" action="{{ route('checkout.history') }}" method="GET">
+    <div class="mb-3">
+        <label for="guestEmail" class="form-label">Email Address</label>
+        <input type="email" class="form-control" id="guestEmail" name="guest_eamil" required value="{{ request('guest_email') }}">
+        @error('guest_eamil')
+            <small class="text-danger">{{ $message }}</small>
+        @enderror
+    </div>
+    <div class="mb-3">
+        <label for="orderNumber" class="form-label">Order Number</label>
+        <input type="text" class="form-control" id="orderNumber" name="order_num" required value="{{ request('guest_token') }}">
+        @error('order_num')
+            <small class="text-danger">{{ $message }}</small>
+        @enderror
+    </div>
+    <button type="submit" class="btn btn-dark w-100">View Order</button>
+</form>
+
                 </div>
             </div>
         </div>
@@ -189,13 +281,13 @@
                         <!-- Sidebar -->
                         <div class="col-md-3 border-end">
                             <div class="list-group">
-                                <a href="#edit-profile" class="list-group-item list-group-item-action active">
+                                <a href="#edit-profile" class="list-group-item active">
                                     <i class="bi bi-person me-2"></i> Edit Profile
                                 </a>
-                                <a href="#change-password" class="list-group-item list-group-item-action">
+                                <a href="#change-password" class="list-group-item">
                                     <i class="bi bi-shield-lock me-2"></i> Change Password
                                 </a>
-                                <a href="#address" class="list-group-item list-group-item-action">
+                                <a href="#address" class="list-group-item ">
                                     <i class="bi bi-geo-alt me-2"></i> Address
                                 </a>
                             </div>
@@ -301,8 +393,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Header Section -->
     <header>
         @yield('header')
     </header>
@@ -313,12 +403,12 @@
     </main>
 
     <!-- footer -->
-    <footer class="custom-footer ">
+    <footer class="custom-footer">
         <div class="container">
             <div class="row">
                 <!-- Category Column -->
-                <div class="col-md-2 my-3">
-                    <h5 class="fw-bold py-2" style="color:#70000E">Category</h5>
+                <div class="col-md-2 my-4">
+                    <h5 class="fw-bold py-2 fs-6" style="color:#70000E">Category</h5>
                     <ul class="list-unstyled">
                         <li class="py-2"><a href="/product" class="text-decoration-none">Smartphones</a></li>
                         <li class="py-2"><a href="/product_acessory" class="text-decoration-none">Accessories</a></li>
@@ -326,7 +416,7 @@
                 </div>
                 <!-- Quick Links Column -->
                 <div class="col-md-2 my-3">
-                    <h5 class="fw-bold py-2" style="color:#70000E">Quick Links</h5>
+                    <h5 class="fw-bold py-2 fs-6" style="color:#70000E">Quick Links</h5>
                     <ul class="list-unstyled">
                         <li class="py-2"><a href="{{ route('homepage') }}" class=" text-decoration-none">Home</a>
                         </li>
@@ -339,7 +429,7 @@
                 </div>
                 <!-- Get In Touch Column -->
                 <div class="col-md-3 my-3">
-                    <h5 class="fw-bold py-2" style="color:#70000E">Get In Touch</h5>
+                    <h5 class="fw-bold py-2 fs-6" style="color:#70000E">Get In Touch</h5>
                     <ul class="list-unstyled">
                         <li class="py-2"><i class="fa-solid fa-location-pin"></i> <span class="ms-2">78Eo St13
                                 Phsar Kondal Ti 1</span></li>
@@ -353,7 +443,7 @@
                 </div>
                 <!-- Follow Us Column -->
                 <div class="col-md-2 my-3">
-                    <h5 class="fw-bold py-2" style="color:#70000E">Follow Us</h5>
+                    <h5 class="fw-bold py-2 fs-6" style="color:#70000E">Follow Us</h5>
                     <ul class="list-unstyled">
                        <li class="py-2">
                             <a href="https://www.facebook.com/TayMeng13?mibextid=wwXIfr" class="text-decoration-none">
@@ -367,10 +457,10 @@
                 </div>
                 <!-- Help Column -->
                 <div class="col-md-2 my-3">
-                    <h5 class="fw-bold py-2" style="color:#70000E">Help</h5>
+                    <h5 class="fw-bold py-2 fs-6" style="color:#70000E">Help</h5>
                     <ul class="list-unstyled">
-                        <li class="py-2"><a href="#" class="text-decoration-none">Privacy Policy</a></li>
-                        <li class="py-2"><a href="#" class="text-decoration-none">Terms of Service</a></li>
+                        <li class="py-2"><a href="/Privacy" class="text-decoration-none">Privacy Policy</a></li>
+                        <li class="py-2"><a href="/terms" class="text-decoration-none">Terms of Service</a></li>
                     </ul>
                 </div>
             </div>
@@ -385,9 +475,27 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         window.isAuthenticated = {{ Auth::check() ? 'true' : 'false' }};
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const orderHistoryLink = document.getElementById('orderHistoryLink');
+            const orderHistoryModal = new bootstrap.Modal(document.getElementById('orderHistoryModal'));
+            
+            orderHistoryLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                if (window.isAuthenticated === true) {
+                    window.location.href = "{{ route('checkout.history') }}";
+                } else {
+                    orderHistoryModal.show();
+                }
+            });
+            
+            // Handle form submission
+            // document.getElementById('guestOrderForm').addEventListener('submit', function(e) {
+            //     e.preventDefault();
+            //     this.submit();
+            // });
+        });
     </script>
-</script>
-
 </body>
-
 </html>

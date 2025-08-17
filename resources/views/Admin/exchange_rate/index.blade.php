@@ -19,10 +19,10 @@
                             <table class="table table-bordered data-table text-center" style="min-width: auto !important;">
                                 <thead>
                                     <tr>
-                                        <th>No</th>
-                                        <th>USD Money</th>
-                                        <th>Khmer Money</th>
-                                        <th>Action</th>
+                                        <th style="background-color: #2e3b56 !important; color: white !important;">No</th>
+                                        <th style="background-color: #2e3b56 !important; color: white !important;">USD Money</th>
+                                        <th style="background-color: #2e3b56 !important; color: white !important;">Khmer Money</th>
+                                        <th style="background-color: #2e3b56 !important; color: white !important;">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>

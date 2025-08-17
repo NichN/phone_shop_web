@@ -26,26 +26,30 @@ use App\Models\productdetail;
                     'category.name as category'
                 )
                 ->get();
+               
                 return DataTables::of($data)
                     ->addColumn('action', function ($row) {
                         $btn = '
                         <div class="btn-group" role="group">
                             <button 
-                                class="btn btn-primary btn-sm viewProduct" 
+                                style="background-color: #e3f2fd; border: 1px solid #90caf9; color: #1565c0; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;" 
+                                class="viewProduct" 
                                 data-id="' . $row->id . '" 
                                 data-bs-toggle="tooltip" 
                                 title="View">
                                 <i class="fa fa-eye"></i>
                             </button>
                             <button 
-                                class="btn btn-warning btn-sm editProduct_dt" 
+                                style="background-color: #fffde7; border: 1px solid #ffe082; color: #fbc02d; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;" 
+                                class="editProduct_dt" 
                                 data-id="' . $row->id . '" 
                                 data-bs-toggle="tooltip" 
                                 title="Edit">
                                 <i class="fa fa-pencil"></i>
                             </button>
                             <button 
-                                class="btn btn-danger btn-sm delete" 
+                                style="background-color: #ffebee; border: 1px solid #ef9a9a; color: #c62828; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;" 
+                                class="delete" 
                                 data-id="' . $row->id . '" 
                                 data-bs-toggle="tooltip" 
                                 title="Delete">
@@ -143,23 +147,14 @@ use App\Models\productdetail;
     }
     public function update(Request $request, $id)
 {
-    $productz_dt = productdetail::findOrFail($id);
-
-    // Validate if new images are uploaded
-    $validated = $request->validate([
-        'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        // other validations...
-    ]);
-
-    $imagePaths = $productz_dt->images ?? [];
-    if ($request->hasFile('images')) {
-        $imagePaths = [];
-        foreach ($request->file('images') as $image) {
-            $path = $image->store('public/product_images');
-            $imagePaths[] = str_replace('public/', '', $path);
+    $productz_dt = ProductDetail::findOrFail($id);
+    $imagePaths = [];
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('public/product_images');
+                $imagePaths[] = str_replace('public/', '', $path);
+            }
         }
-    }
-
     $productz_dt->update([
         'product_name' => $request->name,
         'color_id' => $request->color_id,
@@ -175,7 +170,6 @@ use App\Models\productdetail;
 
     return response()->json(['success' => true]);
 }
-
      public function delete(Request $request){
         $product_dt = productdetail::findOrFail($request->id);
         $product_dt->delete();
@@ -183,9 +177,11 @@ use App\Models\productdetail;
     }
     public function get_pr_item($id){
         $product_item = productdetail::findOrFail($id);
+        $color = Color::find($product_item->color_id);
         return response()->json([
-        'cost_price' => $product_item->cost_price,
-         ]);
+            'cost_price' => $product_item->cost_price,
+            'color_name' => $color ? $color->name : null,
+        ]);
     }
    public function show_product($pro_id)
 {
@@ -201,10 +197,8 @@ use App\Models\productdetail;
         'stock'        => $product_item->stock,
         'price'        => $product_item->price,
         'images'       => $product_item->images ?? [],
+        'type'         => $product_item->type,
         'warranty'     =>$product_item->warranty,
     ]);
 }
-
-
-
 }

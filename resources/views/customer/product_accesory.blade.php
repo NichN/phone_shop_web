@@ -39,15 +39,15 @@
                         $images = json_decode($product->images, true);
                     @endphp
                     <div class="col-md-3">
-                        <div class="card product-card">
+                        <div class="card product-card" style="height:400px;">
                             @if (!empty($images) && isset($images[0]))
                             <a href="{{ route('product.show', $product->id) }}">
-                                <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img" style="height: 270px; object-fit: cover; object-position: center; width: 100%;">
+                                <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img" style="height: 250px; object-fit: cover; object-position: center; width: 100%;">
                             </a>
                             @endif
-                            <div class="card-body text-right" style="background-color: #ecdceb;">
+                            <div class="card-body text-righ" style="background-color: #ecdceb;">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <h5 class="card-title mt-2 product-title">{{ $product->name }}</h5>
+                                    <p class="card-title mt-2 product-title fs-6">{{ $product->name }}</p>
                                     <i class="fa-regular fa-heart fs-5 add-wishlist"></i>
                                 </div>
                                 <p class="card-price">{{ $product->price }}</p>

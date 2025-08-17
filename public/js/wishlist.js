@@ -11,20 +11,21 @@ document.addEventListener("DOMContentLoaded", function () {
         icon.addEventListener('click', function () {
             const productItemId = icon.getAttribute('data-product-id');
             const productCard = icon.closest('.product-card');
-            const productName = productCard.querySelector('.product-title').innerText;
-            const productImage = productCard.querySelector('.product-img').src;
-            const productPrice = productCard.querySelector('.card-price').innerText;
+            const title = productCard.querySelector('.product-title').innerText;
+            const imgSrc = productCard.querySelector('.product-img').src;
+            const price = productCard.querySelector('.card-price').innerText;
 
-            toggleWishlist(productItemId, productName, productPrice, productImage, icon);
+            toggleWishlist(productItemId, title, price, imgSrc, icon);
         });
     });
 
-    function toggleWishlist(productItemId, productName, productPrice, productImage, icon) {
+    function toggleWishlist(productItemId, title, price, imgSrc, icon) {
         productItemId = String(productItemId);
+        console.log('hh',productItemId);
         const existingIndex = wishlist.findIndex(item => item.productItemId === productItemId);
 
         if (existingIndex === -1) {
-            wishlist.push({ productItemId, productName, productPrice, productImage });
+            wishlist.push({ productItemId, title, price, imgSrc });
             icon.classList.remove('fa-regular');
             icon.classList.add('fa-solid');
         } else {
@@ -36,6 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
         localStorage.setItem('wishlist', JSON.stringify(wishlist));
         updateWishlistCount();
         updateWishlistModal();
+        syncWishlistIcons();
     }
 
     function updateWishlistCount() {
@@ -49,13 +51,9 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!response.ok) throw new Error('Failed to load product options');
             return await response.json();
         } catch (error) {
-            console.error(error);
-            return { sizes: [], colors: [] };
+            console.error("Error fetching product options:", error);
+            return { sizes: [], colors: [] }; // Fallback to empty arrays
         }
-    }
-
-    function buildOptionsHtml(options) {
-        return options.map(opt => `<option value="${opt}">${opt}</option>`).join('');
     }
 
     async function updateWishlistModal() {
@@ -75,29 +73,29 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         for (const item of wishlist) {
+            const { sizes, colors } = await fetchProductOptions(item.productItemId);
+            const sizeOptions = `<option value="">Select size</option>` + sizes.map(s => `<option value="${s}">${s}</option>`).join('');
+            const colorOptions = `<option value="">Select color</option>` + colors.map(c => `<option value="${c}">${c}</option>`).join('');
+
             const listItem = document.createElement('li');
             listItem.className = 'list-group-item wishlist-item-card d-flex justify-content-between align-items-center p-4 mb-3 rounded shadow-sm border-0';
 
-            const { sizes, colors } = await fetchProductOptions(item.productItemId);
-            const sizeOptions = `<option value="">Select size</option>` + buildOptionsHtml(sizes);
-            const colorOptions = `<option value="">Select color</option>` + buildOptionsHtml(colors);
-
             listItem.innerHTML = `
                 <div class="d-flex align-items-center">
-                    <img src="${item.productImage}" alt="${item.productName}" class="img-fluid rounded-3" style="width: 80px; height: 80px; object-fit: cover;">
+                    <img src="${item.imgSrc}" alt="${item.title}" class="img-fluid rounded-3" style="width: 80px; height: 80px; object-fit: cover;">
                     <div class="ms-3" style="flex: 1;">
-                        <h5 class="mb-1 fw-bold product-title">${item.productName}</h5>
-                        <p class="mb-1 text-muted card-price fw-bold" style="color:blue;">${item.productPrice} $</p>
+                        <h5 class="mb-1 fw-bold product-title">${item.title}</h5>
+                        <p class="mb-1 text-muted card-price fw-bold" style="color:blue;">${item.price}</p>
                         <div style="display: flex; gap: 1rem; margin-bottom: 0.5rem;">
                             <div style="flex: 1;">
-                                <label for="sizeSelect_${item.productItemId}" class="form-label small mb-1">Size:</label>
-                                <select id="sizeSelect_${item.productItemId}" class="form-select form-select-sm">
+                                <label class="form-label small mb-1">Size:</label>
+                                <select class="form-select form-select-sm">
                                     ${sizeOptions}
                                 </select>
                             </div>
                             <div style="flex: 1;">
-                                <label for="colorSelect_${item.productItemId}" class="form-label small mb-1">Color:</label>
-                                <select id="colorSelect_${item.productItemId}" class="form-select form-select-sm">
+                                <label class="form-label small mb-1">Color:</label>
+                                <select class="form-select form-select-sm">
                                     ${colorOptions}
                                 </select>
                             </div>
@@ -120,15 +118,15 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
             listItem.querySelector('.move-to-bag-btn').addEventListener('click', () => {
-                const size = document.getElementById(`sizeSelect_${item.productItemId}`).value;
-                const color = document.getElementById(`colorSelect_${item.productItemId}`).value;
+                const size = listItem.querySelector('select').value;
+                const color = listItem.querySelectorAll('select')[1].value;
 
                 if (!size || !color) {
                     alert('Please select size and color before moving to bag.');
                     return;
                 }
 
-                moveToBag(item.productName, item.productPrice, item.productImage, item.productItemId, size, color);
+                moveToBag(item.title, item.price, item.imgSrc, item.productItemId, size, color);
             });
         }
     }
@@ -144,28 +142,25 @@ document.addEventListener("DOMContentLoaded", function () {
     function syncWishlistIcons() {
         wishlistIcons.forEach(icon => {
             const productItemId = icon.getAttribute('data-product-id');
-            if (wishlist.some(item => item.productItemId === productItemId)) {
-                icon.classList.remove('fa-regular');
-                icon.classList.add('fa-solid');
-            } else {
-                icon.classList.remove('fa-solid');
-                icon.classList.add('fa-regular');
-            }
+            const isInWishlist = wishlist.some(item => item.productItemId === productItemId);
+            icon.classList.toggle('fa-regular', !isInWishlist);
+            icon.classList.toggle('fa-solid', isInWishlist);
         });
     }
 
-    function moveToBag(productName, productPrice, productImage, productItemId, size, color) {
+    function moveToBag(title, price, imgSrc, productItemId, size, color) {
         removeFromWishlist(productItemId);
         if (window.isAuthenticated) {
             handleAddToCart(productItemId);
         } else {
-            addProductToCart(productName, productPrice, productImage, productItemId, size, color);
+            addProductToCart(title, price, imgSrc, productItemId, size, color);
         }
     }
 
     function handleAddToCart(productItemId) {
         const quantity = 1;
-        const id = parseInt(productItemId, 10);
+        const id = parseInt(productItemId);
+        console.log('hii',id);
         if (!id || isNaN(id)) {
             alert("Invalid product selection.");
             return;
@@ -194,10 +189,12 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    window.addProductToCart = function (productName, productPrice, productImage, productItemId, size, color) {
+    window.addProductToCart = function (title, price, imgSrc, productItemId, size, color) {
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const priceNumeric = parseFloat(price.replace(/[^\d.]/g, '')); // Remove "$" and parse
+
         const existing = cart.find(item =>
-            item.productName === productName &&
+            item.productItemId === productItemId &&
             item.size === size &&
             item.color === color
         );
@@ -207,9 +204,9 @@ document.addEventListener("DOMContentLoaded", function () {
         } else {
             cart.push({
                 productItemId,
-                productName,
-                productPrice,
-                productImage,
+                title,
+                price,
+                imgSrc,
                 size,
                 color,
                 quantity: 1
@@ -246,10 +243,10 @@ document.addEventListener("DOMContentLoaded", function () {
         cart.forEach((item, index) => {
             const itemHtml = `
                 <div class="cart-box d-flex align-items-start mb-3">
-                    <img src="${item.productImage}" class="cart-img me-2" alt="${item.productName}" style="width: 60px; height: 60px; object-fit: cover;">
+                    <img src="${item.imgSrc}" class="cart-img me-2" alt="${item.title}" style="width: 60px; height: 60px; object-fit: cover;">
                     <div class="detail-box flex-grow-1">
-                        <div class="cart-product-title fw-bold">${item.productName}</div>
-                        <div class="cart-price">${item.productPrice}</div>
+                        <div class="cart-product-title fw-bold">${item.title}</div>
+                        <div class="cart-price">$${item.price.toFixed(2)}</div>
                         <div>Size: ${item.size}</div>
                         <div>Color: ${item.color}</div>
                         <div class="text-danger">Qty: ${item.quantity}</div>
@@ -258,12 +255,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 </div>
             `;
             cartContent.insertAdjacentHTML('beforeend', itemHtml);
-            total += parseFloat(item.productPrice.replace(/[^\d.]/g, '')) * item.quantity;
+            total += item.price * item.quantity;
         });
 
         const totalPriceElement = document.querySelector('.total-price') || document.getElementById('totalPrice');
         if (totalPriceElement) {
-            totalPriceElement.innerText = total.toFixed(2) + "$";
+            totalPriceElement.innerText = `$${total.toFixed(2)}`;
         }
     }
 

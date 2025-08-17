@@ -11,7 +11,7 @@
 
 @section('content')
     <div class="container mt-4 mb-5">
-        <a href="/checkout/history" class="btn btn-primary">← Back</a>
+        <a href="/checkout/history" style="text-decoration: none;">← Back</a>
         <h4 class="text-center mb-4">
             Order Details <i class="fas fa-history text-primary"></i>
         </h4>
@@ -79,89 +79,109 @@
 </div>
 <!-- Invoice Modal -->
 <div class="modal fade" id="invoiceModal" tabindex="-1" aria-labelledby="invoiceModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" style="max-width: 35vw;">
-    <div class="modal-content p-3">
-      <div class="modal-header">
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 35vw;">
+        <div class="modal-content p-3">
+            <div class="modal-header d-flex justify-content-between align-items-center">
+                <button type="button" class="btn btn-secondary me-2" onclick="printInvoice()">Print</button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="invoiceContent">
                 <h5>
                     <img src="{{ asset('image/tayment_logo.png') }}" alt="Logo" style="width: 70px; height: 70px;">
                     TayMeng
                 </h5>
-                <div class="text-center mb-2">
-                <strong>វិក័យបត្រ / RECEIPT</strong>
-            </div>
-        <div class="receipt">
-            <div class="receipt-header">
-                <small>#78E0, ផ្លូវ13 សង្កាត់ផ្សារកណ្តាល I ខណ្ឌដូនពេញ រាជធានីភ្នំពេញ</small><br>
-                <small>096841 2222 / 076 333 3288 / 031 333 3288</small>
-            </div>
+                <div class="receipt">
+                    <div class="text-center mb-2">
+                        <h4>វិក័យប័ត្រ</h4>
+                        <div class="receipt-header">
+                            <small>#78E0, ផ្លូវ13 សង្កាត់ផ្សារកណ្តាល I ខណ្ឌដូនពេញ រាជធានីភ្នំពេញ</small><br>
+                            <small>096841 2222 / 076 333 3288 / 031 333 3288</small>
+                        </div>
+                    </div>
+                    <hr class="my-2">
 
-            <hr class="my-2">
+                    <div class="d-flex justify-content-between mb-2">
+                        <p class="mb-0"><strong>Date:</strong> {{ $order->created_at->format('d-m-Y') }}</p>
+                        <p class="mb-0"><strong>Order:</strong> {{ $order->order_num }}</p>
+                    </div>
 
-                <div class="d-flex justify-content-between mb-2">
-                    <p class="mb-0"><strong>Date:</strong> {{ $order->created_at->format('d-m-Y') }}</p>
-                    <p class="mb-0"><strong>Order:</strong> {{ $order->order_num }}</p>
+                    <div class="d-flex justify-content-between mb-2">
+                        <p class="mb-0"><strong>Customer:</strong> {{ $order->guest_name ?? Auth::user()->name }}</p>
+                        <p class="mb-0"><strong>Address:</strong> {{ $order->guest_address }}</p>
+                    </div>
+                    <table class="table table-sm table-bordered" style="text-align: center; font-size: 0.9rem;">
+                        <thead>
+                            <tr>
+                                <th style="text-align: center; font-size: 0.9rem;">Product</th>
+                                <th style="text-align: center; font-size: 0.9rem;">Quantity</th>
+                                <th style="text-align: center; font-size: 0.9rem;">Price</th>
+                                <th style="text-align: center; font-size: 0.9rem;">Warranty</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($orderItems as $item)
+                                <tr>
+                                    <td style="text-align: center; font-size: 0.9rem;">{{ $item->product_name }}</td>
+                                    <td style="text-align: center; font-size: 0.9rem;">{{ $item->quantity }}</td>
+                                    <td style="text-align: center; font-size: 0.9rem;">${{ number_format($item->price, 2) }}</td>
+                                    <td style="text-align: center; font-size: 0.9rem;">{{ $item->warranty}}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                    <div class="d-flex justify-content-between">
+                        <strong>Total USD:</strong>
+                        <span>${{ number_format($order->total_amount, 2) }}</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <small>Total (KHR):</small>
+                        <span>{{ number_format($order->total_amount * $order->rate) }} ៛</span>
+                    </div>
+
+                    <div class="mt-2">
+                        <div class="d-flex justify-content-between">
+                            <small>Receive (Cash):</small>
+                            <span>${{ $order->total_amount }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            អាត្រាប្តូរប្រាក់
+                            <span>{{$order->rate}} ៛</span>
+                        </div>
+                    </div>
+
+                    <hr class="my-2">
+                    <div class="d-flex justify-content-end mt-4">
+                        <div style="text-align: center; min-width: 180px;">
+                            <p style="font-size: 12px; margin-bottom: 40px;">Prepared by name</p>
+                            <hr style="border: none; height: 1px; background-color: #000; margin-bottom: 5px;">
+                            <p style="font-size: 12px;">Signature & Date</p>
+                        </div>
+                    </div>
+                    <p class="text-center">
+                        {{-- <small>VAT 10%, Exchange Rate: $1 = ៛4,100</small><br> --}}
+                        <strong>សូមរក្សាទុកវិក្ក័យប័ត្រនេះដើម្បីបញ្ជាក់ការធានា</strong><br>
+                        <small>Thank you, please come back again.</small>
+                    </p>
                 </div>
-
-                <div class="d-flex justify-content-between mb-2">
-                    <p class="mb-0"><strong>Customer:</strong> {{ $order->guest_name ?? Auth::user()->name }}</p>
-                    <p class="mb-0"><strong>Address:</strong> {{ $order->address }}</p>
-                </div>
-            <table class="table table-sm table-bordered" style="text-align: center; font-size: 0.9rem;">
-                <thead>
-                    <tr>
-                        <th style="text-align: center; font-size: 0.9rem;">ឈ្មោះ</th>
-                        <th style="text-align: center; font-size: 0.9rem;">ចំនួន</th>
-                        <th style="text-align: center; font-size: 0.9rem;">តម្លៃ</th>
-                        <th style="text-align: center; font-size: 0.9rem;">ការធានា</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($orderItems as $item)
-                        <tr>
-                            <td style="text-align: center; font-size: 0.9rem;">{{ $item->product_name }}</td>
-                            <td style="text-align: center; font-size: 0.9rem;">{{ $item->quantity }}</td>
-                            <td style="text-align: center; font-size: 0.9rem;">${{ number_format($item->price, 2) }}</td>
-                            <td style="text-align: center; font-size: 0.9rem;">{{ $item->warranty}}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-
-            <hr class="my-1 border-top-dashed">
-            <div class="d-flex justify-content-between">
-                <strong>Total USD:</strong>
-                <span>${{ number_format($order->total_amount, 2) }}</span>
             </div>
-
-            <div class="d-flex justify-content-between">
-                <small>Total (KHR):</small>
-                <span>{{ number_format($order->total_amount * $order->rate) }} ៛</span>
-            </div>
-
-            <div class="mt-2">
-                <div class="d-flex justify-content-between">
-                    <small>Receive (Cash):</small>
-                    <span>${{ $order->total_amount }}</span>
-                </div>
-                <div class="d-flex justify-content-between">
-                    អាត្រាប្តូរប្រាក់
-                    <span>{{$order->rate}} ៛</span>
-                </div>
-            </div>
-
-            <hr class="my-2">
-
-            <p class="text-center">
-                {{-- <small>VAT 10%, Exchange Rate: $1 = ៛4,100</small><br> --}}
-                <strong>សូមរក្សាទុកវិក្ក័យប័ត្រនេះដើម្បីបញ្ជាក់ការធានា</strong><br>
-                <small>Thank you, please come back again.</small>
-            </p>
         </div>
-      </div>
     </div>
-  </div>
 </div>
+<script>
+function printInvoice() {
+        var printContents = document.getElementById('invoiceContent').innerHTML;
+        var originalContents = document.body.innerHTML;
+        var win = window.open('', '', 'height=700,width=900');
+        win.document.write('<html><head><title>Invoice</title>');
+        win.document.write('<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">');
+        win.document.write('</head><body>');
+        win.document.write(printContents);
+        win.document.write('</body></html>');
+        win.document.close();
+        win.focus();
+        win.print();
+        win.close();
+}
+</script>
 @endsection

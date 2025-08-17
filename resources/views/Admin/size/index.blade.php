@@ -22,10 +22,10 @@
                     <table class="table data-table mt-3">
                         <thead style="text-align:center;">
                             <tr>
-                                <th>No</th>
-                                <th>Size</th>
-                                <th>Date</th>
-                                <th>Action</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">No</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Size</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Date</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Action</th>
                             </tr>
                         </thead>                                
                     </table>

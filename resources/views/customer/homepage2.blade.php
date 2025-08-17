@@ -78,7 +78,7 @@
                     <div class="shop-overlay d-flex align-items-center justify-content-center">
                         <a href="{{ route($item['route'], $item['name']) }}" class="btn btn-primary px-4 py-2 d-inline-block custom-btn">Shop Now</a>
                     </div>
-                    <h3 class="shop-title text-uppercase fs-4 fw-semibold">{{ $item['label'] }}</h3>
+                    <h3 class="shop-title text-uppercase fs-5 fw-semibold">{{ $item['label'] }}</h3>
                 </div>
             </div>
         @endforeach
@@ -87,12 +87,12 @@
 </section>
 <section>
     <div class="container my-5 scroll-animate">
-        <h2 class="text-right mb-4 fs-4"><b>New Products</b></h2>
+        <h2 class="text-right mb-4 fs-5"><b>New Products</b></h2>
         <div class="row g-4">
             @foreach ($products->take(10) as $product)
                 @php $images = json_decode($product->images, true); @endphp
                 <div class="col-md-3">
-                    <div class="card product-card" style="height:380px;">
+                    <div class="card product-card" style="height:400px;">
                         @if (!empty($images[0]))
                             <a href="{{ route('product.show', $product->id) }}">
                                 <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img" style="object-fit: cover; object-position: center; width: 100%; height:250px;">
@@ -103,7 +103,7 @@
                                 <h6 class="card-title mt-2 product-title">{{ $product->name }}</h6>
                                 <i class="fa-regular fa-heart fs-5 add-wishlist" data-product-id="{{ $product->id }}"></i> 
                             </div>
-                            <p class="card-price">{{ $product->price }}</p>
+                            <p class="card-price"> ${{ $product->price }}</p>
                             <p class="color" style="text-align: right;">
                             @foreach ($product->colors as $color)
                                 <span class="rounded-circle d-inline-block mx-1"
@@ -142,13 +142,13 @@
 {{-- Accessories Section --}}
 <section class="my-5">
     <div class="container scroll-animate">
-        <h2 class="text-right mb-4 fs-4"><b>Accessories</b></h2>
+        <h2 class="text-right mb-4 fs-5"><b>Accessories</b></h2>
         <div class="row g-4">
             @if ($accessoryProducts->isNotEmpty())
-                @foreach ($accessoryProducts->take(4) as $product)
+                @foreach ($accessoryProducts->shuffle()->take(4) as $product)
                     @php $images = json_decode($product->images, true); @endphp
                     <div class="col-md-3">
-                    <div class="card product-card" style="height:380px;">
+                    <div class="card product-card" style="height:400px;">
                         @if (!empty($images[0]))
                         <a href="{{ route('product.show', $product->id) }}">
                             <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img" style="object-fit: cover; object-position: center; width: 100%; height:250px;">
@@ -159,7 +159,7 @@
                                 <h6 class="card-title mt-2 product-title">{{ $product->name }}</h6>
                                 <i class="fa-regular fa-heart fs-5 add-wishlist" data-product-id="{{ $product->id }}"></i>
                             </div>
-                            <p class="card-price">{{ $product->price }}</p>
+                            <p class="card-price">${{ $product->price }}</p>
                             <p class="color" style="text-align: right;">
                                 @foreach ($product->colors as $color)
                                     <span class="rounded-circle d-inline-block mx-1"
@@ -175,6 +175,11 @@
                 @endforeach
             @endif
         </div>
+        <div class="text-end mt-3">
+            <a href="{{ route('product_acessory') }}" class="text-decoration-none btn btn-light" style="color: black">
+               Shop More
+            </a>
+        </div>
     </div>
 </section>
 <section class="my-5">
@@ -182,12 +187,12 @@
         <h2 class="text-right mb-4" style="font-size: 25px;"><b>Phone</b></h2>
         <div class="row g-4">
             @if ($phone->isNotEmpty())
-                @foreach ($phone->take(4) as $product)
+                @foreach ($phone->shuffle()->take(4) as $product)
                     @php
                         $images = json_decode($product->images, true);
                     @endphp
                     <div class="col-md-3">
-                    <div class="card product-card" style="height:380px;">
+                    <div class="card product-card" style="height:400px;">
                         @if (!empty($images[0]))
                         <a href="{{ route('product.show', $product->id) }}">
                             <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img" style="object-fit: cover; object-position: center; width: 100%; height:250px;">
@@ -198,7 +203,7 @@
                                 <h6 class="card-title mt-2 product-title">{{ $product->name }}</h6>
                                 <i class="fa-regular fa-heart fs-5 add-wishlist" data-product-id="{{ $product->id }}"></i>
                             </div>
-                            <p class="card-price">{{ $product->price }}</p>
+                            <p class="card-price">${{ $product->price }}</p>
                             <p class="color" style="text-align: right;">
                                 @foreach ($product->colors as $color)
                                     <span class="rounded-circle d-inline-block mx-1"
@@ -212,6 +217,11 @@
                 </div>
                 @endforeach
             @endif
+        </div>
+        <div class="text-end mt-3">
+            <a href="{{ route('product') }}" class="btn btn-light">
+                Shop More
+            </a>
         </div>
     </div>
 </section>

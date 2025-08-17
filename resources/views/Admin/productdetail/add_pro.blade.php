@@ -5,8 +5,8 @@
 <div class="w3-main">
     <div class="container-fluid py-4">
         <div class="card shadow-sm">
-            <div class="card-header text-white" style="background-color: rgb(30, 30, 95)">
-                <h5 class="mb-0"><i class="fas fa-tags me-2"></i>Add Product</h5>
+            <div class="flex items-center justify-between bg- px-4 py-2 rounded-md shadow-sm">
+                <h4 class="text-lg font-semibold text-gray-800"><i class="fas fa-tags me-2"></i>Add Product</h4>
             </div>
             <div class="card-body">
                 <form id="proForm" action="{{ route('pr_detail.store') }}" method="POST" enctype="multipart/form-data">
@@ -96,15 +96,17 @@
                         <div class="col-md-10">
                             <label for="images" class="form-label fw-bold">Product Images <span class="text-danger">*</span></label>
                             <input type="file" class="form-control" id="images" name="images[]" multiple accept="image/*" required onchange="previewImages(this)">
-                            <small class="form-text text-muted">You can select multiple images.</small>
                         </div>
                     </div>
                     <div id="imagePreview" class="d-flex flex-wrap gap-3 mt-3"></div>
 
                     <!-- Submit -->
-                    <div class="d-flex justify-content-end border-top pt-4">
-                        <button type="submit" id="saveBtn" class="btn btn-primary px-4">
-                            <i class="fas fa-save me-2"></i> Save
+                    <div class="d-flex justify-content-end border-top gap-2 pt-4">
+                          <a href="{{ route('pr_detail.index') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i> Back
+                        </a>
+                        <button type="submit" id="saveBtn" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i> Create
                         </button>
                     </div>
                 </form>

@@ -20,6 +20,15 @@
                     </h2>
                     </div>
             </div> 
+               <div style="background-color: #87ceeb; padding: 10px; border-radius: 8px; width: 185px;">
+                    <div>
+                        <p style="margin: 0; font-weight: bold;">Pending Order</p>
+                        <h2 id="total-income" style="margin: 20px auto 0; 
+                            text-align: center; font-size: 20px; background-color: rgb(180, 180, 157) ; color: black; padding: 10px; border-radius: 50%; width: 50px; height: 50px; line-height: 30px;">
+                        {{$total_pending ?? 0}}
+                    </h2>
+                    </div>
+            </div>
             <div style="background-color: #87ceeb; padding: 10px; border-radius: 8px; width: 185px;">
                 <div>
                     <p style="margin: 0; font-weight: bold;">Canceled Order</p>
@@ -59,7 +68,7 @@
                     </div>
             </div>
         </main>
-        <div style="display: flex; justify-content: space-between; align-items: center; background-color: aliceblue; padding: 10px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; background-color: aliceblue; padding: 10px;">
             <h4 style="margin: 0;">Monthly Order</h4>
             <div style="display: flex; align-items: center; gap: 10px;">
                 <button onclick="prevMonth()" style="border: none; border-radius: 20px; padding: 5px 10px;">&#8592;</button>
@@ -73,15 +82,15 @@
                     <table class="table data-table mt-3">
                         <thead style="text-align:center;">
                             <tr>
-                                <th>Date</th>
-                                <th>Order</th>
-                                <th>Cutomer</th>
-                                <th>Phone</th>
-                                <th>Address</th>
-                                <th>Amount</th>
-                                <th>Delivery Method</th>
-                                <th>Status</th>
-                                <th>Action</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Date</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Order</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Cutomer</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Phone</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Address</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Amount</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Delivery</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Status</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Action</th>
                             </tr>
                         </thead>                                
                     </table>

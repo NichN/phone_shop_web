@@ -82,7 +82,7 @@ $(document).ready(function () {
                                 'Verification code confirmed. Redirecting...',
                                 'success'
                             ).then(() => {
-                                window.location.href = '/checkout/payment';
+                                window.location.href = '/checkout/payment/' + response.order_id;
                             });
                         }
                     });
