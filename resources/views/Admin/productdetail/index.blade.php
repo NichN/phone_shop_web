@@ -37,6 +37,7 @@
                                 <th style="background-color: #2e3b56 !important; color: white !important;">Stock</th>
                                 <th style="background-color: #2e3b56 !important; color: white !important;">Price</th>
                                 <th style="background-color: #2e3b56 !important; color: white !important;">Warranty</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Featured</th>
                                 <th style="background-color: #2e3b56 !important; color: white !important;">Action</th>
                             </tr>
                         </thead>                                
@@ -195,4 +196,5 @@
 </div>
 <!-- Modal -->
 @include('Admin.productdetail.script')
+
 

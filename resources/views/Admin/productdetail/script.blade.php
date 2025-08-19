@@ -60,6 +60,21 @@ $(document).ready(function() {
                 }
             },
             { data: 'warranty', name:'warranty'},
+            {
+                data: 'is_featured',
+                name: 'is_featured',
+                render: function(data, type, row) {
+                    // Check if 'is_featured' is true, and set checked attribute accordingly
+                    var checked = data ? 'checked' : '';
+                    return `
+                        <label class="switch">
+                            <input type="checkbox" class="toggle-featured" data-id="${row.id}" ${checked}>
+                            <span class="slider round"></span>
+                        </label>
+                    `;
+                }
+            },
+
             { data: 'action', orderable: false, searchable: false }
         ]
     });
@@ -344,6 +359,36 @@ function changeImage(imgElement) {
     $('.thumbnail-img').removeClass('selected-thumbnail');
     $(imgElement).addClass('selected-thumbnail');
 }
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
 
-    
+$(document).on('change', '.toggle-featured', function() {
+    var isActive = $(this).prop('checked') ? 1 : 0;
+    var productId = $(this).data('id');
+    console.log('Product ID:', productId);
+    console.log('CSRF Token:', $('meta[name="csrf-token"]').attr('content'));
+
+    $.ajax({
+        url: `/update-featured-status/${productId}`,
+        type: 'POST',
+        data: {
+            is_active: isActive
+        },
+        success: function(response) {
+            if (response.success) {
+                alert('Product status updated successfully!');
+            } else {
+                alert('Error updating product status: ' + (response.message || 'Unknown error'));
+            }
+        },
+        error: function(xhr) {
+            console.log('Error Response:', xhr.responseText);
+            alert('An error occurred while updating product status: ' + xhr.status);
+        }
+    });
+});
+
 </script>

@@ -232,6 +232,8 @@ Route::prefix('product_detail')->name('pr_detail.')->group(function(){
     Route::delete('/delete/{id}',[product_detailCotroller::class,'delete'])->name('delete');
     Route::get('/show_product/{pro_id}',[product_detailCotroller::class,'show_product'])->name('product_items');
 });
+Route::post('/update-featured-status/{id}', [product_detailCotroller::class, 'updateFeaturedStatus']);
+
 
 Route::prefix('delivery')->name('delivery.')->group(function(){
     Route::get('/',[delivery_feeController::class,'index'])->name('index');

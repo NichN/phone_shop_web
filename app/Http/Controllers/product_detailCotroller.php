@@ -70,8 +70,8 @@ use App\Models\productdetail;
         return view('Admin.productdetail.index',compact('size', 'color','product'));
     }
 
-      public function store(Request $request)
-    {
+     public function store(Request $request)
+{
     try {
         $validated = $request->validate([
             'cost_price'     => 'required|numeric',
@@ -80,8 +80,9 @@ use App\Models\productdetail;
             'size'           => 'required|exists:size,id',
             'color'          => 'required|exists:color,id',
             'images.*'       => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            // 'warranty'       => ''
+            'is_featured'     => 'boolean',  // Add validation for the is_featured field
         ]);
+
         $imagePaths = [];
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
@@ -89,23 +90,25 @@ use App\Models\productdetail;
                 $imagePaths[] = str_replace('public/', '', $path);
             }
         }
+
         $product = Product::find($validated['product_name']);
-        $color   = Color::find($validated['color']);
-        $size    = Size::find($validated['size']);
+        $color = Color::find($validated['color']);
+        $size = Size::find($validated['size']);
 
         $data = [
-            'pro_id'       => $product->id,
-            'cost_price'   => $validated['cost_price'],
-            'price'        => $validated['price'],
-            'size_id'      => $size->id,
-            'color_id'     => $color->id,
-            'stock'        => $request->stock ?? 0,
-            'product_name' => $product->name,
-            'color_code'   => $color->code,
-            'size'         => $size->size,
-            'images'       => $imagePaths,
-            'type'         => $request->type,
-            'warranty'     => $request->warranty
+            'pro_id'        => $product->id,
+            'cost_price'    => $validated['cost_price'],
+            'price'         => $validated['price'],
+            'size_id'       => $size->id,
+            'color_id'      => $color->id,
+            'stock'         => $request->stock ?? 0,
+            'product_name'  => $product->name,
+            'color_code'    => $color->code,
+            'size'          => $size->size,
+            'images'        => $imagePaths,
+            'type'          => $request->type,
+            'warranty'      => $request->warranty,
+            'is_featured'   => $request->is_active ?? false,  // Set the default value if not provided
         ];
 
         $productDetail = ProductDetail::create($data);
@@ -115,7 +118,6 @@ use App\Models\productdetail;
             'message' => 'Product stored successfully!',
             'data' => $productDetail
         ]);
-
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -123,6 +125,7 @@ use App\Models\productdetail;
         ], 500);
     }
 }
+
 
     public function addproduct()
     {
@@ -149,27 +152,30 @@ use App\Models\productdetail;
 {
     $productz_dt = ProductDetail::findOrFail($id);
     $imagePaths = [];
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                $path = $image->store('public/product_images');
-                $imagePaths[] = str_replace('public/', '', $path);
-            }
+    if ($request->hasFile('images')) {
+        foreach ($request->file('images') as $image) {
+            $path = $image->store('public/product_images');
+            $imagePaths[] = str_replace('public/', '', $path);
         }
+    }
+
     $productz_dt->update([
         'product_name' => $request->name,
-        'color_id' => $request->color_id,
-        'size_id' => $request->size_id,
-        'price' => $request->price,
-        'brand_id' => $request->brand_id,
-        'cost_price' => $request->cost_price,
-        'cat_id' => $request->cat_id,
-        'type' => $request->type,
-        'images' => $imagePaths,
-        'warranty' => $request->warranty,
+        'color_id'     => $request->color_id,
+        'size_id'      => $request->size_id,
+        'price'        => $request->price,
+        'brand_id'     => $request->brand_id,
+        'cost_price'   => $request->cost_price,
+        'cat_id'       => $request->cat_id,
+        'type'         => $request->type,
+        'images'       => $imagePaths,
+        'warranty'     => $request->warranty,
+        'is_featured'   => $request->is_featured ?? false,  // Update the is_featured field
     ]);
 
     return response()->json(['success' => true]);
 }
+
      public function delete(Request $request){
         $product_dt = productdetail::findOrFail($request->id);
         $product_dt->delete();
@@ -201,4 +207,20 @@ use App\Models\productdetail;
         'warranty'     =>$product_item->warranty,
     ]);
 }
+public function updateFeaturedStatus(Request $request, $id)
+{
+    try {
+        $validated = $request->validate([
+            'is_active' => 'required|boolean'
+        ]);
+        $product = ProductDetail::findOrFail($id);
+        $product->is_featured = $validated['is_active']; // Use correct field
+        $product->save();
+
+        return response()->json(['success' => true]);
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+    }
+}
+
 }

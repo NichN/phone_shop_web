@@ -1,6 +1,7 @@
 @include('Admin.component.sidebar')
 <link href="{{ asset('css/dashboard.css')}}" rel="stylesheet">
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<meta name="csrf-token" content="{{ csrf_token() }}">
 
 <div class="w3-main">
     <div class="container-fluid py-4">
@@ -98,6 +99,17 @@
                             <input type="file" class="form-control" id="images" name="images[]" multiple accept="image/*" required onchange="previewImages(this)">
                         </div>
                     </div>
+                    <div class="row mb-4">
+                        <div class="col-md-5">
+                            <label for="is_active" class="form-label fw-bold">Status <span class="text-danger">*</span></label>
+                            <select class="form-select" id="is_active" name="is_active" required>
+                                <option value="" disabled selected>Select Status</option>
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                
                     <div id="imagePreview" class="d-flex flex-wrap gap-3 mt-3"></div>
 
                     <!-- Submit -->

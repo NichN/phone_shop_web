@@ -23,7 +23,8 @@ class productdetail extends Model
         'color_code',
         'size',
         'type',
-        'warranty'
+        'warranty',
+        'is_featured'
     ];
     protected $dates = [
         'created_at',
