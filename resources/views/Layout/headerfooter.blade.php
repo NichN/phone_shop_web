@@ -18,7 +18,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    
+
     @yield('head')
 </head>
 
@@ -33,7 +33,9 @@
             </a>
 
             <!-- Mobile Toggle Button -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
@@ -59,36 +61,39 @@
                 <ul class="navbar-nav ms-auto d-flex align-items-center">
                     <!-- Wishlist -->
                     <li class="nav-item">
-                    <button type="button" class="btn position-relative" id="wishlist-link">
-                    <a class="custom-link" href="#" data-bs-toggle="modal" data-bs-target="#wishlistModal">
-                        <i class="fa-solid fa-heart"></i>
-                        <span class="d-none d-lg-inline" style="font-size: 1rem;">My Wishlist</span>
-                        <span id="count_heart_cart"
-                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
-                    </a>
-                </button>
+                        <button type="button" class="btn position-relative" id="wishlist-link">
+                            <a class="custom-link" href="#" data-bs-toggle="modal"
+                                data-bs-target="#wishlistModal">
+                                <i class="fa-solid fa-heart"></i>
+                                <span class="d-none d-lg-inline" style="font-size: 1rem;">My Wishlist</span>
+                                <span id="count_heart_cart"
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+                            </a>
+                        </button>
                     </li>
                     <!-- Cart -->
                     <li class="nav-item">
-                    <button type="button" class="btn position-relative">
-                    <a class="custom-link" href="#" id="cartLink">
-                        <i class="fa-solid fa-cart-shopping cart-icon" id="cart-icon"></i>
-                        <span class="d-none d-lg-inline" style="font-size: 1rem;">My Cart</span>
-                        <span id="count_cart" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
-                    </a>
-                </button>
+                        <button type="button" class="btn position-relative">
+                            <a class="custom-link" href="#" id="cartLink">
+                                <i class="fa-solid fa-cart-shopping cart-icon" id="cart-icon"></i>
+                                <span class="d-none d-lg-inline" style="font-size: 1rem;">My Cart</span>
+                                <span id="count_cart"
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+                            </a>
+                        </button>
                     </li>
                     <!-- User Button -->
                     <li class="nav-item">
-                        <button class="btn position-relative dropdown-toggle d-flex align-items-center gap-2 px-3" type="button" id="profileDropdown"
-                            data-bs-toggle="dropdown" aria-expanded="false">
+                        <button class="btn position-relative dropdown-toggle d-flex align-items-center gap-2 px-3"
+                            type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                             <div class="profile-image-container position-relative">
-                                <img src="{{ (Auth::user() && Auth::user()->profile_image) ? asset('storage/' . Auth::user()->profile_image) : asset('image/smphone.png') }}"
-                                     class="rounded-circle border border-2 border-primary"
-                                     style="width: 35px; height: 35px; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"
-                                     alt="Profile Picture">
-                                <span class="position-absolute bottom-0 end-0 bg-success rounded-circle border border-2 border-white"
-                                      style="width: 10px; height: 10px;"></span>
+                                <img src="{{ Auth::user() && Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('image/smphone.png') }}"
+                                    class="rounded-circle border border-2 border-primary"
+                                    style="width: 35px; height: 35px; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"
+                                    alt="Profile Picture">
+                                <span
+                                    class="position-absolute bottom-0 end-0 bg-success rounded-circle border border-2 border-white"
+                                    style="width: 10px; height: 10px;"></span>
                             </div>
                             <div class="d-flex flex-column align-items-start">
                                 <h8 class="modal-title mb-0 fw-bold" id="profileModalLabel">
@@ -97,29 +102,34 @@
                                 <small class="text-muted" style="font-size: 0.75rem;">My Account</small>
                             </div>
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="profileDropdown" style="min-width: 200px;">
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="profileDropdown"
+                            style="min-width: 200px;">
                             <li class="px-3 py-2 border-bottom">
                                 <div class="d-flex align-items-center">
-                                    <img src="{{ (Auth::user() && Auth::user()->profile_image) ? asset('storage/' . Auth::user()->profile_image) : asset('image/smphone.png') }}"
-                                         class="rounded-circle me-2"
-                                         style="width: 40px; height: 40px; object-fit: cover;"
-                                         alt="Profile Picture">
+                                    <img src="{{ Auth::user() && Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('image/smphone.png') }}"
+                                        class="rounded-circle me-2"
+                                        style="width: 40px; height: 40px; object-fit: cover;" alt="Profile Picture">
                                     <div>
-                                        <h6 class="mb-0 fw-bold">{{ Auth::check() ? Auth::user()->name : 'Guest' }}</h6>
-                                        <small class="text-muted">{{ Auth::check() ? Auth::user()->email : '' }}</small>
+                                        <h6 class="mb-0 fw-bold">{{ Auth::check() ? Auth::user()->name : 'Guest' }}
+                                        </h6>
+                                        <small
+                                            class="text-muted">{{ Auth::check() ? Auth::user()->email : '' }}</small>
                                     </div>
                                 </div>
                             </li>
                             <li><a class="dropdown-item py-2" href="{{ route('checkout.history') }}">
-                                <i class="fa-solid fa-box me-2 text-dark"></i>Order History
-                            </a></li>
-                            <li><a class="dropdown-item py-2" href="#" data-bs-toggle="modal" data-bs-target="#profileModal">
-                                <i class="fa-solid fa-gear me-2 text-dark"></i>My Profile
-                            </a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item py-2 text-danger" href="{{ route('login')}}">
-                                <i class="fa-solid fa-sign-out-alt me-2"></i>Logout
-                            </a></li>
+                                    <i class="fa-solid fa-box me-2 text-dark"></i>Order History
+                                </a></li>
+                            <li><a class="dropdown-item py-2" href="#" data-bs-toggle="modal"
+                                    data-bs-target="#profileModal">
+                                    <i class="fa-solid fa-gear me-2 text-dark"></i>My Profile
+                                </a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item py-2 text-danger" href="{{ route('login') }}">
+                                    <i class="fa-solid fa-sign-out-alt me-2"></i>Logout
+                                </a></li>
                         </ul>
                     </li>
                 </ul>
@@ -130,28 +140,30 @@
     <!-- Cart Sidebar -->
     <div class="cart-backdrop" id="cartBackdrop"></div>
     <div class="cart" id="cartSidebar">
-    <i class="fa-solid fa-xmark" id="close-card"></i>
-    <div class="cart-content"></div>
-    <div class="total">
-        <div class="total-text">Total</div>
-        <div class="total-price">0.00</div>
-    </div>
-    <div>
-      <form id="checkoutRedirectForm" method="POST" action="{{ route('checkout.show') }}">
-    @csrf
-    <input type="hidden" name="cart_data" id="checkoutCartData">
-    <input type="hidden" name="user_id" id="checkoutUserId" value="{{ Auth::check() ? Auth::user()->id : '' }}">
-    @if (!Auth::check())
-        <input type="hidden" name="is_guest" value="1">
-    @endif
+        <i class="fa-solid fa-xmark" id="close-card"></i>
+        <div class="cart-content"></div>
+        <div class="total">
+            <div class="total-text">Total</div>
+            <div class="total-price">0.00</div>
+        </div>
+        <div>
+            <form id="checkoutRedirectForm" method="POST" action="{{ route('checkout.show') }}">
+                @csrf
+                <input type="hidden" name="cart_data" id="checkoutCartData">
+                <input type="hidden" name="user_id" id="checkoutUserId"
+                    value="{{ Auth::check() ? Auth::user()->id : '' }}">
+                @if (!Auth::check())
+                    <input type="hidden" name="is_guest" value="1">
+                @endif
 
-    <button type="button" class="btn mt-4 w-100" style="background-color: black; color:white;" onclick="submitCheckoutForm()">
-        Checkout
-    </button>
-</form>
+                <button type="button" class="btn mt-4 w-100" style="background-color: black; color:white;"
+                    onclick="submitCheckoutForm()">
+                    Checkout
+                </button>
+            </form>
 
+        </div>
     </div>
-</div>
 
     <div class="modal" id="wishlistModal" aria-labelledby="wishlistModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -170,13 +182,14 @@
     </div>
 
     <!-- My Profile Modal -->
-    <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true"> 
+    <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
                 <div class="modal-header align-items-center">
                     <div class="d-flex align-items-center">
-                        <img src="{{ (Auth::user() && Auth::user()->profile_image) ? asset('storage/' . Auth::user()->profile_image) : asset('image/smphone.png') }}" alt="User Photo" class="rounded-circle me-3"
-                            width="35" height="35">
+                        <img src="{{ Auth::user() && Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('image/smphone.png') }}"
+                            alt="User Photo" class="rounded-circle me-3" width="35" height="35">
                         <h5 class="modal-title mb-0" id="profileModalLabel">
                             Hello, {{ Auth::check() ? Auth::user()->name : 'Guest' }}
                         </h5>
@@ -205,38 +218,47 @@
                         <div class="col-md-9">
                             <div id="profileContent">
                                 <!-- Success Alert -->
-                                <div id="successMessage" class="alert alert-success alert-dismissible fade show d-none" role="alert">
+                                <div id="successMessage"
+                                    class="alert alert-success alert-dismissible fade show d-none" role="alert">
                                     <strong>Success!</strong> Changes saved successfully.
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                        aria-label="Close"></button>
                                 </div>
 
-                                <div id="errorMessage" class="alert alert-danger alert-dismissible fade show d-none" role="alert">
+                                <div id="errorMessage" class="alert alert-danger alert-dismissible fade show d-none"
+                                    role="alert">
                                     <strong>Error!</strong> Please fill in all required fields.
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                        aria-label="Close"></button>
                                 </div>
 
                                 <!-- Edit Profile Section -->
                                 <div id="editProfileContent">
-                                    <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
+                                    <form action="{{ route('profile.update') }}" method="POST"
+                                        enctype="multipart/form-data">
                                         @csrf
                                         <div class="text-center mb-4">
-                                            <img src="{{ (Auth::user() && Auth::user()->profile_image) ? asset('storage/' . Auth::user()->profile_image) : asset('image/smphone.png') }}"
-                                                 class="rounded-circle mb-2"
-                                                 width="120" height="120" alt="Profile Picture">
-                                            <input type="file" name="profile_image" class="form-control mt-2" accept="image/*">
+                                            <img src="{{ Auth::user() && Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('image/smphone.png') }}"
+                                                class="rounded-circle mb-2" width="120" height="120"
+                                                alt="Profile Picture">
+                                            <input type="file" name="profile_image" class="form-control mt-2"
+                                                accept="image/*">
                                         </div>
 
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">Full Name</label>
-                                            <input type="text" name="name" class="form-control" value="{{ Auth::user()->name ?? 'Guest'}}" required>
+                                            <input type="text" name="name" class="form-control"
+                                                value="{{ Auth::user()->name ?? 'Guest' }}" required>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">Phone Number</label>
-                                            <input type="text" name="phone_number" class="form-control" value="{{ Auth::user()->phone_number ?? ''}}">
+                                            <input type="text" name="phone_number" class="form-control"
+                                                value="{{ Auth::user()->phone_number ?? '' }}">
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">Email</label>
-                                            <input type="email" name="email" class="form-control" value="{{ Auth::user()->email ?? ''}}" required>
+                                            <input type="email" name="email" class="form-control"
+                                                value="{{ Auth::user()->email ?? '' }}" required>
                                         </div>
 
                                         <button type="submit" class="btn btn-dark w-100">Save Changes</button>
@@ -249,17 +271,23 @@
                                         @csrf
                                         <div class="mb-3">
                                             <label for="current_password" class="form-label">Current Password</label>
-                                            <input type="password" class="form-control" id="current_password" name="current_password" required>
+                                            <input type="password" class="form-control" id="current_password"
+                                                name="current_password" required>
                                             <div class="invalid-feedback">Please enter your current password.</div>
                                         </div>
                                         <div class="mb-3">
                                             <label for="new_password" class="form-label">New Password</label>
-                                            <input type="password" class="form-control" id="new_password" name="new_password" required minlength="8">
-                                            <div class="invalid-feedback">Password must be at least 8 characters long.</div>
+                                            <input type="password" class="form-control" id="new_password"
+                                                name="new_password" required minlength="8">
+                                            <div class="invalid-feedback">Password must be at least 8 characters long.
+                                            </div>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="new_password_confirmation" class="form-label">Confirm New Password</label>
-                                            <input type="password" class="form-control" id="new_password_confirmation" name="new_password_confirmation" required>
+                                            <label for="new_password_confirmation" class="form-label">Confirm New
+                                                Password</label>
+                                            <input type="password" class="form-control"
+                                                id="new_password_confirmation" name="new_password_confirmation"
+                                                required>
                                             <div class="invalid-feedback">Passwords do not match.</div>
                                         </div>
                                         <div id="passwordAlert" class="alert" style="display: none;"></div>
@@ -277,19 +305,23 @@
                                         @csrf
                                         <div class="mb-3">
                                             <label class="form-label">Street Address Line 1</label>
-                                            <input type="text" name="address_line1" class="form-control" value="{{ Auth::user()->address_line1 ?? ''}}" required>
+                                            <input type="text" name="address_line1" class="form-control"
+                                                value="{{ Auth::user()->address_line1 ?? '' }}" required>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Street Address Line 2</label>
-                                            <input type="text" name="address_line2" class="form-control" value="{{ Auth::user()->address_line2 ?? ''}}">
+                                            <input type="text" name="address_line2" class="form-control"
+                                                value="{{ Auth::user()->address_line2 ?? '' }}">
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">City</label>
-                                            <input type="text" name="city" class="form-control" value="{{ Auth::user()->city ?? ''}}" required>
+                                            <input type="text" name="city" class="form-control"
+                                                value="{{ Auth::user()->city ?? '' }}" required>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">State/Province</label>
-                                            <input type="text" name="state" class="form-control" value="{{ Auth::user()->state ?? ''}}" required>
+                                            <input type="text" name="state" class="form-control"
+                                                value="{{ Auth::user()->state ?? '' }}" required>
                                         </div>
                                         <button type="submit" class="btn btn-dark w-100">Save Address</button>
                                     </form>
@@ -321,7 +353,8 @@
                     <h5 class="fw-bold py-2" style="color:#70000E">Category</h5>
                     <ul class="list-unstyled">
                         <li class="py-2"><a href="/product" class="text-decoration-none">Smartphones</a></li>
-                        <li class="py-2"><a href="/product_acessory" class="text-decoration-none">Accessories</a></li>
+                        <li class="py-2"><a href="/product_acessory" class="text-decoration-none">Accessories</a>
+                        </li>
                     </ul>
                 </div>
                 <!-- Quick Links Column -->
@@ -355,11 +388,11 @@
                 <div class="col-md-2 my-3">
                     <h5 class="fw-bold py-2" style="color:#70000E">Follow Us</h5>
                     <ul class="list-unstyled">
-                       <li class="py-2">
+                        <li class="py-2">
                             <a href="https://www.facebook.com/TayMeng13?mibextid=wwXIfr" class="text-decoration-none">
                                 <i class="fa-brands fa-facebook"></i> Facebook
                             </a>
-                            </li>
+                        </li>
 
                         <li class="py-2"><a href="#" class="text-decoration-none"><i
                                     class="fa-solid fa-globe"></i> Taymeng.com</a></li>
@@ -386,7 +419,7 @@
     <script>
         window.isAuthenticated = {{ Auth::check() ? 'true' : 'false' }};
     </script>
-</script>
+    </script>
 
 </body>
 

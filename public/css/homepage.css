@@ -398,3 +398,24 @@ li a{
     transform: translateY(0);
 }
 
+/* Sidebar active state */
+#profileModal .list-group-item.active {
+    background-color: #000 !important; /* Black background */
+    color: #fff !important;           /* White text */
+    border-color: #000 !important;    /* Match border */
+}
+
+/* Ensure icon color also turns white */
+#profileModal .list-group-item.active i {
+    color: #fff !important;
+}
+
+#profileModal .content-section,
+#profileModal #editProfileContent,
+#profileModal #changePasswordContent,
+#profileModal #addressContent {
+    height: 500px;   /* exact height */
+    width: 100%;     
+}
+
+
