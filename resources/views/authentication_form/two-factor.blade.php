@@ -5,7 +5,7 @@
 @section('content')
     <div class="w-100">
         <div class="p-4 p-md-5">
-            <h2 class="text-center mb-3 fw-bold">Two-Factor Verification</h2>
+            <h2 class="text-center mb-3 fw-bold">Verification</h2>
             <p class="text-center text-muted mb-4">Enter the 6-digit code sent to your email or phone</p>
 
             @if ($errors->any())
@@ -44,7 +44,7 @@
                 </div>
 
                 <div class="d-grid mt-4">
-                    <button type="submit" class="btn btn-primary fw-bold">Verify</button>
+                    <button type="submit" class="btn btn-dark fw-bold">Verify</button>
                 </div>
             </form>
         </div>

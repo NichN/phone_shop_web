@@ -29,11 +29,11 @@ class productAdminController extends Controller
             return DataTables::of($data)
                 ->addColumn('action', function ($row) {
                     $btn = '<div>
-                                <button class="btn btn-warning btn-sm editProduct" data-id="' . $row->id . '" data-toggle="tooltip" title="Edit">
-                                    Edit
+                                <button class="btn btn-light btn-sm editProduct" data-id="' . $row->id . '" data-toggle="tooltip" title="Edit">
+                                    <i class="fas fa-edit" style="color: #ffc107;"></i>
                                 </button>
-                                <button class="btn btn-danger btn-sm deleteProduct" data-id="' . $row->id . '" data-toggle="tooltip" title="Delete">
-                                    Delete
+                                <button class="btn btn-light btn-sm deleteProduct" data-id="' . $row->id . '" data-toggle="tooltip" title="Delete">
+                                    <i class="fas fa-trash-alt" style="color: #dc3545;"></i>
                                 </button>
                             </div>';
                     return $btn;
@@ -69,7 +69,8 @@ class productAdminController extends Controller
     public function updateproduct(Request $request, $id){
         $product = Product::findOrFail($id);
         $product->update([
-            'pro_id' => $request->name,
+            'pro_id' => $request->id,
+            'name' => $request->name,
             'color_id'=>$request->description,
             'brand_id'=>$request->brand_id,
             'cat_id'=>$request->cat_id

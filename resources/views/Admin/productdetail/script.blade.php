@@ -22,6 +22,19 @@ $(document).ready(function() {
                     return meta.row + 1;
                 }
             },
+          { 
+                data: 'images', 
+                name: 'images',
+                render: function(data, type, row) {
+                    let decodedData = decodeHTML(data);
+                    let images = JSON.parse(decodedData);
+                    if (images && images.length > 0) {
+                        return `<img src="/storage/${images[0]}" alt="${row.product_name}" style="width: 50px; height: 50px; object-fit: cover;">`;
+                    } else {
+                        return '<img src="/default-placeholder.jpg" alt="No Image" style="width: 50px; height: 50px; object-fit: cover;">';
+                    }
+                }
+            },
             { data: 'product_name', name: 'product_name' },
             { data: 'brand', name: 'brand' },
             { data: 'category', name: 'category' },
@@ -39,11 +52,37 @@ $(document).ready(function() {
             },
             { data: 'size',name:'size'},
             { data: 'stock', name: 'stock' },
-            { data: 'price', name: 'price' },
+            { 
+                data: 'price', 
+                name: 'price',
+                render: function(data, type, row) {
+                    return '$' + parseFloat(data).toFixed(2);
+                }
+            },
             { data: 'warranty', name:'warranty'},
+            {
+                data: 'is_featured',
+                name: 'is_featured',
+                render: function(data, type, row) {
+                    // Check if 'is_featured' is true, and set checked attribute accordingly
+                    var checked = data ? 'checked' : '';
+                    return `
+                        <label class="switch">
+                            <input type="checkbox" class="toggle-featured" data-id="${row.id}" ${checked}>
+                            <span class="slider round"></span>
+                        </label>
+                    `;
+                }
+            },
+
             { data: 'action', orderable: false, searchable: false }
         ]
     });
+            function decodeHTML(html) {
+            var txt = document.createElement("textarea");
+            txt.innerHTML = html;
+            return txt.value;
+        }
     $('#ProName').select2({
         placeholder: "Search Product Name...",
         allowClear: true,
@@ -92,7 +131,7 @@ $(document).ready(function() {
             $('#edit_color_id').val(data.color_id);
             $('#edit_size_id').val(data.size_id);
             $('#edit_warranty').val(data.warranty);
-            // $('#edit_images').val(data.images);
+            // $('#edit_images').val(JSON.stringify(data.images));
 
             $('#editModal').modal('show');
             $('#editPr').data('id', data.id);
@@ -166,41 +205,43 @@ $(document).ready(function() {
             }
         });
     });
-    $('#edit_form').on('submit', function(e) {
-        e.preventDefault();
-        let id = $('#productId').val();
-        let url = "{{ route('pr_detail.update', ':id') }}".replace(':id', id);
-        let formData = new FormData(this);
-        formData.append('_method', 'PUT');
-        formData.append('_token', '{{ csrf_token() }}');
-        $.ajax({
-            url: url,
-            type: 'POST',
-            data: formData,
-            contentType: false,
-            processData: false,
-            success: function(response) {
-                if (response.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success!',
-                        text: 'Product updated successfully!',
-                        willClose: () => {
-                            table.ajax.reload(null, false);
-                            $('#editModal').modal('hide');
-                        }
-                    });
-                }
-            },
-            error: function(xhr) {
+    $('#editPr').on('submit', function(e) {
+    e.preventDefault();
+    let id = $('#pro_dt').val();
+    let url = "{{ route('pr_detail.update', ':id') }}".replace(':id', id);
+    let formData = new FormData(this);
+
+    formData.append('_token', '{{ csrf_token() }}');
+
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function(response) {
+            if (response.success) {
                 Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: xhr.responseJSON?.message || 'An error occurred'
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'Product updated successfully!',
+                    willClose: () => {
+                        table.ajax.reload(null, false);
+                        $('#editModal').modal('hide');
+                    }
                 });
             }
-        });
+        },
+        error: function(xhr) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: xhr.responseJSON?.message || 'An error occurred'
+            });
+        }
     });
+});
+
 });
 function changeprduct(selectElement) {
     let productID = $(selectElement).val();
@@ -253,6 +294,7 @@ function loadProduct_edit(searchTerm = '') {
             // Basic Details
             $('#product_name').text(response.product_name);
             $('#viewModalLabel').text(response.product_name);
+            $('#warrantyOptions').text(response.warranty);
             $('#stock_qty').text(response.stock);
             $('#product_price').text(`$${response.price}`);
 
@@ -270,9 +312,7 @@ function loadProduct_edit(searchTerm = '') {
                 `;
                 $('#colorOptions').append(input + label);
             }
-
-
-            // Size Display
+            
             $('#sizeOptions').empty();
             if (response.size) {
                 const size = response.size;
@@ -319,6 +359,36 @@ function changeImage(imgElement) {
     $('.thumbnail-img').removeClass('selected-thumbnail');
     $(imgElement).addClass('selected-thumbnail');
 }
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
 
-    
+$(document).on('change', '.toggle-featured', function() {
+    var isActive = $(this).prop('checked') ? 1 : 0;
+    var productId = $(this).data('id');
+    console.log('Product ID:', productId);
+    console.log('CSRF Token:', $('meta[name="csrf-token"]').attr('content'));
+
+    $.ajax({
+        url: `/update-featured-status/${productId}`,
+        type: 'POST',
+        data: {
+            is_active: isActive
+        },
+        success: function(response) {
+            if (response.success) {
+                alert('Product status updated successfully!');
+            } else {
+                alert('Error updating product status: ' + (response.message || 'Unknown error'));
+            }
+        },
+        error: function(xhr) {
+            console.log('Error Response:', xhr.responseText);
+            alert('An error occurred while updating product status: ' + xhr.status);
+        }
+    });
+});
+
 </script>

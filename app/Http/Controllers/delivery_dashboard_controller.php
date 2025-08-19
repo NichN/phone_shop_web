@@ -15,21 +15,21 @@ class delivery_dashboard_controller extends Controller
    public function index()
    {
         $totalOrder = DB::table('orders')
-            ->where('status', 'paid')
+            ->where('delivery_type', '=','delivery')
             ->count();
 
         $totalCanceled = DB::table('orders')
-            ->where('status', 'cancelled')
+        ->whereRaw("status = 'cancelled' AND delivery_type = 'delivery'")
             ->count();
 
         // Total Processing Orders
         $totalProcessing = DB::table('orders')
-            ->where('status', 'processing')
+            ->whereRaw("status = 'processing' AND delivery_type = 'delivery'")
             ->count();
 
         // Total Completed Orders
         $totalCompleted = DB::table('orders')
-            ->where('status', 'completed')
+             ->whereRaw("status = 'completed' AND delivery_type = 'delivery'")
             ->count();
 
         $total_feeCompleted = DB::table('orders')
@@ -53,6 +53,7 @@ class delivery_dashboard_controller extends Controller
         if ($request->ajax()) {
             $data = DB::table('orders')
             ->where('delivery_type', 'delivery')
+            ->where('status','!=','pending')
             ->get();
                 return DataTables::of($data)
                 ->addColumn('action', function ($row) {
@@ -126,7 +127,6 @@ class delivery_dashboard_controller extends Controller
 
         return view('Admin.delivery.delivery_processing', compact('order', 'orderItems', 'delivery', 'payment'));
     }
-
 public function confirm(Request $request, $id)
 {
     try {

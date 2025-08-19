@@ -24,10 +24,12 @@ class Order extends Model
         'guest_address',
         'phone_guest',
         'guest_eamil',
+        'guest_token',
         'delivery_type',
         'status',
         'code_verify',
-        'rate_id'
+        'rate_id',
+        'img_verify'
     ];
     protected $dates = [
         'created_at',

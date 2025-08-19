@@ -24,7 +24,7 @@
             </p>
         </div>
 
-        <div class="card mb-3 p-3" style="max-width: 1000px;">
+        <div class="card mb-3 p-3">
             <div class="d-flex justify-content-between flex-wrap">
                 <div class="col-md-4 col-sm-6 mb-3">
                 <h6><strong>Customer Information</strong></h6>

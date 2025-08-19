@@ -22,4 +22,11 @@ class CustomerController extends Controller
     {
         return view('customer.contact');
     }
+    public function privacy()
+    {
+        return view('customer.privacy');
+    }
+    public function terms(){
+        return view('customer.terms');
+    }
 }

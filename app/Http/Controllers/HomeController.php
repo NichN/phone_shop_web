@@ -112,6 +112,23 @@ public function search(Request $request)
 
     return view('customer.homepage2', compact('products', 'query'));
 }
+public function getOptions($productId)
+{
+    $productItem = DB::table('product_item')
+        ->where('pro_id', $productId)
+        ->first();
 
+    if (!$productItem) {
+        return response()->json(['message' => 'Product not found'], 404);
+    }
+    $color = DB::table('color')
+        ->where('code', $productItem->color_code)
+        ->first();
+
+    return response()->json([
+        'sizes' => [$productItem->size],
+        'colors' => [ $color->name],
+    ]);
+}
 }
 

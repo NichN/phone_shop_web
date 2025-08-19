@@ -17,11 +17,11 @@ class sizeController extends Controller
             ->addColumn('action', function ($row) {
                 return '
                     <div>
-                        <button class="btn btn-primary btn-sm editsize" data-id="' . $row->id . '" title="Edit">
-                            Edit
+                        <button class="btn btn-warning btn-sm editsize" data-id="' . $row->id . '" title="Edit" style="background-color: #fffde7; border: 1px solid #ffe082; color: #fbc02d; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;">
+                            <i class="fas fa-edit"></i>
                         </button>
-                        <button class="btn btn-danger btn-sm deletesize" data-id="' . $row->id . '" title="Delete">
-                            Delete
+                        <button class="btn btn-sm deletesize" data-id="' . $row->id . '" title="Delete" style="background-color: #ffebee; border: 1px solid #ef9a9a; color: #c62828; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;">
+                            <i class="fas fa-trash-alt"></i>
                         </button>
                     </div>';
             })

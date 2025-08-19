@@ -20,15 +20,15 @@
                         <table class="table table-bordered data-table text-center">
                             <thead>
                                 <tr>
-                                    <th>Date</th>
-                                    <th>Reference No</th>
-                                    <th>Supplier</th>
-                                    <th>Product</th>
-                                    <th>Qty</th>
-                                    <th>Total</th>
-                                    <th>Paid</th>
-                                    <th>Balance</th>
-                                    <th>Payment Status</th>
+                                    <th style="background-color: #2e3b56 !important; color: white !important;">Date</th>
+                                    <th style="background-color: #2e3b56 !important; color: white !important;">Reference No</th>
+                                    <th style="background-color: #2e3b56 !important; color: white !important;">Supplier</th>
+                                    <th style="background-color: #2e3b56 !important; color: white !important;">Product</th>
+                                    <th style="background-color: #2e3b56 !important; color: white !important;">Qty</th>
+                                    <th style="background-color: #2e3b56 !important; color: white !important;">Total</th>
+                                    <th style="background-color: #2e3b56 !important; color: white !important;">Paid</th>
+                                    <th style="background-color: #2e3b56 !important; color: white !important;">Balance</th>
+                                    <th style="background-color: #2e3b56 !important; color: white !important;">Payment Status</th>
                                 </tr>
                             </thead>
                             <tfoot>

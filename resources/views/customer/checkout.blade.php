@@ -112,12 +112,12 @@
                         <span><strong>${{ $subtotal ?? '0.00' }}</strong></span>
                     </div>
                     <div class="d-flex justify-content-between">
-                        <span class="text-success"><b>Delivery fee</b></span>
-                        <span id="deliveryFeeDisplay" class="text-success"><strong>${{ $deliveryFee ?? '0.00' }}</strong></span>
+                        <span class="text-dark"><b>Delivery fee</b></span>
+                        <span id="deliveryFeeDisplay" class="text-dark"><strong>${{ $deliveryFee ?? '0.00' }}</strong></span>
                     </div>
                     <hr>
                     <div class="d-flex justify-content-between fw-bold mt-3">
-                        <span class="text-danger">Total Amount</span>
+                        <span class="text-dark">Total Amount</span>
                         <span id="totalAmountDisplay" style="color: red">${{ $totalAmount ?? '0.00' }}</span>
                     </div>
 

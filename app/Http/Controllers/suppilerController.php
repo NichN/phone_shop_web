@@ -16,10 +16,10 @@ class suppilerController extends Controller
         $data = suppiler:: select(['id', 'name','address','phone','email']);
         return DataTables::of($data)
         ->addColumn('action', function($row){
-            return ' <button class="btn btn-primary btn-sm editSupplier" data-id="' . $row->id . '" data-toggle="tooltip" title="Edit">
+            return ' <button class="btn btn-sm editSupplier" data-id="' . $row->id . '" data-toggle="tooltip" title="Edit" style="background-color: #fffde7; border: 1px solid #ffe082; color: #fbc02d; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;">
                         Edit
                     </button>
-                    <button data-id="'.$row->id.'" class="btn btn-sm btn-danger deleteSupplier" data-toggle="tooltip" title="Delete">Delete</button>';
+                    <button data-id="'.$row->id.'" class="btn btn-sm deleteSupplier" data-toggle="tooltip" title="Delete" style="background-color: #ffebee; border: 1px solid #ef9a9a; color: #c62828; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;">Delete</button>';
         })
         ->rawColumns(['action'])
         ->make(true);

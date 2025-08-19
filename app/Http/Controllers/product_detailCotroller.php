@@ -26,26 +26,30 @@ use App\Models\productdetail;
                     'category.name as category'
                 )
                 ->get();
+               
                 return DataTables::of($data)
                     ->addColumn('action', function ($row) {
                         $btn = '
                         <div class="btn-group" role="group">
                             <button 
-                                class="btn btn-primary btn-sm viewProduct" 
+                                style="background-color: #e3f2fd; border: 1px solid #90caf9; color: #1565c0; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;" 
+                                class="viewProduct" 
                                 data-id="' . $row->id . '" 
                                 data-bs-toggle="tooltip" 
                                 title="View">
                                 <i class="fa fa-eye"></i>
                             </button>
                             <button 
-                                class="btn btn-warning btn-sm editProduct_dt" 
+                                style="background-color: #fffde7; border: 1px solid #ffe082; color: #fbc02d; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;" 
+                                class="editProduct_dt" 
                                 data-id="' . $row->id . '" 
                                 data-bs-toggle="tooltip" 
                                 title="Edit">
                                 <i class="fa fa-pencil"></i>
                             </button>
                             <button 
-                                class="btn btn-danger btn-sm delete" 
+                                style="background-color: #ffebee; border: 1px solid #ef9a9a; color: #c62828; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;" 
+                                class="delete" 
                                 data-id="' . $row->id . '" 
                                 data-bs-toggle="tooltip" 
                                 title="Delete">
@@ -66,8 +70,8 @@ use App\Models\productdetail;
         return view('Admin.productdetail.index',compact('size', 'color','product'));
     }
 
-      public function store(Request $request)
-    {
+     public function store(Request $request)
+{
     try {
         $validated = $request->validate([
             'cost_price'     => 'required|numeric',
@@ -76,8 +80,9 @@ use App\Models\productdetail;
             'size'           => 'required|exists:size,id',
             'color'          => 'required|exists:color,id',
             'images.*'       => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            // 'warranty'       => ''
+            'is_featured'     => 'boolean',  // Add validation for the is_featured field
         ]);
+
         $imagePaths = [];
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
@@ -85,23 +90,25 @@ use App\Models\productdetail;
                 $imagePaths[] = str_replace('public/', '', $path);
             }
         }
+
         $product = Product::find($validated['product_name']);
-        $color   = Color::find($validated['color']);
-        $size    = Size::find($validated['size']);
+        $color = Color::find($validated['color']);
+        $size = Size::find($validated['size']);
 
         $data = [
-            'pro_id'       => $product->id,
-            'cost_price'   => $validated['cost_price'],
-            'price'        => $validated['price'],
-            'size_id'      => $size->id,
-            'color_id'     => $color->id,
-            'stock'        => $request->stock ?? 0,
-            'product_name' => $product->name,
-            'color_code'   => $color->code,
-            'size'         => $size->size,
-            'images'       => $imagePaths,
-            'type'         => $request->type,
-            'warranty'     => $request->warranty
+            'pro_id'        => $product->id,
+            'cost_price'    => $validated['cost_price'],
+            'price'         => $validated['price'],
+            'size_id'       => $size->id,
+            'color_id'      => $color->id,
+            'stock'         => $request->stock ?? 0,
+            'product_name'  => $product->name,
+            'color_code'    => $color->code,
+            'size'          => $size->size,
+            'images'        => $imagePaths,
+            'type'          => $request->type,
+            'warranty'      => $request->warranty,
+            'is_featured'   => $request->is_active ?? false,  // Set the default value if not provided
         ];
 
         $productDetail = ProductDetail::create($data);
@@ -111,7 +118,6 @@ use App\Models\productdetail;
             'message' => 'Product stored successfully!',
             'data' => $productDetail
         ]);
-
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -119,6 +125,7 @@ use App\Models\productdetail;
         ], 500);
     }
 }
+
 
     public function addproduct()
     {
@@ -143,17 +150,9 @@ use App\Models\productdetail;
     }
     public function update(Request $request, $id)
 {
-    $productz_dt = productdetail::findOrFail($id);
-
-    // Validate if new images are uploaded
-    $validated = $request->validate([
-        'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        // other validations...
-    ]);
-
-    $imagePaths = $productz_dt->images ?? [];
+    $productz_dt = ProductDetail::findOrFail($id);
+    $imagePaths = [];
     if ($request->hasFile('images')) {
-        $imagePaths = [];
         foreach ($request->file('images') as $image) {
             $path = $image->store('public/product_images');
             $imagePaths[] = str_replace('public/', '', $path);
@@ -162,15 +161,16 @@ use App\Models\productdetail;
 
     $productz_dt->update([
         'product_name' => $request->name,
-        'color_id' => $request->color_id,
-        'size_id' => $request->size_id,
-        'price' => $request->price,
-        'brand_id' => $request->brand_id,
-        'cost_price' => $request->cost_price,
-        'cat_id' => $request->cat_id,
-        'type' => $request->type,
-        'images' => $imagePaths,
-        'warranty' => $request->warranty,
+        'color_id'     => $request->color_id,
+        'size_id'      => $request->size_id,
+        'price'        => $request->price,
+        'brand_id'     => $request->brand_id,
+        'cost_price'   => $request->cost_price,
+        'cat_id'       => $request->cat_id,
+        'type'         => $request->type,
+        'images'       => $imagePaths,
+        'warranty'     => $request->warranty,
+        'is_featured'   => $request->is_featured ?? false,  // Update the is_featured field
     ]);
 
     return response()->json(['success' => true]);
@@ -183,9 +183,11 @@ use App\Models\productdetail;
     }
     public function get_pr_item($id){
         $product_item = productdetail::findOrFail($id);
+        $color = Color::find($product_item->color_id);
         return response()->json([
-        'cost_price' => $product_item->cost_price,
-         ]);
+            'cost_price' => $product_item->cost_price,
+            'color_name' => $color ? $color->name : null,
+        ]);
     }
    public function show_product($pro_id)
 {
@@ -201,10 +203,24 @@ use App\Models\productdetail;
         'stock'        => $product_item->stock,
         'price'        => $product_item->price,
         'images'       => $product_item->images ?? [],
+        'type'         => $product_item->type,
         'warranty'     =>$product_item->warranty,
     ]);
 }
+public function updateFeaturedStatus(Request $request, $id)
+{
+    try {
+        $validated = $request->validate([
+            'is_active' => 'required|boolean'
+        ]);
+        $product = ProductDetail::findOrFail($id);
+        $product->is_featured = $validated['is_active']; // Use correct field
+        $product->save();
 
-
+        return response()->json(['success' => true]);
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+    }
+}
 
 }

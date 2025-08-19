@@ -44,7 +44,7 @@
 
                 <!-- Login Button -->
                 <div class="d-grid mt-4">
-                    <button type="submit" class="btn btn-primary fw-bold">Login</button>
+                    <button type="submit" class="btn btn-dark fw-bold">Login</button>
                 </div>
 
                 <!-- Links -->

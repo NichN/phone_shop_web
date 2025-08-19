@@ -17,12 +17,12 @@ class customer_admincontroller extends Controller
             return DataTables::of($customer)
             ->addColumn('action', function ($row) {
                 $btn = '<div>
-                            <button class="btn btn-primary btn-sm editCate" data-id="' . $row->id . '" data-toggle="tooltip" title="Edit">
-                                Edit
+                            <div>
+                            <button class="btn btn-sm editCate" data-id="'. $row->id .'" data-toggle="tooltip" title="Edit" style="background-color: #fffde7; border: 1px solid #ffe082; color: #fbc02d; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;">
+                                <i class="fas fa-edit"></i>
                             </button>
-                            <button class="btn btn-danger btn-sm deleteCate" data-id="' . $row->id . '" data-toggle="tooltip" title="Delete">
-                                Delete
-                            </button>
+                            <button data-id="'.$row->id.'" class="btn btn-sm deleteCate" style="background-color: #ffebee; border: 1px solid #ef9a9a; color: #c62828; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;"><i class="fas fa-trash-alt"></i></button>
+                        </div>
                         </div>';
                 return $btn;
             })

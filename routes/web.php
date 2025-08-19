@@ -53,7 +53,7 @@ Route::get('/product/{id}', [HomeController::class, 'show'])->name('product.show
 
 Route::get('/aboutus', [CustomerController::class, 'aboutUs'])->name('aboutus');
 
-
+// Route::get('/policy')
 Route::get('/contactus', [CustomerController::class, 'contact'])->name('contact_us');
 // by nich
 Route::get('/product', [ProductController::class, 'index'])->name('product');
@@ -131,6 +131,8 @@ Route::get('/productdetail',function(){
 })->name('productdetail');
 
 Route::get('/faq', [CustomerController::class, 'faq'])->name('faq');
+Route::get('/Privacy',[CustomerController::class,'privacy'])->name('privacy');
+Route::get('/terms',[CustomerController::class,'terms'])->name('terms');
 
 
 //Dashboard
@@ -230,6 +232,8 @@ Route::prefix('product_detail')->name('pr_detail.')->group(function(){
     Route::delete('/delete/{id}',[product_detailCotroller::class,'delete'])->name('delete');
     Route::get('/show_product/{pro_id}',[product_detailCotroller::class,'show_product'])->name('product_items');
 });
+Route::post('/update-featured-status/{id}', [product_detailCotroller::class, 'updateFeaturedStatus']);
+
 
 Route::prefix('delivery')->name('delivery.')->group(function(){
     Route::get('/',[delivery_feeController::class,'index'])->name('index');
@@ -251,6 +255,7 @@ Route::prefix('purchase')->name('purchase.')->group(function(){
     Route::get('/showinvoice/{id}',[purchaseController::class,'showinvoice'])->name('invoiceshow');
     Route::delete('/deletepurchase/{id}',[purchaseController::class,'delete_purchases'])->name('delete_purchases');
     Route::get('/addpayment/{id}',[purchaseController::class,'addpayment'])->name('addpayment');
+    Route::get('/purchase_invoice/{id}',[purchaseController::class,'purchase_invoice'])->name('purchase_invoice');
 });
 Route::prefix('user')->name('user.')->group(function(){
     Route::get('/',[Admin_user_controller::class,'index'])->name('index');
@@ -260,13 +265,19 @@ Route::prefix('report')->name('report.')->group(function(){
     Route::get('/',[reportController::class,'product_report'])->name('product_report');
     Route::get('/purchase',[reportController::class,'purchase_report'])->name('purchase_report');
     Route::get('/sale',[reportController::class,'daily_sale'])->name('daily_sale');
+    Route::get('/supplier',[reportController::class,'supplier'])->name('supplier');
+    Route::get('/supplier/{id}',[reportController::class,'supplier_view'])->name('supplier_view');
+    Route::get('/sale_completed',[reportController::class,'sale_completed'])->name('sale_completed');
+    Route::get('/profit',[reportController::class,'profit'])->name('profit');
+    Route::get('/product-chart',[reportController::class,'product_chart'])->name('product_chart');
+    Route::get('/income-expense',[reportController::class,'income_expense'])->name('income_expense');
     // Route::get('/')
     // Route::get('/')
 });
 
 //homepage
 Route::get('/homepage', [HomeController::class, 'index'])->name('homepage');
-Route::get('/product-items/{productId}', [HomeController::class, 'getProductOptions']);
+Route::get('/product-items/{productId}', [HomeController::class, 'getOptions']);
 Route::get('/search', [HomeController::class, 'search'])->name('search');
 
 Route::middleware('auth')->group(function () {
@@ -285,7 +296,7 @@ Route::prefix('faq')->name('faq.')->group(function(){
 Route::prefix('checkout')->name('checkout.')->group(function(){
     Route::post('/', [CheckoutController::class, 'showCheckout'])->name('show');
     Route::post('/store',[CheckoutController::class,'storeCheckout'])->name('store');
-    Route::get('/payment', [CheckoutController::class, 'processPayment'])->name('payment');
+    Route::get('/payment/{orderId}', [CheckoutController::class, 'processPayment'])->name('payment');
     Route::post('/payment/store', [CheckoutController::class, 'storePayment'])->name('payment_store');
     Route::get('/history', [CheckoutController::class, 'orderHistory'])->name('history');
     Route::get('/history/{id}', [CheckoutController::class, 'orderDetails'])->name('history_details');
@@ -295,12 +306,11 @@ Route::prefix('checkout')->name('checkout.')->group(function(){
     Route::post('/{order}/accept', [CheckoutController::class, 'acceptOrder'])->name('accept');
     Route::post('/{order}/decline', [CheckoutController::class, 'declineOrder'])->name('decline');
     Route::post('/verify-code', [CheckoutController::class, 'verifyCode'])->name('verify');
-
 });
-Route::prefix('order_dashboard')->name('order_dashboard.')->group(function () {
+Route::prefix('order_dashboard')->name('order_dashboard.')  ->middleware('auth')->group(function () {
     Route::get('/', [Order_dashboard_controller::class, 'index'])->name('index');
     Route::get('/data', [Order_dashboard_controller::class, 'getData'])->name('data');
-    Route::get('/order_total', [Order_dashboard_controller::class, 'orderTotal'])->name('order_total');
+    Route::get('/order_total/{id}', [Order_dashboard_controller::class, 'order_detail'])->name('order_detail');
 });
 
 Route::prefix('deliveries')->name('delivery_option.')->group(function () {
@@ -315,6 +325,8 @@ Route::prefix('deliveries')->name('delivery_option.')->group(function () {
 
 Route::prefix('pick_up')->name('pick_up.')->group(function (){
     Route::get('/',[pick_upController::class, 'index'])->name('index');
+    Route::post('/finish-order/{id}', [pick_upController::class, 'finish'])->name('finish');
+
 });
 
 Route::prefix('payment')->name('payment.')->group(function () {
@@ -334,8 +346,8 @@ Route::prefix('exchange')->name('exchange.')->group(function(){
 
 
 // Cart by nich
-Route::post('/store-cart', [cartController::class, 'storeCart'])
-    ->middleware('auth')->name('cart.store');
+Route::post('/store-cart', [cartController::class, 'storeCart'])->name('cart.store');
+    // ->middleware('auth')->name('cart.store');
 // Route::get('/',[cartController::class, 'index'])->middleware('auth')->name('cart.index');
 Route::get('/countcart',[cartController::class,'countCart'])->name('cart.number');
 Route::get('/checkcart',[cartController::class,'checkcart'])->name('cart.check');

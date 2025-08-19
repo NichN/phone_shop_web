@@ -17,13 +17,15 @@ class paymentController extends Controller
             ->addColumn('action', function ($row) {
                 return '
                     <div>
-                        <button class="btn btn-primary btn-sm editsize" data-id="' . $row->id . '" title="Edit">
-                            Edit
-                        </button>
-                        <button class="btn btn-danger btn-sm deletesize" data-id="' . $row->id . '" title="Delete">
-                            Delete
-                        </button>
-                    </div>';
+                <div>
+                    <button class="btn btn-outline-warning btn-sm editsize" data-id="' . $row->id . '" title="Edit">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-outline-danger btn-sm deletesize" data-id="' . $row->id . '" title="Delete">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>';
+
             })
             ->rawColumns(['action']) 
             ->make(true);

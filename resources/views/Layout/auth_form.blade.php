@@ -42,7 +42,7 @@
 
         .auth-illustration {
             flex: 1;
-            background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+            background: gray;
             padding: 2rem;
             display: flex;
             flex-direction: column;
@@ -90,7 +90,7 @@
         .carousel-item img {
             border-radius: var(--border-radius);
             object-fit: contain;
-            height: 300px;
+            height: 500px;
         }
 
         .carousel-indicators [data-bs-target] {
@@ -105,7 +105,8 @@
         .carousel-indicators .active {
             background-color: white;
             width: 30px;
-            border-radius: 5px;
+            border-radius: 10px;
+
         }
 
         .auth-form {
@@ -178,7 +179,7 @@
         }
 
         .btn-primary:hover {
-            background-color: #3a56e6;
+            background-color: #1e293b;
             transform: translateY(-2px);
         }
 

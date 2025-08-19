@@ -4,87 +4,105 @@
 
 @section('header')
 <div class="position-relative text-overlay-container">
-    <div class="overlay-text position-absolute top-50 start-0 ms-4 text-secondary">
+    <div class="banner-container">
+        <img src="{{ asset('image/banner2.png') }}" alt="FAQ Banner" class="img-fluid w-100" style="max-height: 300px; object-fit: cover;">
+        <div class="banner-text position-absolute top-50 start-50 translate-middle text-center text-dark">
+            <h4 class="fw-bold">Frequently Asked Questions</h4>
+            <p class="lead">Find answers to common questions about our services</p>
+        </div>
     </div>
 </div>
 @endsection
 
 @section('content')
- {{-- <img src="{{ asset('image/bannerFAQ.png') }}"  alt="FAQ Banner" style="max-height: 400px; object-fit: cover; width:"> --}}
 <div class="container my-5 py-4">
-    <div class="text-center mb-5">
-        <p class="lead"><strong>Find quick answers to common questions below</strong></p>
-        <div class="mt-4">
-            <input type="text" class="form-control rounded-pill w-75 mx-auto shadow-sm" placeholder="Search FAQs...">
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <h3 class="fw-bold mb-4">How can we help you?</h3>
+            {{-- <div class="search-container mx-auto" style="max-width: 600px;">
+                <input type="text" class="form-control rounded-pill shadow-sm px-4 py-3" placeholder="Search FAQs...">
+            </div> --}}
         </div>
     </div>
 
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="accordion shadow-sm" id="faqAccordion">
-                @forelse($faqs as $index => $faq)
-                    <div class="accordion-item border-top mb-3 rounded overflow-hidden">
-                        <h2 class="accordion-header" id="faqHeading{{ $faq->id }}">
-                            <button class="accordion-button collapsed fw-bold py-3" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseFaq{{ $faq->id }}" aria-expanded="false"
-                                    aria-controls="collapseFaq{{ $faq->id }}">
-                                <i class="bi bi-question-circle me-3 text-primary"></i>
-                                {{ $faq->question }}
-                            </button>
-                        </h2>
-                        <div id="collapseFaq{{ $faq->id }}" class="accordion-collapse collapse"
-                             aria-labelledby="faqHeading{{ $faq->id }}" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body bg-light">
-                                {!! nl2br(e($faq->answer)) !!}
-                            </div>
+    <div class="row g-3">
+        @forelse($faqs as $faq)
+            <div class="col-lg-3 col-md-6">
+                <div class="card h-100 border-0 shadow-sm faq-card bg-light">
+                    <div class="card-body p-4">
+                        <div class="icon-container mb-3">
+                            <i class="bi bi-question-circle-fill fs-2" style="color:#a3444f"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">{{ $faq->question }}</h5>
+                        <div class="card-text faq-answer mt-3">
+                            {!! nl2br(e($faq->answer)) !!}
                         </div>
                     </div>
-                @empty
-                    <p class="text-center text-muted">No FAQs available at the moment.</p>
-                @endforelse
-            </div>
-
-            <div class="card mt-5 border-0 shadow-sm">
-                <div class="card-body text-center p-4">
-                    <h3 class="card-title mb-3">Still have questions?</h3>
-                    <p class="card-text mb-4">Our customer service team is happy to help with any other inquiries you may have.</p>
-                    <a href="/contactus" class="btn btn-primary px-4 py-2 rounded-pill">Contact Us</a>
                 </div>
             </div>
-        </div>
+        @empty
+            <div class="col-12">
+                <p class="text-center text-muted">No FAQs available at the moment.</p>
+            </div>
+        @endforelse
     </div>
+
+    <div class="row mt-5">
+    <div class="col-12 d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between bg-light p-4 rounded shadow-sm">
+        <div class="mb-3 mb-md-0 me-md-4">
+            <h5 class="fw-bold">Still have questions?</h5>
+            <p class="fs-6 mb-0">Our customer service team is happy to help with any other inquiries you may have.</p>
+        </div>
+        <a href="/contactus" class="btn px-4 py-2" style="background-color: #d88c95; color:white;">Contact Us</a>
+    </div>
+</div>
+
 </div>
 @endsection
 
 @section('styles')
 <style>
-    .accordion-button {
-        font-size: 1rem;
-        transition: all 0.3s ease;
+    .banner-container {
+        position: relative;
     }
-
-    .accordion-button:not(.collapsed) {
-        background-color: #f8f9fa;
-        color: #0d6efd;
+    
+    .banner-text {
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     }
-
-    .accordion-button:focus {
-        box-shadow: none;
-        border-color: rgba(0,0,0,.125);
+    
+    .faq-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 10px;
     }
-
-    .accordion-body {
-        font-size: 0.95rem;
-        line-height: 1.6;
+    
+    .faq-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
     }
-
+    
+    .icon-container {
+        width: 50px;
+        height: 50px;
+        background-color: rgba(13, 110, 253, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .contact-card {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 15px;
+    }
+    
     .form-control:focus {
         border-color: #86b7fe;
         box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
     }
-
-    .card {
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    
+    .faq-answer {
+        color: #6c757d;
+        line-height: 1.6;
     }
 </style>
 @endsection

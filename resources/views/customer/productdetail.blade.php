@@ -26,7 +26,7 @@
 
             <div class="col-md-6">
                 <div class="d-flex align-items-center justify-content-between mb-4">
-                    <h4 class="mb-0">{{ $product['name'] }}</h4>
+                    <h4 class="mb-0 fw-bold">{{ $product['name'] }}</h4>
                     <h4 id="product-type" style="color: green;">
                         {{ $product['type'] }}<span style="color: red;">*</span>
                     </h4>
@@ -36,12 +36,12 @@
                 </h5>
 
                 <div class="choose-color mb-4">
-                    <h5 class="mb-4 fw-bold">CHOOSE COLOR</h5>
+                    <h5 class="mb-4 fs-6">CHOOSE COLOR</h5>
                     <div class="d-flex gap-3">
                         @foreach ($color_code as $index => $color)
                             @php $colorId = 'color_' . $index; @endphp
                             <input type="radio" class="btn-check" name="color" id="{{ $colorId }}" value="{{ $color }}" autocomplete="off" {{ $index === 0 ? 'checked' : '' }}>
-                            <label class="btn d-flex flex-column align-items-center justify-content-center" for="{{ $colorId }}">
+                            <label class="btn btn-light d-flex flex-column align-items-center justify-content-center" for="{{ $colorId }}">
                                 <span class="rounded-circle d-block" style="width: 20px; height: 20px; background-color: {{ strtolower($color) }};"></span>
                             </label>
                         @endforeach
@@ -49,7 +49,7 @@
                 </div>
 
                 <div class="choose-storage">
-                    <h5 class="mb-4 fw-bold">CHOOSE STORAGE</h5>
+                    <h5 class="mb-4 fs-6">CHOOSE STORAGE</h5>
                     <div class="d-flex gap-3">
                         @foreach ($sizes as $index => $size)
                             <input type="radio" class="btn-check" name="storage" id="storage{{ $index }}" autocomplete="off" value="{{ $size }}" {{ $index === 0 ? 'checked' : '' }}>
@@ -68,7 +68,7 @@
                     </a>
                 </div>
                 <div class="mt-4">
-                    <h5 class="fw-bold">SPECIFICATION</h5>
+                    <h5 class="fs-6">SPECIFICATION</h5>
                     <div class="accordion" id="specAccordion">
                         <div class="accordion-item">
                             <h2 class="accordion-header">

@@ -31,19 +31,19 @@ transition: border-color 0.3s ease;
 margin-bottom: 10px; /* Space between thumbnails */
 }
 .thumbnail-wrapper:hover {
-border-color: #ff0000; /* Highlight border on hover */
+border-color: black; /* Highlight border on hover */
 }
 .selected-thumbnail {
-    border: 1px solid red !important;
+    border: 1px solid black !important;
 }
 .btn-check:not(:checked) + label {
-border: 1px solid black !important;
+border: 1px solid rgb(202, 200, 200) !important;
 background-color: white !important;
 color: black !important;
 }
 
 .btn-check:checked + label {
-border: 2px solid red !important;
+border: 2px solid black !important;
 background-color: white !important;
 color: black !important;
 }

@@ -2,17 +2,68 @@
 
 <div class="w3-main">
     <div class="container mt-4">
-        <div class="w3-container">
-             <div class="row">
+        <div class="w3-container"> 
+            <div class="row">
                 <div class="col-12 mb-4 d-flex justify-content-between align-items-center welcome-message">
                     <span>
-                        Welcome back,  {{ Str::limit(Auth::user()->name, 18) }}
+                        Welcome back, {{ Str::limit(Auth::user()->name, 18) }}
+                        @if(request('start_date') || request('end_date'))
+                        <small class="d-block text-white" style="font-size: 14px;">
+                            Showing data from {{ request('start_date') ?: 'beginning' }} to {{ request('end_date') ?: 'now' }}
+                        </small>
+                        @endif
                     </span>
-                     <div class="position-relative" style="width: 60px; height: 60px;">
+                    <div class="d-flex gap-3">
+                        <div class="position-relative" style="width: 60px; height: 60px;">
+                        <a href="{{ route('homepage') }}" style="text-decoration: none;">
+                        <div class="rounded-circle shadow d-flex justify-content-center align-items-center"
+                            style="width: 56px; height: 56px; background-color: #ffffff; border: 2px solid rgb(201, 177, 45); box-shadow: 0 2px 8px rgba(0,0,0,0.12);">
+                            <i class="fas fa-store fa-lg text-dark"></i>
+                        </div>
+                        </a>
+                    </div>
+                        <div class="position-relative" style="width: 60px; height: 60px;">
                         <img src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('image/smphone.png') }}" class="rounded-circle shadow" style="width: 56px; height: 56px; object-fit: cover; border: 2px solid #007bff; box-shadow: 0 2px 8px rgba(0,0,0,0.12);  border : 2px solid rgb(39, 67, 158);">
+                    </div>
                     </div>
                 </div>
             </div>
+            <div class="col-12">
+                    {{-- action="{{ route('admin.dashboard') }}" --}}
+                    {{-- href="{{ route('admin.dashboard') }}" --}}
+                    {{-- <div class="card shadow-sm p-3" style="border-radius: 12px; border: 2px solid rgb(39, 67, 158);">
+                        <form method="GET" id="dateFilterForm">
+                            <div class="row align-items-center">
+                                <div class="col-md-3 mb-2 mb-md-0">
+                                    <label for="start_date" class="form-label">Start Date</label>
+                                    <input type="date" class="form-control" id="start_date" name="start_date" 
+                                           value="{{ request('start_date') }}" max="{{ date('Y-m-d') }}">
+                                </div>
+                                <div class="col-md-3 mb-2 mb-md-0">
+                                    <label for="end_date" class="form-label">End Date</label>
+                                    <input type="date" class="form-control" id="end_date" name="end_date" 
+                                           value="{{ request('end_date') }}" max="{{ date('Y-m-d') }}">
+                                </div>
+                                <div class="col-md-4 d-flex align-items-end gap-2">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-filter me-1"></i> Apply Filter
+                                    </button>
+                                    <a  class="btn btn-outline-secondary">
+                                        <i class="fas fa-sync-alt me-1"></i> Reset
+                                    </a>
+                                </div>
+                                @if(request('start_date') || request('end_date'))
+                                <div class="col-md-2 text-md-end mt-2 mt-md-0">
+                                    <span class="badge bg-info">
+                                        Filter Active
+                                    </span>
+                                </div>
+                                @endif
+                            </div>
+                        </form>
+                    </div> --}}
+                </div>
+            
         </div>
         <div class="row g-4">
             <div class="col-md-3">
@@ -86,7 +137,33 @@
                 </div>
             </div>
         </div>
-
+            <div class="row mt-4 g-4">
+                 <h5>Quick Links</h5>
+                <div class="col-6 col-md-3">
+                <a href="/product_detail" class="btn btn-light border text-dark w-100 py-3">
+                <i class="fas fa-boxes fa-2x text-primary"></i>
+                <p class="text-primary fw-bold">Product Variant</p>
+                </a>
+            </div>
+            <div class="col-6 col-md-3">
+                <a href="/customer_admin" class="btn btn-light border text-dark w-100 py-3">
+                <i class="fas fa-users fa-2x text-success"></i>
+                <p class="text-success fw-bold">Customer</p>
+                </a>
+            </div>
+            <div class="col-6 col-md-3">
+                <a href="/order_dashboard" class="btn btn-light border text-dark w-100 py-3">
+                <i class="fas fa-shopping-cart fa-2x text-warning"></i>
+                <p class="text-warning fw-bold">Order</p>
+                </a>
+            </div>
+            <div class="col-6 col-md-3">
+                <a href="/payment" class="btn btn-light border text-dark w-100 py-3">
+                <i class="fas fa-chart-line fa-2x text-danger"></i>
+                <p class="text-danger fw-bold">Payment</p>
+                </a>
+            </div>
+            </div>
         <!-- Charts Row -->
         <div class="row mt-4 g-4">
             <div class="col-md-6">
@@ -130,20 +207,15 @@
                         <div class="card-body">
                             @forelse ($recentOrders as $order)
                                 <div class="d-flex align-items-center mb-4 p-2 rounded hover-shadow" style="background-color: #f8f9fa;">
-                                    {{-- User Profile Image --}}
                                     <img src="{{ $order->profile_image 
                                         ? asset('storage/' . $order->profile_image) 
                                         : asset('image/smphone.png') }}"
                                         alt="Profile" class="rounded-circle shadow-sm"
                                         style="width: 50px; height: 50px; object-fit: cover;">
-
-                                    {{-- Guest Name and Order Info --}}
                                     <div class="ms-3 flex-grow-1">
                                         <div class="fw-semibold text-dark">{{ $order->guest_name }}</div>
                                         <small class="text-muted">{{ \Carbon\Carbon::parse($order->created_at)->format('M d, Y') }}</small>
                                     </div>
-
-                                    {{-- Order Total --}}
                                     <div class="fw-bold text-dark">${{ number_format($order->total_amount, 2) }}</div>
                                 </div>
                             @empty

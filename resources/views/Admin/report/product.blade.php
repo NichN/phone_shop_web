@@ -32,13 +32,13 @@
                         <table class="table table-bordered data-table text-center">
                             <thead>
                                 <tr>
-                                    <th>No</th>
-                                    <th>Product Name</th>
-                                    <th>Color</th>
-                                    <th>Size</th>
-                                    <th>Stock</th>
-                                    <th>Sold</th>
-                                    <th>Purchased</th>
+                                    <th style="background-color: #2e3b56 !important; color: white !important;">No</th>
+                                    <th style="background-color: #2e3b56 !important; color: white !important;">Product Name</th>
+                                    <th style="background-color: #2e3b56 !important; color: white !important;">Color</th>
+                                    <th style="background-color: #2e3b56 !important; color: white !important;">Size</th>
+                                    <th style="background-color: #2e3b56 !important; color: white !important;">Stock</th>
+                                    <th style="background-color: #2e3b56 !important; color: white !important;">Sold</th>
+                                    <th style="background-color: #2e3b56 !important; color: white !important;">Purchased</th>
                                 </tr>
                             </thead>
                             <tfoot>

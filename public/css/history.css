@@ -91,4 +91,8 @@
     font-size: 14px;
 }
 
+.text-orange {
+    color: #FF7F00 !important; /* orange for pending status */
+}
+
 

@@ -14,10 +14,10 @@ class BrandController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function($row){
-                    return ' <button class="btn btn-primary btn-sm editBrand" data-id="' . $row->id . '" data-toggle="tooltip" title="Edit">
-                                Edit
+                    return '<button class="btn btn-sm editBrand" data-id="'. $row->id .'" data-toggle="tooltip" title="Edit" style="background-color: #fffde7; border: 1px solid #ffe082; color: #fbc02d; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;">
+                                <i class="fas fa-edit"></i>
                             </button>
-                            <button data-id="'.$row->id.'" class="btn btn-sm btn-danger deleteBrand">Delete</button>';
+                            <button data-id="'.$row->id.'" class="btn btn-sm deleteBrand" style="background-color: #ffebee; border: 1px solid #ef9a9a; color: #c62828; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;"><i class="fas fa-trash-alt"></i></button>';
                 })
                 ->rawColumns(['action'])
                 ->make(true);

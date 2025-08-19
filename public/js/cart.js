@@ -138,36 +138,38 @@ function updateCartBadge(count) {
 
 function loadCartFromLocalStorage() {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const cartContent = document.querySelector('.cart-content');
-    if (!cartContent) return;
-    cartContent.innerHTML = '';
+    const cartContainer = document.querySelector('.cart-content');
+    const totalEl = document.querySelector('.total-price');
+
+    cartContainer.innerHTML = '';
     let total = 0;
 
     cart.forEach((item, index) => {
+        const subtotal = item.price * item.quantity;
+        total += subtotal;
+
         const itemHtml = `
-            <div class="cart-box d-flex align-items-start mb-3">
-                <img src="${item.imgSrc}" class="cart-img me-2" style="width: 60px; height: 60px; object-fit: cover;">
-                <div class="detail-box flex-grow-1">
-                    <div class="cart-product-title fw-bold">${item.title}</div>
-                    <div class="text-muted">Size: ${item.size}</div>
-                    <div class="text-muted d-flex align-items-center gap-2">
-                        Color:
-                        <span style="width: 16px; height: 16px; border-radius: 50%; display: inline-block; background-color: ${item.color}; border: 1px solid #ccc;"></span>
-                    </div>
-                    <div class="cart-price">${item.price}</div>
-                    <div class="text-danger">Qty: ${item.quantity}</div>
+        <div class="cart-box d-flex align-items-start mb-3">
+            <img src="${item.imgSrc}" class="cart-img me-2" style="width: 60px; height: 60px; object-fit: cover;">
+            <div class="detail-box flex-grow-1">
+                <div class="cart-product-title fw-bold">${item.title}</div>
+                <div class="text-muted">Size: ${item.size}</div>
+                <div class="text-muted d-flex align-items-center gap-2">
+                    Color:
+                    <span style="width: 16px; height: 16px; border-radius: 50%; display: inline-block; background-color: ${item.color}; border: 1px solid #ccc;"></span>
                 </div>
-                <i class="fa-solid fa-trash-can cart-remove text-danger" onclick="removeItemFromLocal(${index})" style="cursor: pointer;"></i>
-            </div>`;
-        cartContent.insertAdjacentHTML('beforeend', itemHtml);
-        total += parseFloat(item.price.replace(/[^\d.]/g, '')) * item.quantity;
+                <div class="cart-price">${item.price} × ${item.quantity} = <strong>${subtotal.toFixed(2)}</strong></div>
+                <div class="text-danger">Qty: ${item.quantity}</div>
+            </div>
+            <i class="fa-solid fa-trash-can cart-remove text-danger" onclick="removeItemFromLocal(${index})" style="cursor: pointer;"></i>
+        </div>
+        `;
+        cartContainer.insertAdjacentHTML('beforeend', itemHtml);
     });
 
-    const totalPriceElement = document.querySelector('.total-price');
-    if (totalPriceElement) {
-        totalPriceElement.innerText = total.toFixed(2) + " $";
-    }
+    totalEl.textContent = total.toFixed(2) + ' $';
 }
+
 
 function removeItemFromLocal(index) {
     let cart = JSON.parse(localStorage.getItem('cart')) || [];

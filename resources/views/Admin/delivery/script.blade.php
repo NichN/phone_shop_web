@@ -6,7 +6,7 @@ $(document).ready(function () {
         ajax: "{{ route('delivery_option.data') }}",
         order: [[0, 'desc']],
         columns: [
-            { data: 'created_at', name: 'created_at' },
+            { data: 'created_at', name: 'created_at'},
             { data: 'order_num', name: 'order_num' },
             { data: 'guest_name', name: 'guest_name' },
             { data: 'phone_guest', name: 'phone_guest' },

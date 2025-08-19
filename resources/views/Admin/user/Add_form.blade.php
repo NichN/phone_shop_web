@@ -20,11 +20,11 @@
                     <table class="table data-table mt-3">
                         <thead style="text-align:center;">
                             <tr>
-                                <th>No</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Group</th>
-                                <th>Action</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">No</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Name</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Email</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Group</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Action</th>
                             </tr>
                         </thead>                                
                     </table>

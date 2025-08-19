@@ -35,8 +35,8 @@
                                 $quantity = $item->quantity ?? 0;
                                 $price = $item->price ?? '0.00';
                                 $subtotal = $item->subtotal ?? '0.00';
-                                $deliveryFee = $item->delivery_fee ?? '0.00';
-                                $totalAmount = $item->total_amount ?? '0.00';
+                                $deliveryFee = $item->fee ?? '0.00';
+                                $totalAmount = ($subtotal + $deliveryFee);
                             @endphp
                             <div class="d-flex align-items-center mb-3 p-2 rounded" style="border:1px solid #b35dae;">
                                 <img src="{{ asset('storage/' . $imgSrc) }}" alt="{{ $title }}" width="120" height="120"
@@ -127,8 +127,6 @@
                     @endif
                 </div>
             </div>
-
-
                 <div class="mt-3">
                     <label for="note"><strong>Note:</strong></label>
                     <textarea class="form-control" id="note" name="note" rows="3" placeholder="Add a note (optional)"></textarea>
@@ -136,7 +134,7 @@
                 <input type="hidden" name="order_id" value="{{ $orderItems[0]->order_id ?? '' }}">
 
                 <div class="center-container mt-4">
-                    <button type="submit" id="confirmOrderBtn">Let's Order</button>
+                    <button type="submit" id="confirmOrderBtn">Let's Pay</button>
                 </div>
             </div>
         </div>

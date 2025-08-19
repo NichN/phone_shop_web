@@ -16,14 +16,9 @@
 <div class="w3-sidebar w3-bar-block w3-collapse w3-card w3-animate-left" style="width:250px;" id="mySidebar">
     <button class="w3-bar-item w3-button w3-large w3-hide-large text-white" onclick="w3_close()">Close &times;</button>
     @if(Auth::check())
-    <div class="sidebar-profile d-flex align-items-center flex-row justify-content-center py-3 mb-3" style="background: inherit; margin: 10px 0 15px 0;">
-        {{-- <div class="position-relative" style="width: 56px; height: 56px;">
-            <img src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('image/smphone.png') }}" class="rounded-circle shadow" style="width: 56px; height: 56px; object-fit: cover; border: 2px solid #007bff; box-shadow: 0 2px 8px rgba(0,0,0,0.12);">
-        </div> --}}
-        {{-- <div class="fw-bold ms-3" style="font-size: 1.12rem; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.18); letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-            {{ Str::limit(Auth::user()->name, 18) }}
-        </div> --}}
-        <h4>Tay Meng Shop</h4>
+    <div class="sidebar-profile align-items-center justify-content-center py-3 mb-3" style="background: inherit; margin: 10px 0 15px 0;">
+        <img src="{{ asset('image/tay_meng_logo.jpg') }}" alt="Logo" height="70" style="border-radius: 50%; object-fit: cover; width: 70px; height: 70px; border: 3px solid gold;"><br>
+        <h4>Tay Meng</h4>
     </div>
     @endif
 
@@ -70,12 +65,8 @@
             <a href="{{ route('purchase.add')}}" class="w3-bar-item w3-button"><i class="fa fa-list"></i> List Purchases</a>
             <a href="{{ route('purchase.index')}}" class="w3-bar-item w3-button"><i class="fa fa-list"></i> ADD Purchases </a>
         </div>
-        <div class="w3-bar-item  w3-dropdown-click" onclick="toggleDropdown('supplierDropdown')">
-            <i class="fa fa-qrcode"></i> Supplier <i class="fa fa-caret-down" style="float:right;"></i>
-        </div>
-        <div id="supplierDropdown" class="w3-dropdown-content" style="display: none;">
-            <a href="{{ route('supplier.index') }}" class="w3-bar-item w3-button"><i class="fa fa-list"></i> List Supplier</a>
-        </div>
+        <a href="{{ route('supplier.index') }}" class="w3-bar-item w3-button"><i class="fa fa-list"></i> Supplier</a>
+
         {{-- Delivery tab: only for Delivery role --}}
         <a href="{{ route('order_dashboard.index')}}" class="w3-bar-item w3-button order-link"><i class="fas fa-shopping-cart"></i> Order</a>
              @if(isset($roleId) && $roleId == 3)
@@ -103,7 +94,7 @@
         <div id="setting" class="w3-dropdown-content" style="display: none;">
             <a href="{{ route('faq.index') }}" class="w3-bar-item w3-button"><i class="fa-solid fa-person-circle-question"></i> FAQ</a>
             <a href="{{ route('delivery.index') }}" class="w3-bar-item w3-button"><i class="fa-solid fa-truck"></i> Delivery Fee</a>
-            <a href="{{ route('photo.index') }}" class="w3-bar-item w3-button"><i class="fa-solid fa-image"></i> Photo</a>  
+            {{-- <a href="{{ route('photo.index') }}" class="w3-bar-item w3-button"><i class="fa-solid fa-image"></i> Photo</a>   --}}
             <a href="{{ route('exchange.exchange_index')}}" class="w3-bar-item w3-button"><i class="fa-solid fa-money-bill-wave"></i> Exchange Rate</a>
         </div>
         {{-- report --}}
@@ -117,12 +108,27 @@
             <a href="{{ route('report.purchase_report') }}" class="w3-bar-item w3-button">
                 <i class="fa fa-list"></i> Purchase Report
             </a>
-            <a href="{{ route('report.daily_sale') }}" class="w3-bar-item w3-button">
-                <i class="fa fa-calendar"></i> Sale Report
+              <a href="{{ route('report.supplier') }}" class="w3-bar-item w3-button">
+                <i class="fa fa-calendar"></i> Supplier Report
             </a>
-            
+            <a href="{{ route('report.daily_sale') }}" class="w3-bar-item w3-button">
+                <i class="fa-solid fa-bag-shopping"></i> Order Report
+            </a>
+            <a href="{{ route('report.sale_completed') }}" class="w3-bar-item w3-button">
+                <i class="fa fa-calendar"></i> Sale report Completed
+            </a>
+    
+            {{-- <a href="{{ route('report.product_chart') }}" class="w3-bar-item w3-button">
+                <i class="fa fa-calendar"></i> Product Performance
+            </a> --}}
+            {{-- <a href="{{ route('report.profit') }}" class="w3-bar-item w3-button">
+                <i class="fa fa-calendar"></i> Profit
+            </a> --}}
+            <a href="{{ route('report.income_expense') }}" class="w3-bar-item w3-button">
+                <i class="fa fa-calendar"></i> Income Vs Expense
+            </a>
+
         </div>
-        {{-- end --}}
     @endif
     {{-- People tab: only for Admin (role_id==1) --}}
     @if(isset($roleId) && $roleId == 1)

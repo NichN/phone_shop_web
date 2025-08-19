@@ -21,11 +21,11 @@
                     <table class="table data-table mt-3">
                         <thead style="text-align:center;">
                             <tr>
-                                <th>No</th>
-                                <th>image</th>
-                                <th>name</th>
-                                <th>Image Type</th>
-                                <th>Action</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">No</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">image</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">name</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Image Type</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Action</th>
                             </tr>
                         </thead>                                
                     </table>

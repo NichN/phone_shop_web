@@ -11,9 +11,10 @@
         </div>
 
         <div class="d-flex justify-content-end mt-3">
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">
-                <i class="fas fa-plus me-2"></i> Add Product
+            <button class="btn btn-outline-primary bg-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                <i class="fas fa-plus me-2"></i>
             </button> 
+            
         </div>   
 
         <div class="container no-print" style="z-index: 999999999999999 !important;">
@@ -42,20 +43,20 @@
 <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header" style="background-color: #2e3b56; color: white;">
+            <div class="modal-header" style="color: black;">
                 <h5 class="modal-title" id="addModalLabel">Add Product</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="productForm" action="{{ route('products.productstore') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="row g-3 mb-4">
                         <div class="col-md-6">
-                            <label for="add_prName" class="form-label fw-bold">Name<span class="text-danger">*</span></label>
+                            <label for="add_prName" class="form-label fw-bold">Name<span class="text-danger"> *</span></label>
                             <input type="text" class="form-control" id="add_prName" name="name" placeholder="Enter product name" required>
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="cat_id" class="col-sm control-label">Category</label>
+                            <label for="cat_id" class="form-label fw-bold">Category<span class="text-danger"> *</span></label>
                             <select class="form-select" id="cat_id" name="cat_id">
                                 <option value="">Select Category</option>
                                 @foreach($category as $cat)
@@ -64,7 +65,7 @@
                             </select>
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="brand_id" class="col-sm control-label">Brand</label>
+                            <label for="brand_id" class="form-label fw-bold">Brand<span class="text-danger"> *</span></label>
                             <select class="form-select" id="brand_id" name="brand_id">
                                 <option value="">Select Brand</option>
                                 @foreach($brands as $brand)
@@ -74,12 +75,12 @@
                         </div>
                         <div class="col-md-12">
                             <label for="add_prdescription" class="form-label fw-bold">Description<span class="text-danger">*</span></label>
-                            <textarea class="form-control" id="add_prdescription" name="description" placeholder="Enter description" rows="4" required></textarea>
+                            <textarea class="form-control" id="add_prdescription" name="description" placeholder="Enter description" rows="4"></textarea>
                         </div>
                     </div>
 
                     <div class="d-flex justify-content-end border-top pt-4">
-                        <button type="submit" id="saveBtn" class="btn btn-primary px-4">
+                        <button type="submit" id="saveBtn" class="btn btn-outline-primary px-4">
                             <i class="fas fa-save me-2"></i> Save
                         </button>
                     </div>
@@ -109,7 +110,7 @@
                             <input type="text" class="form-control" id="edit_prName" name="name" placeholder="Enter product name" required>
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="edit_cat_id" class="col-sm control-label">Category</label>
+                            <label for="edit_cat_id" class="form-label fw-bold">Category<span class="text-danger"> *</span></label>
                             <select class="form-select" id="edit_cat_id" name="cat_id">
                                 <option value="">Select Category</option>
                                 @foreach($category as $cat)
@@ -118,7 +119,7 @@
                             </select>
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="edit_brand_id" class="col-sm control-label">Brand</label>
+                            <label for="edit_brand_id" class="form-label fw-bold">Brand<span class="text-danger"> *</span></label>
                             <select class="form-select" id="edit_brand_id" name="brand_id">
                                 <option value="">Select Brand</option>
                                 @foreach($brands as $brand)
@@ -128,13 +129,13 @@
                         </div>
                         <div class="col-md-12">
                             <label for="edit_description" class="form-label fw-bold">Description<span class="text-danger">*</span></label>
-                            <textarea class="form-control" id="edit_description" name="description" placeholder="Enter description" rows="4" required></textarea>
+                            <textarea class="form-control" id="edit_description" name="description" placeholder="Enter description" rows="4"></textarea>
                         </div>
                     </div>
 
                     <div class="d-flex justify-content-end border-top pt-4">
-                        <button type="submit" class="btn btn-primary px-4">
-                            <i class="fas fa-save me-2"></i> Save Changes
+                        <button type="submit" class="btn btn-outline-primary px-4">
+                            <i class="fas fa-save me-2"></i> Update
                         </button>
                     </div>
                 </form>
