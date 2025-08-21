@@ -331,10 +331,7 @@ Route::prefix('pick_up')->name('pick_up.')->group(function (){
 
 Route::prefix('payment')->name('payment.')->group(function () {
     Route::get('/', [paymentController::class, 'index'])->name('index');
-    // Route::get('/data', [OrderController::class, 'getData'])->name('data');
-    // Route::get('/show/{id}', [OrderController::class, 'show'])->name('show');
-    // Route::post('/store', [OrderController::class, 'store'])->name('store');
-    // Route::get('/invoice/{id}', [OrderController::class, 'invoice'])->name('invoice');
+    Route::get('/order_detail/{id}', [paymentController::class, 'order_detail'])->name('order_detail');
 });
 Route::prefix('exchange')->name('exchange.')->group(function(){
     Route::get('/exchnage',[exchangeController::class,'exchange_index'])->name('exchange_index');

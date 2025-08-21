@@ -1,35 +1,31 @@
 <script>
-    $(document).ready(function(){
+    $(document).ready(function () {
+        // Initialize DataTable
         var table = $('.data-table').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ route('payment.index')}}",
+            ajax: "{{ route('payment.index') }}",
             order: [[0, 'desc']],
-            columns:[
-                {data: 'created_at',name: 'created_at'},
-                {data: 'order_num', name: 'order_num' },
-                {data: 'guest_name', name: 'guest_name' },
-                // { data: 'phone_guest', name: 'phone_guest' },
-                // { data: 'guest_address' , name:'guest_address'},
+            columns: [
+                { data: 'created_at', name: 'created_at' },
+                { data: 'order_num', name: 'order_num' },
+                { data: 'guest_name', name: 'guest_name' },
                 { data: 'total_amount', name: 'total_amount' },
                 { data: 'payment_type', name: 'payment_type' },
                 { data: 'remark', name: 'remark' },
                 {
                     data: 'payment_status',
                     name: 'payment_status',
-                    render: function(data, type, row) {
+                    render: function (data) {
                         let badgeClass = '';
                         const status = data ? data.toLowerCase() : '';
 
-                        switch(status) {
-                            case 'cancelled':
-                                badgeClass = 'background-color: #ff5733 ; color: #721c24;';
-                                break;
-                            case 'processing':
-                                badgeClass = 'background-color: #fff3cd; color: #856404;';
-                                break;
-                            case 'completed':
+                        switch (status) {
+                            case 'paid':
                                 badgeClass = 'background-color: #d4edda; color: #155724;';
+                                break;
+                            case 'pending':
+                                badgeClass = 'background-color: #fff3cd; color: #856404;';
                                 break;
                             default:
                                 badgeClass = 'background-color: #e2e3e5; color: #6c757d;';
@@ -41,5 +37,51 @@
                 { data: 'action', orderable: false, searchable: false }
             ]
         });
+
+        // Handle "View Invoice" button click
+        $(document).ready(function() {
+    $('.data-table').on('click', '.view-invoice', function () {
+       // Ensure the modal DOM element exists
+var modalElement = document.getElementById('invoiceModal');
+
+if (modalElement) {
+  var invoiceModal = new bootstrap.Modal(modalElement); // No need to pass options unless needed
+  invoiceModal.show();
+} else {
+  console.error("Modal element with ID 'invoiceModal' not found.");
+}
+
+
+        const orderId = $(this).data('id');
+        $('#invoiceContent').html('<div class="text-center">Loading...</div>');
+
+        $.ajax({
+            url: `/payment/order_detail/${orderId}`,
+            method: 'GET',
+            success: function(response) {
+                $('#invoiceContent').html(response);
+            },
+            error: function() {
+                $('#invoiceContent').html('<div class="text-danger">Failed to load invoice.</div>');
+            }
+        });
     });
+});
+
+    });
+
+    // Print invoice
+    function printInvoice() {
+        var printContents = document.getElementById('invoiceContent').innerHTML;
+        var win = window.open('', '', 'height=700,width=900');
+        win.document.write('<html><head><title>Invoice</title>');
+        win.document.write('<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">');
+        win.document.write('</head><body>');
+        win.document.write(printContents);
+        win.document.write('</body></html>');
+        win.document.close();
+        win.focus();
+        win.print();
+        win.close();
+    }
 </script>
