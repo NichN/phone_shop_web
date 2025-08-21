@@ -30,45 +30,54 @@
     {{-- Dashboard tab (all except Delivery) --}}
     @if(!isset($roleId) || $roleId != 3)
     <a href="{{ route('dashboard.show') }}" class="w3-bar-item w3-button dashboard-link"><i class="fa fa-television"></i> Dashboard</a>
+    <a href="{{ route('report.income_expense') }}" class="w3-bar-item w3-button">
+                <i class="fa-solid fa-chart-simple"></i> Income Vs Expense
+            </a>
     @endif
+
 
     {{-- All tabs except Delivery: Product, Brand, Category, Purchases, Supplier, Order, Customer, Payment, Setting, Report --}}
     @if(!isset($roleId) || $roleId != 3)
         <div class="w3-bar-item  w3-dropdown-click" onclick="toggleDropdown('productDropdown')">
-            <i class="fa fa-product-hunt"></i> Product <i class="fa fa-caret-down" style="float:right;"></i>
+            <i class="fa fa-product-hunt"></i> Manage Product <i class="fa fa-caret-down" style="float:right;"></i>
         </div>
-        <div id="productDropdown" class="w3-dropdown-content" style="display: none;">
-            <a href="{{ route('products.product_index')}}" class="w3-bar-item w3-button"><i class="fa fa-list"></i> Product List</a>
-            <a href="{{ route('pr_detail.index')}}" class="w3-bar-item w3-button"><i class="fa-solid fa-circle-info"></i> Product Variant</a>
-            {{-- <a href="{{ route('pr_detail.add')}}" class="w3-bar-item w3-button"><i class="fa-solid fa-circle-info"></i> Add Product</a> --}}
-            <a href="{{ route('color.colorlist') }}" class="w3-bar-item w3-button"><i class="fa-solid fa-palette"></i> Color</a>
-            <a href="{{ route('size.index') }}" class="w3-bar-item w3-button"><i class="fa-solid fa-expand"></i> Size</a>   
+       <div id="productDropdown" class="w3-dropdown-content" style="display: none; min-width: 220px;">
+    <!-- Product List (top-level) -->
+            <a href="{{ route('products.product_index') }}" class="w3-bar-item w3-button">
+                <i class="fa fa-boxes" style="width:20px;"></i> Product List
+            </a>
+            
+            <!-- Categories and Brand (also top-level classification) -->
+            <a href="{{ route('category.index') }}" class="w3-bar-item w3-button">
+                <i class="fa fa-tags" style="width:20px;"></i> Categories
+            </a>
+            <a href="{{ route('brand.index') }}" class="w3-bar-item w3-button">
+                <i class="fa fa-copyright" style="width:20px;"></i> Brand
+            </a>
+
+            <!-- Product Variants -->
+            <a href="{{ route('pr_detail.index') }}" class="w3-bar-item w3-button">
+                <i class="fa-solid fa-layer-group" style="width:20px;"></i> Product Variant
+            </a>
+
+            <!-- Attributes -->
+            <a href="{{ route('color.colorlist') }}" class="w3-bar-item w3-button">
+                <i class="fa-solid fa-palette" style="width:20px;"></i> Color
+            </a>
+            <a href="{{ route('size.index') }}" class="w3-bar-item w3-button">
+                <i class="fa-solid fa-ruler-horizontal" style="width:20px;"></i> Size
+            </a>
         </div>
-        <div class="w3-bar-item  w3-dropdown-click" onclick="toggleDropdown('brandDropdown')">
-            <i class="fa fa-qrcode"></i> Brand <i class="fa fa-caret-down" style="float:right;"></i>
-        </div>
-        <div id="brandDropdown" class="w3-dropdown-content" style="display: none;">
-            <a href="{{ route('brand.index') }}" class="w3-bar-item w3-button"><i class="fa fa-list"></i> Brand List</a>
-            <a href="{{route('brand.new')}}" class="w3-bar-item w3-button"><i class="fa fa-plus-circle"></i> Add Brand</a>
-        </div>
-        <div class="w3-bar-item  w3-dropdown-click" onclick="toggleDropdown('categoryDropdown')">
-            <i class="fa fa-qrcode"></i> Category <i class="fa fa-caret-down" style="float:right;"></i>
-        </div>
-        <div id="categoryDropdown" class="w3-dropdown-content" style="display: none;">
-            <a href="{{ route('category.index') }}" class="w3-bar-item w3-button"><i class="fa fa-list"></i> List Categories</a>
-            <a href="{{route('category.new')}}" class="w3-bar-item w3-button"><i class="fa fa-plus-circle"></i> Add Category</a>
-        </div>
-        <div class="w3-bar-item  w3-dropdown-click" onclick="toggleDropdown('purchasesDropdown')">
-            <i class="fas fa-box"></i> Purchases <i class="fa fa-caret-down" style="float:right;"></i>
-        </div>
-        <div id="purchasesDropdown" class="w3-dropdown-content" style="display: none;">
-            <a href="{{ route('purchase.add')}}" class="w3-bar-item w3-button"><i class="fa fa-list"></i> List Purchases</a>
-            <a href="{{ route('purchase.index')}}" class="w3-bar-item w3-button"><i class="fa fa-list"></i> ADD Purchases </a>
-        </div>
-        <a href="{{ route('supplier.index') }}" class="w3-bar-item w3-button"><i class="fa fa-list"></i> Supplier</a>
+        {{-- // purchases tab --}}
+        <a href="{{ route('purchase.add') }}" class="w3-bar-item w3-button"><i class="fa fa-shopping-cart"></i> Purchases</a>
+        {{-- supplier --}}
+        <a href="{{ route('supplier.index') }}" class="w3-bar-item w3-button"><i class="fa fa-handshake"></i> Supplier</a>
+        {{-- order --}}
+        <a href="{{ route('order_dashboard.index')}}" class="w3-bar-item w3-button order-link"><i class="fas fa-shopping-bag"></i> Order</a>
+
+
 
         {{-- Delivery tab: only for Delivery role --}}
-        <a href="{{ route('order_dashboard.index')}}" class="w3-bar-item w3-button order-link"><i class="fas fa-shopping-cart"></i> Order</a>
              @if(isset($roleId) && $roleId == 3)
             <div class="w3-bar-item  w3-dropdown-click" onclick="toggleDropdown('deliveryDropdown')">
                 <i class="fa-solid fa-truck"></i> Delivery <i class="fa fa-caret-down" style="float:right;"></i>
@@ -101,34 +110,42 @@
         <div class="w3-bar-item w3-dropdown-click" onclick="toggleDropdown('reportDropdown')">
         <i class="fa fa-qrcode"></i> Report <i class="fa fa-caret-down" style="float:right;"></i>
         </div>
-        <div id="reportDropdown" class="w3-dropdown-content" style="display: none;">
+        <div id="reportDropdown" class="w3-dropdown-content" style="display: none; min-width: 230px;">
+            <!-- Product-related reports -->
             <a href="{{ route('report.product_report') }}" class="w3-bar-item w3-button">
-                <i class="fa-solid fa-flag"></i> Product Report
+                <i class="fa-solid fa-boxes" style="width:20px;"></i> Product Report
             </a>
+            
+            <!-- Purchase & Supplier -->
             <a href="{{ route('report.purchase_report') }}" class="w3-bar-item w3-button">
-                <i class="fa fa-list"></i> Purchase Report
+                <i class="fa-solid fa-file-invoice-dollar" style="width:20px;"></i> Purchase Report
             </a>
-              <a href="{{ route('report.supplier') }}" class="w3-bar-item w3-button">
-                <i class="fa fa-calendar"></i> Supplier Report
-            </a>
-            <a href="{{ route('report.daily_sale') }}" class="w3-bar-item w3-button">
-                <i class="fa-solid fa-bag-shopping"></i> Order Report
-            </a>
-            <a href="{{ route('report.sale_completed') }}" class="w3-bar-item w3-button">
-                <i class="fa fa-calendar"></i> Sale report Completed
-            </a>
-    
-            {{-- <a href="{{ route('report.product_chart') }}" class="w3-bar-item w3-button">
-                <i class="fa fa-calendar"></i> Product Performance
-            </a> --}}
-            {{-- <a href="{{ route('report.profit') }}" class="w3-bar-item w3-button">
-                <i class="fa fa-calendar"></i> Profit
-            </a> --}}
-            <a href="{{ route('report.income_expense') }}" class="w3-bar-item w3-button">
-                <i class="fa fa-calendar"></i> Income Vs Expense
+            <a href="{{ route('report.supplier') }}" class="w3-bar-item w3-button">
+                <i class="fa-solid fa-industry" style="width:20px;"></i> Supplier Report
             </a>
 
+            <!-- Sales Reports -->
+            <a href="{{ route('report.daily_sale') }}" class="w3-bar-item w3-button">
+                <i class="fa-solid fa-chart-line" style="width:20px;"></i> Order Report
+            </a>
+            <a href="{{ route('report.sale_completed') }}" class="w3-bar-item w3-button">
+                <i class="fa-solid fa-check-circle" style="width:20px;"></i> Sale Completed
+            </a>
+
+            <!-- Optional: Uncomment if needed -->
+            {{--
+            <a href="{{ route('report.product_chart') }}" class="w3-bar-item w3-button">
+                <i class="fa-solid fa-chart-pie" style="width:20px;"></i> Product Performance
+            </a>
+            <a href="{{ route('report.profit') }}" class="w3-bar-item w3-button">
+                <i class="fa-solid fa-dollar-sign" style="width:20px;"></i> Profit Report
+            </a>
+            <a href="{{ route('report.income_expense') }}" class="w3-bar-item w3-button">
+                <i class="fa-solid fa-scale-balanced" style="width:20px;"></i> Income vs Expense
+            </a>
+            --}}
         </div>
+
     @endif
     {{-- People tab: only for Admin (role_id==1) --}}
     @if(isset($roleId) && $roleId == 1)
