@@ -213,8 +213,15 @@ public function updateFeaturedStatus(Request $request, $id)
         $validated = $request->validate([
             'is_active' => 'required|boolean'
         ]);
+
         $product = ProductDetail::findOrFail($id);
-        $product->is_featured = $validated['is_active']; // Use correct field
+
+        if ($validated['is_active'] == 0) {
+            $product->is_featured = 0;
+        } else {
+            $product->is_featured = 1;
+        }
+
         $product->save();
 
         return response()->json(['success' => true]);
@@ -222,5 +229,6 @@ public function updateFeaturedStatus(Request $request, $id)
         return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
     }
 }
+
 
 }

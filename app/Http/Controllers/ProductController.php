@@ -71,7 +71,7 @@ class ProductController extends Controller
                 'product_item.color_code'
             );
 
-        // ✅ Search filter
+        
         if ($request->filled('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
@@ -80,7 +80,7 @@ class ProductController extends Controller
             });
         }
 
-        // ✅ Brand filter (optional)
+    
         if ($request->filled('category') && $request->category !== 'all') {
             $query->where('product.brand_id', $request->category);
         }
@@ -151,66 +151,136 @@ class ProductController extends Controller
         }
         return view('customer.product_accesory', compact('products', 'accessoryProducts', 'brands'));
     }
+    // public function show($pro_id)
+    // {
+    //     $product_item = Productdetail::where('pro_id', $pro_id)->firstOrFail();
+    //     $related_items = Productdetail::where('pro_id', $pro_id)->get();
+
+    //     $colors = $related_items->pluck('color_code')->unique()->values();
+    //     $sizes = $related_items->pluck('size')->unique()->values();
+    //     $stock = $related_items->pluck('stock')->unique()->values();
+    //     $type = $related_items->pluck('type')->unique()->values();
+
+    //     $variants = $related_items->map(function ($item) {
+    //         return [
+    //             'id'         => $item->id,
+    //             'color_code' => $item->color_code,
+    //             'size'       => $item->size,
+    //             'price'      => $item->price,
+    //             'stock'      => $item->stock,
+    //             'type'       => $item->type,
+    //             'images'     => $item->images,
+    //         ];
+    //     });
+
+    //     $allImages = $related_items->pluck('images')->flatten()->unique()->values();
+
+    //     $products = Productdetail::where('product_name', '!=', $product_item->product_name)
+    //         ->inRandomOrder()
+    //         ->take(4)
+    //         ->get()
+    //         ->map(function ($item) {
+    //             return [
+    //                 'id'          => $item->id,
+    //                 'name'        => $item->product_name,
+    //                 'price'       => $item->price,
+    //                 'category'    => $item->category,
+    //                 'created_at'  => $item->created_at,
+    //                 'description' => $item->description,
+    //                 'size'        => $item->size,
+    //                 'type'        => $item->type,
+    //                 'images'      => $item->images ?? null,
+    //                 'warranty'    => $item->warranty,
+    //             ];
+    //         });
+
+    //     return view('customer.productdetail', [
+    //         'product'     => [
+    //             'name'        => $product_item->product_name,
+    //             'image'       => $product_item->images,
+    //             'price'       => $product_item->price,
+    //             'created_at'  => $product_item->created_at,
+    //             'description' => $product_item->description,
+    //             'size'        => $product_item->size,
+    //             'type'        => $product_item->type,
+    //             'warranty'    => $product_item->warranty
+    //         ],
+    //         'color_code' => $colors,
+    //         'sizes'      => $sizes,
+    //         'stock'      => $stock,
+    //         'variants'   => $variants,
+    //         'products'   => $products,
+    //         'images'     => $allImages,
+    //     ]);
+    // }
     public function show($pro_id)
-    {
-        $product_item = Productdetail::where('pro_id', $pro_id)->firstOrFail();
-        $related_items = Productdetail::where('pro_id', $pro_id)->get();
+{
+    $product_item = Productdetail::where('pro_id', $pro_id)
+        ->where('is_featured', 1)
+        ->firstOrFail();
 
-        $colors = $related_items->pluck('color_code')->unique()->values();
-        $sizes = $related_items->pluck('size')->unique()->values();
-        $stock = $related_items->pluck('stock')->unique()->values();
-        $type = $related_items->pluck('type')->unique()->values();
+    $related_items = Productdetail::where('pro_id', $pro_id)
+        ->where('is_featured', 1)
+        ->get();
 
-        $variants = $related_items->map(function ($item) {
+    $colors = $related_items->pluck('color_code')->unique()->values();
+    $sizes  = $related_items->pluck('size')->unique()->values();
+    $stock  = $related_items->pluck('stock')->unique()->values();
+    $type   = $related_items->pluck('type')->unique()->values();
+
+    $variants = $related_items->map(function ($item) {
+        return [
+            'id'         => $item->id,
+            'color_code' => $item->color_code,
+            'size'       => $item->size,
+            'price'      => $item->price,
+            'stock'      => $item->stock,
+            'type'       => $item->type,
+            'images'     => $item->images,
+        ];
+    });
+
+    $allImages = $related_items->pluck('images')->flatten()->unique()->values();
+
+    // Suggested products but only featured
+    $products = Productdetail::where('product_name', '!=', $product_item->product_name)
+        ->where('is_featured', 1)
+        ->inRandomOrder()
+        ->take(4)
+        ->get()
+        ->map(function ($item) {
             return [
-                'id'         => $item->id,
-                'color_code' => $item->color_code,
-                'size'       => $item->size,
-                'price'      => $item->price,
-                'stock'      => $item->stock,
-                'type'       => $item->type,
-                'images'     => $item->images,
+                'id'          => $item->id,
+                'name'        => $item->product_name,
+                'price'       => $item->price,
+                'category'    => $item->category,
+                'created_at'  => $item->created_at,
+                'description' => $item->description,
+                'size'        => $item->size,
+                'type'        => $item->type,
+                'images'      => $item->images ?? null,
+                'warranty'    => $item->warranty,
             ];
         });
 
-        $allImages = $related_items->pluck('images')->flatten()->unique()->values();
+    return view('customer.productdetail', [
+        'product'     => [
+            'name'        => $product_item->product_name,
+            'image'       => $product_item->images,
+            'price'       => $product_item->price,
+            'created_at'  => $product_item->created_at,
+            'description' => $product_item->description,
+            'size'        => $product_item->size,
+            'type'        => $product_item->type,
+            'warranty'    => $product_item->warranty
+        ],
+        'color_code' => $colors,
+        'sizes'      => $sizes,
+        'stock'      => $stock,
+        'variants'   => $variants,
+        'products'   => $products,
+        'images'     => $allImages,
+    ]);
+}
 
-        $products = Productdetail::where('product_name', '!=', $product_item->product_name)
-            ->inRandomOrder()
-            ->take(4)
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'id'          => $item->id,
-                    'name'        => $item->product_name,
-                    'price'       => $item->price,
-                    'category'    => $item->category,
-                    'created_at'  => $item->created_at,
-                    'description' => $item->description,
-                    'size'        => $item->size,
-                    'type'        => $item->type,
-                    'images'      => $item->images ?? null,
-                    'warranty'    => $item->warranty,
-                ];
-            });
-
-        return view('customer.productdetail', [
-            'product'     => [
-                'name'        => $product_item->product_name,
-                'image'       => $product_item->images,
-                'price'       => $product_item->price,
-                'created_at'  => $product_item->created_at,
-                'description' => $product_item->description,
-                'size'        => $product_item->size,
-                'type'        => $product_item->type,
-                'warranty'    => $product_item->warranty
-            ],
-            'color_code' => $colors,
-            'sizes'      => $sizes,
-            'stock'      => $stock,
-            'variants'   => $variants,
-            'products'   => $products,
-            'images'     => $allImages,
-        ]);
-    }
 }

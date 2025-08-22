@@ -49,7 +49,7 @@ Route::get('/homepage', [HomeController::class, 'index'])->name('homepage');
 // Authenticated homepage route
 Route::get('/dashboard/homepage', [HomeController::class, 'index'])->middleware(['auth', 'twofactor'])->name('dashboard.homepage');
 
-Route::get('/product/{id}', [HomeController::class, 'show'])->name('product.show');
+// Route::get('/product/{id}', [HomeController::class, 'show'])->name('product.show');
 
 Route::get('/aboutus', [CustomerController::class, 'aboutUs'])->name('aboutus');
 
@@ -60,6 +60,9 @@ Route::get('/product', [ProductController::class, 'index'])->name('product');
 Route::get('/product_acessory', [ProductController::class, 'product_acessory'])->name('product_acessory');
 Route::get('/products_admin', [ProductController::class, 'index'])->name('product.index');
 Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
+Route::get('/product_category/{id}', [HomeController::class, 'getByCategory'])
+    ->name('product_by_category');
+
 
 // Route::prefix('history')->middleware(['auth', 'twofactor'])->controller(HistoryController::class)->group(function () {
 //     Route::get('/', 'index')->name('history'); 

@@ -118,61 +118,14 @@
                 </form>
             </div>
         </div>
-        {{-- <section class="my-5">
-    <div class="container scroll-animate">
-        <h2 class="text-right mb-4" style="font-size: 25px;"><b>Accessories</b></h2>
-        <div class="row g-4">
-            @if ($accessoryProducts->isNotEmpty())
-                @foreach ($accessoryProducts as $product)
-                    @php
-                        $images = json_decode($product->images, true);
-                        // Find the brand name for this product
-                        $brandName = null;
-                        foreach ($brands as $brand) {
-                            if (isset($product->brand_id) && $brand->id == $product->brand_id) {
-                                $brandName = $brand->name;
-                                break;
-                            }
-                        }
-                    @endphp
-                    <div class="col-md-3 product-item" data-brand="{{ $brandName }}">
-                        <div class="card product-card">
-                            @if (!empty($images) && isset($images[0]))
-                            <a href="{{ route('product.show', $product->id) }}">
-                                <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img" style="height: 250px; object-fit: cover; object-position: center; width: 100%;">
-                            </a>
-                            @endif
-                            <div class="card-body text-righ" style="background-color: #ecdceb;">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <p class="card-title mt-2 product-title fs-6">{{ $product->name }}</p>
-                                    <i class="fa-regular fa-heart fs-5 add-wishlist"></i>
-                                </div>
-                                <p class="card-price">{{ $product->price }}</p>
-                                <p class="color" style="text-align: right;">
-                                    @foreach ($product->colors as $color)
-                                    <span class="rounded-circle d-inline-block mx-1"
-                                        style="width: 20px; height: 20px; background-color: {{ strtolower($color) }}; margin-bottom: 20px;"
-                                        title="{{ $color }}">
-                                    </span>
-                                @endforeach
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            @endif
-        </div>
-    </div>
-</section> --}}
         <section class="my-5">
             <div class="container scroll-animate">
-                <h2 class="text-right mb-4" style="font-size: 25px;"><b>Accessories</b></h2>
+                <h2 class="text-right mb-4" style="font-size: 25px;"><b>{{ $category->name }}</b></h2>
                 <div class="row g-4">
-                    @if ($accessoryProducts->isNotEmpty())
-                        @foreach ($accessoryProducts as $product)
+                    @if ($products->isNotEmpty())
+                        @foreach ($products as $product)
                             @php
                                 $images = json_decode($product->images, true);
-                                // Find the brand name for this product
                                 $brandName = null;
                                 foreach ($brands as $brand) {
                                     if (isset($product->brand_id) && $brand->id == $product->brand_id) {
@@ -207,6 +160,10 @@
                                 </div>
                             </div>
                         @endforeach
+                    @else
+                        <div class="text-center w-100" style="height: 400px; line-height: 400px; font-size: 1.5rem; color: #555;">
+                            No products found in this category.
+                        </div>
                     @endif
 
                     <!-- No product found message -->

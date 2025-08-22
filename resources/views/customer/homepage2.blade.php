@@ -74,21 +74,26 @@
     </section>
     <section>
         <div class="container my-5 scroll-animate position-relative">
-            <div class="row d-flex justify-content-center">
-                @foreach ([['src' => 'image/phone_ps2.png', 'route' => 'product', 'name' => 'smartphone', 'label' => 'Smartphones'], ['src' => 'image/accessories1.jpg', 'route' => 'product_acessory', 'name' => 'accessories', 'label' => 'Accessories']] as $item)
-                    <div class="col-md-6 d-flex justify-content-center position-relative">
-                        <div class="shop-card">
-                            <img src="/{{ $item['src'] }}" alt="{{ $item['label'] }}" class="img-fluid">
-                            <div class="shop-overlay d-flex align-items-center justify-content-center">
-                                <a href="{{ route($item['route'], $item['name']) }}"
-                                    class="btn btn-primary px-4 py-2 d-inline-block custom-btn">Shop Now</a>
-                            </div>
-                            <h3 class="shop-title text-uppercase fs-5 fw-semibold">{{ $item['label'] }}</h3>
-                        </div>
-                    </div>
-                @endforeach
+    <div class="row d-flex justify-content-center">
+        @foreach ($categories as $category)
+    <div class="col-md-6 d-flex justify-content-center position-relative">
+        <div class="shop-card">
+            <img src="{{ asset('storage/' . $category->image) }}" 
+                alt="{{ $category->name }}" 
+                class="img-fluid">
+            <div class="shop-overlay d-flex align-items-center justify-content-center">
+                <a href="{{ route('product_by_category', $category->id) }}"
+                   class="btn btn-primary px-4 py-2 d-inline-block custom-btn">Shop Now</a>
             </div>
+
+            <h3 class="shop-title text-uppercase fs-5 fw-semibold">{{ $category->name ?? 'No Name' }}</h3>
         </div>
+    </div>
+@endforeach
+
+    </div>
+</div>
+
     </section>
     <section>
         <div class="container my-5 scroll-animate">

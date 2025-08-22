@@ -441,27 +441,32 @@ $.ajaxSetup({
 $(document).on('change', '.toggle-featured', function() {
     var isActive = $(this).prop('checked') ? 1 : 0;
     var productId = $(this).data('id');
+    console.log('Toggle Featured:', isActive);
     console.log('Product ID:', productId);
     console.log('CSRF Token:', $('meta[name="csrf-token"]').attr('content'));
 
     $.ajax({
-        url: `/update-featured-status/${productId}`,
-        type: 'POST',
-        data: {
-            is_active: isActive
-        },
-        success: function(response) {
-            if (response.success) {
-                alert('Product status updated successfully!');
-            } else {
-                alert('Error updating product status: ' + (response.message || 'Unknown error'));
-            }
-        },
-        error: function(xhr) {
-            console.log('Error Response:', xhr.responseText);
-            alert('An error occurred while updating product status: ' + xhr.status);
-        }
-    });
+    url: `/update-featured-status/${productId}`,
+    type: 'POST',
+    data: {
+        is_active: isActive
+    },
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    },
+    // success: function(response) {
+    //     if (response.success) {
+    //         alert('Product status updated successfully!');
+    //     } else {
+    //         alert('Error updating product status: ' + (response.message || 'Unknown error'));
+    //     }
+    // },
+    error: function(xhr) {
+        console.log('Error Response:', xhr.responseText);
+        alert('An error occurred while updating product status: ' + xhr.status);
+    }
+});
+
 });
 
 </script>
