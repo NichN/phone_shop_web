@@ -6,13 +6,13 @@
 
     <div class="w-100">
         <div class="mb-4">
-                <a href="{{ route('login') }}" onclick="login.back()" class="btn mb-4">← Back</a>
+                <a href="{{ route('login') }}" onclick="login.back()" class="btn">← Back</a>
             </div>
         <div class="p-4 p-md-5">
             <!-- Back Link -->
 
             <!-- Header -->
-            <h4 class="text-center mb-3 fw-bold">Forgot Password ?</h4>
+            <h4 class="text-center fw-bold" style="margin-top: -25px;">Forgot Password ?</h4>
             <p class="text-center text-muted mb-4">Enter your email to reset your password</p>
 
             <!-- Success Message -->

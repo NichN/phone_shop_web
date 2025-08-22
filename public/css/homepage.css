@@ -418,4 +418,23 @@ li a{
     width: 100%;     
 }
 
+.brand-card {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      border-radius: 10px;
+      padding: 15px;
+      height: 80px;
+      transition: 0.3s;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    .brand-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+    .brand-card img {
+      max-height: 40px;
+      max-width: 100px;
+    }
 

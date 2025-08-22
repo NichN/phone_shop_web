@@ -4,15 +4,15 @@
 
 @section('content')
 <div class="w-100">
-  <div class="p-4 p-md-5 mt-3"> <!-- Added mt-3 to move it up -->
+  <div class="p-4 p-md-5"> <!-- Added mt-3 to move it up -->
     
     <!-- Back Link -->
     <div class="mb-4">
-      <a href="{{ route('login') }}" class="btn btn-secondary mb-4">← Back</a>
+      <a href="{{ route('login') }}" class="btn btn-secondary">← Back</a>
     </div>
 
     <!-- Header -->
-    <h2 class="text-center mb-3 fw-bold">Reset Password</h2>
+    <h2 class="text-center fw-bold" style="margin-top: -10px;">Reset Password</h2>
     <p class="text-center text-muted mb-4">Enter your new password</p>
 
     <!-- Error Messages -->

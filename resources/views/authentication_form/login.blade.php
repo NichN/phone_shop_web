@@ -5,7 +5,7 @@
 @section('content')
     <div class="w-100">
         <div class="p-4 p-md-5">
-            <h2 class="text-center mb-3 fw-bold">Login</h2>
+            <h2 class="text-center fw-bold" style="margin-top: -25px;">Login</h2>
             <p class="text-center text-muted mb-4">Enter your credentials to log in</p>
 
             {{-- Display Error Message --}}

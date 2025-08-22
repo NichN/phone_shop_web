@@ -10,7 +10,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
+    <link rel="stylesheet" href="{{ asset('css/auth.css') }}">
+    {{-- <style>
         :root {
             --primary-color: #4361ee;
             --primary-light: #eef2ff;
@@ -60,7 +61,7 @@
             right: -50%;
             width: 100%;
             height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
             transform: rotate(30deg);
         }
 
@@ -97,7 +98,7 @@
             width: 10px;
             height: 10px;
             border-radius: 50%;
-            background-color: rgba(255,255,255,0.5);
+            background-color: rgba(255, 255, 255, 0.5);
             border: none;
             margin: 0 5px;
         }
@@ -223,7 +224,8 @@
             color: #94a3b8;
         }
 
-        .divider::before, .divider::after {
+        .divider::before,
+        .divider::after {
             content: "";
             flex: 1;
             border-bottom: 1px solid #e2e8f0;
@@ -306,17 +308,13 @@
                 height: 250px;
             }
         }
-    </style>
+    </style> --}}
 </head>
 
 <body>
-    <div class="auth-container">
-        <!-- Illustration Section -->
+    {{-- <div class="auth-container">
         <div class="auth-illustration">
             <div class="illustration-content">
-                {{-- <h2>Welcome to Our Shop</h2> --}}
-                {{-- <p>Join thousands of satisfied customers who trust our products and services.</p> --}}
-                
                 <div id="productCarousel" class="carousel slide product-carousel" data-bs-ride="carousel">
                     <div class="carousel-inner">
                         <div class="carousel-item active">
@@ -340,12 +338,12 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
-        <!-- Form Section -->
-        <div class="auth-form">
-            <div class="form-container">
-                {{-- <div class="form-logo">
+    <!-- Form Section -->
+    {{-- <div class="auth-form">
+            <div class="form-container"> --}}
+    {{-- <div class="form-logo">
                     <!-- Replace with your logo -->
                     <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect width="40" height="40" rx="8" fill="#4361ee"/>
@@ -355,15 +353,68 @@
                         <path d="M30 20L25 25V15L30 20Z" fill="white"/>
                     </svg>
                 </div> --}}
-                
-                {{-- <h1 class="form-title">Welcome Back</h1> --}}
-                {{-- <p class="form-subtitle">Please enter your details to sign in</p> --}}
-                
-                @yield('content')
-                
-                {{-- <div class="form-footer">
+
+    {{-- <h1 class="form-title">Welcome Back</h1> --}}
+    {{-- <p class="form-subtitle">Please enter your details to sign in</p> --}}
+
+    {{-- @yield('content') --}}
+
+    {{-- <div class="form-footer">
                     <p>Don't have an account? <a href="#">Sign up</a></p>
                 </div> --}}
+    {{-- </div>
+        </div>
+    </div> --}}
+
+    <div class="container">
+        <div class="row justify-content-center align-items-center vh-100">
+            <div class="col-md-11">
+                <div class="card shadow-lg mx-auto">
+                    <div class="row g-0 ">
+                        <!-- Left Image Section -->
+                        <div class="col-md-6 d-none d-md-flex align-items-center justify-content-center bg-dark">
+                            <div class="w-100 p-3">
+                                <div id="productCarousel" class="carousel slide product-carousel"
+                                    data-bs-ride="carousel">
+                                    <div class="carousel-inner">
+                                        <div class="carousel-item active">
+                                            <img src="{{ asset('picture/phone1.png') }}" class="d-block w-100"
+                                                alt="iPhone 1">
+                                        </div>
+                                        <div class="carousel-item">
+                                            <img src="{{ asset('picture/iphone4.png') }}" class="d-block w-100"
+                                                alt="iPhone 2">
+                                        </div>
+                                        <div class="carousel-item">
+                                            <img src="{{ asset('picture/case.png') }}" class="d-block w-100"
+                                                alt="iPhone Case">
+                                        </div>
+                                    </div>
+
+                                    <div class="carousel-indicators ">
+                                        <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="0"
+                                            class="active" aria-current="true" aria-label="Slide 1"></button>
+                                        <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="1"
+                                            aria-label="Slide 2"></button>
+                                        <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="2"
+                                            aria-label="Slide 3"></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Form Section -->
+                        <div class="auth-form">
+                            <div class="form-container">
+                                <!-- Logo -->
+                                <div class="auth-logo text-center">
+                                    <img src="{{ asset('image/tay_meng_logo.jpg') }}" alt="Logo" height="100">
+                                </div>
+                                @yield('content')
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -387,7 +438,7 @@
                 this.parentElement.querySelector('.form-label').style.transform = 'translateY(-5px)';
                 this.parentElement.querySelector('.form-label').style.fontSize = '0.8rem';
             });
-            
+
             input.addEventListener('blur', function() {
                 if (!this.value) {
                     this.parentElement.querySelector('.form-label').style.transform = 'none';
@@ -397,4 +448,5 @@
         });
     </script>
 </body>
+
 </html>

@@ -1,5 +1,3 @@
-
-
 @extends('Layout.auth_form')
 
 @section('title', 'Registration')
@@ -7,7 +5,7 @@
 @section('content')
     <div class="w-100">
         <div class="p-4 p-md-5">
-            <h5 class="text-center mb-3 fw-bold">Registration</h5>
+            <h5 class="text-center fw-bold" style="margin-top: -25px;">Registration</h5>
             <p class="text-center text-muted mb-4">Fill in the details to register</p>
             
             @if (session('success'))

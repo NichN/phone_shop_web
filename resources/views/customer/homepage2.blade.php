@@ -92,7 +92,7 @@
     </section>
     <section>
         <div class="container my-5 scroll-animate">
-            <h2 class="text-right mb-4 fs-5"><b>New Products</b></h2>
+            <h2 class="text-right mb-4" style="font-size: 25px;"><b>New Products</b></h2>
             <div class="row g-4">
                 @foreach ($products->take(10) as $product)
                     @php $images = json_decode($product->images, true); @endphp
@@ -128,10 +128,10 @@
         </div>
     </section>
     {{-- Banner Section --}}
-    <section>
+    {{-- <section>
         <div class="container my-5">
             <div class="row g-3">
-                @foreach (['Mobile.jpg', 'airpods.jpg'] as $banner)
+                @foreach (['oppof27.jpg', 'airpods.jpg'] as $banner)
                     <div class="col-md-6 position-relative scroll-animate">
                         <img src="{{ asset('image/' . $banner) }}" class="img-fluid"
                             style="object-fit: cover; height: 100%; width: 100%; filter: brightness(65%);">
@@ -143,11 +143,33 @@
                 @endforeach
             </div>
         </div>
+    </section> --}}
+    <section>
+        <div class="container my-5">
+            <div id="bannerCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+                <div class="carousel-inner">
+                    @foreach (['oppof27.jpg', 'airpods.jpg'] as $key => $banner)
+                        <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
+                            <div class="position-relative">
+                                <img src="{{ asset('image/' . $banner) }}" class="d-block w-100"
+                                    style="object-fit: cover; height: 400px; filter: brightness(65%);">
+                                <div
+                                    class="position-absolute top-50 start-20 translate-middle-y text-white text-start p-3">
+                                    <h3 class="fw-bold mb-3">Let's Order Now!</h3>
+                                    <p class="mb-4">Special launch offers available for a limited time.</p>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
     </section>
+
     {{-- Accessories Section --}}
     <section class="my-5">
         <div class="container scroll-animate">
-            <h2 class="text-right mb-4 fs-5"><b>Accessories</b></h2>
+            <h2 class="text-right mb-4" style="font-size: 25px;"><b>Accessories</b></h2>
             <div class="row g-4">
                 @if ($accessoryProducts->isNotEmpty())
                     @foreach ($accessoryProducts->shuffle()->take(4) as $product)
@@ -192,7 +214,7 @@
     </section>
     <section class="my-5">
         <div class="container scroll-animate">
-            <h2 class="text-right mb-4" style="font-size: 25px;"><b>Phone</b></h2>
+            <h2 class="text-right mb-4" style="font-size: 25px;"><b>Smartphone</b></h2>
             <div class="row g-4">
                 @if ($phone->isNotEmpty())
                     @foreach ($phone->shuffle()->take(4) as $product)
@@ -253,5 +275,32 @@
             </div>
         </div>
     </section>
+    <div class="container py-5">
+        <h3 class="mb-4 fw-bold">POPULAR BRANDS</h3>
+        <div class="row g-3">
+            <!-- Example brand -->
+            <div class="col-6 col-md-3 col-lg-2">
+                <div class="brand-card">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple">
+                </div>
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <div class="brand-card">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/24/Samsung_Logo.svg" alt="Samsung">
+                </div>
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <div class="brand-card">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2e/Sony_logo.svg" alt="Sony">
+                </div>
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <div class="brand-card">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/29/Xiaomi_logo.svg" alt="Xiaomi">
+                </div>
+            </div>
+            <!-- repeat more brands here -->
+        </div>
+    </div>
 
 @endsection

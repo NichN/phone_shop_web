@@ -1,12 +1,119 @@
-.background {
-    background-color: #4A4545;
-    color: white; 
-    height: 90vh;
-  }
-.img-fluid{
-  width:400px;
+/* .background {
+  background-color: #4A4545;
+  color: white;
+  height: 90vh;
+}
+
+.img-fluid {
+  width: 400px;
   height: 400px;
 }
-.text-style:hover{
+
+.text-style:hover {
   color: blue;
+} */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--light-color);
+  color: var(--dark-color);
+  /* line-height: 1.2; */
+}
+
+.product-carousel {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.carousel-item img {
+  border-radius: var(--border-radius);
+  object-fit: contain;
+  height: 400px;
+}
+
+.carousel-indicators .active {
+  background-color: white;
+  width: 30px;
+  border-radius: 10px;
+}
+
+.carousel-indicators {
+  position: static;      /* remove overlay positioning */
+  margin-top: 1rem;      /* space between image and indicators */
+}
+
+
+.auth-form {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  min-height: 640px; /* same height for both sides */
+}
+
+.form-container {
+  width: 100%;
+  max-width: 500px; /* form won’t look too narrow */
+  margin: 0 auto;
+}
+
+.card {
+  min-height: 640px; /* adjust as needed */
+}
+
+.auth-logo {
+    margin-top: -10px; /* adjust as needed */
+}
+
+@media (max-width: 992px) {
+  .auth-container {
+    flex-direction: column;
+  }
+
+  .auth-illustration {
+    padding: 2rem 1rem;
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+  }
+
+  .illustration-content {
+    max-width: 100%;
+  }
+
+  .product-carousel {
+    max-width: 400px;
+  }
+
+  .auth-form {
+    padding: 2rem 1rem;
+  }
+
+  .form-container {
+    padding: 2rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .form-container {
+    padding: 1.5rem;
+  }
+
+  .form-title {
+    font-size: 1.5rem;
+  }
+
+  .product-carousel {
+    max-width: 300px;
+  }
+
+  .carousel-item img {
+    height: 250px;
+  }
 }

@@ -72,22 +72,30 @@
                                     <li><a class="dropdown-item text-primary"
                                             href="{{ route('checkout.history_details', $order->id) }}"><i
                                                 class="fas fa-eye me-2"></i>Detail</a></li>
-                                    @if(strtolower($order->status) === 'pending')
-                                    <li><button type="button" class="dropdown-item text-danger" data-bs-toggle="modal"
-                                            data-bs-target="#cancelModal-{{ $order->id }}"><i
-                                                class="fas fa-times-circle me-2"></i>Cancel Order</button></li>
+                                    @if (strtolower($order->status) === 'pending')
+                                        <li><button type="button" class="dropdown-item text-danger" data-bs-toggle="modal"
+                                                data-bs-target="#cancelModal-{{ $order->id }}"><i
+                                                    class="fas fa-times-circle me-2"></i>Cancel Order</button></li>
                                     @endif
-                                    @if(in_array(strtolower($order->status), ['accepted', 'processing']))
-                                    <li><a class="dropdown-item text-success"
-                                            href="{{ route('checkout.payment', $order->id) }}"><i
-                                                class="fas fa-credit-card me-2"></i>Payment</a></li>
+                                    @if (in_array(strtolower($order->status), ['accepted', 'processing']))
+                                        <li><a class="dropdown-item text-success"
+                                                href="{{ route('checkout.payment', $order->id) }}"><i
+                                                    class="fas fa-credit-card me-2"></i>Payment</a></li>
                                     @endif
-                                    @if(in_array(strtolower($order->status), ['accepted', 'pending']))
+                                    {{-- @if (in_array(strtolower($order->status), ['accepted', 'pending']))
                                     <li>
                                         <a data-bs-toggle="tooltip" class="dropdown-item text-info verify-order-btn" data-order-id="{{ $order->id }}">
                                             <i class="fas fa-check-circle fa-lg"></i>Verify Order
                                         </a>
                                     </li>
+                                    @endif --}}
+                                    @if (in_array(strtolower($order->status), ['accepted', 'pending']))
+                                        <li>
+                                            <button type="button" class="dropdown-item text-info verify-order-btn"
+                                                data-order-id="{{ $order->id }}">
+                                                <i class="fas fa-check-circle me-2"></i>Verify Order
+                                            </button>
+                                        </li>
                                     @endif
                                 </ul>
                             </div>
@@ -104,8 +112,6 @@
                             <div>
                                 <p class="mb-1"><strong>Product</strong></p>
                                 <p class="mb-1">Total: ${{ number_format($order->total_amount, 2) }}</p>
-                                {{-- <p class="mb-1">Qty: {{ $order->orderItems?->sum('quantity') ?? 0 }}</p> --}}
-                                {{-- <p class="text-muted small">{{ $order->description ?? 'Product details here...' }}</p> --}}
                                 <p class="text-muted small">View product details in your order detail.</p>
                             </div>
                         </div>
@@ -164,62 +170,67 @@
         @endif
     </div>
     <script>
-    $(document).ready(function () {
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl);
+        $(document).ready(function() {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+            $('.verify-order-btn').on('click', function(e) {
+                e.preventDefault();
+
+                let orderId = $(this).data('order-id');
+
+                Swal.fire({
+                    title: 'Enter Verification Code',
+                    input: 'text',
+                    inputLabel: 'A code has been sent to your email. Please enter it below:',
+                    inputAttributes: {
+                        maxlength: 6,
+                        autocapitalize: 'off',
+                        autocorrect: 'off'
+                    },
+                    showCancelButton: true,
+                    confirmButtonText: 'Verify',
+                    showLoaderOnConfirm: true,
+                    preConfirm: (code) => {
+                        if (!code) {
+                            Swal.showValidationMessage('Please enter the code.');
+                            return;
+                        }
+                        return $.ajax({
+                            url: '/checkout/verify-code',
+                            method: 'POST',
+                            data: {
+                                order_id: orderId,
+                                code: code,
+                                _token: $('meta[name="csrf-token"]').attr('content')
+                            }
+                        }).then(response => {
+                            if (!response.success) {
+                                throw new Error(response.message);
+                            }
+                            return response;
+                        }).catch(error => {
+                            Swal.showValidationMessage(`Verification failed: ${error}`);
+                        });
+                    },
+                    allowOutsideClick: () => !Swal.isLoading()
+                }).then((result) => {
+                    if (result.isConfirmed && result.value && result.value.order_id) {
+                        Swal.fire(
+                            'Success!',
+                            'Verification code confirmed. Redirecting...',
+                            'success'
+                        ).then(() => {
+                            window.location.href = '/checkout/payment/' + result.value
+                                .order_id;
+                        });
+                    } else if (result.isConfirmed) {
+                        Swal.fire('Error', 'Order ID not found in response.', 'error');
+                    }
+                });
+            });
+
         });
-        $('.verify-order-btn').on('click', function (e) {
-    e.preventDefault();
-
-    let orderId = $(this).data('order-id');
-
-    Swal.fire({
-        title: 'Enter Verification Code',
-        input: 'text',
-        inputLabel: 'A code has been sent to your email. Please enter it below:',
-        inputAttributes: { maxlength: 6, autocapitalize: 'off', autocorrect: 'off' },
-        showCancelButton: true,
-        confirmButtonText: 'Verify',
-        showLoaderOnConfirm: true,
-        preConfirm: (code) => {
-            if (!code) {
-                Swal.showValidationMessage('Please enter the code.');
-                return;
-            }
-            return $.ajax({
-                url: '/checkout/verify-code',
-                method: 'POST',
-                data: {
-                    order_id: orderId,
-                    code: code,
-                    _token: $('meta[name="csrf-token"]').attr('content')
-                }
-            }).then(response => {
-                if (!response.success) {
-                    throw new Error(response.message);
-                }
-                return response;
-            }).catch(error => {
-                Swal.showValidationMessage(`Verification failed: ${error}`);
-            });
-        },
-        allowOutsideClick: () => !Swal.isLoading()
-    }).then((result) => {
-        if (result.isConfirmed && result.value && result.value.order_id) {
-            Swal.fire(
-                'Success!',
-                'Verification code confirmed. Redirecting...',
-                'success'
-            ).then(() => {
-                window.location.href = '/checkout/payment/' + result.value.order_id;
-            });
-        } else if (result.isConfirmed) {
-            Swal.fire('Error', 'Order ID not found in response.', 'error');
-        }
-    });
-});
-
-    });
-</script>
+    </script>
 @endsection
