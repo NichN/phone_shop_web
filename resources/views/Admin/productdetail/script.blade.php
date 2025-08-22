@@ -78,68 +78,105 @@ $(document).ready(function() {
             { data: 'action', orderable: false, searchable: false }
         ]
     });
-            function decodeHTML(html) {
-            var txt = document.createElement("textarea");
-            txt.innerHTML = html;
-            return txt.value;
-        }
+           function decodeHTML(html) {
+        var txt = document.createElement("textarea");
+        txt.innerHTML = html;
+        return txt.value;
+    }
     $('#ProName').select2({
         placeholder: "Search Product Name...",
         allowClear: true,
         maximumSelectionLength: 1 
     });
     $('#edit_ProName').select2({
-    placeholder: "Search Product Name...",
-    allowClear: true,
-    maximumSelectionLength: 1,
-    dropdownParent: $('#editModal')
-});
-    function loadProduct(searchTerm = '') {
+        placeholder: "Search Product Name...",
+        allowClear: true,
+        maximumSelectionLength: 1,
+        dropdownParent: $('#editModal')
+    });
+    function loadProduct_edit(searchTerm = '', currentProductId = null, currentProductName = null) {
         $.ajax({
             url: "{{ route('pr_detail.search-product') }}",
             method: 'GET',
             data: { search: searchTerm },
             success: function(response) {
-                $('#ProName').empty().append('<option value="">Select Product</option>');
-                response.forEach(function(product) {
-                    $('#ProName').append(
-                        `<option value="${product.id}">${product.name}</option>`
+                $('#edit_ProName').empty().append('<option value="">Select Product</option>');
+                // Add current product if provided (to ensure it’s available)
+                if (currentProductId && currentProductName) {
+                    $('#edit_ProName').append(
+                        `<option value="${currentProductId}">${currentProductName}</option>`
                     );
+                }
+                // Add other products from response
+                response.forEach(function(product) {
+                    if (product.id != currentProductId) { // Avoid duplicates
+                        $('#edit_ProName').append(
+                            `<option value="${product.id}">${product.name}</option>`
+                        );
+                    }
                 });
             },
             error: function(xhr, status, error) {
-                console.error("Error loading Product:", error);
+                console.error("Error loading Edit Product:", error);
             }
         });
     }
-    loadProduct();
+    loadProduct_edit();
 
         $(document).on('click', '.editProduct_dt', function(e) {
         e.preventDefault();
         let id = $(this).data('id');
-        $("#pro_dt").val(id);
+        $("#pro_dt").val(id); // Set hidden input for product ID
+
         let url = "{{ route('pr_detail.edit', ':id') }}".replace(':id', id);
         $.get(url, function(data) {
+            // Log response for debugging
+            console.log('Edit API Response:', data);
 
-           $('#edit_ProName').val(data.product_name);
-        //    console.log(data.product_name);
-            $('#edit_costPrice').val(data.cost_price);
-            $('#edit_type').val(data.type);
-            $('#edit_sellPrice').val(data.price);
-            $('#edit_brandName').val(data.brand).trigger('change');
-            $('#edit_Category').val(data.category).trigger('change');
-            $('#edit_color_id').val(data.color_id);
-            $('#edit_size_id').val(data.size_id);
-            $('#edit_warranty').val(data.warranty);
-            // $('#edit_images').val(JSON.stringify(data.images));
+            // Populate fields based on productdetail model
+            $('#pro_dt').val(data.id); // Hidden ID field
+            // Ensure edit_ProName options include the current product
+            let productId = data.product_detail || data.product_id || data.id || '';
+            let productName = data.product_name || ''; // Assuming product_name is available
+            loadProduct_edit('', productId, productName); // Load options and include current product
+            $('#edit_ProName').val(productId).trigger('select2:select');
+            // Debug available options and selected value
+            console.log('Available edit_ProName options:', $('#edit_ProName option').map(function() { return $(this).val(); }).get());
+            console.log('Setting edit_ProName to:', productId);
 
+            $('#edit_brandName').val(data.brand || '');
+            $('#edit_Category').val(data.category || '');
+            $('#edit_costPrice').val(data.cost_price || '');
+            $('#edit_sellPrice').val(data.price || '');
+            $('#edit_type').val(data.type || '');
+            $('#edit_color_id').val(data.color_id || '');
+            $('#edit_size_id').val(data.size_id || '');
+            $('#edit_warranty').val(data.warranty || '');
+
+            // Handle image preview
+            $('#imagePreview').empty();
+            let images = data.images ? (typeof data.images === 'string' ? JSON.parse(data.images) : data.images) : [];
+            if (Array.isArray(images) && images.length > 0) {
+                images.forEach((img, index) => {
+                    $('#imagePreview').append(
+                        `<div class="position-relative">
+                            <img src="/storage/${img}" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;" alt="Image ${index + 1}">
+                        </div>`
+                    );
+                });
+            } else {
+                $('#imagePreview').append('<p>No images available</p>');
+            }
+
+            // Show the modal
             $('#editModal').modal('show');
-            $('#editPr').data('id', data.id);
+            $('#editPr').data('id', data.id); // Store ID in form data
         }).fail(function(xhr) {
+            console.error('Edit API Error:', xhr.responseJSON);
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: xhr.responseJSON?.message || 'An error occurred'
+                text: xhr.responseJSON?.message || 'An error occurred while fetching product data'
             });
         });
     });
@@ -206,64 +243,100 @@ $(document).ready(function() {
         });
     });
     $('#editPr').on('submit', function(e) {
-    e.preventDefault();
-    let id = $('#pro_dt').val();
-    let url = "{{ route('pr_detail.update', ':id') }}".replace(':id', id);
-    let formData = new FormData(this);
+        e.preventDefault();
+        const id = $('#pro_dt').val();
+        const brandName = $('#edit_brandName').val().trim();
+        const categoryName = $('#edit_Category').val().trim();
 
-    formData.append('_token', '{{ csrf_token() }}');
-
-    $.ajax({
-        url: url,
-        type: 'POST',
-        data: formData,
-        contentType: false,
-        processData: false,
-        success: function(response) {
-            if (response.success) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: 'Product updated successfully!',
-                    willClose: () => {
-                        table.ajax.reload(null, false);
-                        $('#editModal').modal('hide');
-                    }
-                });
-            }
-        },
-        error: function(xhr) {
+        // Validate Brand and Category
+        if (!brandName) {
+            e.preventDefault();
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: xhr.responseJSON?.message || 'An error occurred'
+                text: 'Please enter a brand name'
+            });
+            $('#edit_brandName').focus();
+            return;
+        }
+
+        if (!categoryName) {
+            e.preventDefault();
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Please enter a category name'
+            });
+            $('#edit_Category').focus();
+            return;
+        }
+
+        // Dynamically set form action with product ID
+        if (id) {
+            let url = "{{ route('products.product_update', ':id') }}".replace(':id', id);
+            $(this).attr('action', url);
+
+            // Submit form via AJAX
+            let formData = new FormData(this);
+            formData.append('_token', '{{ csrf_token() }}');
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: 'Product updated successfully!',
+                            willClose: () => {
+                                $('.data-table').DataTable().ajax.reload(null, false);
+                                $('#editModal').modal('hide');
+                            }
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: xhr.responseJSON?.message || 'An error occurred'
+                    });
+                }
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Product ID is missing'
             });
         }
     });
 });
-
-});
 function changeprduct(selectElement) {
-    let productID = $(selectElement).val();
-    if (productID) {
-        $.ajax({
-            url: "{{ route('pr_detail.get_product', '') }}/" + productID,
-            method: 'GET',
-            success: function(data) {
-                if (selectElement.id === 'ProName') {
-                    $('#brandName').val(data.brand);
-                    $('#Category').val(data.category);
-                } else if (selectElement.id === 'edit_ProName') {
-                    $('#edit_brandName').val(data.brand);
-                    $('#edit_Category').val(data.category);
+        let productID = $(selectElement).val();
+        if (productID) {
+            $.ajax({
+                url: "{{ route('pr_detail.get_product', '') }}/" + productID,
+                method: 'GET',
+                success: function(data) {
+                    if (selectElement.id === 'ProName') {
+                        $('#brandName').val(data.brand);
+                        $('#Category').val(data.category);
+                    } else if (selectElement.id === 'edit_ProName') {
+                        $('#edit_brandName').val(data.brand);
+                        $('#edit_Category').val(data.category);
+                    }
+                },
+                error: function(xhr) {
+                    console.error("Failed to fetch product data", xhr);
                 }
-            },
-            error: function(xhr) {
-                console.error("Failed to fetch product data", xhr);
-            }
-        });
+            });
+        }
     }
-}
 function loadProduct_edit(searchTerm = '') {
         $.ajax({
             url: "{{ route('pr_detail.search-product') }}",
@@ -354,11 +427,11 @@ function loadProduct_edit(searchTerm = '') {
 });
 
 function changeImage(imgElement) {
-    const newSrc = $(imgElement).attr('src');
-    $('#mainProductImage').attr('src', newSrc);
-    $('.thumbnail-img').removeClass('selected-thumbnail');
-    $(imgElement).addClass('selected-thumbnail');
-}
+        const newSrc = $(imgElement).attr('src');
+        $('#mainProductImage').attr('src', newSrc);
+        $('.thumbnail-img').removeClass('selected-thumbnail');
+        $(imgElement).addClass('selected-thumbnail');
+    }
 $.ajaxSetup({
     headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

@@ -50,89 +50,104 @@
 <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
+            <!-- Header -->
             <div class="modal-header bg-light">
                 <h5 class="mb-0"><i class="fas fa-tags me-2"></i>Edit</h5>
-                <button type="button" class="btn-close btn-close-black" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            
+
+            <!-- Body -->
             <div class="modal-body">
-                <form id="editPr">
-                     @method('POST')
+                <form id="editPr" method="POST" enctype="multipart/form-data">
+                    @method('POST')
                     @csrf
+
+                    <input type="hidden" id="pro_dt" name="id">
+
+                    <!-- Name and Brand -->
                     <div class="row mb-4">
-                        <input type="hidden" id="pro_dt" name="id">
-                        <div class="col-md-5">
-                            <label for="brandName" class="form-label fw-bold">Name <span class="text-danger">*</span></label>
-                            <select class="select2 js-states form-select" multiple="multiple" id="edit_ProName" name="name" required onchange="changeprduct(this)">
+                        <div class="col-md-6">
+                            <label for="edit_ProName1" class="form-label fw-bold">Name <span class="text-danger">*</span></label>
+                            <select class="select2 js-states form-control" id="edit_ProName" name="name" required onchange="changeprduct(this)">
                                 <option value="">Choose Name</option>
                                 @foreach($product as $products)
-                                <option value="{{ $products->id }}">{{ $products->name }}</option>
-                                 @endforeach
+                                    <option value="{{ $products->id }}">{{ $products->name }}</option>
+                                @endforeach
                             </select>
                         </div>
-                        <div class="col-md-5">
-                            <label for="brandName" class="form-label fw-bold"> Brand <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control " id="edit_brandName" name="brandName" placeholder="" required onchange="localStorage.setItem('brandName', this.value)">
+                        <div class="col-md-6">
+                            <label for="edit_brandName" class="form-label fw-bold">Brand <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="edit_brandName" name="brandName" required onchange="localStorage.setItem('brandName', this.value)">
                         </div>
                     </div>
+
+                    <!-- Category and Cost Price -->
                     <div class="row mb-4">
-                        <div class="col-md-5">
-                            <label for="brandName" class="form-label fw-bold"> Category <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="edit_Category" name="edit_categoryName" placeholder="" required onchange="localStorage.setItem('Category', this.value)">
+                        <div class="col-md-6">
+                            <label for="edit_Category" class="form-label fw-bold">Category <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="edit_Category" name="edit_categoryName" required onchange="localStorage.setItem('Category', this.value)">
                         </div>
-                        <div class="col-md-2">
-                            <label for="brandName" class="form-label fw-bold"> Cost Price <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control " id="edit_costPrice" name="cost_price" placeholder="Enter Cost Price" required>
+                        <div class="col-md-6">
+                            <label for="edit_costPrice" class="form-label fw-bold">Cost Price <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="edit_costPrice" name="cost_price" placeholder="e.g. 1200" required>
                         </div>
-                        <div class="col-md-2">
-                            <label for="brandName" class="form-label fw-bold"> Sell Price <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control " id="edit_sellPrice" name="price" placeholder="Enter Sell Price" required>
+                    </div>
+
+                    <!-- Sell Price and State -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="edit_sellPrice" class="form-label fw-bold">Sell Price <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="edit_sellPrice" name="price" placeholder="e.g. 1500" required>
                         </div>
-                         <div class="col-md-2">
-                            <label for="type" class="form-label fw-bold">State<span class="text-danger">*</span></label>
+                        <div class="col-md-6">
+                            <label for="edit_type" class="form-label fw-bold">State <span class="text-danger">*</span></label>
                             <select class="form-select" id="edit_type" name="type" required>
-                                <option value="" disabled selected>Select State</option>
+                                <option value="">Select State</option>
                                 <option value="new">New</option>
                                 <option value="old">Second Hand</option>
                             </select>
                         </div>
-
                     </div>
+
+                    <!-- Color and Size -->
                     <div class="row mb-4">
-                        <div class="form-group col-md-3">
-                            <label for="color" class="form-label fw-bold">Color <span class="text-danger">*</span></label>
-                            <select class="form-select" id="edit_color_id" name="color_id">
+                        <div class="col-md-6">
+                            <label for="edit_color_id" class="form-label fw-bold">Color <span class="text-danger">*</span></label>
+                            <select class="form-select" id="edit_color_id" name="color_id" required>
                                 <option value="">Choose Color</option>
                                 @foreach($color as $colors)
                                     <option value="{{ $colors->id }}">{{ $colors->name }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="form-group col-md-3">
-                            <label for="color" class="form-label fw-bold">Size <span class="text-danger">*</span></label>
-                            <select class="form-select" id="edit_size_id" name="size_id">
+                        <div class="col-md-6">
+                            <label for="edit_size_id" class="form-label fw-bold">Size <span class="text-danger">*</span></label>
+                            <select class="form-select" id="edit_size_id" name="size_id" required>
                                 <option value="">Choose Size</option>
                                 @foreach($size as $sizes)
                                     <option value="{{ $sizes->id }}">{{ $sizes->size }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="form-group col-md-3">
-                        <label for="size_id" class="form-label fw-bold">
-                            Warranty
-                             <input type="text" name="warranty" id="edit_warranty" class="form-control" value="">
-                        </label>
                     </div>
 
-                    </div>
+                    <!-- Warranty and Product Images -->
                     <div class="row mb-4">
-                        <div class="col-md-10">
-                            <label for="images" class="form-label fw-bold">Product Images <span class="text-danger">*</span></label>
-                            <input type="file" class="form-control" id="edit_images" name="images" multiple accept="image/*" required onchange="previewImages(this)">
+                        <div class="col-md-6">
+                            <label for="edit_warranty" class="form-label fw-bold">Warranty (Months) <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="edit_warranty" name="warranty" min="0" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="edit_images" class="form-label fw-bold">Product Images <span class="text-danger">*</span></label>
+                            <input type="file" class="form-control" id="edit_images" name="images[]" multiple accept="image/*" required onchange="previewImages(this)">
                             <small class="form-text text-muted">You can select multiple images.</small>
                         </div>
                     </div>
+
+                    <!-- Image Preview -->
                     <div id="imagePreview" class="d-flex flex-wrap gap-3 mt-3"></div>
+
+                    <!-- Submit Button -->
                     <div class="d-flex justify-content-end border-top pt-4">
                         <button type="submit" id="saveBtn2" class="btn btn-primary px-4">
                             <i class="fas fa-save me-2"></i>Edit
@@ -143,6 +158,8 @@
         </div>
     </div>
 </div>
+
+
 <div class="modal fade" id="viewDetailModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
