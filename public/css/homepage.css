@@ -418,4 +418,14 @@ li a{
     width: 100%;     
 }
 
+.banner-wrapper:hover .banner-img {
+    transform: scale(1.05);   /* zoom slightly */
+    filter: brightness(90%);   /* brighten a little */
+}
+
+.banner-wrapper {
+    aspect-ratio: 16 / 9; /* width / height ratio */
+    overflow: hidden;
+    position: relative;
+}
 

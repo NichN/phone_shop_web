@@ -128,13 +128,13 @@
         </div>
     </section>
     {{-- Banner Section --}}
-    <section>
+    {{-- <section>
         <div class="container my-5">
             <div class="row g-3">
-                @foreach (['oppof27.jpg', 'airpods.jpg'] as $banner)
+                @foreach (['samsungzflip.png', 'airpods.jpg'] as $banner)
                     <div class="col-md-6 position-relative scroll-animate">
-                        <img src="{{ asset('image/' . $banner) }}" class="img-fluid"
-                            style="object-fit: cover; height: 100%; width: 100%; filter: brightness(65%);">
+                        <img src="{{ asset('image/' . $banner) }}" class="img-fluid banner-img"
+                            style="object-fit: cover; height: 100%; width: 100%; filter: brightness(80%);">
                         <div class="position-absolute top-50 start-20 translate-middle-y text-white text-start p-3">
                             <h3 class="fw-bold mb-3">Let's Order Now!</h3>
                             <p class="mb-4">Special launch offers available for a limited time.</p>
@@ -143,8 +143,22 @@
                 @endforeach
             </div>
         </div>
+    </section> --}}
+
+    <section>
+        <div class="container my-5">
+            <div class="row g-3">
+                @foreach (['samsungzflip.png', 'galaxy.jpg'] as $banner)
+                    <div class="col-md-6 position-relative scroll-animate">
+                        <div class="banner-wrapper position-relative overflow-hidden shadow-sm">
+                            <img src="{{ asset('image/' . $banner) }}" class="img-fluid banner-img"
+                                style="object-fit: cover; height: 100%; width: 100%; transition: transform 0.5s ease, filter 0.5s ease;">
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
     </section>
-    
 
     {{-- Accessories Section --}}
     <section class="my-5">
@@ -243,13 +257,22 @@
                 <div class="row align-items-center">
                     <div class="col-md-6">
                         <div class="d-flex justify-content-center">
-                            <img src="{{ asset('image/oppo2.jpg') }}" alt="..." class="img-fluid">
+                            {{-- <img src="{{ asset('image/oppo2.jpg') }}" alt="..." class="img-fluid"> --}}
+                            <img src="{{ asset('image/huaweipura.png') }}" alt="..." class="img-fluid">
                         </div>
                     </div>
-                    <div class="col-md-6 text-center text-md-start">
-                        <h2 class="fw-bold">Upgrade to a Fully-fledged <span class="text-uppercase">Electromo!</span></h2>
-                        <p class="lead">Featuring additional pages, plugins, beautiful pictures, and full functionality!
-                        </p>
+                    {{-- <div class="col-md-6 text-center text-md-start"> --}}
+                    <div class="col-md-6 text-center text-md-start" style="padding: 50px;">
+                        {{-- <h2 class="fw-bold">Upgrade to a Fully-fledged <span class="text-uppercase">Electromo!</span></h2> --}}
+                        <h2 class="fw-bold">Huawei Pura 80 Serious</h2>
+                        {{-- <p class="lead">Featuring additional pages, plugins, beautiful pictures, and full functionality!</p> --}}
+                        <p class="lead text-justify" style="font-size: 1rem; text-align: justify; line-height: 1.8;">
+                            Flagship Pura 80 Ultra
+                            combines premium design with top-tier performance. It has a 6.8-inch LTPO OLED display and
+                            runs on the Kirin 9020 chip with HarmonyOS 5.1. Its standout camera system includes a 50MP
+                            1-inch
+                            main sensor and dual switchable telephoto lens, plus a 40MP ultra-wide shooter. The 5,700 mAh
+                            battery supports 100 W wired and 80 W wireless fast charging.</p>
                     </div>
                 </div>
             </div>

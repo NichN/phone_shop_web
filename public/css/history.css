@@ -95,4 +95,34 @@
     color: #FF7F00 !important; /* orange for pending status */
 }
 
+/* Tablet view */
+@media (max-width: 992px) {
+    .order-body {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* Mobile view */
+@media (max-width: 768px) {
+    .order-body {
+        grid-template-columns: 1fr;
+    }
+
+    .order-product {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .order-product img {
+        margin: 0 0 10px 0;
+    }
+
+    .order-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}
+
 
