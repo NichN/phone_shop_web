@@ -111,7 +111,7 @@
             <div class="modal-body">
                 <form id="editForm" action="" method="POST">
                     @csrf
-                    @method('PUT')
+                    @method('GET')
                     <div class="row g-3 mb-4">
                         <input type="hidden" id="productId" name="id">
                         <div class="col-md-6">

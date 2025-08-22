@@ -25,12 +25,18 @@
             </div>
 
             <div class="col-md-6">
-                <div class="d-flex align-items-center justify-content-between mb-4">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h3 class="fw-bold text-primary">{{ $product['name'] }}</h3>
+                        <span class="badge bg-success fs-6" id="product-type" >
+                            {{ $product['type'] }}<span class="text-danger">*</span>
+                        </span>
+                    </div>
+                    {{-- <div class="d-flex align-items-center justify-content-between mb-4">
                     <h4 class="mb-0 fw-bold">{{ $product['name'] }}</h4>
                     <h4 id="product-type" style="color: green;">
                         {{ $product['type'] }}<span style="color: red;">*</span>
                     </h4>
-                </div>
+                </div> --}}
                 <h5 class="text-danger mb-4">
                     <strong id="product-price">{{ $product['price'] }} USD</strong>
                 </h5>
@@ -67,7 +73,16 @@
                        Add to Cart
                     </a>
                 </div>
-                <div class="mt-4">
+                <br>
+                <div class="mb-4">
+                    <h5 class="fs-6">Description</h5>
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body bg-light text-dark rounded">
+                            {{ $productDescription }}
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-">
                     <h5 class="fs-6">SPECIFICATION</h5>
                     <div class="accordion" id="specAccordion">
                         <div class="accordion-item">
@@ -80,7 +95,6 @@
                                 <div class="accordion-body">
                                     <p><strong>Announced:</strong> {{ $product['created_at'] }}</p>
                                     <p><strong>Status:</strong> Available</p>
-                                    <p><strong>warranty</strong> {{$product['warranty']}}</p>
                                 </div>
                             </div>
                         </div>
@@ -91,48 +105,64 @@
     </div>
 
     <script src="{{ asset('js/cart.js') }}"></script>
-    <script>
-        window.changeImage = function(thumbnail) {
-            document.querySelectorAll('.thumbnail-img').forEach(img => {
-                img.classList.remove('selected-thumbnail');
-            });
-            thumbnail.classList.add('selected-thumbnail');
-            const mainImage = document.getElementById('mainImage');
-            if (mainImage) {
-                mainImage.src = thumbnail.getAttribute('data-full-image');
-                document.querySelector('.add-cart').dataset.img = mainImage.src;
-            }
-        };
+                <script>
+                    window.changeImage = function(thumbnail) {
+                        document.querySelectorAll('.thumbnail-img').forEach(img => {
+                            img.classList.remove('selected-thumbnail');
+                        });
+                        thumbnail.classList.add('selected-thumbnail');
+                        const mainImage = document.getElementById('mainImage');
+                        if (mainImage) {
+                            mainImage.src = thumbnail.getAttribute('data-full-image');
+                            document.querySelector('.add-cart').dataset.img = mainImage.src;
+                        }
+                    };
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const variants = @json($variants);
-            const priceDisplay = document.getElementById('product-price');
-            const typeDisplay = document.getElementById('product-type');
-            const addCartBtn = document.querySelector('.add-cart');
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const variants = @json($variants);
+                        const priceDisplay = document.getElementById('product-price');
+                        const typeDisplay = document.getElementById('product-type');
+                        const addCartBtn = document.querySelector('.add-cart');
 
-            let selectedColor = document.querySelector('input[name="color"]:checked')?.value;
-            let selectedSize = document.querySelector('input[name="storage"]:checked')?.value;
+                        let selectedColor = document.querySelector('input[name="color"]:checked')?.value;
+                        let selectedSize = document.querySelector('input[name="storage"]:checked')?.value;
 
-            function updateVariantInfo() {
-                const variant = variants.find(v => 
-                    v.color_code.toLowerCase() === selectedColor?.toLowerCase() && 
-                    v.size.toLowerCase() === selectedSize?.toLowerCase()
-                );
+                        function updateVariantInfo() {
+                    // Find all variants matching the selected color and size
+                    const matchingVariants = variants.filter(v =>
+                        v.color_code.toLowerCase() === selectedColor?.toLowerCase() &&
+                        v.size.toLowerCase() === selectedSize?.toLowerCase()
+                    );
 
-                if (variant) {
-                    priceDisplay.innerHTML = `<strong>${variant.price} USD</strong>`;
-                    typeDisplay.innerHTML = `${variant.type}<span style="color: green;">*</span>`;
-                    addCartBtn.dataset.productItemId = variant.id;
-                    addCartBtn.dataset.price = variant.price;
+                    if (matchingVariants.length > 0) {
+                        // Just pick the first matching variant to show price and update button
+                        const variant = matchingVariants[0];
+
+                        // Update price and cart data
+                        priceDisplay.innerHTML = `<strong>${variant.price} USD</strong>`;
+                        typeDisplay.innerHTML = `${variant.type}<span class="text-danger">*</span>`;
+                        addCartBtn.dataset.productItemId = variant.id;
+                        addCartBtn.dataset.price = variant.price;
+
+                        // OPTIONAL: show other available types with same size and color
+                        if (matchingVariants.length > 1) {
+                            let typeList = matchingVariants.map(v => v.type).join(' / ');
+                            typeDisplay.innerHTML = `${typeList}<span class="text-danger">*</span>`;
+                        }
+                    } else {
+                        // No matching variant found
+                        priceDisplay.innerHTML = `<strong>N/A</strong>`;
+                        typeDisplay.innerHTML = `<span class="text-danger">Unavailable</span>`;
+                        addCartBtn.dataset.productItemId = '';
+                        addCartBtn.dataset.price = '';
+                    }
                 }
-            }
-
-            document.querySelectorAll('input[name="color"]').forEach(radio => {
-                radio.addEventListener('change', function() {
-                    selectedColor = this.value;
-                    updateVariantInfo();
+                document.querySelectorAll('input[name="color"]').forEach(radio => {
+                    radio.addEventListener('change', function() {
+                        selectedColor = this.value;
+                        updateVariantInfo();
+                    });
                 });
-            });
 
             document.querySelectorAll('input[name="storage"]').forEach(radio => {
                 radio.addEventListener('change', function() {

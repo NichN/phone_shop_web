@@ -147,7 +147,7 @@
                                             <p class="card-title mt-2 product-title fs-6">{{ $product->name }}</p>
                                             <i class="fa-regular fa-heart fs-5 add-wishlist"></i>
                                         </div>
-                                        <p class="card-price">{{ $product->price }}</p>
+                                        <p class="card-price">{{ $product->price }} $</p>
                                         <p class="color" style="text-align: right;">
                                             @foreach ($product->colors as $color)
                                                 <span class="rounded-circle d-inline-block mx-1"

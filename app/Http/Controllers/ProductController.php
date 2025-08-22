@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\Productdetail;
+use App\Models\Product;
 
 class ProductController extends Controller
 {
@@ -217,10 +218,12 @@ class ProductController extends Controller
 {
     $product_item = Productdetail::where('pro_id', $pro_id)
         ->where('is_featured', 1)
+        ->where('stock', '>', 0)
         ->firstOrFail();
 
     $related_items = Productdetail::where('pro_id', $pro_id)
         ->where('is_featured', 1)
+        ->where('stock', '>', 0)
         ->get();
 
     $colors = $related_items->pluck('color_code')->unique()->values();
@@ -243,6 +246,8 @@ class ProductController extends Controller
     $allImages = $related_items->pluck('images')->flatten()->unique()->values();
 
     // Suggested products but only featured
+    // $product_des = Product::with('Productdetail')->get();
+    // dd($product_des);
     $products = Productdetail::where('product_name', '!=', $product_item->product_name)
         ->where('is_featured', 1)
         ->inRandomOrder()
@@ -262,6 +267,7 @@ class ProductController extends Controller
                 'warranty'    => $item->warranty,
             ];
         });
+        $productDescription = Product::where('name', $product_item->product_name)->value('description');
 
     return view('customer.productdetail', [
         'product'     => [
@@ -280,6 +286,7 @@ class ProductController extends Controller
         'variants'   => $variants,
         'products'   => $products,
         'images'     => $allImages,
+        'productDescription' => $productDescription
     ]);
 }
 

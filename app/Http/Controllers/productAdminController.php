@@ -71,9 +71,9 @@ class productAdminController extends Controller
         $product->update([
             'pro_id' => $request->id,
             'name' => $request->name,
-            'color_id'=>$request->description,
-            'brand_id'=>$request->brand_id,
-            'cat_id'=>$request->cat_id
+            'description' => $request->description,
+            'brand_id' => $request->brand_id,
+            'cat_id' => $request->cat_id
         ]);
         return response()->json(['success' => true]);
     }
