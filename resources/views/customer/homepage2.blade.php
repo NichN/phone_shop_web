@@ -113,7 +113,10 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <h6 class="card-title mt-2 product-title">{{ $product->name }}</h6>
                                     <i class="fa-regular fa-heart fs-5 add-wishlist"
-                                        data-product-id="{{ $product->id }}"></i>
+                                        data-product-pro-id="{{ $product->id }}"
+                                        data-product-item-id="{{ $product->product_item_id }}">
+                                        </i>
+
                                 </div>
                                 <p class="card-price"> ${{ $product->price }}</p>
                                 <p class="color" style="text-align: right;">
@@ -182,22 +185,25 @@
                                     </a>
                                 @endif
                                 <div class="card-body text-right" style="background-color: #ecdceb;">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <h6 class="card-title mt-2 product-title">{{ $product->name }}</h6>
-                                        <i class="fa-regular fa-heart fs-5 add-wishlist"
-                                            data-product-id="{{ $product->id }}"></i>
-                                    </div>
-                                    <p class="card-price">${{ $product->price }}</p>
-                                    <p class="color" style="text-align: right;">
-                                        @foreach ($product->colors as $color)
-                                            <span class="rounded-circle d-inline-block mx-1"
-                                                style="width: 20px; height: 20px; background-color: {{ strtolower($color) }}; margin-bottom: 20px;"
-                                                title="{{ $color }}">
-                                            </span>
-                                        @endforeach
-                                    </p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h6 class="card-title mt-2 product-title">{{ $product->name }}</h6>
+                                    <i class="fa-regular fa-heart fs-5 add-wishlist"
+                                        data-product-pro-id="{{ $product->id }}"
+                                        data-product-item-id="{{ $product->product_item_id }}">
+                                        </i>
 
                                 </div>
+                                <p class="card-price"> ${{ $product->price }}</p>
+                                <p class="color" style="text-align: right;">
+                                    @foreach ($product->colors as $color)
+                                        <span class="rounded-circle d-inline-block mx-1"
+                                            style="width: 20px; height: 20px; background-color: {{ strtolower($color) }}; margin-bottom: 20px;"
+                                            title="{{ $color }}">
+                                        </span>
+                                    @endforeach
+                                </p>
+
+                            </div>
                             </div>
                         </div>
                     @endforeach
@@ -229,21 +235,25 @@
                                     </a>
                                 @endif
                                 <div class="card-body text-right" style="background-color: #ecdceb;">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <h6 class="card-title mt-2 product-title">{{ $product->name }}</h6>
-                                        <i class="fa-regular fa-heart fs-5 add-wishlist"
-                                            data-product-id="{{ $product->id }}"></i>
-                                    </div>
-                                    <p class="card-price">${{ $product->price }}</p>
-                                    <p class="color" style="text-align: right;">
-                                        @foreach ($product->colors as $color)
-                                            <span class="rounded-circle d-inline-block mx-1"
-                                                style="width: 20px; height: 20px; background-color: {{ strtolower($color) }}; margin-bottom: 20px;"
-                                                title="{{ $color }}">
-                                            </span>
-                                        @endforeach
-                                    </p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h6 class="card-title mt-2 product-title">{{ $product->name }}</h6>
+                                    <i class="fa-regular fa-heart fs-5 add-wishlist"
+                                        data-product-pro-id="{{ $product->id }}"
+                                        data-product-item-id="{{ $product->product_item_id }}">
+                                        </i>
+
                                 </div>
+                                <p class="card-price"> ${{ $product->price }}</p>
+                                <p class="color" style="text-align: right;">
+                                    @foreach ($product->colors as $color)
+                                        <span class="rounded-circle d-inline-block mx-1"
+                                            style="width: 20px; height: 20px; background-color: {{ strtolower($color) }}; margin-bottom: 20px;"
+                                            title="{{ $color }}">
+                                        </span>
+                                    @endforeach
+                                </p>
+
+                            </div>
                             </div>
                         </div>
                     @endforeach

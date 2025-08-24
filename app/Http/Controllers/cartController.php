@@ -10,68 +10,34 @@ use App\Models\productdetail;
 
 class CartController extends Controller
 {
-    public function storeCart(Request $request)
-{
-    DB::beginTransaction();
+    public function storeCart(Request $request) 
+    {
+    $productItemId = $request->input('product_item_id');
+    $size = $request->input('size');
+    $color = $request->input('color');
+    $quantity = $request->input('quantity');
 
-    try {
-        $validated = $request->validate([
-            'product_item_id' => 'required|integer|exists:product_item,id',
-            'quantity' => 'nullable|integer|min:1',
-            'size' => 'required|string',
-            'color' => 'required|string',
-        ]);
-
-        $userId = Auth::id();
-        $quantity = $validated['quantity'] ?? 1;
-
-        // Load product_item
-        $productItem = productdetail::find($validated['product_item_id']);
-
-        if (!$productItem) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Product variant not found.',
-            ], 404);
-        }
-        if (
-            strtolower($productItem->size) !== strtolower($validated['size']) ||
-            strtolower($productItem->color_code) !== strtolower($validated['color'])
-        ) {
-            return response()->json([
-                'success' => false,
-                'message' => 'this product is not in stock',
-            ], 400);
-        }
-        $existingCartItem = Cart::where('user_id', $userId)
-            ->where('product_item_id', $productItem->id)
-            ->first();
-        // dd($existingCartItem);
-        if ($existingCartItem) {
-            $existingCartItem->quantity += $quantity;
-            $existingCartItem->save();
-        } else {
-            Cart::create([
-                'user_id' => $userId,
-                'product_item_id' => $productItem->id,
-                'quantity' => $quantity,
-            ]);
-            
-        }
-
-        DB::commit();
-
-        return response()->json([
-            'success' => true,
-        ]);
-    } catch (\Exception $e) {
-        DB::rollBack();
+    // Check if size or color is missing
+    if (empty($size) || empty($color)) {
         return response()->json([
             'success' => false,
-            'message' => 'Error adding to cart: ' . $e->getMessage(),
-        ], 500);
+            'message' => 'Size and color are required.'
+        ], 400);
     }
+
+    Cart::create([
+        'product_item_id' => $productItemId,
+        'size' => $size,
+        'color' => $color,
+        'quantity' => $quantity,
+    ]);
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Product added to cart successfully.'
+    ]);
 }
+
     public function countCart()
     {
         $count = Cart::where('user_id', Auth::id())->sum('quantity');

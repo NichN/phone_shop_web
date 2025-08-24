@@ -9,23 +9,31 @@ document.addEventListener("DOMContentLoaded", function () {
 
     wishlistIcons.forEach(icon => {
         icon.addEventListener('click', function () {
-            const productItemId = icon.getAttribute('data-product-id');
-            const productCard = icon.closest('.product-card');
-            const title = productCard.querySelector('.product-title').innerText;
-            const imgSrc = productCard.querySelector('.product-img').src;
-            const price = productCard.querySelector('.card-price').innerText;
+            const productItemId = icon.getAttribute('data-product-item-id');
+            const proId = icon.getAttribute('data-product-pro-id');
 
-            toggleWishlist(productItemId, title, price, imgSrc, icon);
+            if (!productItemId || !proId) {
+                return;  // Removed the alert
+            }
+
+            const productCard = icon.closest('.product-card') || icon.closest('.card-body');
+            const title = productCard.querySelector('.product-title')?.innerText || 'Untitled';
+            const imgSrc = productCard.closest('.product-card')?.querySelector('.product-img')?.src || '';
+            const price = productCard.querySelector('.card-price')?.innerText || '$0.00';
+
+            toggleWishlist(productItemId, proId, title, price, imgSrc, icon);
         });
     });
 
-    function toggleWishlist(productItemId, title, price, imgSrc, icon) {
+    // Toggle Wishlist: Add/Remove Items from Wishlist in LocalStorage
+    function toggleWishlist(productItemId, proId, title, price, imgSrc, icon) {
         productItemId = String(productItemId);
-        console.log('hh',productItemId);
+        proId = String(proId);
+
         const existingIndex = wishlist.findIndex(item => item.productItemId === productItemId);
 
         if (existingIndex === -1) {
-            wishlist.push({ productItemId, title, price, imgSrc });
+            wishlist.push({ productItemId, proId, title, price, imgSrc });
             icon.classList.remove('fa-regular');
             icon.classList.add('fa-solid');
         } else {
@@ -40,11 +48,13 @@ document.addEventListener("DOMContentLoaded", function () {
         syncWishlistIcons();
     }
 
+    // Update the Wishlist Count
     function updateWishlistCount() {
         const wishlistCount = document.getElementById('count_heart_cart');
         if (wishlistCount) wishlistCount.textContent = wishlist.length;
     }
 
+    // Fetch product options (size/color)
     async function fetchProductOptions(productItemId) {
         try {
             const response = await fetch(`/product-items/${productItemId}`);
@@ -52,10 +62,11 @@ document.addEventListener("DOMContentLoaded", function () {
             return await response.json();
         } catch (error) {
             console.error("Error fetching product options:", error);
-            return { sizes: [], colors: [] }; // Fallback to empty arrays
+            return { sizes: [], colors: [] };
         }
     }
 
+    // Update the Wishlist Modal (UI)
     async function updateWishlistModal() {
         const listwish = document.getElementById('listwish');
         if (!listwish) return;
@@ -73,9 +84,16 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         for (const item of wishlist) {
+            if (!item.productItemId) continue;
+
             const { sizes, colors } = await fetchProductOptions(item.productItemId);
+
             const sizeOptions = `<option value="">Select size</option>` + sizes.map(s => `<option value="${s}">${s}</option>`).join('');
-            const colorOptions = `<option value="">Select color</option>` + colors.map(c => `<option value="${c}">${c}</option>`).join('');
+            const colorOptions = `<option value="">Select color</option>` + colors.map(c => 
+                `<option value="${c.code}">${c.name}</option>`).join('');
+
+            const priceNum = typeof item.price === 'number' ? item.price : parseFloat(item.price.replace(/[^\d.-]/g, '')) || 0;
+            const formattedPrice = priceNum.toFixed(2);  // Format to 2 decimal places
 
             const listItem = document.createElement('li');
             listItem.className = 'list-group-item wishlist-item-card d-flex justify-content-between align-items-center p-4 mb-3 rounded shadow-sm border-0';
@@ -85,24 +103,24 @@ document.addEventListener("DOMContentLoaded", function () {
                     <img src="${item.imgSrc}" alt="${item.title}" class="img-fluid rounded-3" style="width: 80px; height: 80px; object-fit: cover;">
                     <div class="ms-3" style="flex: 1;">
                         <h5 class="mb-1 fw-bold product-title">${item.title}</h5>
-                        <p class="mb-1 text-muted card-price fw-bold" style="color:blue;">${item.price}</p>
+                        <p class="mb-1 text-muted card-price fw-bold" style="color:blue;">$${formattedPrice}</p>
                         <div style="display: flex; gap: 1rem; margin-bottom: 0.5rem;">
                             <div style="flex: 1;">
                                 <label class="form-label small mb-1">Size:</label>
-                                <select class="form-select form-select-sm">
+                                <select class="form-select form-select-sm size-select">
                                     ${sizeOptions}
                                 </select>
                             </div>
                             <div style="flex: 1;">
                                 <label class="form-label small mb-1">Color:</label>
-                                <select class="form-select form-select-sm">
+                                <select class="form-select form-select-sm color-select">
                                     ${colorOptions}
                                 </select>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="d-flex flex-column align-items-end">
+                <div class="d-flex flex-column align-items-end position-relative">
                     <button class="btn btn-danger btn-sm mb-3 position-absolute top-0 end-0 remove-wishlist-btn" data-product-id="${item.productItemId}">
                         <i class="fa-solid fa-trash"></i>
                     </button>
@@ -118,19 +136,39 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
             listItem.querySelector('.move-to-bag-btn').addEventListener('click', () => {
-                const size = listItem.querySelector('select').value;
-                const color = listItem.querySelectorAll('select')[1].value;
+                const size = listItem.querySelector('.size-select').value;
+                const color = listItem.querySelector('.color-select').value;
 
+                // Ensure size and color are selected before moving
                 if (!size || !color) {
-                    alert('Please select size and color before moving to bag.');
-                    return;
+                    return;  // Removed the alert, no action taken
                 }
 
-                moveToBag(item.title, item.price, item.imgSrc, item.productItemId, size, color);
+                // Proceed to move to the cart
+                fetch(`/get-product-item-id?pro_id=${item.proId}&size=${size}&color_code=${encodeURIComponent(color)}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Product variation fetch failed.");
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            const finalProductItemId = data.product_item_id;
+
+                            // Move item to cart, then remove from wishlist
+                            removeFromWishlist(item.productItemId);
+                            moveToBag(item.title, item.price, item.imgSrc, finalProductItemId, size, color);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching product_item_id:', error);
+                    });
             });
         }
     }
 
+    // Remove Item from Wishlist (localStorage)
     function removeFromWishlist(productItemId) {
         wishlist = wishlist.filter(item => item.productItemId !== productItemId);
         localStorage.setItem('wishlist', JSON.stringify(wishlist));
@@ -139,73 +177,40 @@ document.addEventListener("DOMContentLoaded", function () {
         syncWishlistIcons();
     }
 
+    // Sync Wishlist Icons
     function syncWishlistIcons() {
         wishlistIcons.forEach(icon => {
-            const productItemId = icon.getAttribute('data-product-id');
+            const productItemId = icon.getAttribute('data-product-item-id');
             const isInWishlist = wishlist.some(item => item.productItemId === productItemId);
             icon.classList.toggle('fa-regular', !isInWishlist);
             icon.classList.toggle('fa-solid', isInWishlist);
         });
     }
 
+    // Move to Cart and Clear from Wishlist
     function moveToBag(title, price, imgSrc, productItemId, size, color) {
+        addProductToCart(title, price, imgSrc, productItemId, size, color);
         removeFromWishlist(productItemId);
+
+        // If logged in, sync with backend
         if (window.isAuthenticated) {
-            handleAddToCart(productItemId);
-        } else {
-            addProductToCart(title, price, imgSrc, productItemId, size, color);
+            handleAddToCart(productItemId, size, color);
         }
     }
 
-    function handleAddToCart(productItemId) {
-        const quantity = 1;
-        const id = parseInt(productItemId);
-        console.log('hii',id);
-        if (!id || isNaN(id)) {
-            alert("Invalid product selection.");
-            return;
-        }
-
-        $.ajax({
-            url: "/store-cart",
-            type: "POST",
-            data: {
-                _token: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                product_item_id: id,
-                quantity: quantity
-            },
-            success: function (response) {
-                if (response.success) {
-                    alert(response.message);
-                    updateCartCount();
-                    loadCartItems();
-                } else {
-                    alert("Failed: " + response.message);
-                }
-            },
-            error: function (xhr) {
-                alert("Error: " + (xhr.responseJSON?.message || 'Unknown error'));
-            }
-        });
-    }
-
-    window.addProductToCart = function (title, price, imgSrc, productItemId, size, color) {
+    // Add Product to Cart (localStorage)
+    function addProductToCart(title, price, imgSrc, productItemId, size, color) {
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        const priceNumeric = parseFloat(price.replace(/[^\d.]/g, '')); // Remove "$" and parse
+        const priceNumeric = parseFloat(price.replace(/[^\d.]/g, '')) || 0;
 
-        const existing = cart.find(item =>
-            item.productItemId === productItemId &&
-            item.size === size &&
-            item.color === color
-        );
-
+        const existing = cart.find(item => item.productItemId === productItemId && item.size === size && item.color === color);
         if (existing) {
             existing.quantity += 1;
         } else {
             cart.push({
                 productItemId,
                 title,
-                price,
+                price: priceNumeric,
                 imgSrc,
                 size,
                 color,
@@ -216,14 +221,16 @@ document.addEventListener("DOMContentLoaded", function () {
         localStorage.setItem('cart', JSON.stringify(cart));
         updateCartCountLocal();
         loadCartFromLocalStorage();
-    };
+    }
 
+    // Update Cart Count
     function updateCartCountLocal() {
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
         const totalQty = cart.reduce((sum, item) => sum + item.quantity, 0);
         updateCartBadge(totalQty);
     }
 
+    // Update Cart Badge
     function updateCartBadge(count) {
         const badge = document.getElementById('count_cart');
         if (badge) {
@@ -232,6 +239,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    // Load Cart Items from LocalStorage
     function loadCartFromLocalStorage() {
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
         const cartContent = document.querySelector('.cart-content');
@@ -240,22 +248,22 @@ document.addEventListener("DOMContentLoaded", function () {
         cartContent.innerHTML = '';
         let total = 0;
 
-        cart.forEach((item, index) => {
-            const itemHtml = `
+        cart.forEach(item => {
+            const priceNum = Number(item.price) || 0;
+            const itemHtml = ` 
                 <div class="cart-box d-flex align-items-start mb-3">
                     <img src="${item.imgSrc}" class="cart-img me-2" alt="${item.title}" style="width: 60px; height: 60px; object-fit: cover;">
                     <div class="detail-box flex-grow-1">
                         <div class="cart-product-title fw-bold">${item.title}</div>
-                        <div class="cart-price">$${item.price.toFixed(2)}</div>
+                        <div class="cart-price">$${priceNum.toFixed(2)}</div>
                         <div>Size: ${item.size}</div>
                         <div>Color: ${item.color}</div>
                         <div class="text-danger">Qty: ${item.quantity}</div>
                     </div>
-                    <i class="fa-solid fa-trash-can cart-remove text-danger" onclick="removeItemFromLocal(${index})" style="cursor: pointer;"></i>
-                </div>
-            `;
+                    <i class="fa-solid fa-trash-can cart-remove text-danger" onclick="removeItemFromLocal(${item.productItemId})" style="cursor: pointer;"></i>
+                </div>`;
             cartContent.insertAdjacentHTML('beforeend', itemHtml);
-            total += item.price * item.quantity;
+            total += priceNum * item.quantity;
         });
 
         const totalPriceElement = document.querySelector('.total-price') || document.getElementById('totalPrice');
@@ -264,11 +272,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    window.removeItemFromLocal = function (index) {
+    // Remove Item from Local Storage Cart
+    function removeItemFromLocal(index) {
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
         cart.splice(index, 1);
         localStorage.setItem('cart', JSON.stringify(cart));
         updateCartCountLocal();
         loadCartFromLocalStorage();
-    };
+    }
 });

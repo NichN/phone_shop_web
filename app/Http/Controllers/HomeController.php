@@ -18,12 +18,12 @@ public function index()
     $products = DB::table('product')
         ->join('product_item', function ($join) {
             $join->on('product.id', '=', 'product_item.pro_id')
-                ->whereRaw('product_item.id = (
-                    select min(id) from product_item as pi2 where pi2.pro_id = product.id and pi2.stock > 0
-                )')
-                ->where('product_item.stock', '>', 0);
+                 ->whereRaw('product_item.id = (
+                     select min(id) from product_item as pi2 where pi2.pro_id = product.id and pi2.stock > 0
+                 )')
+                 ->where('product_item.stock', '>', 0);
         })
-        ->select('product.*', 'product_item.price', 'product_item.images','product_item.color_code')
+        ->select('product.*', 'product_item.id as product_item_id', 'product_item.price', 'product_item.images', 'product_item.color_code')
         ->get();
 
     $accessoryProducts = DB::table('product')
@@ -39,9 +39,10 @@ public function index()
         ->select(
             'product.*',
             'category.name as category_name',
+            'product_item.id as product_item_id',
             'product_item.price',
             'product_item.images',
-            'product_item.color_code',
+            'product_item.color_code'
         )
         ->get();
 
@@ -58,13 +59,14 @@ public function index()
         ->select(
             'product.*',
             'category.name as category_name',
+            'product_item.id as product_item_id',
             'product_item.price',
             'product_item.images',
-            'product_item.color_code',
+            'product_item.color_code'
         )
         ->get();
 
-    // attach colors
+    // Attach colors
     foreach ($products as $product) {
         $product->colors = DB::table('product_item')
             ->where('pro_id', $product->id)
@@ -88,10 +90,15 @@ public function index()
             ->unique()
             ->values();
     }
-    $categories = DB::table('category')->get();
-    // dd($categories);
 
-    return view('customer.homepage2', compact('products','accessoryProducts','phone','categories'));
+    $categories = DB::table('category')->get();
+
+    // Test Productdetail query with a valid pro_id
+    $someValue = $products->isNotEmpty() ? $products->first()->id : 1; // Use first product.id or a known ID
+    $productItems = Productdetail::where('pro_id', $someValue)->get(['id as product_item_id', 'pro_id', 'price', 'images', 'color_code']);
+    // dd($productItems); // Should show product_item_id (product_item.id), pro_id, etc.
+
+    return view('customer.homepage2', compact('products', 'accessoryProducts', 'phone', 'categories','productItems'));
 }
 public function getByCategory($id)
 {
@@ -109,6 +116,7 @@ public function getByCategory($id)
         ->where('product.cat_id', $id)
         ->select('product.*', 'product_item.price', 'product_item.images', 'product_item.color_code')
         ->get();
+    // dd($products);
 
     // Attach colors array to each product
     foreach ($products as $product) {
@@ -149,23 +157,68 @@ public function search(Request $request)
 
     return view('customer.homepage2', compact('products', 'query'));
 }
-public function getOptions($productId)
+public function getOptions($productItemId)
 {
+    // First get the product item
     $productItem = DB::table('product_item')
-        ->where('pro_id', $productId)
+        ->where('id', $productItemId)
         ->first();
 
     if (!$productItem) {
-        return response()->json(['message' => 'Product not found'], 404);
+        return response()->json(['message' => 'Product item not found'], 404);
     }
-    $color = DB::table('color')
-        ->where('code', $productItem->color_code)
-        ->first();
+
+    // Now get all product_items with the same pro_id
+    $productItems = DB::table('product_item')
+        ->where('pro_id', $productItem->pro_id)
+        ->get();
+
+    $sizes = $productItems->pluck('size')->unique()->values();
+    $colorCodes = $productItems->pluck('color_code')->unique();
+
+   $colors = DB::table('color')
+    ->whereIn('code', $colorCodes)
+    ->select('code', 'name')  // ✅ now returning id instead of code
+    ->get();
+    // dd($colors)
+
 
     return response()->json([
-        'sizes' => [$productItem->size],
-        'colors' => [ $color->name],
+        'sizes' => $sizes,
+        'colors' => $colors,
     ]);
 }
+
+
+public function getProductItemId(Request $request)
+{
+    $pro_id = $request->query('pro_id');
+    $size = $request->query('size');
+    $colorId = $request->query('color_code');  // color ID sent from frontend
+
+    if (!$pro_id || !$size || !$colorId) {
+        return response()->json(['success' => false, 'message' => 'Missing required parameters.'], 400);
+    }
+
+    $productItem = DB::table('product_item')
+        ->where('pro_id', $pro_id)
+        ->where('size', $size)
+        ->where('color_code', $colorId)  // <-- match color_code column to color ID
+        ->first();
+
+    if (!$productItem) {
+        return response()->json(['success' => false, 'message' => 'Product variation not found.'], 404);
+    }
+
+    return response()->json([
+        'success' => true,
+        'product_item_id' => $productItem->id,
+    ]);
+}
+
+
+
+
+
 }
 

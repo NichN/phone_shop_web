@@ -45,6 +45,7 @@ use PhpParser\Node\Expr\FuncCall;
 Route::redirect('/', '/homepage');
 
 Route::get('/homepage', [HomeController::class, 'index'])->name('homepage');
+Route::get('/get-product-item-id', [HomeController::class, 'getProductItemId']);
 
 // Authenticated homepage route
 Route::get('/dashboard/homepage', [HomeController::class, 'index'])->middleware(['auth', 'twofactor'])->name('dashboard.homepage');
@@ -403,6 +404,7 @@ Route::get('/debug/2fa-status', function () {
     
     return response()->json($status);
 })->middleware('auth')->name('debug.2fa');
+
 
 
 ?>

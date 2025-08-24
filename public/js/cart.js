@@ -54,20 +54,20 @@ function handleAddToCart(productItemId) {
         return;
     }
     const button = document.querySelector(`[data-product-item-id="${id}"]`);
-    if (!button) {
-        alert("Product not found.");
-        return;
-    }
+    // if (!button) {
+    //     alert("Product not found.");
+    //     return;
+    // }
     const title = button.getAttribute('data-title');
     const price = button.getAttribute('data-price');
     const imgSrc = button.getAttribute('data-img');
     const size = document.querySelector('input[name="storage"]:checked')?.value;
     const color = document.querySelector('input[name="color"]:checked')?.value;
 
-    if (!size || !color) {
-        alert("Please select both size and color.");
-        return;
-    }
+    // if (!size || !color) {
+    //     alert("Please select both size and color.");
+    //     return;
+    // }
     if (window.isAuthenticated) {
         $.ajax({
             url: "/store-cart",
