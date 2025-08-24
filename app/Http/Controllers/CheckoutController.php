@@ -298,7 +298,7 @@ class CheckoutController extends Controller
             $query->where('user_id', auth()->id());
         } else {
             // Guest user
-            $guestEmail = $request->query('guest_email'); // fixed typo
+            $guestEmail = $request->query('guest_eamil'); 
             $guestToken = $request->query('order_num');
 
             if (!$guestEmail || !$guestToken) {
@@ -308,7 +308,7 @@ class CheckoutController extends Controller
                 ]);
             }
 
-            $query->where('guest_email', $guestEmail)
+            $query->where('guest_eamil', $guestEmail)
                 ->where('order_num', $guestToken);
         }
 
