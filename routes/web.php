@@ -275,6 +275,8 @@ Route::prefix('report')->name('report.')->group(function(){
     Route::get('/profit',[reportController::class,'profit'])->name('profit');
     Route::get('/product-chart',[reportController::class,'product_chart'])->name('product_chart');
     Route::get('/income-expense',[reportController::class,'income_expense'])->name('income_expense');
+    Route::get('/delivery',[reportController::class,'delivery'])->name('delivery');
+    Route::get('/delivery/detail/{status}',[reportController::class,'delivery_detail'])->name('delivery.detail');
     // Route::get('/')
     // Route::get('/')
 });

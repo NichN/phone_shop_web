@@ -10,74 +10,6 @@
 @endsection
 
 @section('content')
-    {{-- <div class="container mt-4 mb-5">
-        <a href="/checkout/history" style="text-decoration: none;">← Back</a>
-        <h4 class="text-center mb-4">
-            Order Details <i class="fas fa-history text-primary"></i>
-        </h4>
-        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
-            <p class="mb-0">
-                <strong>Ordered On:</strong> {{ $order->created_at->format('d-m-Y') }}<br>
-                <strong>Order:</strong> #{{ $order->order_num }}
-            </p>
-
-            <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#invoiceModal">
-                View Invoice
-            </button>
-        </div>
-        <div class="card mb-3 p-3" style="max-width: 1000px;">
-            <div class="d-flex justify-content-between flex-wrap">
-                <div class="label" style="min-width: 200px;">
-                    <p><strong>Delivery Address</strong></p>
-                    <p>{{ $order->guest_address ?? ($order->address ?? '-') }}</p>
-                </div>
-
-                <div class="label" style="min-width: 200px;">
-                    <p><strong>Payment Method</strong></p>
-                    <p>{{ $payment->payment_type ?? 'N/A' }}</p>
-                </div>
-
-                <div class="label" style="min-width: 200px;">
-                    <p><strong>Order Summary</strong></p>
-                    <p>Item Quantity: {{ $orderItems->sum('quantity') }}</p>
-                    <p>Subtotal: <span style="color:blue;">${{ number_format($order->subtotal, 2) }}</span></p>
-                    <p>Delivery Fee: ${{ number_format($delivery->fee ?? 0, 2) }}</p>
-                    <p>Grand Total: ${{ number_format($order->total_amount, 2) }}</p>
-                </div>
-            </div>
-            <div class="bg-light p-3 mb-3 rounded shadow-sm">
-                @if (isset($orderItems) && $orderItems->isNotEmpty())
-                    @foreach ($orderItems as $item)
-                        @php
-                            $images = json_decode($item->imgSrc, true);
-                            $imgSrc = $images && count($images) > 0 ? $images[0] : 'default-image.jpg';
-                            $title = $item->product_name ?? 'Unknown Product';
-                            $color = $item->color_code ?? '#ccc';
-                            $size = $item->size ?? 'N/A';
-                            $quantity = $item->quantity ?? 0;
-                            $price = $item->price ?? '0.00';
-                        @endphp
-                        <div class="d-flex align-items-center mb-3 p-2 rounded" style="border:1px solid #b35dae;">
-                            <img src="{{ asset('storage/' . $imgSrc) }}" alt="{{ $title }}" width="120"
-                                height="120" class="me-3 rounded" style="object-fit: cover;">
-                            <div>
-                                <div><strong>Product Name:</strong> {{ $title }}</div>
-                                <div><strong>Color:</strong>
-                                    <span
-                                        style="display:inline-block; width:20px; height:20px; background-color: {{ $color }}; border: 1px solid #ccc;"></span>
-                                </div>
-                                <div><strong>Size:</strong> {{ $size }}</div>
-                                <div><strong>Quantity:</strong> {{ $quantity }}</div>
-                                <div class="text-danger"><strong>Price:</strong> ${{ $price }}</div>
-                            </div>
-                        </div>
-                    @endforeach
-                @else
-                    <p>No items in cart</p>
-                @endif
-            </div>
-        </div>
-    </div> --}}
     <div class="container mt-4 mb-5">
         <a href="/checkout/history" style="text-decoration: none;">← Back</a>
         <h4 class="text-center mb-4">
@@ -128,41 +60,27 @@
                                 $quantity = $item->quantity ?? 0;
                                 $price = $item->price ?? '0.00';
                             @endphp
-                            {{-- <div class="d-flex align-items-center mb-3 p-2 rounded" style="border:1px solid #b35dae;">
-                                <img src="{{ asset('storage/' . $imgSrc) }}" alt="{{ $title }}" width="120"
-                                    height="120" class="me-3 rounded" style="object-fit: cover;">
-                                <div>
+                            <div class="d-flex mb-3 p-2 rounded" style="border:1px solid #b35dae; align-items: flex-start;">
+                            <!-- Product Image -->
+                            <img src="{{ asset('storage/' . $imgSrc) }}" alt="{{ $title }}" width="120"
+                                height="120" class="rounded" style="object-fit: cover;">
+
+                            <!-- Product Info -->
+                            <div class="ms-3 flex-grow-1">
+                                <!-- Top line: Product Name left, Price right -->
+                                <div class="d-flex justify-content-between w-100">
                                     <div><strong>Product Name:</strong> {{ $title }}</div>
-                                    <div><strong>Color:</strong>
-                                        <span
-                                            style="display:inline-block; width:20px; height:20px; background-color: {{ $color }}; border: 1px solid #ccc;"></span>
-                                    </div>
-                                    <div><strong>Size:</strong> {{ $size }}</div>
-                                    <div><strong>Quantity:</strong> {{ $quantity }}</div>
                                     <div class="text-danger"><strong>Price:</strong> ${{ $price }}</div>
                                 </div>
-                            </div> --}}
-                            <div class="d-flex mb-3 p-2 rounded" style="border:1px solid #b35dae; align-items: flex-start;">
-    <!-- Product Image -->
-    <img src="{{ asset('storage/' . $imgSrc) }}" alt="{{ $title }}" width="120"
-        height="120" class="rounded" style="object-fit: cover;">
 
-    <!-- Product Info -->
-    <div class="ms-3 flex-grow-1">
-        <!-- Top line: Product Name left, Price right -->
-        <div class="d-flex justify-content-between w-100">
-            <div><strong>Product Name:</strong> {{ $title }}</div>
-            <div class="text-danger"><strong>Price:</strong> ${{ $price }}</div>
-        </div>
-
-        <!-- Other details below -->
-        <div><strong>Color:</strong>
-            <span style="display:inline-block; width:20px; height:20px; background-color: {{ $color }}; border: 1px solid #ccc;"></span>
-        </div>
-        <div><strong>Size:</strong> {{ $size }}</div>
-        <div><strong>Quantity:</strong> {{ $quantity }}</div>
-    </div>
-</div>
+                                <!-- Other details below -->
+                                <div><strong>Color:</strong>
+                                    <span style="display:inline-block; width:20px; height:20px; background-color: {{ $color }}; border: 1px solid #ccc;"></span>
+                                </div>
+                                <div><strong>Size:</strong> {{ $size }}</div>
+                                <div><strong>Quantity:</strong> {{ $quantity }}</div>
+                            </div>
+                        </div>
 
                         @endforeach
                     @else

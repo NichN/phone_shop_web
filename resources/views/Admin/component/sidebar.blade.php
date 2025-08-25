@@ -131,6 +131,9 @@
             <a href="{{ route('report.sale_completed') }}" class="w3-bar-item w3-button">
                 <i class="fa-solid fa-check-circle" style="width:20px;"></i> Sale Completed
             </a>
+            <a href="{{ route('report.delivery') }}" class="w3-bar-item w3-button">
+               <i class="fa-solid fa-truck" style="width:20px;"></i> Delivery Report
+            </a>
 
             <!-- Optional: Uncomment if needed -->
             {{--

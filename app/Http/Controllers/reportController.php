@@ -608,5 +608,53 @@ $total_bill_balance = DB::table('purchase')
      'billOutputpaid','billOutputcancel','monthlyOutput_paid','monthlyOutput_cancel',
      'billOutput','formatted_total','unpaidBills','billOutputbalance'));
 }
+public function delivery()
+{
+    $total_feeCompleted = DB::table('orders')
+        ->where('status', 'Completed')
+        ->sum('delivery_fee');
+    $total_feePending = DB::table('orders')
+        ->where('status', 'Processing')
+        ->sum('delivery_fee');
+
+    return view('Admin.report.delivery_report', compact('total_feeCompleted', 'total_feePending'));
+}
+public function delivery_detail(Request $request, $status)
+{
+    if ($request->ajax()) {
+        $query = DB::table('orders')
+            ->select(
+                'orders.id',
+                'orders.order_num',
+                'orders.created_at',
+                'orders.guest_name',
+                'orders.phone_guest',
+                'orders.guest_address',
+                'orders.delivery_fee',
+                'orders.status'
+            )
+            ->where('orders.status', $status);
+
+        if ($request->filled('order_date')) {
+            $query->whereDate('orders.created_at', '>=', $request->order_date);
+        }
+
+        if ($request->filled('end_date')) {
+            $query->whereDate('orders.created_at', '<=', $request->end_date);
+        }
+
+        if ($request->filled('guest_name')) {
+            $query->where('orders.guest_name', 'like', '%' . $request->guest_name . '%');
+        }
+
+        if ($request->filled('order_num')) {
+            $query->where('orders.order_num', 'like', '%' . $request->order_num . '%');
+        }
+
+        return DataTables::of($query)->make(true);
+    }
+
+    return view('Admin.report.delivery_detail', compact('status'));
+}
 
 }
