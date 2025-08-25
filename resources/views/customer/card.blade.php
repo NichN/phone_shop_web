@@ -90,7 +90,7 @@
                                 <div class="payment-content d-flex align-items-center">
                                     <img src="{{ asset('image/barkog.png') }}" alt="KH QR Payment" class="payment-icon rounded me-2">
                                     <div>
-                                        <span class="payment-title">KH QR Payment</span><br>
+                                        <span class="payment-title">Online Payment</span><br>
                                         <small class="payment-description">Scan QR code to pay instantly</small>
                                     </div>
                                 </div>
@@ -116,9 +116,9 @@
                             <input class="form-check-input" type="radio" name="payment_type" id="kh_qr" value="kh_qr">
                             <label class="payment-label" for="kh_qr">
                                 <div class="payment-content d-flex align-items-center">
-                                    <img src="{{ asset('image/barkog.png') }}" alt="KH QR Payment" class="payment-icon rounded me-2">
+                                    <img src="{{ asset('image/barkog.png') }}" alt="Online Payment" class="payment-icon rounded me-2">
                                     <div>
-                                        <span class="payment-title">KH QR Payment</span><br>
+                                        <span class="payment-title">Online Payment</span><br>
                                         <small class="payment-description">Scan QR code to pay instantly</small>
                                     </div>
                                 </div>

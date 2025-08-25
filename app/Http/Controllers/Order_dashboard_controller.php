@@ -45,48 +45,75 @@ class Order_dashboard_controller extends Controller
             'total_pending'   => $totalpending,
         ]);
     }
-    public function getData(Request $request)
+        public function getData(Request $request)
     {
         $currentMonth = $request->input('current_month', now()->month);
         $currentYear = $request->input('current_year', now()->year);
 
-        $query = Order::query()
-            ->whereMonth('created_at', $currentMonth)
-            ->whereYear('created_at', $currentYear);
+        $query = Order::select('orders.*', 'payment.payment_type')
+            ->leftJoin('payment', 'payment.order_id', '=', 'orders.id')
+            ->whereMonth('orders.created_at', $currentMonth)
+            ->whereYear('orders.created_at', $currentYear);
 
         return DataTables::eloquent($query)
-            ->addColumn('action', function ($order) {
-                return '
+        ->addColumn('action', function ($order) {
+            $buttons = '
                 <div class="dropdown">
                     <a class="text-dark" href="#" role="button" data-bs-toggle="dropdown">
                         <i class="fas fa-ellipsis-v"></i>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="'.route('order_dashboard.order_detail', $order->id).'">
-                            <i class="fa fa-eye text-primary"></i> View
-                        </a></li>
                         <li>
-                            <form action="'.route('checkout.accept', $order->id).'" method="POST">
-                                '.csrf_field().'
+                            <a class="dropdown-item" href="' . route('order_dashboard.order_detail', $order->id) . '">
+                                <i class="fa fa-eye text-primary"></i> View
+                            </a>
+                        </li>';
+
+            // Show Accept button ONLY if payment is NOT processing
+            if ($order->status !== 'processing') {
+                $buttons .= '
+                        <li>
+                            <form action="' . route('checkout.accept', $order->id) . '" method="POST">
+                                ' . csrf_field() . '
                                 <button type="submit" class="dropdown-item text-success">
                                     <i class="fas fa-check-circle"></i> Accept
                                 </button>
                             </form>
-                        </li>
+                        </li>';
+            }
+
+            $buttons .= '
                         <li>
-                            <form action="'.route('checkout.decline', $order->id).'" method="POST">
-                                '.csrf_field().'
+                            <form action="' . route('checkout.decline', $order->id) . '" method="POST">
+                                ' . csrf_field() . '
                                 <button type="submit" class="dropdown-item text-danger">
                                     <i class="fas fa-times-circle"></i> Decline
                                 </button>
                             </form>
-                        </li>
-                    </ul>
-                </div>';
-            })
-            ->rawColumns(['action'])
-            ->make(true);
+                        </li>';
+
+            // Show Confirm button if payment_type = 'kh_qr'
+            if ($order->payment_type === 'kh_qr') {
+                $buttons .= '
+                        <li>
+                            <form action="' . route('checkout.confirm', $order->id) . '" method="POST">
+                                ' . csrf_field() . '
+                                <button type="submit" class="dropdown-item text-warning">
+                                    <i class="fas fa-check"></i> Confirm
+                                </button>
+                            </form>
+                        </li>';
+            }
+
+            $buttons .= '</ul></div>';
+
+            return $buttons;
+        })
+        ->rawColumns(['action'])
+        ->make(true);
+
     }
+
         public function order_detail($id)
         {
         $order = Order::findOrFail($id);
@@ -104,8 +131,6 @@ class Order_dashboard_controller extends Controller
                 'product_item.warranty'
             ])
             ->get();
-
-        // $delivery = Delivery::find($order->delivery_id);
         $payment = DB::table('payment')
             ->where('order_id', $order->id)
             ->select('payment_type')

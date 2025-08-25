@@ -310,6 +310,7 @@ Route::prefix('checkout')->name('checkout.')->group(function(){
     Route::post('/{order}/accept', [CheckoutController::class, 'acceptOrder'])->name('accept');
     Route::post('/{order}/decline', [CheckoutController::class, 'declineOrder'])->name('decline');
     Route::post('/verify-code', [CheckoutController::class, 'verifyCode'])->name('verify');
+    Route::post('/{order}/confirm', [CheckoutController::class, 'confirmPayment'])->name('confirm');
 });
 Route::prefix('order_dashboard')->name('order_dashboard.')  ->middleware('auth')->group(function () {
     Route::get('/', [Order_dashboard_controller::class, 'index'])->name('index');

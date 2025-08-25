@@ -12,14 +12,22 @@ $(document).ready(function () {
             return;
         }
 
+        // If payment method is 'kh_qr', show QR + upload dialog
         if (paymentMethod === 'kh_qr') {
-            // Show KH QR payment popup
             Swal.fire({
-                // title: 'Please complete your payment',
                 html: `
-                    <div style="text-align: center;">
-                        <img src="{{ asset('image/kh_qr.jpg') }}" alt="KH QR Code" style="max-width: 300px; margin: 15px 0;">
+                    <div style="position: relative; text-align: center;">
+                        <!-- Download icon -->
+                        <a href="{{ asset('image/kh_qr.jpg') }}" download="kh_qr_code.jpg"
+                           style="position: absolute; top: 10px; right: 10px;" title="Download QR Code">
+                            <i class="fas fa-download" style="font-size: 18px; color: black;"></i>
+                        </a>
+
+                        <!-- QR Image -->
+                        <img src="{{ asset('image/kh_qr.jpg') }}" alt="KH QR Code" style="max-width: 300px; margin: 15px auto;">
+
                         <p>Scan this QR code to complete your payment of ${{ $totalAmount ?? '0.00' }}</p>
+
                         <div class="mt-3">
                             <label>Upload payment confirmation:</label>
                             <input type="file" id="paymentProof" name="paymentProof" class="form-control" accept="image/*">
@@ -28,7 +36,7 @@ $(document).ready(function () {
                 `,
                 showCancelButton: true,
                 cancelButtonText: 'Cancel',
-                confirmButtonText: 'Let\'s Order',
+                confirmButtonText: "Let's Order",
                 showLoaderOnConfirm: true,
                 preConfirm: () => {
                     const fileInput = document.getElementById('paymentProof');
@@ -40,36 +48,51 @@ $(document).ready(function () {
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    confirmOrder(orderId, paymentMethod, note);
+                    submitOrder(orderId, paymentMethod, note);
                 }
             });
         } else {
-            confirmOrder(orderId, paymentMethod, note);
+            // For other methods
+            submitOrder(orderId, paymentMethod, note);
         }
     });
 
-    function confirmOrder(orderId, paymentMethod, note) {
+    function submitOrder(orderId, paymentMethod, note) {
+        const formData = new FormData();
+        formData.append('_token', '{{ csrf_token() }}');
+        formData.append('order_id', orderId);
+        formData.append('payment_type', paymentMethod);
+        formData.append('note', note);
+
+        // Append file if 'kh_qr'
+        if (paymentMethod === 'kh_qr') {
+            const fileInput = document.getElementById('paymentProof');
+            if (fileInput && fileInput.files.length > 0) {
+                formData.append('payment_proof', fileInput.files[0]);
+            }
+        }
+
+        $('#confirmOrderBtn').prop('disabled', true).text('Processing...');
+
         $.ajax({
             url: "{{ route('checkout.payment_store') }}",
             method: "POST",
-            data: {
-                _token: "{{ csrf_token() }}",
-                order_id: orderId,
-                payment_type: paymentMethod,
-                note: note
-            },
+            data: formData,
+            processData: false,
+            contentType: false,
             success: function (response) {
                 if (response.success) {
                     Swal.fire({
-                        title: 'Order Confirmed!',
-                        html: 'Thank you for your order.<br>View your order history?',
+                        title: 'Order Submitted!',
+                        html: paymentMethod === 'kh_qr'
+                            ? 'Your order has been submitted and is pending admin approval.'
+                            : 'Thank you! Your order has been confirmed.',
                         imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyGvJdXBAXsEiRXZwKs9aBF0rsiRLfvNKblw&s',
                         imageWidth: 150,
                         imageHeight: 150,
-                        imageAlt: 'Cute shopping icon',
                         confirmButtonText: 'My Order',
                         cancelButtonText: 'No',
-                        showCancelButton: true, 
+                        showCancelButton: true,
                         reverseButtons: true
                     }).then((result) => {
                         if (result.isConfirmed) {
@@ -83,6 +106,9 @@ $(document).ready(function () {
             error: function (xhr) {
                 const message = xhr.responseJSON?.message || 'Failed to confirm order.';
                 Swal.fire('Error', message, 'error');
+            },
+            complete: function () {
+                $('#confirmOrderBtn').prop('disabled', false).text('Confirm Order');
             }
         });
     }

@@ -15,7 +15,9 @@ use App\Models\refund;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use App\Mail\CustomerVerificationCodeMail;
+use App\Mail\PaymentConfirmed;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Http;
 
 class CheckoutController extends Controller
 {
@@ -190,45 +192,91 @@ class CheckoutController extends Controller
         ]);
     }
     public function storePayment(Request $request)
-    {
-        $request->validate([
-            'order_id' => 'required|exists:orders,id',
-            'payment_type' => 'required|string|max:50',
+{
+    $request->validate([
+        'order_id' => 'required|exists:orders,id',
+        'payment_type' => 'required|string|max:50',
+        'payment_proof' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+    ]);
+
+    DB::beginTransaction();
+
+    try {
+        $order = Order::findOrFail($request->order_id);
+
+        $imgPath = null;
+        $imgFullPath = null;
+
+        if ($request->hasFile('payment_proof')) {
+            $file = $request->file('payment_proof');
+            $imgPath = $file->store('payment_proofs', 'public');
+            $imgFullPath = storage_path('app/public/' . $imgPath);
+        }
+
+        payment::create([
+            'order_id' => $order->id,
+            'payment_type' => $request->payment_type,
+            'remark' => $request->input('note', ''),
+            'amount' => $order->total_amount,
+            'img_verify' => $imgPath,
+            'payment_status' => 'pending',
         ]);
 
-        DB::beginTransaction();
-        try {
-            $order = Order::findOrFail($request->order_id);
-            $order->save();
-            payment::create([
-                'order_id'     => $order->id,
-                'payment_type' => $request->payment_type,
-                'remark'       => $request->input('note', ''),
-                'amount'       => $order->total_amount,
-                'img_verify' => $order->paymentProof,
-                'payment_status' => 'pending',
-            ]);
-            DB::commit();
+        DB::commit();
 
-            if ($request->ajax()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Payment processed and stock updated.',
+        // 🔄 SEND TO TELEGRAM if KH_QR
+        if ($request->payment_type === 'kh_qr') {
+            $telegramBotToken = '8108484660:AAFfEtec51wHSAJfHso1BTT6X9_H5YfcMIo';
+            $telegramChatId = '@ksaranauniyear4';
+
+            $caption = "New order received!\n"
+                . "Order ID: {$order->order_num}\n"
+                . "Payment Type: kh_qr\n"
+                . "Note: " . ($request->note ?? 'None') . "\n"
+                . "Status: Pending Payment Confirmation";
+
+            if ($imgFullPath && file_exists($imgFullPath)) {
+                $response = Http::attach(
+                    'photo', file_get_contents($imgFullPath), basename($imgFullPath)
+                )->post("https://api.telegram.org/bot{$telegramBotToken}/sendPhoto", [
+                    'chat_id' => $telegramChatId,
+                    'caption' => $caption,
+                ]);
+
+                if (!$response->ok()) {
+                    \Log::error('Telegram sendPhoto failed', ['response' => $response->body()]);
+                }
+            } else {
+                // fallback text message if no image
+                Http::get("https://api.telegram.org/bot{$telegramBotToken}/sendMessage", [
+                    'chat_id' => $telegramChatId,
+                    'text' => $caption,
                 ]);
             }
-        } catch (\Exception $e) {
-            DB::rollBack();
-
-            if ($request->ajax()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Payment failed: ' . $e->getMessage()
-                ], 500);
-            }
-
-            return redirect()->back()->withErrors('Payment failed: ' . $e->getMessage());
         }
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Payment processed and stock updated.',
+            ]);
+        }
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Payment failed: ' . $e->getMessage()
+            ], 500);
+        }
+
+        return redirect()->back()->withErrors('Payment failed: ' . $e->getMessage());
     }
+}
+
+
 
     // public function orderHistory(Request $request)
     // {
@@ -467,4 +515,21 @@ class CheckoutController extends Controller
             'order_id' => $order->id
         ]);
     }
+    public function confirmPayment(Order $order)
+{
+    // Update status
+    $order->status = 'processing';
+    $order->save();
+
+    // Send confirmation email if customer email exists
+    if ($order->guest_eamil) {
+        Mail::to($order->guest_eamil)->send(new PaymentConfirmed($order));
+    }
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Payment confirmed and customer notified.',
+    ]);
+}
+    
 }

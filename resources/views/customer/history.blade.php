@@ -68,7 +68,7 @@
                                     </li>
                                 @endif
 
-                                @if (in_array(strtolower($order->status), ['accepted', 'processing']))
+                                @if (in_array(strtolower($order->status), ['accepted',]))
                                     <li><a class="dropdown-item text-success" href="{{ route('checkout.payment', $order->id) }}">
                                         <i class="fas fa-credit-card me-2"></i>Payment</a></li>
                                 @endif
@@ -80,6 +80,7 @@
                                         </button>
                                     </li>
                                 @endif
+                                 {{-- 'processing' --}}
                             </ul>
                         </div>
                     </div>
