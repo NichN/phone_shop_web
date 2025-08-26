@@ -12,9 +12,9 @@
     height: 100%;
     object-fit: contain
 }
-.thumbnail-img {
-aspect-ratio: 1 / 1; /* Keeps a square ratio */
-object-fit: cover; /* Prevents distortion */
+/* .thumbnail-img {
+aspect-ratio: 1 / 1;
+object-fit: cover;
 border: 1px solid #ddd;
 padding: 5px;
 cursor: pointer;
@@ -24,18 +24,58 @@ transition: transform 0.3s;
 transform: scale(1.1);
 }
 .thumbnail-wrapper {
-border: 2px solid #ddd; /* Light gray border */
+border: 2px solid #ddd;
 border-radius: 8px;
 padding: 5px;
 transition: border-color 0.3s ease;
-margin-bottom: 10px; /* Space between thumbnails */
+margin-bottom: 10px; 
 }
 .thumbnail-wrapper:hover {
-border-color: black; /* Highlight border on hover */
+border-color: black; 
+} */
+ .thumbnail-scroll-container {
+    overflow-x: auto; /* horizontal scroll */
+    overflow-y: hidden; /* no vertical scroll */
+    white-space: nowrap;
+    padding-bottom: 20px; /* optional spacing */
 }
+
+.thumbnail-scroll-container::-webkit-scrollbar {
+    height: 7px; /* scrollbar height */
+}
+
+.thumbnail-scroll-container::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 3px;
+}
+
+.thumbnail-scroll-container::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+}
+
+.thumbnail-wrapper {
+    flex: 0 0 25%; /* 4 thumbnails per row */
+    box-sizing: border-box;
+    padding: 5px;
+}
+
+.thumbnail-img {
+    width: 100%;
+    aspect-ratio: 1 / 1; 
+    object-fit: cover; 
+    border: 1px solid #ddd;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.thumbnail-img:hover {
+    transform: scale(1.1);
+}
+
 .selected-thumbnail {
     border: 1px solid black !important;
 }
+
 .btn-check:not(:checked) + label {
 border: 1px solid rgb(202, 200, 200) !important;
 background-color: white !important;

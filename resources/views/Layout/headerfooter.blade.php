@@ -446,8 +446,8 @@
         <div class="container">
             <div class="row">
                 <!-- Category Column -->
-                <div class="col-md-2 my-4">
-                    <h5 class="fw-bold py-2 fs-6" style="color:#70000E">Category</h5>
+                <div class="col-md-2 my-3">
+                    <h5 class="fw-bold py-2 fs-6" style="color:white">Category</h5>
                     <ul class="list-unstyled">
                         <li class="py-2"><a href="/product" class="text-decoration-none">Smartphones</a></li>
                         <li class="py-2"><a href="/product_acessory" class="text-decoration-none">Accessories</a>
@@ -456,7 +456,7 @@
                 </div>
                 <!-- Quick Links Column -->
                 <div class="col-md-2 my-3">
-                    <h5 class="fw-bold py-2 fs-6" style="color:#70000E">Quick Links</h5>
+                    <h5 class="fw-bold py-2 fs-6" style="color:white">Quick Links</h5>
                     <ul class="list-unstyled">
                         <li class="py-2"><a href="{{ route('homepage') }}" class=" text-decoration-none">Home</a>
                         </li>
@@ -468,22 +468,23 @@
                     </ul>
                 </div>
                 <!-- Get In Touch Column -->
-                <div class="col-md-3 my-3">
-                    <h5 class="fw-bold py-2 fs-6" style="color:#70000E">Get In Touch</h5>
-                    <ul class="list-unstyled">
-                        <li class="py-2"><i class="fa-solid fa-location-pin"></i> <span class="ms-2">78Eo St13
-                                Phsar Kondal Ti 1</span></li>
-                        <li class="py-2"><i class="fa-solid fa-phone"></i> <span class="ms-2">096 841 2222</span>
-                        </li>
-                        <li class="py-2"><i class="fa-solid fa-envelope"></i></i> <span
-                                class="ms-2">taymeng@gmail.com</span></li>
-                        <li class="py-2"><i class="fa-brands fa-telegram"></i> <span
-                                class="ms-2">t.me/taymeng</span></li>
-                    </ul>
-                </div>
+                <div class="col-md-3 my-3 text-white">
+    <h5 class="fw-bold py-2 fs-6">Get In Touch</h5>
+    <ul class="list-unstyled">
+        <li class="py-2"><i class="fa-solid fa-location-pin"></i> <span class="ms-2">78Eo St13
+                Phsar Kondal Ti 1</span></li>
+        <li class="py-2"><i class="fa-solid fa-phone"></i> <span class="ms-2">096 841 2222</span>
+        </li>
+        <li class="py-2"><i class="fa-solid fa-envelope"></i> <span
+                class="ms-2">taymeng@gmail.com</span></li>
+        <li class="py-2"><i class="fa-brands fa-telegram"></i> <span
+                class="ms-2">t.me/taymeng</span></li>
+    </ul>
+</div>
+
                 <!-- Follow Us Column -->
                 <div class="col-md-2 my-3">
-                    <h5 class="fw-bold py-2 fs-6" style="color:#70000E">Follow Us</h5>
+                    <h5 class="fw-bold py-2 fs-6" style="color:white">Follow Us</h5>
                     <ul class="list-unstyled">
                         <li class="py-2">
                             <a href="https://www.facebook.com/TayMeng13?mibextid=wwXIfr" class="text-decoration-none">
@@ -497,7 +498,7 @@
                 </div>
                 <!-- Help Column -->
                 <div class="col-md-2 my-3">
-                    <h5 class="fw-bold py-2 fs-6" style="color:#70000E">Help</h5>
+                    <h5 class="fw-bold py-2 fs-6" style="color:white">Help</h5>
                     <ul class="list-unstyled">
                         <li class="py-2"><a href="/Privacy" class="text-decoration-none">Privacy Policy</a></li>
                         <li class="py-2"><a href="/terms" class="text-decoration-none">Terms of Service</a></li>
