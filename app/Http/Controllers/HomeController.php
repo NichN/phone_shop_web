@@ -35,7 +35,7 @@ public function index()
                      where pi2.pro_id = product.id and pi2.stock > 0
                  )');
         })
-        ->where('category.name', 'Accesories')
+        ->where('category.name', 'Accessories')
         ->select(
             'product.*',
             'category.name as category_name',
@@ -55,7 +55,7 @@ public function index()
                      where pi2.pro_id = product.id and pi2.stock > 0
                  )');
         })
-        ->where('category.name', 'Phone')
+        ->where('category.name', 'Smartphone')
         ->select(
             'product.*',
             'category.name as category_name',
