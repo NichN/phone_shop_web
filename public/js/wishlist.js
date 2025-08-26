@@ -65,8 +65,13 @@ document.addEventListener("DOMContentLoaded", function () {
             return { sizes: [], colors: [] };
         }
     }
-
-    // Update the Wishlist Modal (UI)
+        function removeFromWishlist(productItemId) {
+            wishlist = wishlist.filter(item => item.productItemId !== productItemId);
+            localStorage.setItem('wishlist', JSON.stringify(wishlist));
+            updateWishlistCount();
+            updateWishlistModal();
+            syncWishlistIcons();
+        }
     async function updateWishlistModal() {
         const listwish = document.getElementById('listwish');
         if (!listwish) return;
@@ -136,46 +141,47 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
             listItem.querySelector('.move-to-bag-btn').addEventListener('click', () => {
-                const size = listItem.querySelector('.size-select').value;
-                const color = listItem.querySelector('.color-select').value;
+    const size = listItem.querySelector('.size-select').value;
+    const color = listItem.querySelector('.color-select').value;
+    console.log(size, color);
 
-                // Ensure size and color are selected before moving
-                if (!size || !color) {
-                    return;  // Removed the alert, no action taken
-                }
+    if (!size || !color) {
+        alert('Please select both size and color.');
+        return;
+    }
 
-                // Proceed to move to the cart
-                fetch(`/get-product-item-id?pro_id=${item.proId}&size=${size}&color_code=${encodeURIComponent(color)}`)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error("Product variation fetch failed.");
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.success) {
-                            const finalProductItemId = data.product_item_id;
-
-                            // Move item to cart, then remove from wishlist
-                            removeFromWishlist(item.productItemId);
-                            moveToBag(item.title, item.price, item.imgSrc, finalProductItemId, size, color);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error fetching product_item_id:', error);
-                    });
-            });
+    fetch(`/get-product-item-id?pro_id=${item.proId}&size=${size}&color_code=${encodeURIComponent(color)}`)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Product variation fetch failed.");
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            const finalProductItemId = data.product_item_id;
+            removeFromWishlist(item.productItemId);
+            moveToBag(item.title, item.price, item.imgSrc, finalProductItemId, size, color);
+        } else {
+            alert('Error: Product variation not found.');
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching product_item_id:', error);
+        alert('Error: Unable to move item to cart.');
+    });
+});
         }
     }
 
     // Remove Item from Wishlist (localStorage)
-    function removeFromWishlist(productItemId) {
-        wishlist = wishlist.filter(item => item.productItemId !== productItemId);
-        localStorage.setItem('wishlist', JSON.stringify(wishlist));
-        updateWishlistCount();
-        updateWishlistModal();
-        syncWishlistIcons();
-    }
+   function removeItemFromLocal(productItemId) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    cart = cart.filter(item => item.productItemId !== productItemId);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartCountLocal();
+    loadCartFromLocalStorage();
+}
 
     // Sync Wishlist Icons
     function syncWishlistIcons() {
@@ -189,39 +195,44 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Move to Cart and Clear from Wishlist
     function moveToBag(title, price, imgSrc, productItemId, size, color) {
-        addProductToCart(title, price, imgSrc, productItemId, size, color);
-        removeFromWishlist(productItemId);
+    addProductToCart(title, price, imgSrc, productItemId, size, color);
+    removeFromWishlist(productItemId);
 
-        // If logged in, sync with backend
-        if (window.isAuthenticated) {
+    // If logged in, sync with backend
+    if (window.isAuthenticated) {
+        if (typeof handleAddToCart === 'function') {
             handleAddToCart(productItemId, size, color);
+        } else {
+            console.error('handleAddToCart function is not defined.');
+            alert('Error: Unable to sync cart with server.');
         }
     }
+}
 
     // Add Product to Cart (localStorage)
     function addProductToCart(title, price, imgSrc, productItemId, size, color) {
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        const priceNumeric = parseFloat(price.replace(/[^\d.]/g, '')) || 0;
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const priceNumeric = parseFloat(price.replace(/[^\d.]/g, '')) || 0;
 
-        const existing = cart.find(item => item.productItemId === productItemId && item.size === size && item.color === color);
-        if (existing) {
-            existing.quantity += 1;
-        } else {
-            cart.push({
-                productItemId,
-                title,
-                price: priceNumeric,
-                imgSrc,
-                size,
-                color,
-                quantity: 1
-            });
-        }
-
-        localStorage.setItem('cart', JSON.stringify(cart));
-        updateCartCountLocal();
-        loadCartFromLocalStorage();
+    const existing = cart.find(item => item.id === productItemId && item.size === size && item.color === color);
+    if (existing) {
+        existing.quantity += 1;
+    } else {
+        cart.push({
+            id: productItemId,
+            title,
+            price: priceNumeric,
+            imgSrc,
+            size,
+            color,
+            quantity: 1
+        });
     }
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartCountLocal();
+    loadCartFromLocalStorage();
+}
 
     // Update Cart Count
     function updateCartCountLocal() {
