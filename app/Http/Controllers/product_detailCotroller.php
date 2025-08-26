@@ -144,10 +144,21 @@ use App\Models\productdetail;
             ->get();
         return response()->json($product);
     }
-    public function edit($id){
-        $productz_dt = productdetail::findOrFail($id);
-        return response()->json($productz_dt);
-    }
+    public function edit($id) {
+    $productz_dt = Productdetail::select(
+        'product_item.*',                  
+        'brand.name as brand_name',        
+        'category.name as category_name' 
+    )
+    ->join('product', 'product.id', '=', 'product_item.pro_id') 
+    ->join('brand', 'brand.id', '=', 'product.brand_id')        
+    ->join('category', 'category.id', '=', 'product.cat_id')      // join category table
+    ->where('product_item.id', $id)
+    ->firstOrFail();
+
+    return response()->json($productz_dt);
+}
+
     public function update(Request $request, $id)
 {
     $productz_dt = ProductDetail::findOrFail($id);
@@ -160,17 +171,17 @@ use App\Models\productdetail;
     }
 
     $productz_dt->update([
-        'product_name' => $request->name,
-        'color_id'     => $request->color_id,
-        'size_id'      => $request->size_id,
-        'price'        => $request->price,
-        'brand_id'     => $request->brand_id,
+        // 'product_name' => $request->name,
+        // 'color_id'     => $request->color_id,
+        // 'size_id'      => $request->size_id,
+        // 'price'        => $request->price,
+        // 'brand_id'     => $request->brand_id,
         'cost_price'   => $request->cost_price,
-        'cat_id'       => $request->cat_id,
+        // 'cat_id'       => $request->cat_id,
         'type'         => $request->type,
         'images'       => $imagePaths,
         'warranty'     => $request->warranty,
-        'is_featured'   => $request->is_featured ?? false,  // Update the is_featured field
+        'is_featured'   => $request->is_featured ?? true, 
     ]);
 
     return response()->json(['success' => true]);

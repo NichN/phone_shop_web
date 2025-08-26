@@ -59,7 +59,7 @@
 
             <!-- Body -->
             <div class="modal-body">
-                <form id="editPr" method="POST" enctype="multipart/form-data">
+                <form id="editPr" method="GET" enctype="multipart/form-data">
                     @method('POST')
                     @csrf
 
@@ -69,7 +69,7 @@
                     <div class="row mb-4">
                         <div class="col-md-6">
                             <label for="edit_ProName1" class="form-label fw-bold">Name <span class="text-danger">*</span></label>
-                            <select class="select2 js-states form-control" id="edit_ProName" name="name" required onchange="changeprduct(this)">
+                            <select class="select2 js-states form-control" id="edit_ProName" name="name" required disabled>
                                 <option value="">Choose Name</option>
                                 @foreach($product as $products)
                                     <option value="{{ $products->id }}">{{ $products->name }}</option>
@@ -78,7 +78,7 @@
                         </div>
                         <div class="col-md-6">
                             <label for="edit_brandName" class="form-label fw-bold">Brand <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="edit_brandName" name="brandName" required onchange="localStorage.setItem('brandName', this.value)">
+                            <input type="text" class="form-control" id="edit_brandName" name="brandName" required disabled>
                         </div>
                     </div>
 
@@ -86,7 +86,7 @@
                     <div class="row mb-4">
                         <div class="col-md-6">
                             <label for="edit_Category" class="form-label fw-bold">Category <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="edit_Category" name="edit_categoryName" required onchange="localStorage.setItem('Category', this.value)">
+                            <input type="text" class="form-control" id="edit_Category" name="edit_categoryName" required disabled onchange="localStorage.setItem('Category', this.value)">
                         </div>
                         <div class="col-md-6">
                             <label for="edit_costPrice" class="form-label fw-bold">Cost Price <span class="text-danger">*</span></label>
@@ -140,7 +140,7 @@
                         </div>
                         <div class="col-md-6">
                             <label for="edit_images" class="form-label fw-bold">Product Images <span class="text-danger">*</span></label>
-                            <input type="file" class="form-control" id="edit_images" name="images[]" multiple accept="image/*" required onchange="previewImages(this)">
+                            <input type="file" class="form-control" id="edit_images" name="images[]" multiple accept="image/*"  onchange="previewImages(this)">
                             <small class="form-text text-muted">You can select multiple images.</small>
                         </div>
                     </div>

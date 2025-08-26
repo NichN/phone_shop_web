@@ -178,7 +178,7 @@ public function getOptions($productItemId)
 
    $colors = DB::table('color')
     ->whereIn('code', $colorCodes)
-    ->select('code', 'name')  // ✅ now returning id instead of code
+    ->select('code', 'name') 
     ->get();
     // dd($colors)
 
