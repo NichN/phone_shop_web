@@ -51,7 +51,7 @@
                 <div class="bg-light p-3 mb-3 rounded shadow-sm">
                     @if (isset($orderItems) && $orderItems->isNotEmpty())
                         @foreach ($orderItems as $item)
-                            @php
+                            {{-- @php
                                 $images = json_decode($item->imgSrc, true);
                                 $imgSrc = $images && count($images) > 0 ? $images[0] : 'default-image.jpg';
                                 $title = $item->product_name ?? 'Unknown Product';
@@ -59,7 +59,23 @@
                                 $size = $item->size ?? 'N/A';
                                 $quantity = $item->quantity ?? 0;
                                 $price = $item->price ?? '0.00';
+                            @endphp --}}
+                            @php
+                                $decodedImages = json_decode($item->imgSrc, true);
+                                $images = is_array($decodedImages) ? $decodedImages : [];
+
+                                $imgSrc = count($images) > 0 ? $images[0] : 'default-image.jpg';
+
+                                $title = $item->title ?? 'Unknown Product';
+                                $color = $item->color_code ?? '#ccc';
+                                $size = $item->size ?? 'N/A';
+                                $quantity = $item->quantity ?? 0;
+                                $price = $item->price ?? '0.00';
+                                $subtotal = $item->subtotal ?? '0.00';
+                                $deliveryFee = $item->fee ?? '0.00';
+                                $totalAmount = ($subtotal + $deliveryFee);
                             @endphp
+
                             <div class="d-flex mb-3 p-2 rounded" style="border:1px solid #b35dae; align-items: flex-start;">
                             <!-- Product Image -->
                             <img src="{{ asset('storage/' . $imgSrc) }}" alt="{{ $title }}" width="120"

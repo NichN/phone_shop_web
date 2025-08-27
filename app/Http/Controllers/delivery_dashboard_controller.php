@@ -48,38 +48,48 @@ class delivery_dashboard_controller extends Controller
             'total_feepending' => $total_feepending,
         ]);
     }
-    public function getData(Request $request)
+        public function getData(Request $request)
     {
         if ($request->ajax()) {
             $data = DB::table('orders')
-            ->where('delivery_type', 'delivery')
-            ->where('status','!=','pending')
-            ->get();
-            
+                ->where('delivery_type', 'delivery')
+                ->where('status', '!=', 'pending')
+                ->get();
+
             return DataTables::of($data)
-                ->addColumn('action', function ($row) {
-                    $dropdown = '
-                        <div class="dropdown">
-                            <a class="text-dark" href="#" role="button" id="dropdownMenu' . $row->id . '" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-ellipsis-v"></i> <!-- 3-dot icon -->
+        ->addColumn('action', function ($row) {
+            $dropdown = '
+                <div class="dropdown">
+                    <a class="text-dark" href="#" role="button" id="dropdownMenu' . $row->id . '" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu' . $row->id . '">
+                        <li>
+                            <a class="dropdown-item vieworder" href="' . route('delivery_option.show', ['id' => $row->id]) . '" data-id="' . $row->id . '">
+                                Order Detail
                             </a>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu' . $row->id . '">
-                                <li>
-                                    <a class="dropdown-item vieworder" href="' . route('delivery_option.show', ['id' => $row->id]) . '" data-id="' . $row->id . '">Order Detail</a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item confirm" href="' . route('delivery_option.confirm', ['id' => $row->id]) . '">Confirm Order</a>
-                                </li>
-                            </ul>
-                        </div>';
-                    return $dropdown;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
+                        </li>';
+            if (trim(strtolower($row->status)) != 'completed' && trim(strtolower($row->status)) != 'cancelled') {
+                $dropdown .= '
+                        <li>
+                            <a class="dropdown-item confirm" href="' . route('delivery_option.confirm', ['id' => $row->id]) . '">
+                                Confirm Order
+                            </a>
+                        </li>';
+            }
+
+            $dropdown .= '
+                    </ul>
+                </div>';
+
+            return $dropdown;
+        })
+        ->rawColumns(['action'])
+        ->make(true);
+
         }
-        
-        return response()->json(['error' => 'Invalid request'], 400);
-    }
+}
+
         public function show($id)
         {
         $order = Order::findOrFail($id);

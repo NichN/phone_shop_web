@@ -11,22 +11,25 @@ class paymentController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-        $payment= DB::table('payment')
-        ->join('orders','orders.id','=','payment.order_id')
+            $payment = DB::table('payment')
+        ->join('orders', 'orders.id', '=', 'payment.order_id')
+        ->whereNotIn('orders.status', ['cancelled', 'pending'])
         ->get();
-        return DataTables::of($payment)
-            ->addColumn('action', function ($row) {
-                return '
-                    <button class="btn btn-outline-primary btn-sm view-invoice" data-id="' . $row->order_id . '" title="View Invoice">
-                        <i class="fas fa-file-invoice"></i> View
-                    </button>
-                ';
-            })
-            ->rawColumns(['action']) 
-            ->make(true);
-    }
+            return DataTables::of($payment)
+                ->addColumn('action', function ($row) {
+                    return '
+                        <button class="btn btn-outline-primary btn-sm view-invoice" data-id="' . $row->order_id . '" title="View Invoice">
+                            <i class="fas fa-file-invoice"></i> View
+                        </button>
+                    ';
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+
         return view('Admin.payment.index');
     }
+
    public function order_detail($id)
 {
     $order = Order::findOrFail($id);
