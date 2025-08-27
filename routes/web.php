@@ -98,7 +98,9 @@ Route::post('/login', function (Request $request) {
         if ($user->role_id == 1) {
             return redirect()->route('dashboard.show');
         } elseif ($user->role_id == 2) {
-            return redirect()->route('delivery.index');
+            return redirect()->route('dashboard.show'); // Staff can access dashboard
+        } elseif ($user->role_id == 3) {
+            return redirect()->route('delivery_option.index'); // Delivery users go to delivery dashboard
         } elseif ($user->role_id == 4) {
             return redirect()->route('homepage');
         } else {
@@ -146,7 +148,12 @@ Route::prefix('dashboard')->middleware(['auth', 'twofactor'])->name('dashboard.'
         return app(\App\Http\Controllers\dashboardcontroller::class)->index();
     })->name('index');
     Route::get('/', function() {
-        if (auth()->user()->role_id != 1 && auth()->user()->role_id != 2) abort(403, 'Unauthorized');
+        $roleId = auth()->user()->role_id;
+        if ($roleId == 3) {
+            // Redirect delivery users to their specific dashboard
+            return redirect()->route('delivery_option.index');
+        }
+        if ($roleId != 1 && $roleId != 2) abort(403, 'Unauthorized');
         return app(\App\Http\Controllers\dashboardcontroller::class)->show();
     })->name('show');
     Route::get('/product', function() {
@@ -283,9 +290,11 @@ Route::prefix('report')->name('report.')->group(function(){
 
 //homepage
 Route::get('/homepage', [HomeController::class, 'index'])->name('homepage');
-Route::get('/product-items/{productId}', [HomeController::class, 'getOptions']);
+
+// Search routes
 Route::get('/search', [HomeController::class, 'search'])->name('search');
-Route::get('/search-suggestions', [HomeController::class, 'getProductSuggestions'])->name('search.suggestions');
+Route::get('/search-suggestions', [HomeController::class, 'searchSuggestions'])->name('search.suggestions');
+Route::get('/product-items/{productId}', [HomeController::class, 'getOptions']);
 
 // Test route for search functionality
 Route::get('/test-search', function() {
@@ -332,13 +341,32 @@ Route::prefix('order_dashboard')->name('order_dashboard.')  ->middleware('auth')
     Route::get('/order_total/{id}', [Order_dashboard_controller::class, 'order_detail'])->name('order_detail');
 });
 
-Route::prefix('deliveries')->name('delivery_option.')->group(function () {
-    Route::get('/', [delivery_dashboard_controller::class, 'index'])->name('index');
-    Route::get('/data', [delivery_dashboard_controller::class, 'getData'])->name('data');
-    Route::get('/showorder/{id}', [delivery_dashboard_controller::class, 'show'])->name('show');
-    Route::get('/invoice/{id}', [delivery_dashboard_controller::class, 'invoice'])->name('invoice');
-    Route::get('/confirm/{id}', [delivery_dashboard_controller::class, 'confirm'])->name('confirm');
-    Route::post('/store', [delivery_dashboard_controller::class, 'store'])->name('store');
+Route::prefix('deliveries')->middleware(['auth', 'twofactor'])->name('delivery_option.')->group(function () {
+    Route::get('/', function() {
+        // Only allow admin, staff, and delivery users
+        if (!in_array(auth()->user()->role_id, [1, 2, 3])) abort(403, 'Unauthorized');
+        return app(\App\Http\Controllers\delivery_dashboard_controller::class)->index();
+    })->name('index');
+    Route::get('/data', function(Request $request) {
+        if (!in_array(auth()->user()->role_id, [1, 2, 3])) abort(403, 'Unauthorized');
+        return app(\App\Http\Controllers\delivery_dashboard_controller::class)->getData($request);
+    })->name('data');
+    Route::get('/showorder/{id}', function($id) {
+        if (!in_array(auth()->user()->role_id, [1, 2, 3])) abort(403, 'Unauthorized');
+        return app(\App\Http\Controllers\delivery_dashboard_controller::class)->show($id);
+    })->name('show');
+    Route::get('/invoice/{id}', function($id) {
+        if (!in_array(auth()->user()->role_id, [1, 2, 3])) abort(403, 'Unauthorized');
+        return app(\App\Http\Controllers\delivery_dashboard_controller::class)->invoice($id);
+    })->name('invoice');
+    Route::get('/confirm/{id}', function(Request $request, $id) {
+        if (!in_array(auth()->user()->role_id, [1, 2, 3])) abort(403, 'Unauthorized');
+        return app(\App\Http\Controllers\delivery_dashboard_controller::class)->confirm($request, $id);
+    })->name('confirm');
+    Route::post('/store', function(Request $request) {
+        if (!in_array(auth()->user()->role_id, [1, 2, 3])) abort(403, 'Unauthorized');
+        return app(\App\Http\Controllers\delivery_dashboard_controller::class)->store($request);
+    })->name('store');
     // Route::get('/show_pick_up/{id}',[delivery_dashboard_controller::class ,'show_pickup'])->name('show_pickup');
 });
 

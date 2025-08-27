@@ -55,7 +55,8 @@ class delivery_dashboard_controller extends Controller
             ->where('delivery_type', 'delivery')
             ->where('status','!=','pending')
             ->get();
-                return DataTables::of($data)
+            
+            return DataTables::of($data)
                 ->addColumn('action', function ($row) {
                     $dropdown = '
                         <div class="dropdown">
@@ -75,8 +76,10 @@ class delivery_dashboard_controller extends Controller
                 })
                 ->rawColumns(['action'])
                 ->make(true);
-                }
         }
+        
+        return response()->json(['error' => 'Invalid request'], 400);
+    }
         public function show($id)
         {
         $order = Order::findOrFail($id);

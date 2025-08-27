@@ -77,6 +77,14 @@ class Admin_user_controller extends Controller
 
     public function update(Request $request, User $user)
     {
+        // Prevent admin users from editing themselves
+        if (auth()->user()->id == $user->id && auth()->user()->role_id == 1) {
+            if ($request->ajax()) {
+                return response()->json(['error' => 'Admin users cannot edit their own account for security reasons.'], 403);
+            }
+            return redirect()->route('user.index')->with('error', 'Admin users cannot edit their own account for security reasons.');
+        }
+
         $rules = [
             'name'  => 'required',
             'email' => 'required|email|unique:users,email,' . $user->id,
@@ -107,6 +115,11 @@ class Admin_user_controller extends Controller
 
     public function destroy(User $user)
     {
+        // Prevent admin users from deleting themselves
+        if (auth()->user()->id == $user->id && auth()->user()->role_id == 1) {
+            return response()->json(['error' => 'Admin users cannot delete their own account for security reasons.'], 403);
+        }
+
         $user->delete();
         return response()->json(['success' => 'User deleted successfully.']);
     }

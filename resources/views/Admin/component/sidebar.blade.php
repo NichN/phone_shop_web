@@ -9,8 +9,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('js/search.js') }}"></script>
     <link href="{{ asset('css/mainstyle.css')}}" rel="stylesheet">
     <link href="{{ asset('css/dashboard.css')}}" rel="stylesheet">
+    <link href="{{ asset('css/search.css')}}" rel="stylesheet">
 </head>
 <body>
 <div class="w3-sidebar w3-bar-block w3-collapse w3-card w3-animate-left" style="width:250px;" id="mySidebar">
@@ -27,12 +29,25 @@
         @php $roleId = Auth::user()->role_id; @endphp
     @endif
 
-    {{-- Dashboard tab (all except Delivery) --}}
+    {{-- Dashboard tab (all except Delivery-only users) --}}
     @if(!isset($roleId) || $roleId != 3)
     <a href="{{ route('dashboard.show') }}" class="w3-bar-item w3-button dashboard-link"><i class="fa fa-television"></i> Dashboard</a>
     <a href="{{ route('report.income_expense') }}" class="w3-bar-item w3-button">
                 <i class="fa-solid fa-chart-simple"></i> Income Vs Expense
             </a>
+    @endif
+
+    {{-- Delivery Dashboard for delivery-only users --}}
+    @if(isset($roleId) && $roleId == 3)
+    <a href="{{ route('delivery_option.index') }}" class="w3-bar-item w3-button dashboard-link"><i class="fa fa-television"></i> Delivery Dashboard</a>
+    
+    {{-- Delivery-specific menu items --}}
+    <div class="w3-bar-item  w3-dropdown-click" onclick="toggleDropdown('deliveryDropdown')">
+        <i class="fa-solid fa-truck"></i> Delivery Orders <i class="fa fa-caret-down" style="float:right;"></i>
+    </div>
+    <div id="deliveryDropdown" class="w3-dropdown-content" style="display: none;">
+        <a href="{{ route('delivery_option.index') }}" class="w3-bar-item w3-button"><i class="fa-solid fa-truck"></i>Order List</a>
+    </div>
     @endif
 
 
@@ -77,19 +92,12 @@
 
 
 
-        {{-- Delivery tab: only for Delivery role --}}
-             @if(isset($roleId) && $roleId == 3)
-            <div class="w3-bar-item  w3-dropdown-click" onclick="toggleDropdown('deliveryDropdown')">
+        {{-- Delivery tab: show for admin and staff users only --}}
+        @if(isset($roleId) && ($roleId == 1 || $roleId == 2))
+            <div class="w3-bar-item  w3-dropdown-click" onclick="toggleDropdown('deliveryDropdownAdmin')">
                 <i class="fa-solid fa-truck"></i> Delivery <i class="fa fa-caret-down" style="float:right;"></i>
             </div>
-            <div id="deliveryDropdown" class="w3-dropdown-content" style="display: none;">
-                <a href="{{ route('delivery_option.index') }}" class="w3-bar-item w3-button"><i class="fa-solid fa-truck"></i>Order list</a>
-            </div>
-        @elseif(!isset($roleId) || $roleId != 3)
-            <div class="w3-bar-item  w3-dropdown-click" onclick="toggleDropdown('deliveryDropdown')">
-                <i class="fa-solid fa-truck"></i> Delivery <i class="fa fa-caret-down" style="float:right;"></i>
-            </div>
-            <div id="deliveryDropdown" class="w3-dropdown-content" style="display: none;">
+            <div id="deliveryDropdownAdmin" class="w3-dropdown-content" style="display: none;">
                 <a href="{{ route('delivery_option.index') }}" class="w3-bar-item w3-button"><i class="fa-solid fa-truck"></i>Order list</a>
             </div>
         @endif

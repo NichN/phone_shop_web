@@ -12,7 +12,7 @@ class customer_admincontroller extends Controller
     public function index(Request $request){
         if ($request->ajax()) {
             $customer = DB::table('users')
-                ->where('role_id', '!=', 4) // Exclude customers (role_id = 4)
+                ->where('role_id', '>', 3) // Exclude customers (role_id = 4)
                 ->get();
             return DataTables::of($customer)
             ->addColumn('action', function ($row) {

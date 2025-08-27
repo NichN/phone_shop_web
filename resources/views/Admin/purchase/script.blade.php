@@ -9,9 +9,10 @@ $(document).ready(function () {
     var purchaseTable = $('.data-table.purchase').DataTable({
         processing: false,
         serverSide: true,
-        paging: false,
-        searching: false,
-        info: false,
+        paging: true,
+        searching: true,
+        info: true,
+        dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rtip',
         ajax: {
             url: "{{ route('purchase.index') }}",
             dataSrc: 'data'

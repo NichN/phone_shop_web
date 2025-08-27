@@ -62,8 +62,9 @@
         var table = $('.data-table').DataTable({
             processing: true,
             serverSide: true,
-            searching: false,  
-            paging: false, 
+            searching: true,  
+            paging: true,
+            dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rtip', 
             ajax: "{{ route('delivery.index') }}",
             columns: [
                 {data: 'id', name: 'id',render: function (data, type, row, meta) {

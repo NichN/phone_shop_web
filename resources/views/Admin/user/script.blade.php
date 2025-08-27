@@ -64,7 +64,7 @@
                     }
                 },
                 error: function(xhr) {
-                    let msg = xhr.responseJSON?.message || 'An error occurred';
+                    let msg = xhr.responseJSON?.error || xhr.responseJSON?.message || 'An error occurred';
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
@@ -95,8 +95,9 @@
                             table.ajax.reload();
                             Swal.fire('Deleted!', response.success, 'success');
                         },
-                        error: function () {
-                            Swal.fire('Failed!', 'Something went wrong.', 'error');
+                        error: function (xhr) {
+                            let msg = xhr.responseJSON?.error || 'Something went wrong.';
+                            Swal.fire('Failed!', msg, 'error');
                         }
                     });
                 }

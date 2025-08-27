@@ -3,6 +3,11 @@ $(document).ready(function () {
     $('.data-table').DataTable({
         processing: true,
         serverSide: true,
+        searching: true,
+        search: {
+            return: true
+        },
+        dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rtip',
         ajax: "{{ route('delivery_option.data') }}",
         order: [[0, 'desc']],
         columns: [
