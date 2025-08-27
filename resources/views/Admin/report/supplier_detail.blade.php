@@ -35,14 +35,17 @@
                             </tr>
                         </thead>
                         <tfoot>
-                            <tr>
-                                <th colspan="4" style="text-align:right">Total:</th>
-                                <th id="total-grand"></th>
-                                <th id="total-paid"></th>
-                                <th id="total-balance"></th>
-                                <th></th>
-                            </tr>
-                        </tfoot>
+                                <tr>
+                                    <th><input type="text" placeholder="Search Company"></th>
+                                    <th><input type="text" placeholder="Search Phone"></th>
+                                    <th><input type="text" placeholder="Search Email"></th>
+                                    <th><input type="text" placeholder="Search Total Purchase"></th>
+                                    <th id="total-amount" style="background-color: #2e3b56; color: white;">Total Amount</th>
+                                    <th id="total-paid" style="background-color: #2e3b56; color: white;">Paid</th>
+                                    <th id="total-balance" style="background-color: #2e3b56; color: white;">Balance</th>
+                                    <th></th> <!-- No search input for Action -->
+                                </tr>
+                            </tfoot>
                     </table>
                 </div>
             </div>
@@ -101,46 +104,34 @@ $(document).ready(function () {
             {data:'balance', name:'balance'},
             {data:'payment_statuse', name:'payment_statuse'}
         ],
-        footerCallback: function (row, data, start, end, display) {
-            var api = this.api();
+        drawCallback: function(settings) {
+            let api = this.api();
 
-            // Helper function to sum column
-            var intVal = function (i) {
-                return typeof i === 'string'
-                    ? parseFloat(i.replace(/[\$,]/g, '')) || 0
-                    : typeof i === 'number'
-                    ? i
-                    : 0;
+            const parseNumber = (val) => {
+                return typeof val === 'string' ? parseFloat(val.replace(/[^0-9.-]+/g, '')) : (parseFloat(val) || 0);
             };
-
-            // Grand Total
-            var grandTotal = api
-                .column(4, { page: 'current' })
-                .data()
-                .reduce(function (a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0);
-
-            // Paid
-            var paidTotal = api
-                .column(5, { page: 'current' })
-                .data()
-                .reduce(function (a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0);
-
-            // Balance
-            var balanceTotal = api
-                .column(6, { page: 'current' })
-                .data()
-                .reduce(function (a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0);
-
-            // Display in footer
-            $('#total-grand').html(grandTotal.toFixed(2));
-            $('#total-paid').html(paidTotal.toFixed(2));
-            $('#total-balance').html(balanceTotal.toFixed(2));
+            let totalAmount = api.column(4, { page: 'current' }).data().reduce((a, b) => a + parseNumber(b), 0);
+            $('#total-amount').html('$' + totalAmount.toFixed(2));
+            let totalPaid = api.column(5, { page: 'current' }).data().reduce((a, b) => a + parseNumber(b), 0);
+            $('#total-paid').html('$' + totalPaid.toFixed(2));
+            let totalBalance = api.column(6, { page: 'current' }).data().reduce((a, b) => a + parseNumber(b), 0);
+            $('#total-balance').html('$' + totalBalance.toFixed(2));
+        },
+        initComplete: function () {
+            var api = this.api();
+            api.columns().every(function (index) {
+                if (index < 4) {
+                    var column = this;
+                    var title = $(column.header()).text();
+                    var input = $('<input type="text" placeholder="' + title + '" style="width: 100%; border: none;" />')
+                        .appendTo($(column.footer()).empty())
+                        .on('keyup change clear', function () {
+                            if (column.search() !== this.value) {
+                                column.search(this.value).draw();
+                            }
+                        });
+                }
+            });
         }
     });
 });

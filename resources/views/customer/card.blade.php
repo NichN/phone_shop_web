@@ -85,7 +85,7 @@
                     @if($deliveryType === 'pick up')
                         {{-- Only KH QR Payment --}}
                         <div class="payment-option">
-                            <input class="form-check-input" type="radio" name="payment_type" id="kh_qr" value="kh_qr" checked>
+                            <input class="form-check-input" type="radio" name="payment_type" id="kh_qr" value="online_payment" checked>
                             <label class="payment-label" for="kh_qr">
                                 <div class="payment-content d-flex align-items-center">
                                     <img src="{{ asset('image/barkog.png') }}" alt="KH QR Payment" class="payment-icon rounded me-2">
@@ -113,7 +113,7 @@
 
                         {{-- KH QR Payment --}}
                         <div class="payment-option">
-                            <input class="form-check-input" type="radio" name="payment_type" id="kh_qr" value="kh_qr">
+                            <input class="form-check-input" type="radio" name="payment_type" id="kh_qr" value="online_payment">
                             <label class="payment-label" for="kh_qr">
                                 <div class="payment-content d-flex align-items-center">
                                     <img src="{{ asset('image/barkog.png') }}" alt="Online Payment" class="payment-icon rounded me-2">

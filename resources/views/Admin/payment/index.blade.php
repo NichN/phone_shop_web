@@ -58,16 +58,7 @@
                 { data: 'order_num', name: 'order_num' },
                 { data: 'guest_name', name: 'guest_name' },
                 { data: 'total_amount', name: 'total_amount' },
-                { 
-                data: 'payment_type', 
-                name: 'payment_type',
-                render: function(data, type, row) {
-                    if (data === 'kh_qr') {
-                    return 'online payment';
-                    }
-                    return data;
-                }
-                },
+                { data: 'payment_type', name: 'payment_type'},
                 { data: 'remark', name: 'remark' },
                 {
                     data: 'payment_status',

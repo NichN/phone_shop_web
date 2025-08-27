@@ -32,7 +32,7 @@
                                     <select class="form-select" id="paid_by">
                                         <option value="">Select Payment Type</option>
                                         <option value="cash">Cash on Delivery</option>
-                                        <option value="aba">Bank</option>
+                                        <option value="aba">Online Payment</option>
                                     </select>
                                 </div>
                                 <div class="col-md-4">
@@ -81,12 +81,20 @@
                                         </tr>
                                     </thead>
                                     <tfoot>
-                                        <tr>
-                                            <th colspan="6" style="text-align: right;">Total Amount:</th>
-                                            <th id="total-amount"></th>
-                                            <th colspan="2"></th>
-                                        </tr>
-                                    </tfoot>
+                                <tr>
+                                    <th></th>
+                                     <th></th>
+                                     <th></th>
+                                     <th></th>
+                                     <th></th>
+                                     <th></th>
+                                    <th id="total-balance" style="background-color: #2e3b56; color: white;">Balance</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </tfoot>
+                                    <tbody>
+                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -166,25 +174,31 @@
                 {data: 'payment_type', name: 'payment_type'},
                 {data: 'status', name: 'status'}
             ],
-            footerCallback: function (row, data, start, end, display) {
-                var api = this.api();
+            drawCallback: function(settings) {
+            let api = this.api();
 
-                var intVal = function (i) {
-                    return typeof i === 'string'
-                        ? parseFloat(i.replace(/[\$,]/g, '')) || 0
-                        : typeof i === 'number'
-                        ? i : 0;
-                };
-
-                var totalAmount = api
-                    .column(6, {page: 'current'})
-                    .data()
-                    .reduce(function (a, b) {
-                        return intVal(a) + intVal(b);
-                    }, 0);
-
-                $('#total-amount').html(totalAmount.toFixed(2));
-            }
+            const parseNumber = (val) => {
+                return typeof val === 'string' ? parseFloat(val.replace(/[^0-9.-]+/g, '')) : (parseFloat(val) || 0);
+            };
+            let totalBalance = api.column(6, { page: 'current' }).data().reduce((a, b) => a + parseNumber(b), 0);
+            $('#total-balance').html('$' + totalBalance.toFixed(2));
+        },
+        initComplete: function () {
+            var api = this.api();
+            api.columns().every(function (index) {
+                if (index < 6) {
+                    var column = this;
+                    var title = $(column.header()).text();
+                    var input = $('<input type="text" placeholder="' + title + '" style="width: 100%; border: none;" />')
+                        .appendTo($(column.footer()).empty())
+                        .on('keyup change clear', function () {
+                            if (column.search() !== this.value) {
+                                column.search(this.value).draw();
+                            }
+                    });
+                }
+            });
+        }
         });
 
         $('#submit_btn').on('click', function() {

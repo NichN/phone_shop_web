@@ -93,7 +93,7 @@ class Order_dashboard_controller extends Controller
                         </li>';
 
             // Show Confirm button if payment_type = 'kh_qr'
-            if ($order->payment_type === 'kh_qr') {
+            if ($order->payment_type === 'online_payment') {
                 $buttons .= '
                         <li>
                             <form action="' . route('checkout.confirm', $order->id) . '" method="POST">

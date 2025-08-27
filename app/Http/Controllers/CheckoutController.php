@@ -225,13 +225,13 @@ class CheckoutController extends Controller
         DB::commit();
 
         // 🔄 SEND TO TELEGRAM if KH_QR
-        if ($request->payment_type === 'kh_qr') {
+        if ($request->payment_type === 'online_payment') {
             $telegramBotToken = '8108484660:AAFfEtec51wHSAJfHso1BTT6X9_H5YfcMIo';
             $telegramChatId = '@ksaranauniyear4';
 
             $caption = "New order received!\n"
                 . "Order ID: {$order->order_num}\n"
-                . "Payment Type: kh_qr\n"
+                . "Payment Type: online_payment\n"
                 . "Note: " . ($request->note ?? 'None') . "\n"
                 . "Status: Pending Payment Confirmation";
 
