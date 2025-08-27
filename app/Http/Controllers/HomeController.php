@@ -360,7 +360,7 @@ public function getOptions($productItemId)
 
    $colors = DB::table('color')
     ->whereIn('code', $colorCodes)
-    ->select('code', 'name')  // ✅ now returning id instead of code
+    ->select('code', 'name') 
     ->get();
     // dd($colors)
 
@@ -374,28 +374,40 @@ public function getOptions($productItemId)
 
 public function getProductItemId(Request $request)
 {
-    $pro_id = $request->query('pro_id');
+    $proId = $request->query('pro_id');
     $size = $request->query('size');
-    $colorId = $request->query('color_code');  // color ID sent from frontend
+    $colorCode = $request->query('color_code');
 
-    if (!$pro_id || !$size || !$colorId) {
-        return response()->json(['success' => false, 'message' => 'Missing required parameters.'], 400);
-    }
+    \Log::info('getProductItemId Request:', ['pro_id' => $proId, 'size' => $size, 'color_code' => $colorCode]);
 
-    $productItem = DB::table('product_item')
-        ->where('pro_id', $pro_id)
-        ->where('size', $size)
-        ->where('color_code', $colorId)  // <-- match color_code column to color ID
+    $productItem = ProductDetail::where('pro_id', $proId)
+        ->whereRaw('LOWER(size) = ?', [strtolower($size)])
+        ->whereRaw('LOWER(color_code) = ?', [strtolower($colorCode)])
         ->first();
 
-    if (!$productItem) {
-        return response()->json(['success' => false, 'message' => 'Product variation not found.'], 404);
+    if ($productItem) {
+        \Log::info('Product item found:', [
+            'id' => $productItem->id,
+            'pro_id' => $productItem->pro_id,
+            'size' => $productItem->size,
+            'color_code' => $productItem->color_code
+        ]);
+        return response()->json([
+            'success' => true,
+            'product_item_id' => $productItem->id
+        ]);
     }
 
-    return response()->json([
-        'success' => true,
-        'product_item_id' => $productItem->id,
+    \Log::warning('Product variation not found:', [
+        'pro_id' => $proId,
+        'size' => $size,
+        'color_code' => $colorCode
     ]);
+
+    return response()->json([
+        'success' => false,
+        'message' => 'Product variation not found.'
+    ], 404);
 }
 
 

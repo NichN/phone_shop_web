@@ -70,12 +70,12 @@
             ajax: {
                 url: "{{ route('report.product_report') }}"
             },
-            dom: 'Bfrtip',
+            dom: '<"d-flex justify-content-between"fB>rtip',
             buttons: [
                 {
                     extend: 'csvHtml5',
-                    text: '📁 Export CSV',
-                    className: 'btn btn-export'
+                    text: '📁',
+                    className: 'btn btn-export float-right'
                 }
             ],
             order: [[0, 'desc']],
@@ -152,6 +152,8 @@
     font-size: 14px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     transition: 0.3s;
+    float: right !important;
+    margin-left: auto;
 }
 </style>
 

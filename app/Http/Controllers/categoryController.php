@@ -41,7 +41,10 @@ class categoryController extends Controller
                 if ($request->hasFile('image')) {
                     $path = $request->file('image')->store('public/category_images');
                     $data['image'] = str_replace('public/', '', $path);
+
+                    // dd($path, $data['image'], storage_path('app/'.$path), public_path('storage/'.$data['image']));
                 }
+
                 Category::create($data);
         
                 return response()->json([

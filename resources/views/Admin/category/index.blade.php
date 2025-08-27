@@ -48,7 +48,7 @@
                     <input type="hidden" id="cateId" name="id">
                     <div class="mb-3">
                         <label for="editName" class="form-label">Name</label>
-                        <input type="text" class="form-control" id="editName" name="Name">
+                        <input type="text" class="form-control" id="editName" name="name">
                     </div>
                     <div class="form-group">
                         <label>Description</label>

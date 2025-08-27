@@ -13,7 +13,7 @@ $(document).ready(function () {
         }
 
         // If payment method is 'kh_qr', show QR + upload dialog
-        if (paymentMethod === 'kh_qr') {
+        if (paymentMethod === 'online_payment') {
             Swal.fire({
                 html: `
                     <div style="position: relative; text-align: center;">
@@ -65,7 +65,7 @@ $(document).ready(function () {
         formData.append('note', note);
 
         // Append file if 'kh_qr'
-        if (paymentMethod === 'kh_qr') {
+        if (paymentMethod === 'online_payment') {
             const fileInput = document.getElementById('paymentProof');
             if (fileInput && fileInput.files.length > 0) {
                 formData.append('payment_proof', fileInput.files[0]);
@@ -84,7 +84,7 @@ $(document).ready(function () {
                 if (response.success) {
                     Swal.fire({
                         title: 'Order Submitted!',
-                        html: paymentMethod === 'kh_qr'
+                        html: paymentMethod === 'online_payment'
                             ? 'Your order has been submitted and is pending admin approval.'
                             : 'Thank you! Your order has been confirmed.',
                         imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyGvJdXBAXsEiRXZwKs9aBF0rsiRLfvNKblw&s',

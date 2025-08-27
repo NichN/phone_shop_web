@@ -18,31 +18,31 @@ class reportController extends Controller
 {
     public function product_report(Request $request) {
         $productSummary = DB::table('product')
-    ->leftJoin('product_item', 'product.id', '=', 'product_item.pro_id')
-    ->leftJoin('purchase_item', 'product_item.id', '=', 'purchase_item.pr_item_id')
-    ->leftJoin('purchase', 'purchase.id', '=', 'purchase_item.purchase_id')
-    ->leftJoin('order_item', 'order_item.product_item_id', '=', 'product_item.id')
-    ->select(
-        'product.id',
-        'product.name',
-        DB::raw('GROUP_CONCAT(DISTINCT product_item.color_code) as colors_code'),
-        DB::raw('GROUP_CONCAT(DISTINCT product_item.size) as sizes'),
-        DB::raw('SUM(product_item.stock) as stock'),
-        DB::raw('SUM(purchase.Grand_total) as Grand_total'),
-        DB::raw('SUM(order_item.price) as sold')
-    )
-    ->groupBy('product.id', 'product.name')
-    ->get()
-    ->map(function ($item) {
-        $item->colors_code = explode(',', $item->colors_code);
-        $item->sizes = explode(',', $item->sizes);
-        $item->sold = $item->sold ?? 0;
-        return $item;
-    });
+            ->leftJoin('product_item', 'product.id', '=', 'product_item.pro_id')
+            ->leftJoin('purchase_item', 'product_item.id', '=', 'purchase_item.pr_item_id')
+            ->leftJoin('purchase', 'purchase.id', '=', 'purchase_item.purchase_id')
+            ->leftJoin('order_item', 'order_item.product_item_id', '=', 'product_item.id')
+            ->select(
+                'product.id',
+                'product.name',
+                DB::raw('GROUP_CONCAT(DISTINCT product_item.color_code) as colors_code'),
+                DB::raw('GROUP_CONCAT(DISTINCT product_item.size) as sizes'),
+                DB::raw('SUM(product_item.stock) as stock'),
+                DB::raw('SUM(purchase.Grand_total) as Grand_total'),
+                DB::raw('SUM(order_item.price) as sold')
+            )
+            ->groupBy('product.id', 'product.name')
+            ->get()
+            ->map(function ($item) {
+                $item->colors_code = explode(',', $item->colors_code);
+                $item->sizes = explode(',', $item->sizes);
+                $item->sold = $item->sold ?? 0;
+                return $item;
+            });
 
-if ($request->ajax()) {
-    return Datatables::of($productSummary)->make(true);
-}
+        if ($request->ajax()) {
+            return Datatables::of($productSummary)->make(true);
+        }
      return view('Admin.report.product');
     }
     public function purchase_report(Request $request) {

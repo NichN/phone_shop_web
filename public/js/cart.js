@@ -46,7 +46,7 @@ function closeCartSidebar() {
     document.body.classList.remove("cart-open");
 }
 
-function handleAddToCart(productItemId) {
+function handleAddToCart(productItemId, size = null, color = null) {
     const quantity = 1;
     const id = parseInt(productItemId, 10);
     if (!id || isNaN(id)) {
@@ -54,20 +54,18 @@ function handleAddToCart(productItemId) {
         return;
     }
     const button = document.querySelector(`[data-product-item-id="${id}"]`);
-    // if (!button) {
-    //     alert("Product not found.");
-    //     return;
-    // }
-    const title = button.getAttribute('data-title');
-    const price = button.getAttribute('data-price');
-    const imgSrc = button.getAttribute('data-img');
-    const size = document.querySelector('input[name="storage"]:checked')?.value;
-    const color = document.querySelector('input[name="color"]:checked')?.value;
+    const title = button?.getAttribute('data-title') || 'Untitled';
+    const price = button?.getAttribute('data-price') || '0.00';
+    const imgSrc = button?.getAttribute('data-img') || '';
+    // Use provided size/color if available, otherwise fall back to DOM
+    const finalSize = size || document.querySelector('input[name="storage"]:checked')?.value;
+    const finalColor = color || document.querySelector('input[name="color"]:checked')?.value;
 
-    // if (!size || !color) {
-    //     alert("Please select both size and color.");
-    //     return;
-    // }
+    if (!finalSize || !finalColor) {
+        alert("Please select both size and color.");
+        return;
+    }
+
     if (window.isAuthenticated) {
         $.ajax({
             url: "/store-cart",
@@ -76,12 +74,12 @@ function handleAddToCart(productItemId) {
                 _token: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                 product_item_id: id,
                 quantity: quantity,
-                size: size,
-                color: color
+                size: finalSize,
+                color: finalColor
             },
             success: function (response) {
                 if (response.success) {
-                    addOrUpdateLocalCart(id, title, price, imgSrc, size, color, quantity);
+                    addOrUpdateLocalCart(id, title, price, imgSrc, finalSize, finalColor, quantity);
                     updateCartCount();
                     loadCartFromLocalStorage();
                     alert("Added to cart.");
@@ -94,8 +92,7 @@ function handleAddToCart(productItemId) {
             }
         });
     } else {
-        // Guest: update localStorage only
-        addOrUpdateLocalCart(id, title, price, imgSrc, size, color, quantity);
+        addOrUpdateLocalCart(id, title, price, imgSrc, finalSize, finalColor, quantity);
         updateCartCountLocal();
         loadCartFromLocalStorage();
         alert("Added to cart.");
