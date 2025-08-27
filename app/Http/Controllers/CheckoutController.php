@@ -224,7 +224,6 @@ class CheckoutController extends Controller
 
         DB::commit();
 
-        // 🔄 SEND TO TELEGRAM if KH_QR
         if ($request->payment_type === 'online_payment') {
             $telegramBotToken = '8108484660:AAFfEtec51wHSAJfHso1BTT6X9_H5YfcMIo';
             $telegramChatId = '@ksaranauniyear4';
@@ -275,77 +274,13 @@ class CheckoutController extends Controller
         return redirect()->back()->withErrors('Payment failed: ' . $e->getMessage());
     }
 }
-
-
-
-    // public function orderHistory(Request $request)
-    // {
-    //     if (auth()->check()) {
-    //         $orders = Order::where('user_id', auth()->id())
-    //             ->orderBy('created_at', 'desc')
-    //             ->get();
-
-    //         return view('customer.history', compact('orders'));
-    //     }
-
-    //     $request->validate([
-    //         'email' => 'required|email',
-    //         'token' => 'required|uuid',
-    //     ]);
-
-    //     $email = $request->input('email');
-    //     $token = $request->input('token');
-
-    //     $orders = Order::whereNull('user_id')
-    //         ->where('guest_eamil', $email)
-    //         ->where('guest_token', $token)
-    //         ->where('is_confirmed', true)
-    //         ->orderBy('created_at', 'desc')
-    //         ->get();
-
-    //     return view('customer.history', compact('orders'));
-    // }
-    // public function orderHistory(Request $request)
-    // {
-    //     if (auth()->check()) {
-    //         $orders = Order::where('user_id', auth()->id())
-    //             ->orderBy('created_at', 'desc')
-    //             ->get();
-
-    //         return view('customer.history', compact('orders'));
-    //     }
-    //     $guestEmail = $request->query('guest_eamil');
-    //     $guestToken = $request->query('order_num');
-
-    //     if (!$guestEmail || !$guestToken) {
-    //         return view('customer.history', ['orders' => collect(), 'error' => 'Please provide both email and order number.']);
-    //     }
-
-    //     $orders = Order::where('guest_eamil', $guestEmail)
-    //         ->where('order_num', $guestToken)
-    //         ->orderBy('created_at', 'desc')
-    //         ->get();
-    //     if ($orders->isEmpty()) {
-    //         return view('customer.history', [
-    //             'orders' => $orders,
-    //             'error' => 'No orders found with provided credentials.',
-    //         ]);
-    //     }
-
-    //     return view('customer.history', [
-    //         'orders' => $orders,
-    //         'isGuest' => true
-    //     ]);
-    // }
     public function orderHistory(Request $request)
     {
         $query = Order::query();
 
         if (auth()->check()) {
-            // Authenticated user
             $query->where('user_id', auth()->id());
         } else {
-            // Guest user
             $guestEmail = $request->query('guest_eamil'); 
             $guestToken = $request->query('order_num');
 
@@ -360,7 +295,6 @@ class CheckoutController extends Controller
                 ->where('order_num', $guestToken);
         }
 
-        // Apply filters
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
@@ -470,20 +404,57 @@ class CheckoutController extends Controller
         return redirect('/order_dashboard')->with('success', 'Order accepted, stock decremented, and verification code sent.');
     }
 
+    // public function declineOrder(Order $order)
+    // {
+    //     if ($order->status === 'pending') {
+    //         \Mail::to($order->guest_eamil)->send(new \App\Mail\OrderDeclinedMail($order));
+
+    //         $order->delete();
+    //     }
+
+    //     if (request()->ajax()) {
+    //         return response()->json(['message' => 'Order declined and deleted.'], 200);
+    //     }
+
+    //     return redirect('/order_dashboard')->with('success', 'Order declined and deleted.');
+    // }
     public function declineOrder(Order $order)
-    {
-        if ($order->status === 'pending') {
-            \Mail::to($order->guest_eamil)->send(new \App\Mail\OrderDeclinedMail($order));
-
-            $order->delete();
-        }
-
+{
+    // Check if already cancelled
+    if ($order->status === 'cancelled') {
         if (request()->ajax()) {
-            return response()->json(['message' => 'Order declined and deleted.'], 200);
+            return response()->json(['message' => 'Order is already cancelled.'], 200);
+        }
+        return redirect('/order_dashboard')->with('info', 'Order is already cancelled.');
+    }
+
+    if ($order->status === 'pending') {
+        // Just cancel and notify
+        $order->status = 'cancelled';
+        $order->save();
+
+        \Mail::to($order->guest_eamil)->send(new \App\Mail\OrderDeclinedMail($order));
+    } elseif ($order->status === 'processing') {
+        // Restore stock
+        $orderItems = OrderItem::where('order_id', $order->id)->get();
+        foreach ($orderItems as $item) {
+            productdetail::where('id', $item->product_item_id)
+                ->increment('stock', $item->quantity);
         }
 
-        return redirect('/order_dashboard')->with('success', 'Order declined and deleted.');
+        $order->status = 'cancelled';
+        $order->save();
+
+        \Mail::to($order->guest_eamil)->send(new \App\Mail\OrderDeclinedMail($order));
     }
+
+    if (request()->ajax()) {
+        return response()->json(['message' => 'Order declined and status updated.'], 200);
+    }
+
+    return redirect('/order_dashboard')->with('success', 'Order declined and status updated.');
+}
+
 
     public function verifyCode(Request $request)
     {
@@ -516,20 +487,26 @@ class CheckoutController extends Controller
         ]);
     }
     public function confirmPayment(Order $order)
-{
-    // Update status
-    $order->status = 'processing';
-    $order->save();
-
-    // Send confirmation email if customer email exists
-    if ($order->guest_eamil) {
-        Mail::to($order->guest_eamil)->send(new PaymentConfirmed($order));
+    {
+        $order->status = 'Confirmed';
+        $order->save();
+        if ($order->guest_eamil) {
+            Mail::to($order->guest_eamil)->send(new PaymentConfirmed($order));
+        }
+        return response()->noContent();
     }
+    // public function declinePayment(Order $order)
+    // {
+    //     if ($order->status === 'processing') {
+    //         \Mail::to($order->guest_eamil)->send(new \App\Mail\OrderDeclinedMail($order));
 
-    return response()->json([
-        'success' => true,
-        'message' => 'Payment confirmed and customer notified.',
-    ]);
-}
-    
+    //         $order->delete();
+    //     }
+
+    //     if (request()->ajax()) {
+    //         return response()->json(['message' => 'Order declined and deleted.'], 200);
+    //     }
+
+    //     return redirect('/order_dashboard')->with('success', 'Order declined and deleted.');
+    // }
 }

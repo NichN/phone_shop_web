@@ -69,32 +69,31 @@ class Order_dashboard_controller extends Controller
                             </a>
                         </li>';
 
-            // Show Accept button ONLY if payment is NOT processing
-            if ($order->status !== 'processing') {
-                $buttons .= '
-                        <li>
-                            <form action="' . route('checkout.accept', $order->id) . '" method="POST">
-                                ' . csrf_field() . '
-                                <button type="submit" class="dropdown-item text-success">
-                                    <i class="fas fa-check-circle"></i> Accept
-                                </button>
-                            </form>
-                        </li>';
-            }
+                        // Show Accept button ONLY if payment is NOT processing
+                        if ($order->status == 'pending') {
+                            $buttons .= '
+                                    <li>
+                                        <form action="' . route('checkout.accept', $order->id) . '" method="POST">
+                                            ' . csrf_field() . '
+                                            <button type="submit" class="dropdown-item text-success">
+                                                <i class="fas fa-check-circle"></i> Accept
+                                            </button>
+                                        </form>
+                                    </li>';
+                        }
+                        $buttons .= '
+                            <li>
+                                <form action="' . route('checkout.decline', $order->id) . '" method="POST">
+                                    ' . csrf_field() . '
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="fas fa-times-circle"></i> Decline
+                                    </button>
+                                </form>
+                            </li>';
 
-            $buttons .= '
-                        <li>
-                            <form action="' . route('checkout.decline', $order->id) . '" method="POST">
-                                ' . csrf_field() . '
-                                <button type="submit" class="dropdown-item text-danger">
-                                    <i class="fas fa-times-circle"></i> Decline
-                                </button>
-                            </form>
-                        </li>';
-
-            // Show Confirm button if payment_type = 'kh_qr'
-            if ($order->payment_type === 'online_payment') {
-                $buttons .= '
+                // Show Confirm button if payment_type = 'kh_qr'
+                if ($order->payment_type === 'online_payment' && $order->status  == 'Confirm') {
+                    $buttons .= '
                         <li>
                             <form action="' . route('checkout.confirm', $order->id) . '" method="POST">
                                 ' . csrf_field() . '
@@ -103,17 +102,15 @@ class Order_dashboard_controller extends Controller
                                 </button>
                             </form>
                         </li>';
-            }
+                }
+                $buttons .= '</ul></div>';
 
-            $buttons .= '</ul></div>';
+                return $buttons;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
 
-            return $buttons;
-        })
-        ->rawColumns(['action'])
-        ->make(true);
-
-    }
-
+        }
         public function order_detail($id)
         {
         $order = Order::findOrFail($id);
