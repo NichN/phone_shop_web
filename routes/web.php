@@ -401,6 +401,7 @@ Route::delete('/remove',[cartController::class,'remove'])->middleware('auth')->n
 Route::prefix('customer_admin')->name('customer_admin.')->group(function () {
     Route::get('/', [customer_admincontroller::class, 'index'])->name('index');
     Route::get('/add', [customer_admincontroller::class, 'add'])->name('new');
+    Route::get('/show/{id}', [customer_admincontroller::class, 'show'])->name('show');
 });
 
 Route::prefix('admin')->middleware(['auth', 'twofactor'])->group(function () {
