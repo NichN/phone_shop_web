@@ -285,6 +285,18 @@ Route::prefix('report')->name('report.')->group(function(){
 Route::get('/homepage', [HomeController::class, 'index'])->name('homepage');
 Route::get('/product-items/{productId}', [HomeController::class, 'getOptions']);
 Route::get('/search', [HomeController::class, 'search'])->name('search');
+Route::get('/search-suggestions', [HomeController::class, 'getProductSuggestions'])->name('search.suggestions');
+
+// Test route for search functionality
+Route::get('/test-search', function() {
+    return response()->json([
+        'message' => 'Search routes are working',
+        'routes' => [
+            'search' => route('search'),
+            'search_suggestions' => route('search.suggestions')
+        ]
+    ]);
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/two-factor', [TwoFactorController::class, 'index'])->name('two_factor.index');

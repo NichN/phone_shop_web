@@ -68,6 +68,281 @@
             font-weight: 500;
             margin-bottom: 8px;
         }
+
+        /* Minimalist Search Modal Styles */
+        #searchModal .modal-content {
+            border: none;
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        #searchModal .modal-dialog {
+            max-width: 600px;
+            margin: 1rem auto;
+        }
+
+        /* Search Header */
+        .search-header-content {
+            flex: 1;
+        }
+
+        .search-input-container {
+            position: relative;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 0.75rem;
+            transition: all 0.2s ease;
+        }
+
+        .search-input-container:focus-within {
+            background: white;
+            box-shadow: 0 0 0 2px #70000E;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            font-size: 1rem;
+        }
+
+        .search-input {
+            border: none;
+            background: transparent;
+            padding: 0.5rem 0.5rem 0.5rem 2.5rem;
+            font-size: 1rem;
+            width: 100%;
+            outline: none;
+        }
+
+        .search-input::placeholder {
+            color: #adb5bd;
+        }
+
+        /* Search Suggestions */
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            margin-top: 0.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            border: 1px solid #e9ecef;
+        }
+
+        .suggestion-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            border-bottom: 1px solid #f8f9fa;
+            transition: all 0.15s ease;
+            font-size: 0.9rem;
+        }
+
+        .suggestion-item:hover {
+            background: #f8f9fa;
+        }
+
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Quick Categories */
+        .quick-categories {
+            background: white;
+        }
+
+        .search-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .search-tag {
+            background: #f8f9fa;
+            color: #495057;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+            border: 1px solid #e9ecef;
+        }
+
+        .search-tag:hover {
+            background: #70000E;
+            color: white;
+            border-color: #70000E;
+        }
+
+        /* Search Results Section */
+        .search-results-section {
+            background: white;
+        }
+
+        .results-header {
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .results-header h6 {
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        /* Loading State */
+        .loading-state {
+            background: white;
+        }
+
+        .loading-spinner {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #70000E;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Results List */
+        .results-list {
+            background: white;
+        }
+
+        .result-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #f8f9fa;
+            transition: all 0.2s ease;
+        }
+
+        .result-item:hover {
+            background: #f8f9fa;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-image {
+            width: 50px;
+            height: 50px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .result-info {
+            flex: 1;
+        }
+
+        .result-info h6 {
+            color: #212529;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+            font-size: 0.95rem;
+        }
+
+        .result-category {
+            color: #6c757d;
+            font-size: 0.8rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .result-rating {
+            color: #ffc107;
+            font-size: 0.8rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .result-details {
+            line-height: 1.3;
+        }
+
+        .result-price {
+            color: #70000E;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        /* No Results */
+        .no-results {
+            background: white;
+        }
+
+        .no-results i {
+            color: #dee2e6;
+        }
+
+        /* Modal Animation */
+        #searchModal .modal-dialog {
+            transform: scale(0.95);
+            opacity: 0;
+            transition: all 0.2s ease;
+        }
+
+        #searchModal.show .modal-dialog {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        /* Search icon in header */
+        .btn-link.text-dark {
+            transition: all 0.3s ease;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-link.text-dark:hover {
+            background: linear-gradient(135deg, #70000E 0%, #8a0012 100%);
+            color: white !important;
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(112, 0, 14, 0.3);
+        }
+
+        /* Button active state */
+        .search-container .btn-primary:active {
+            transform: scale(0.95);
+        }
+
+        /* Enhanced result item styling */
+        .result-item {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .result-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .result-image {
+            overflow: hidden;
+            flex-shrink: 0;
+        }
     </style>
 </head>
 
@@ -105,6 +380,16 @@
                         <a class="nav-link text-uppercase" href="{{ route('contact_us') }}">Contact Us</a>
                     </li>
                 </ul>
+
+                <!-- Search Bar -->
+                <div class="navbar-nav mx-3">
+                    <button class="btn btn-link text-dark p-2" type="button" data-bs-toggle="modal" data-bs-target="#searchModal">
+                        <i class="fa-solid fa-search fs-5"></i>
+                    </button>
+                    <button class="btn btn-link text-warning p-2 ms-1" type="button" onclick="testSearch()" title="Test Search">
+                        <i class="fa-solid fa-vial"></i>
+                    </button>
+                </div>
 
                 <!-- Right Side Items -->
                 <ul class="navbar-nav ms-auto d-flex align-items-center">
@@ -432,6 +717,76 @@
             </div>
         </div>
     </div>
+
+    <!-- Search Modal -->
+    <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0">
+                <div class="modal-header border-0 p-4">
+                    <div class="search-header-content w-100">
+                        <div class="search-input-container">
+                            <i class="fa-solid fa-search search-icon"></i>
+                            <input type="text" 
+                                   class="form-control search-input" 
+                                   id="searchModalInput" 
+                                   placeholder="Search products..." 
+                                   autocomplete="off">
+                            <div class="search-suggestions" id="searchSuggestions"></div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+                <div class="modal-body p-0">
+                    <!-- Initial State - Quick Categories -->
+                    <div class="quick-categories p-4" id="quickCategories">
+                        <h6 class="text-muted mb-3">Quick Search</h6>
+                        <div class="search-tags">
+                            <span class="search-tag" data-search="iPhone">iPhone</span>
+                            <span class="search-tag" data-search="Samsung">Samsung</span>
+                            <span class="search-tag" data-search="Headphones">Headphones</span>
+                            <span class="search-tag" data-search="Charger">Charger</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Search Results Section -->
+                    <div class="search-results-section" id="searchResultsSection" style="display: none;">
+                        <div class="results-header p-4 border-bottom">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0 text-muted">
+                                    Results for "<span id="searchQueryDisplay"></span>"
+                                </h6>
+                                <button class="btn btn-link btn-sm p-0" id="backToSearch">
+                                    <i class="fa-solid fa-arrow-left me-1"></i>Back
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="results-content">
+                            <!-- Loading State -->
+                            <div class="loading-state text-center p-5" id="loadingState">
+                                <div class="loading-spinner"></div>
+                                <p class="mt-3 text-muted small">Searching...</p>
+                            </div>
+                            
+                            <!-- Results List -->
+                            <div class="results-list p-4" id="resultsList" style="display: none;">
+                                <!-- Dynamic results will be populated here -->
+                            </div>
+                            
+                            <!-- No Results -->
+                            <div class="no-results text-center p-5" id="noResults" style="display: none;">
+                                <i class="fa-solid fa-search text-muted mb-3" style="font-size: 2rem;"></i>
+                                <h6 class="text-muted">No products found</h6>
+                                <p class="text-muted small">Try different keywords</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <header>
         @yield('header')
     </header>
@@ -527,6 +882,253 @@
                     window.location.href = "{{ route('checkout.history') }}";
                 } else {
                     orderHistoryModal.show();
+                }
+            });
+
+            // Minimalist Search Modal functionality
+            const searchModal = document.getElementById('searchModal');
+            const searchModalInput = document.getElementById('searchModalInput');
+            const searchSuggestions = document.getElementById('searchSuggestions');
+            const quickCategories = document.getElementById('quickCategories');
+            const searchResultsSection = document.getElementById('searchResultsSection');
+            const searchQueryDisplay = document.getElementById('searchQueryDisplay');
+            const loadingState = document.getElementById('loadingState');
+            const resultsList = document.getElementById('resultsList');
+            const noResults = document.getElementById('noResults');
+            const backToSearch = document.getElementById('backToSearch');
+
+            // Focus on search input when modal opens
+            searchModal.addEventListener('shown.bs.modal', function() {
+                searchModalInput.focus();
+                showQuickCategories();
+            });
+
+            // Handle search input typing
+            let searchTimeout;
+            searchModalInput.addEventListener('input', function() {
+                const query = this.value.trim();
+                
+                clearTimeout(searchTimeout);
+                
+                if (query.length > 2) {
+                    searchTimeout = setTimeout(() => {
+                        showSearchSuggestions(query);
+                    }, 300);
+                } else {
+                    hideSearchSuggestions();
+                }
+            });
+
+            // Handle Enter key in search input
+            searchModalInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+
+            // Handle search tags
+            document.querySelectorAll('.search-tag').forEach(tag => {
+                tag.addEventListener('click', function() {
+                    const searchTerm = this.getAttribute('data-search');
+                    searchModalInput.value = searchTerm;
+                    performSearch();
+                });
+            });
+
+            // Handle back to search button
+            backToSearch.addEventListener('click', function() {
+                showSearchHero();
+            });
+
+            // Function to perform search
+            function performSearch() {
+                const query = searchModalInput.value.trim();
+                if (query) {
+                    showSearchResults();
+                    searchQueryDisplay.textContent = query;
+                    
+                    // Simulate search loading
+                    setTimeout(() => {
+                        // Replace this with actual API call to your backend
+                        searchProducts(query);
+                    }, 1000);
+                }
+            }
+
+            // Function to show quick categories
+            function showQuickCategories() {
+                quickCategories.style.display = 'block';
+                searchResultsSection.style.display = 'none';
+                searchModalInput.value = '';
+                hideSearchSuggestions();
+            }
+
+            // Function to show search results
+            function showSearchResults() {
+                searchResultsSection.style.display = 'block';
+                loadingState.style.display = 'block';
+                resultsGrid.style.display = 'none';
+                noResults.style.display = 'none';
+            }
+
+            // Function to show search suggestions
+            function showSearchSuggestions(query) {
+                // Generate suggestions based on query
+                const suggestions = generateSuggestions(query);
+                
+                if (suggestions.length > 0) {
+                    const suggestionsHTML = suggestions.map(suggestion => 
+                        `<div class="suggestion-item" onclick="selectSuggestion('${suggestion}')">${suggestion}</div>`
+                    ).join('');
+                    
+                    searchSuggestions.innerHTML = suggestionsHTML;
+                    searchSuggestions.style.display = 'block';
+                } else {
+                    hideSearchSuggestions();
+                }
+            }
+
+            // Function to hide search suggestions
+            function hideSearchSuggestions() {
+                searchSuggestions.style.display = 'none';
+            }
+
+            // Function to select suggestion
+            window.selectSuggestion = function(suggestion) {
+                searchModalInput.value = suggestion;
+                hideSearchSuggestions();
+                performSearch();
+            };
+
+            // Function to get suggestions from your database
+            async function generateSuggestions(query) {
+                try {
+                    const response = await fetch(`/search-suggestions?query=${encodeURIComponent(query)}`);
+                    if (response.ok) {
+                        const suggestions = await response.json();
+                        return suggestions;
+                    }
+                } catch (error) {
+                    console.error('Error fetching suggestions:', error);
+                }
+                return [];
+            }
+
+            // Function to search products from your database
+            async function searchProducts(query) {
+                try {
+                    // Make API call to your Laravel backend
+                    const response = await fetch(`/search?query=${encodeURIComponent(query)}&json=1`);
+                    
+                    if (!response.ok) {
+                        throw new Error('Search request failed');
+                    }
+                    
+                    const data = await response.json();
+                    
+                    if (data.success && data.products) {
+                        displaySearchResults(data.products);
+                    } else {
+                        showNoResults();
+                    }
+                } catch (error) {
+                    console.error('Search error:', error);
+                    showNoResults();
+                }
+            }
+
+            // Function to display search results
+            function displaySearchResults(results) {
+                loadingState.style.display = 'none';
+                
+                if (results.length > 0) {
+                    resultsList.style.display = 'block';
+                    noResults.style.display = 'none';
+                    
+                    const resultsHTML = results.map(product => `
+                        <div class="result-item" onclick="goToProduct(${product.id})">
+                            <div class="result-image">
+                                ${product.image.startsWith('http') || product.image.startsWith('/') 
+                                    ? `<img src="${product.image}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">` 
+                                    : product.image}
+                            </div>
+                            <div class="result-info">
+                                <h6>${product.name}</h6>
+                                <div class="result-category">${product.brand} • ${product.category}</div>
+                                <div class="result-rating">
+                                    ${'★'.repeat(Math.floor(product.rating))}${'☆'.repeat(5 - Math.floor(product.rating))} ${product.rating}
+                                </div>
+                                <div class="result-details">
+                                    <small class="text-muted">
+                                        ${product.colors.length > 0 ? `Colors: ${product.colors.join(', ')} • ` : ''}
+                                        Stock: ${product.stock}
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="result-price">${product.price}</div>
+                        </div>
+                    `).join('');
+                    
+                    resultsList.innerHTML = resultsHTML;
+                } else {
+                    showNoResults();
+                }
+            }
+
+            // Function to show no results
+            function showNoResults() {
+                loadingState.style.display = 'none';
+                resultsList.style.display = 'none';
+                noResults.style.display = 'block';
+            }
+
+            // Function to go to product page
+            window.goToProduct = function(productId) {
+                // Close the search modal
+                const modal = bootstrap.Modal.getInstance(searchModal);
+                modal.hide();
+                
+                        // Navigate to product page
+        window.location.href = `/product/${productId}`;
+    };
+
+    // Test search functionality
+    window.testSearch = function() {
+        console.log('Testing search functionality...');
+        
+        // Test search suggestions
+        fetch('/search-suggestions?query=phone')
+            .then(response => response.json())
+            .then(data => {
+                console.log('Search suggestions test:', data);
+                alert('Search suggestions working! Found: ' + data.length + ' suggestions');
+            })
+            .catch(error => {
+                console.error('Search suggestions test failed:', error);
+                alert('Search suggestions test failed: ' + error.message);
+            });
+        
+        // Test main search
+        fetch('/search?query=phone&json=1')
+            .then(response => response.json())
+            .then(data => {
+                console.log('Main search test:', data);
+                if (data.success) {
+                    alert('Main search working! Found: ' + data.count + ' products');
+                } else {
+                    alert('Main search failed: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Main search test failed:', error);
+                alert('Main search test failed: ' + error.message);
+            });
+    };
+
+            // Close suggestions when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!searchModalInput.contains(e.target) && !searchSuggestions.contains(e.target)) {
+                    hideSearchSuggestions();
                 }
             });
 

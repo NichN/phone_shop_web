@@ -131,31 +131,213 @@ public function getByCategory($id)
 }
 public function search(Request $request)
 {
-    $query = $request->input('query');
+    $query = trim($request->input('query'));
     
     if (empty($query)) {
         return $request->expectsJson() 
-            ? response()->json([])
+            ? response()->json(['success' => false, 'message' => 'Please enter a search term'])
             : redirect()->back()->with('error', 'Please enter a search term');
     }
 
-    $products = Product::where('name', 'LIKE', "%{$query}%")
-        ->orWhere('description', 'LIKE', "%{$query}%")
-        ->get();
+    try {
+        // Search across ALL data using your existing structure
+        $products = DB::table('product')
+            ->leftJoin('category', 'product.cat_id', '=', 'category.id')
+            ->leftJoin('brand', 'product.brand_id', '=', 'brand.id')
+            ->leftJoin('product_item', function ($join) {
+                $join->on('product.id', '=', 'product_item.pro_id')
+                     ->where('product_item.stock', '>', 0);
+            })
+            ->where(function($q) use ($query) {
+                $q->where('product.name', 'LIKE', "%{$query}%")
+                  ->orWhere('product.description', 'LIKE', "%{$query}%")
+                  ->orWhere('category.name', 'LIKE', "%{$query}%")
+                  ->orWhere('brand.name', 'LIKE', "%{$query}%")
+                  ->orWhere('product_item.price', 'LIKE', "%{$query}%")
+                  ->orWhere('product_item.stock', 'LIKE', "%{$query}%");
+            })
+            ->select(
+                'product.id',
+                'product.name',
+                'product.description',
+                'category.name as category_name',
+                'brand.name as brand_name',
+                'product_item.price',
+                'product_item.images',
+                'product_item.color_code',
+                'product_item.stock',
+                'product_item.id as product_item_id'
+            )
+            ->orderBy('product.name')
+            ->limit(50)
+            ->get();
 
-    if ($request->has('json') || $request->expectsJson()) {
-        return response()->json($products->map(function ($product) {
-            return [
-                'id' => $product->id,
-                'name' => $product->name,
-                'price' => $product->price,
-                'images' => json_decode($product->images, true),
-                'colors' => $product->colors,
-            ];
-        }));
+        // Log search results for debugging
+        \Log::info('Search query: ' . $query . ', Found products: ' . $products->count());
+
+        if ($request->has('json') || $request->expectsJson()) {
+            $formattedProducts = $products->map(function ($product) {
+                // Handle images - check if it's JSON or string (matching your existing structure)
+                $imageUrl = null;
+                if ($product->images) {
+                    if (is_string($product->images)) {
+                        $images = json_decode($product->images, true);
+                        if (is_array($images) && !empty($images)) {
+                            $imageUrl = $images[0];
+                        } else {
+                            $imageUrl = $product->images; // Direct string
+                        }
+                    }
+                }
+
+                // Get colors for this product (matching your existing structure)
+                $colors = DB::table('product_item')
+                    ->where('pro_id', $product->id)
+                    ->where('stock', '>', 0)
+                    ->pluck('color_code')
+                    ->unique()
+                    ->values();
+
+                // Get price range for this product
+                $priceRange = DB::table('product_item')
+                    ->where('pro_id', $product->id)
+                    ->where('stock', '>', 0)
+                    ->select('price')
+                    ->get();
+
+                $prices = $priceRange->pluck('price')->filter()->values();
+                $minPrice = $prices->min();
+                $maxPrice = $prices->max();
+                $priceDisplay = $minPrice == $maxPrice 
+                    ? '$' . number_format($minPrice, 2)
+                    : '$' . number_format($minPrice, 2) . ' - $' . number_format($maxPrice, 2);
+
+                // Get total stock
+                $totalStock = DB::table('product_item')
+                    ->where('pro_id', $product->id)
+                    ->where('stock', '>', 0)
+                    ->sum('stock');
+
+                return [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'description' => $product->description ?: 'No description available',
+                    'category' => $product->category_name ?: 'Uncategorized',
+                    'brand' => $product->brand_name ?: 'Unknown Brand',
+                    'price' => $priceDisplay,
+                    'image' => $imageUrl ?: '📱',
+                    'stock' => $totalStock,
+                    'colors' => $colors,
+                    'product_item_id' => $product->product_item_id,
+                    'rating' => 4.5, // Default rating
+                    'url' => route('product.show', $product->id)
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'query' => $query,
+                'count' => $formattedProducts->count(),
+                'products' => $formattedProducts
+            ]);
+        }
+
+        return view('customer.homepage2', compact('products', 'query'));
+
+    } catch (\Exception $e) {
+        \Log::error('Search error: ' . $e->getMessage());
+        
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Search failed. Please try again.',
+                'error' => config('app.debug') ? $e->getMessage() : null
+            ], 500);
+        }
+
+        return redirect()->back()->with('error', 'Search failed. Please try again.');
+    }
+}
+
+public function getProductSuggestions(Request $request)
+{
+    $query = trim($request->input('query'));
+    
+    if (empty($query) || strlen($query) < 2) {
+        return response()->json([]);
     }
 
-    return view('customer.homepage2', compact('products', 'query'));
+    try {
+        // Comprehensive suggestions from ALL data sources
+        $suggestions = collect();
+
+        // Product names and descriptions
+        $productData = DB::table('product')
+            ->where(function($q) use ($query) {
+                $q->where('name', 'LIKE', "%{$query}%")
+                  ->orWhere('description', 'LIKE', "%{$query}%");
+            })
+            ->pluck('name')
+            ->take(8);
+
+        // Categories
+        $categories = DB::table('category')
+            ->where('name', 'LIKE', "%{$query}%")
+            ->pluck('name')
+            ->take(5);
+
+        // Brands
+        $brands = DB::table('brand')
+            ->where('name', 'LIKE', "%{$query}%")
+            ->pluck('name')
+            ->take(5);
+
+        // Colors (using color_code from product_item)
+        $colors = DB::table('product_item')
+            ->where('color_code', 'LIKE', "%{$query}%")
+            ->pluck('color_code')
+            ->unique()
+            ->take(3);
+
+        // Price ranges (if query contains numbers)
+        $priceSuggestions = [];
+        if (is_numeric($query)) {
+            $priceSuggestions = [
+                "Under \${$query}",
+                "Around \${$query}",
+                "Over \${$query}"
+            ];
+        }
+
+        // Stock suggestions
+        $stockSuggestions = [];
+        if (is_numeric($query)) {
+            $stockSuggestions = [
+                "In stock ({$query}+ items)",
+                "Limited stock ({$query} items)"
+            ];
+        }
+
+        // Combine all suggestions
+        $suggestions = $productData
+            ->concat($categories)
+            ->concat($brands)
+            ->concat($colors)
+            ->concat($priceSuggestions)
+            ->concat($stockSuggestions)
+            ->unique()
+            ->values()
+            ->take(12);
+
+        // Log suggestions for debugging
+        \Log::info('Suggestions for query: ' . $query . ', Found: ' . $suggestions->count());
+
+        return response()->json($suggestions);
+
+    } catch (\Exception $e) {
+        \Log::error('Suggestions error: ' . $e->getMessage());
+        return response()->json([]);
+    }
 }
 public function getOptions($productItemId)
 {
