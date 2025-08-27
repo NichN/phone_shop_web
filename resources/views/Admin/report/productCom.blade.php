@@ -67,10 +67,10 @@
                     legend: {
                       position: 'right',
                       labels: {
-                        usePointStyle: true,         // Use dot instead of box
-                        pointStyle: 'circle',        // Use circle dots
+                        usePointStyle: true,        
+                        pointStyle: 'circle',        
                         padding: 20,
-                        boxWidth: 10,                // Control dot size
+                        boxWidth: 10,             
                         font: {
                           size: 12,
                         }
