@@ -17,30 +17,101 @@ class purchaseController extends Controller
 {
     public function index(Request $request){
     if ($request->ajax()) {
-        $data = DB::table('purchase_item')
-            ->join('product_item', 'product_item.id', '=', 'purchase_item.pr_item_id')
-            ->join('color','product_item.color_id','=','color.id')
-            ->select(
-                'purchase_item.*',
-                'product_item.product_name as name',
-                'product_item.size as size',
-                'product_item.color_code as color_code',
-                'product_item.cost_price as cost_price'
-            )->whereNull('purchase_id')
-            ->get();
+        $query = DB::table('purchase')
+            ->join('supplier', 'purchase.supplier_id', '=', 'supplier.id');
+
+        // Apply filter parameters if they exist
+        if ($request->filled('date')) {
+            $query->whereDate('purchase.created_at', $request->input('date'));
+        }
+        if ($request->filled('reference_no')) {
+            $query->where('purchase.reference_no', $request->input('reference_no'));
+        }
+        if ($request->filled('grand_total_range')) {
+            $range = $request->input('grand_total_range');
+            switch ($range) {
+                case '0-10000':
+                    $query->whereBetween('purchase.Grand_total', [0, 10000]);
+                    break;
+                case '10000-50000':
+                    $query->whereBetween('purchase.Grand_total', [10000, 50000]);
+                    break;
+                case '50000-100000':
+                    $query->whereBetween('purchase.Grand_total', [50000, 100000]);
+                    break;
+                case '100000+':
+                    $query->where('purchase.Grand_total', '>=', 100000);
+                    break;
+            }
+        }
+        if ($request->filled('payment_status')) {
+            $query->where('purchase.payment_statuse', $request->input('payment_status'));
+        }
+        if ($request->filled('balance_range')) {
+            $range = $request->input('balance_range');
+            switch ($range) {
+                case '0':
+                    $query->where('purchase.balance', 0);
+                    break;
+                case '1-1000':
+                    $query->whereBetween('purchase.balance', [1, 1000]);
+                    break;
+                case '1000-10000':
+                    $query->whereBetween('purchase.balance', [1000, 10000]);
+                    break;
+                case '10000+':
+                    $query->where('purchase.balance', '>=', 10000);
+                    break;
+            }
+        }
+
+        $data = $query->get()
+        ->map(function ($item) {
+            if ($item->paid >= $item->Grand_total) {
+                $item->payment_statuse = 'Paid';
+            } elseif ($item->paid > 0) {
+                $item->payment_statuse = 'Partially';
+            } else {
+                $item->payment_statuse = 'Unpaid';
+            }
+            return $item;
+        });
 
         return DataTables::of($data)
             ->addColumn('action', function ($row) {
-                return '<button class="btn btn-warning btn-sm delete" data-id="' . $row->id . '"><i class="fa-solid fa-xmark"></i></button>';
+                $addPaymentUrl = route('purchase.addpayment', $row->id);
+                $invoiceUrl = route('purchase.purchase_invoice', $row->id);
+                
+                return '
+                    <div style="display: flex; gap: 4px;">
+                        <button class="btn btn-sm showpurachse" data-url="' . $invoiceUrl . '" data-toggle="tooltip" title="View"
+                            style="background-color: #e3f2fd; border: 1px solid #90caf9; color: #1565c0; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                        <button class="btn btn-sm addpayment" data-url="' . $addPaymentUrl . '" data-toggle="tooltip" title="Add Payment"
+                            style="background-color: #e8f5e9; border: 1px solid #a5d6a7; color: #2e7d32; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;">
+                            <i class="fa-solid fa-money-bill-wave"></i>
+                        </button>
+                        <button class="btn btn-sm delete" data-id="' . $row->id . '" data-toggle="tooltip" title="Delete"
+                            style="background-color: #ffebee; border: 1px solid #ef9a9a; color: #c62828; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                ';
             })
             ->rawColumns(['action'])
             ->make(true);
     }
+    // Get purchase data for filter dropdowns
+    $purchases = DB::table('purchase')
+        ->select('reference_no')
+        ->get();
+
     $suppleir = suppiler::all();
     $product_item = productdetail::all();
     $product = Product::all();
 
-    return view('Admin.purchase.add', compact('suppleir', 'product_item', 'product'));
+    return view('Admin.purchase.add', compact('suppleir', 'product_item', 'product', 'purchases'));
 }
     public function show(){
         return view('Admin.purchase.index');

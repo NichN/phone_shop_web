@@ -15,7 +15,15 @@ $(document).ready(function () {
         dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rtip',
         ajax: {
             url: "{{ route('purchase.index') }}",
-            dataSrc: 'data'
+            type: "GET",
+            data: function(d) {
+                // Add filter parameters for purchase records
+                d.date = $('#filterDate').val();
+                d.reference_no = $('#filterReferenceNo').val();
+                d.grand_total_range = $('#filterGrandTotalRange').val();
+                d.payment_status = $('#filterPaymentStatus').val();
+                d.balance_range = $('#filterBalanceRange').val();
+            }
         },
         order: [[0, 'desc']],
         columns: [
@@ -320,6 +328,48 @@ $(document).ready(function () {
                     text: xhr.responseJSON?.message || 'An error occurred during update'
                 });
             }
+        });
+    });
+
+    // Handle filter form submission
+    $('#filterForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        // Reload the table with new filter parameters
+        purchaseTable.ajax.reload();
+        
+        // Close the modal
+        $('#filterModal').modal('hide');
+        
+        // Show success message
+        Swal.fire({
+            icon: 'success',
+            title: 'Filter Applied!',
+            text: 'Purchase records have been filtered according to your criteria.',
+            timer: 1500,
+            showConfirmButton: false
+        });
+    });
+    
+    // Handle reset filter button
+    $('#resetFilter').on('click', function() {
+        // Clear all filter fields
+        $('#filterDate').val('');
+        $('#filterReferenceNo').val('');
+        $('#filterGrandTotalRange').val('');
+        $('#filterPaymentStatus').val('');
+        $('#filterBalanceRange').val('');
+        
+        // Reload the table without filters
+        purchaseTable.ajax.reload();
+        
+        // Show success message
+        Swal.fire({
+            icon: 'info',
+            title: 'Filters Reset!',
+            text: 'All filters have been cleared and purchase records reloaded.',
+            timer: 1500,
+            showConfirmButton: false
         });
     });
 
