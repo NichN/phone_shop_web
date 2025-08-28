@@ -36,7 +36,7 @@
                         </div>
                         <div class="col-6 mb-2">
                             <small class="text-info">Expense Today</small>
-                            <h5 class="text-info">0$</h5>
+                            <h5 class="text-info">${{ $expenseToday ?? '0.00' }}</h5>
                         </div>
                         <div class="col-6">
                             <small class="text-warning">Income This Month</small>
@@ -46,7 +46,7 @@
                         </div>
                         <div class="col-6">
                             <small class="text-danger">Expense This Month</small>
-                            <h5 class="text-danger">-2,251$</h5>
+                            <h5 class="text-danger">-${{ $expenseThisMonth ?? '0.00' }}</h5>
                         </div>
                     </div>
                 </div>
@@ -164,38 +164,52 @@
                 <!-- Weekly Invoices -->
                 <div id="invoices-weekly" class="data-section">
                     <p><strong>Total Generated:</strong>
-                        @foreach ($weeklyOutput as $week)
-                            <span class="text-primary fw-bold"> ${{$week['total_income'] }}</span>
-                        @endforeach
-                    </p>
-                    <p><strong>Total Paid:</strong>
-                        @foreach ($weeklyOutput_paid as $week_paid)
-                            <span class="text-primary fw-bold"> ${{ $week_paid['total_income'] ?? 0}}</span>
-                        @endforeach
-                    </p>
-                    <p><strong class="text-danger">Total Due:</strong>
-                        @foreach ($weeklyOutput_cancel as $week_cancel)
-                            <span class="text-primary fw-bold"> ${{ $week_cancel['total_income'] ?? 0}}</span>
-                        @endforeach
-                    </p>
+                    @if (!empty($weeklyOutput) && count($weeklyOutput) > 0)
+                        <span class="text-primary fw-bold"> ${{ $weeklyOutput[0]['total_income'] }}</span>
+                    @else
+                        <span class="text-primary fw-bold"> $0.00</span>
+                    @endif
+                </p>
+                <p><strong>Total Paid:</strong>
+                    @if (!empty($weeklyOutput_paid) && count($weeklyOutput_paid) > 0)
+                        <span class="text-primary fw-bold"> ${{ $weeklyOutput_paid[0]['total_income'] }}</span>
+                    @else
+                        <span class="text-primary fw-bold"> $0.00</span>
+                    @endif
+                </p>
+                <p><strong class="text-danger">Total Due:</strong>
+                    @php
+                        $totalGenerated = !empty($weeklyOutput) && count($weeklyOutput) > 0 ? floatval(str_replace(',', '', $weeklyOutput[0]['total_income'])) : 0;
+                        $totalPaid = !empty($weeklyOutput_paid) && count($weeklyOutput_paid) > 0 ? floatval(str_replace(',', '', $weeklyOutput_paid[0]['total_income'])) : 0;
+                        $totalDue = $totalGenerated - $totalPaid;
+                    @endphp
+                    <span class="text-primary fw-bold"> ${{ number_format($totalDue, 2) }}</span>
+                </p>
                 </div>
 
                 <!-- Monthly Invoices -->
                 <div id="invoices-monthly" class="data-section d-none">
                     <p><strong>Total Generated:</strong>
-                        @foreach ($monthlyOutput as $month)
-                            <span class="text-primary fw-bold"> ${{ $month['total_income'] }}</span>
-                        @endforeach
+                        @if (!empty($monthlyOutput) && count($monthlyOutput) > 0)
+                            <span class="text-primary fw-bold"> ${{ $monthlyOutput[0]['total_income'] }}</span>
+                        @else
+                            <span class="text-primary fw-bold"> $0.00</span>
+                        @endif
                     </p>
                     <p><strong>Total Paid:</strong>
-                        @foreach ($monthlyOutput_paid as $month_paid)
-                            <span class="text-primary fw-bold"> ${{ $month_paid['total_income'] ?? 0}}</span>
-                        @endforeach
+                        @if (!empty($monthlyOutput_paid) && count($monthlyOutput_paid) > 0)
+                            <span class="text-primary fw-bold"> ${{ $monthlyOutput_paid[0]['total_income'] }}</span>
+                        @else
+                            <span class="text-primary fw-bold"> $0.00</span>
+                        @endif
                     </p>
                     <p><strong class="text-danger">Total Due:</strong>
-                        @foreach ($monthlyOutput_cancel as $month_cancel)
-                            <span class="text-primary fw-bold"> ${{ $month_cancel['total_income'] ?? 0}}</span>
-                        @endforeach
+                        @php
+                            $totalGenerated = !empty($monthlyOutput) && count($monthlyOutput) > 0 ? floatval(str_replace(',', '', $monthlyOutput[0]['total_income'])) : 0;
+                            $totalPaid = !empty($monthlyOutput_paid) && count($monthlyOutput_paid) > 0 ? floatval(str_replace(',', '', $monthlyOutput_paid[0]['total_income'])) : 0;
+                            $totalDue = $totalGenerated - $totalPaid;
+                        @endphp
+                        <span class="text-primary fw-bold"> ${{ number_format($totalDue, 2) }}</span>
                     </p>
                 </div>
             </div>
@@ -221,34 +235,44 @@
                 <!-- Weekly Bills -->
                 <div id="bills-weekly" class="data-section">
                     <p><strong>Total Bill Generated:</strong>
-                        @foreach ($billOutput as $bill)
-                            <span class="text-primary fw-bold"> ${{ $bill['total'] ?? 0}}</span>
-                        @endforeach
+                        <span class="text-primary fw-bold"> ${{ $formatted_total }}</span>
                     </p>
                     <p><strong>Total Balance:</strong>
-                        @foreach ($billOutputpaid as $bill)
-                            <span class="text-primary fw-bold"> ${{ $bill['total'] ?? 0}}</span>
-                        @endforeach
+                        @if (!empty($billOutputbalance) && count($billOutputbalance) > 0)
+                            <span class="text-primary fw-bold"> ${{ $billOutputbalance[0]['total'] }}</span>
+                        @else
+                            <span class="text-primary fw-bold"> $0.00</span>
+                        @endif
                     </p>
-                    <p><strong class="text-danger">Total Unpaid:</strong>
-                            <span class="text-danger fw-bold"> ${{ $unpaidBills['total_sum'] ?? 0 }}</span>
+                    <p><strong class="text-danger">Total Due:</strong>
+                        @php
+                            $totalBalance = !empty($billOutputbalance) && count($billOutputbalance) > 0 ? floatval(str_replace(',', '', $billOutputbalance[0]['total'])) : 0;
+                            $totalUnpaid = !empty($billOutputcancel) && count($billOutputcancel) > 0 ? floatval(str_replace(',', '', $billOutputcancel[0]['total'])) : 0;
+                            $totalDue = $totalBalance + $totalUnpaid; // Sum of balance and unpaid
+                        @endphp
+                        <span class="text-danger fw-bold"> ${{ number_format($totalDue, 2) }}</span>
                     </p>
                 </div>
 
                 <!-- Monthly Bills -->
                 <div id="bills-monthly" class="data-section d-none">
                     <p><strong>Total Bill Generated:</strong>
-                            <span class="text-primary fw-bold"> ${{ $formatted_total}}</span>
+                        <span class="text-primary fw-bold"> ${{ $formatted_total }}</span>
                     </p>
                     <p><strong>Total Balance:</strong>
-                        @foreach ($billOutputbalance as $bill)
-                            <span class="text-primary fw-bold"> ${{ $bill['total'] ?? 0}}</span>
-                        @endforeach
+                        @if (!empty($billOutputbalance) && count($billOutputbalance) > 0)
+                            <span class="text-primary fw-bold"> ${{ $billOutputbalance[0]['total'] }}</span>
+                        @else
+                            <span class="text-primary fw-bold"> $0.00</span>
+                        @endif
                     </p>
                     <p><strong class="text-danger">Total Due:</strong>
-                        @foreach ($billOutputcancel as $bill)
-                            <span class="text-danger fw-bold"> ${{ $bill['total'] ?? 0}}</span>
-                        @endforeach
+                        @php
+                            $totalBalance = !empty($billOutputbalance) && count($billOutputbalance) > 0 ? floatval(str_replace(',', '', $billOutputbalance[0]['total'])) : 0;
+                            $totalUnpaid = !empty($billOutputcancel) && count($billOutputcancel) > 0 ? floatval(str_replace(',', '', $billOutputcancel[0]['total'])) : 0;
+                            $totalDue = $totalBalance + $totalUnpaid; // Sum of balance and unpaid
+                        @endphp
+                        <span class="text-danger fw-bold"> ${{ number_format($totalDue, 2) }}</span>
                     </p>
                 </div>
             </div>
