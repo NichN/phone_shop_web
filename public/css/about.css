@@ -11,3 +11,35 @@
   padding-bottom: 30px;
 }
 
+/* Hero container */
+.header-hero {
+    height: 60vh; /* or 100vh if you want full screen */
+    position: relative;
+    overflow: hidden;
+}
+
+/* Animated background */
+.hero-image {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    filter: brightness(90%);
+    animation: zoomEffect 12s ease-in-out infinite alternate;
+}
+
+/* Zoom in/out keyframes */
+@keyframes zoomEffect {
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(1.1);
+    }
+}
+
+/* Modern text */
+.modern-title {
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+}

@@ -32,7 +32,6 @@
             <li>• Confirm and deliver your orders</li>
             <li>• Respond to inquiries and support</li>
             <li>• Improve our website experience</li>
-            <li>• Send promotions (if you subscribe)</li>
         </ul>
     </div>
 
