@@ -9,10 +9,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ asset('js/search.js') }}"></script>
+    {{-- <script src="{{ asset('js/search.js') }}"></script> --}}
     <link href="{{ asset('css/mainstyle.css')}}" rel="stylesheet">
     <link href="{{ asset('css/dashboard.css')}}" rel="stylesheet">
-    <link href="{{ asset('css/search.css')}}" rel="stylesheet">
+    {{-- <link href="{{ asset('css/search.css')}}" rel="stylesheet"> --}}
 </head>
 <body>
 <div class="w3-sidebar w3-bar-block w3-collapse w3-card w3-animate-left" style="width:250px;" id="mySidebar">

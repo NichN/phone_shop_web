@@ -1,11 +1,11 @@
-/* Minimalist Search Bar Styles */
+Minimalist Search Bar Styles
 
 /* Global Search Container */
-.search-container {
+/* .search-container {
     position: relative;
     max-width: 400px;
     margin: 0 auto;
-}
+} */
 
 /* Minimalist Search Input */
 .search-input-minimal {
@@ -81,8 +81,8 @@
 }
 
 .dataTables_filter label {
-    display: flex;
-    align-items: center;
+    /* display: flex; */
+    /* align-items: center; */
     font-weight: 500;
     color: #495057;
     margin-bottom: 0;
@@ -137,7 +137,7 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     z-index: 1000;
     max-height: 200px;
-    overflow-y: auto;
+    /* overflow-y: auto; */
     display: none;
 }
 
