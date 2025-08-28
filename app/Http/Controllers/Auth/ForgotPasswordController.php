@@ -33,6 +33,11 @@ class ForgotPasswordController extends Controller
             return back()->withErrors(['email' => 'We could not find a user with that email address.']);
         }
 
+        // Check if user is admin (role_id = 1) and block password reset
+        if ($user->role_id == 1) {
+            return back()->withErrors(['email' => 'Password reset is not available for administrator accounts. Please contact system administrator.']);
+        }
+
         // Generate reset token
         $token = Str::random(64);
         
