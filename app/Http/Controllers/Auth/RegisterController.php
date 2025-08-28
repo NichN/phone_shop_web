@@ -27,7 +27,7 @@ class RegisterController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            
+            'role_id' => 4, // Automatically assign customer role (role_id = 4)
         ]);
 
         // Optional: log the user in immediately
