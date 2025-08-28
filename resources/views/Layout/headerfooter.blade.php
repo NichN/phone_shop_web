@@ -993,7 +993,7 @@
                                             <label for="new_password_confirmation" class="form-label">Confirm New
                                                 Password</label>
                                             <input type="password" class="form-control"
-                                                id="new_password_confirmation" name="new_password_confirmation"
+                                                id="new_password_confirmation" name="password_confirmation"
                                                 required>
                                             <div class="invalid-feedback">Passwords do not match.</div>
                                         </div>

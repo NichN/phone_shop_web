@@ -42,6 +42,9 @@ class Admin_user_controller extends Controller
 
     public function store(Request $request)
     {
+        // Debug: Log what's being received
+        \Log::info('Admin user creation request data:', $request->all());
+        
         $rules = [
             'name'     => 'required',
             'email'    => 'required|email|unique:users',

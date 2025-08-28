@@ -46,20 +46,24 @@
         </div>
         <div class="modal-body">
           <div class="mb-3">
-            <label for="userName" class="form-label">Name</label>
+            <label for="userName" class="form-label">Name <span class="text-danger">*</span></label>
             <input type="text" class="form-control" id="userName" name="name" required>
+            <div class="invalid-feedback">Name is required.</div>
           </div>
           <div class="mb-3">
-            <label for="userEmail" class="form-label">Email</label>
+            <label for="userEmail" class="form-label">Email <span class="text-danger">*</span></label>
             <input type="email" class="form-control" id="userEmail" name="email" required>
+            <div class="invalid-feedback">Valid email is required.</div>
           </div>
           <div class="mb-3 password-fields">
-            <label for="userPassword" class="form-label">Password</label>
-            <input type="password" class="form-control" id="userPassword" name="password">
+            <label for="userPassword" class="form-label">Password <span class="text-danger">*</span></label>
+            <input type="password" class="form-control" id="userPassword" name="password" required minlength="6">
+            <div class="invalid-feedback">Password is required and must be at least 6 characters long.</div>
           </div>
           <div class="mb-3 password-fields">
-            <label for="passwordConfirmation" class="form-label">Confirm Password</label>
-            <input type="password" class="form-control" id="passwordConfirmation" name="password_confirmation">
+            <label for="passwordConfirmation" class="form-label">Confirm Password <span class="text-danger">*</span></label>
+            <input type="password" class="form-control" id="passwordConfirmation" name="password_confirmation" required>
+            <div class="invalid-feedback">Please confirm your password.</div>
           </div>
           <!-- Edit Password Section (Hidden by default, shown during edit) -->
           <div class="mb-3 edit-password-section" style="display: none;">
@@ -72,12 +76,12 @@
             <div class="edit-password-fields" style="display: none;">
               <div class="mb-3">
                 <label for="editUserPassword" class="form-label">New Password</label>
-                <input type="password" class="form-control" id="editUserPassword" name="password" minlength="6">
+                <input type="password" class="form-control" id="editUserPassword" name="edit_password" minlength="6">
                 <small class="form-text text-muted">Leave blank to keep current password</small>
               </div>
               <div class="mb-3">
                 <label for="editPasswordConfirmation" class="form-label">Confirm New Password</label>
-                <input type="password" class="form-control" id="editPasswordConfirmation" name="password_confirmation">
+                <input type="password" class="form-control" id="editPasswordConfirmation" name="edit_password_confirmation">
               </div>
             </div>
           </div>
@@ -103,4 +107,31 @@
     </form>
   </div>
 </div>
+<style>
+    .text-danger {
+        color: #dc3545 !important;
+    }
+    
+    .form-control.is-invalid {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+    }
+    
+    .invalid-feedback {
+        display: block;
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 0.875em;
+        color: #dc3545;
+    }
+    
+    .password-fields {
+        transition: all 0.3s ease;
+    }
+    
+    .edit-password-section {
+        transition: all 0.3s ease;
+    }
+</style>
+
 @include('Admin.user.script')

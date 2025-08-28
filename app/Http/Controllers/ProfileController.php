@@ -57,18 +57,13 @@ public function updateProfile(Request $request)
         // Validate input
         $request->validate([
             'current_password' => 'required',
-            'new_password' => 'required|min:8|confirmed',
+            'new_password' => 'required|min:8',
+            'password_confirmation' => 'required|same:new_password',
         ]);
 
         $user = Auth::user();
 
-        // Prevent admin users from changing their own password
-        if ($user->role_id == 1) { // Assuming role_id 1 is admin
-            return response()->json([
-                'success' => false,
-                'message' => 'Admin users cannot change their own password for security reasons'
-            ], 403);
-        }
+        // Allow all users to change their password (removed admin restriction)
 
         // Debug log
         \Log::info('Password change attempt for user: ' . $user->email);
@@ -102,7 +97,7 @@ public function updateProfile(Request $request)
 
             return response()->json([
                 'success' => true,
-                'message' => 'Password updated successfully'
+                'message' => 'Password updated successfully! You will be logged out in 2 seconds for security.'
             ]);
 
         } catch (\Exception $e) {

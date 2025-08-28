@@ -94,13 +94,17 @@ document.querySelectorAll("form").forEach(function(form) {
 document.getElementById('passwordChangeForm').addEventListener('submit', function(e) {
     e.preventDefault();
     
+    console.log('Password change form submitted');
+    
     // Clear any existing alerts
     clearAlerts();
     
     // Get form values
     const currentPassword = this.querySelector('input[name="current_password"]').value.trim();
     const newPassword = this.querySelector('input[name="new_password"]').value.trim();
-    const confirmPassword = this.querySelector('input[name="new_password_confirmation"]').value.trim();
+    const confirmPassword = this.querySelector('input[name="password_confirmation"]').value.trim();
+    
+    console.log('Form values:', { currentPassword: !!currentPassword, newPassword: !!newPassword, confirmPassword: !!confirmPassword });
     
     // Validate current password is not empty
     if (!currentPassword) {
@@ -126,24 +130,31 @@ document.getElementById('passwordChangeForm').addEventListener('submit', functio
         return;
     }
     
-    // Show loading state
-    const submitBtn = this.querySelector('button[type="submit"]');
-    const originalBtnText = submitBtn.innerHTML;
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Updating...';
+                // Show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Updating...';
+            
+            // Disable all form inputs during submission
+            const formInputs = this.querySelectorAll('input');
+            formInputs.forEach(input => input.disabled = true);
 
     // Get form data
     const formData = new FormData();
     formData.append('_token', document.querySelector('meta[name="csrf-token"]').content);
     formData.append('current_password', currentPassword);
     formData.append('new_password', newPassword);
-    formData.append('new_password_confirmation', confirmPassword);
+    formData.append('password_confirmation', confirmPassword);
     
     // Debug log
     console.log('Sending password update request...');
     
     // Send request to update password
-    fetch('/profile/change-password', {
+    console.log('Sending fetch request to /profile/password');
+    console.log('FormData contents:', Array.from(formData.entries()));
+    
+    fetch('/profile/password', {
         method: 'POST',
         body: formData,
         headers: {
@@ -167,7 +178,21 @@ document.getElementById('passwordChangeForm').addEventListener('submit', functio
             
             // Log out user after successful password change
             setTimeout(() => {
-                window.location.href = '/logout';
+                // Create and submit a logout form instead of direct redirect
+                const logoutForm = document.createElement('form');
+                logoutForm.method = 'POST';
+                logoutForm.action = '/logout';
+                
+                // Add CSRF token
+                const csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = '_token';
+                csrfInput.value = document.querySelector('meta[name="csrf-token"]').content;
+                logoutForm.appendChild(csrfInput);
+                
+                // Submit the form
+                document.body.appendChild(logoutForm);
+                logoutForm.submit();
             }, 2000);
         } else {
             // Show specific error message if available
@@ -189,12 +214,16 @@ document.getElementById('passwordChangeForm').addEventListener('submit', functio
     })
     .catch(error => {
         console.error('Error:', error);
-        showAlert('danger', 'An error occurred while updating your password.');
+        showAlert('danger', 'Network error occurred. Please check your connection and try again.');
     })
     .finally(() => {
         // Reset button state
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalBtnText;
+        
+        // Re-enable all form inputs
+        const formInputs = this.querySelectorAll('input');
+        formInputs.forEach(input => input.disabled = false);
     });
 });
 
@@ -207,10 +236,12 @@ function showAlert(type, message) {
         ${message}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     `;
-    document.querySelector('.profile-modal .modal-body').insertBefore(
-        alertDiv,
-        document.querySelector('.profile-modal .modal-body').firstChild
-    );
+    
+    // Find the profile modal body and insert the alert
+    const modalBody = document.querySelector('#profileModal .modal-body');
+    if (modalBody) {
+        modalBody.insertBefore(alertDiv, modalBody.firstChild);
+    }
 }
 
 // Function to clear all alerts
