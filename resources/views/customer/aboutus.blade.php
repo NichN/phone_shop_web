@@ -87,12 +87,26 @@
 
 @section('title', 'About Us')
 
-@section('header')
+{{-- @section('header')
     <link rel="stylesheet" href="{{ asset('css/about.css') }}">
     <div class="position-relative text-white text-left">
-        <img src="{{ asset('image/taymeng.jpg') }}" alt="About Us" class="img-fluid w-100 d-block">
+        <img src="{{ asset('image/picturelogo.png') }}" alt="About Us" class="img-fluid w-100 d-block">
+    </div>
+@endsection --}}
+
+@section('header')
+    <link rel="stylesheet" href="{{ asset('css/about.css') }}">
+    <div class="position-relative text-white text-center overflow-hidden header-hero">
+        <!-- Background image -->
+        <img src="{{ asset('image/picturelogo.png') }}" alt="About Us" class="img-fluid w-100 d-block hero-image">
+
+        <!-- Dark gradient overlay -->
+        <div class="position-absolute top-0 start-0 w-100 h-100" 
+             style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.3));">
+        </div>
     </div>
 @endsection
+
 
 @section('content')
     {{-- About Us Section --}}

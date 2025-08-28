@@ -92,25 +92,25 @@ class Order_dashboard_controller extends Controller
                             </li>';
 
                 // Show Confirm button if payment_type = 'kh_qr'
-                if ($order->payment_type === 'online_payment' && $order->status  == 'Confirm') {
-                    $buttons .= '
-                        <li>
-                            <form action="' . route('checkout.confirm', $order->id) . '" method="POST">
-                                ' . csrf_field() . '
-                                <button type="submit" class="dropdown-item text-warning">
-                                    <i class="fas fa-check"></i> Confirm
-                                </button>
-                            </form>
-                        </li>';
-                }
-                $buttons .= '</ul></div>';
+                    if ($order->payment_type === 'online_payment' || $order->status  == 'Confirm') {
+                        $buttons .= '
+                            <li>
+                                <form action="' . route('checkout.confirm', $order->id) . '" method="POST">
+                                    ' . csrf_field() . '
+                                    <button type="submit" class="dropdown-item text-warning">
+                                        <i class="fas fa-check"></i> Confirm
+                                    </button>
+                                </form>
+                            </li>';
+                    }
+                    $buttons .= '</ul></div>';
 
-                return $buttons;
-            })
-            ->rawColumns(['action'])
-            ->make(true);
+                    return $buttons;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
 
-        }
+            }
         public function order_detail($id)
         {
         $order = Order::findOrFail($id);

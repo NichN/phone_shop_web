@@ -8,9 +8,20 @@
 @endsection
 
 @section('content')
-    <div class="terms-header text-white py-5">
+    {{-- <div class="terms-header text-white py-5">
         <div class="container text-center">
             <h1 class="display-4 fw-bold text-shadow">Terms of Service</h1>
+        </div>
+    </div> --}}
+
+    <div class="position-relative text-overlay-container">
+        <div class="banner-container">
+            <img src="{{ asset('image/banner.jpg') }}" alt="terms Banner" class="img-fluid w-100"
+                style="max-height: 300px; object-fit: cover;">
+            <div class="banner-text position-absolute top-50 start-50 translate-middle text-center text-dark">
+                <h4 class="fw-bold">Terms of Service</h4>
+                {{-- <p class="lead">Find answers to common questions about our services</p> --}}
+            </div>
         </div>
     </div>
 
@@ -82,7 +93,8 @@
         <ul>
             <li>Email: <a href="mailto:info@taymengmobileshop.com" class="text-danger">info@taymengmobileshop.com</a></li>
             <li>Phone: 096 841 2222 / 076 3333 288 / 031 3333 288</li>
-            <li>Facebook Page: <a href="https://www.facebook.com/TayMeng13?mibextid=wwXIfr" class="text-danger">Tay Meng Mobile Shop</a></li>
+            <li>Facebook Page: <a href="https://www.facebook.com/TayMeng13?mibextid=wwXIfr" class="text-danger">Tay Meng
+                    Mobile Shop</a></li>
             <li>Location: House 78E0, Street 13, Phnom Penh, Cambodia</li>
         </ul>
     </div>
