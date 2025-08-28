@@ -86,57 +86,77 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-            <form id="filterForm" method="GET">
+                        <form id="filterForm" method="GET">
                 <div class="modal-body">
                     <div class="row g-3">
-                        <div class="col-md-4">
-                            <label class="form-label">Date</label>
-                            <input type="date" name="date" id="filterDate" class="form-control">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">
+                                <i class="fa fa-calendar me-1"></i>Date
+                            </label>
+                            <input type="date" name="date" id="filterDate" class="form-control" placeholder="Select date">
                         </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Customer</label>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">
+                                <i class="fa fa-user me-1"></i>Customer
+                            </label>
                             <select name="guest_name" id="filterCustomer" class="form-select">
-                            <option value="">-- Select Customer --</option>
-                            @foreach($orders->unique('guest_name') as $order)
-                                <option value="{{ $order->guest_name }}">{{ $order->guest_name }}</option>
-                            @endforeach
-                        </select>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <label class="form-label">Order Number</label>
-                                                    <select name="order_id" id="filterOrder" class="form-select">
-                            <option value="">-- Select Order --</option>
-                            @foreach($orders->unique('order_num') as $order)
-                                <option value="{{ $order->order_num }}">{{ $order->order_num }}</option>
-                            @endforeach
-                        </select>
+                                <option value="">-- Select Customer --</option>
+                                @foreach($orders->unique('guest_name') as $order)
+                                    <option value="{{ $order->guest_name }}">{{ $order->guest_name }}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
-                    <div class="row g-3 mt-2">
-                        <div class="col-md-4">
-                            <label class="form-label">Delivery Method</label>
+                    <div class="row g-3 mt-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">
+                                <i class="fa fa-hashtag me-1"></i>Order Number
+                            </label>
+                            <select name="order_id" id="filterOrder" class="form-select">
+                                <option value="">-- Select Order --</option>
+                                @foreach($orders->unique('order_num') as $order)
+                                    <option value="{{ $order->order_num }}">{{ $order->order_num }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">
+                                <i class="fa fa-truck me-1"></i>Delivery Method
+                            </label>
                             <select name="delivery_method" id="filterDeliveryMethod" class="form-select">
                                 <option value="">-- Select Delivery Method --</option>
-                                @foreach($orders as $order)
-                                    <option value="{{ $order->delivery_type  }}">{{ $order->delivery_type }}</option>
+                                @foreach($orders->unique('delivery_type') as $order)
+                                    <option value="{{ $order->delivery_type }}">{{ $order->delivery_type }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Status</label>
+                    </div>
+                    <div class="row g-3 mt-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">
+                                <i class="fa fa-info-circle me-1"></i>Status
+                            </label>
                             <select name="status" id="filterStatus" class="form-select">
                                 <option value="">-- Select Status --</option>
-                                @foreach($orders as $order)
-                                    <option value="{{ $order->status}}">{{ $order->status }}</option>
+                                @foreach($orders->unique('status') as $order)
+                                    <option value="{{ $order->status }}">{{ ucfirst($order->status) }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-4 d-flex justify-content-start align-items-end">
-                            <button type="submit" class="btn btn-secondary w-100">
-                                <i class="fa fa-search"></i>
+                        <div class="col-md-6 d-flex justify-content-start align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fa fa-search me-2"></i>Apply Filters
                             </button>
                         </div>
                     </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fa fa-times me-2"></i>Cancel
+                    </button>
+                    <button type="button" id="clearFilters" class="btn btn-outline-secondary">
+                        <i class="fa fa-eraser me-2"></i>Clear All
+                    </button>
                 </div>
             </form>
         </div>

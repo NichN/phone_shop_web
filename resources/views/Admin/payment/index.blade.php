@@ -7,8 +7,18 @@
 <div>
     <button class="w3-button w3-xlarge w3-hide-large" onclick="w3_open()">&#9776;</button>
     <div class="w3-main">
-        <div class="flex justify-between" style="background-color: aliceblue; padding: 10px;">
-            <h4>Payment List</h4>
+        <div class="flex items-center justify-between bg- px-4  rounded-md shadow-sm" style="background-color: aliceblue; padding: 10px;" >
+            <div class="d-flex align-items-center justify-content-between w-100">
+                <h4 class="text-lg font-semibold text-gray-800 mb-0">Payment List</h4>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-success bg-light" data-bs-toggle="modal" data-bs-target="#filterModal">
+                        <i class="fa fa-filter" aria-hidden="true"></i>
+                    </button>
+                    <button type="reset" id="resetFilter" class="btn btn-outline-danger bg-light">
+                        <i class="fa fa-refresh"></i>
+                    </button>
+                </div>
+            </div>
         </div>    
             <div class="card-body">                                 
                 <div class="table-responsive"> 
@@ -45,13 +55,88 @@
     </div>
 </div>
 
+<!-- Filter Modal -->
+<div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content p-3">
+            <div class="modal-heade">
+                <h5 class="modal-title text-dark" id="filterModalLabel">Filter Payments</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form id="filterForm" method="GET">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Date</label>
+                            <input type="date" name="date" id="filterDate" class="form-control">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Customer</label>
+                            <select name="guest_name" id="filterCustomer" class="form-select">
+                                <option value="">-- Select Customer --</option>
+                                @foreach($payments ?? [] as $payment)
+                                    <option value="{{ $payment->guest_name ?? '' }}">{{ $payment->guest_name ?? '' }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Order Number</label>
+                            <select name="order_id" id="filterOrder" class="form-select">
+                                <option value="">-- Select Order --</option>
+                                @foreach($payments ?? [] as $payment)
+                                    <option value="{{ $payment->order_num ?? '' }}">{{ $payment->order_num ?? '' }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row g-3 mt-2">
+                        <div class="col-md-4">
+                            <label class="form-label">Payment Type</label>
+                            <select name="payment_type" id="filterPaymentType" class="form-select">
+                                <option value="">-- Select Payment Type --</option>
+                                <option value="cash">Cash on Delivery</option>
+                                <option value="aba">Online Payment</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Status</label>
+                            <select name="status" id="filterStatus" class="form-select">
+                                <option value="">-- Select Status --</option>
+                                <option value="paid">Paid</option>
+                                <option value="pending">Pending</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 d-flex justify-content-start align-items-end">
+                            <button type="submit" class="btn btn-secondary w-100">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
     $(document).ready(function () {
         // Initialize DataTable
         var table = $('.data-table').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ route('payment.index') }}",
+            ajax: {
+                url: "{{ route('payment.index') }}",
+                type: "GET",
+                data: function(d) {
+                    // Add filter parameters
+                    d.date = $('#filterDate').val();
+                    d.guest_name = $('#filterCustomer').val();
+                    d.order_id = $('#filterOrder').val();
+                    d.payment_type = $('#filterPaymentType').val();
+                    d.status = $('#filterStatus').val();
+                }
+            },
             order: [[0, 'desc']],
             columns: [
                 { data: 'created_at', name: 'created_at' },
@@ -83,6 +168,48 @@
                 },
                 { data: 'action', orderable: false, searchable: false }
             ]
+        });
+
+        // Handle filter form submission
+        $('#filterForm').on('submit', function(e) {
+            e.preventDefault();
+            
+            // Reload the table with new filter parameters
+            table.ajax.reload();
+            
+            // Close the modal
+            $('#filterModal').modal('hide');
+            
+            // Show success message
+            Swal.fire({
+                icon: 'success',
+                title: 'Filter Applied!',
+                text: 'Payments have been filtered according to your criteria.',
+                timer: 1500,
+                showConfirmButton: false
+            });
+        });
+        
+        // Handle reset filter button
+        $('#resetFilter').on('click', function() {
+            // Clear all filter fields
+            $('#filterDate').val('');
+            $('#filterCustomer').val('');
+            $('#filterOrder').val('');
+            $('#filterPaymentType').val('');
+            $('#filterStatus').val('');
+            
+            // Reload the table without filters
+            table.ajax.reload();
+            
+            // Show reset message
+            Swal.fire({
+                icon: 'info',
+                title: 'Filters Reset!',
+                text: 'All filters have been cleared and payments reloaded.',
+                timer: 1500,
+                showConfirmButton: false
+            });
         });
 
         // Handle "View Invoice" button click
@@ -128,3 +255,15 @@
         win.close();
     }
 </script>
+
+<style>
+    .modal {
+        z-index: 1060 !important;
+    }
+    .modal-backdrop {
+        z-index: 1050 !important;
+    }
+    .w3-main, main {
+        overflow: visible;
+    }
+</style>

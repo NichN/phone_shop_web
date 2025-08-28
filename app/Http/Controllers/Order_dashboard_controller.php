@@ -74,6 +74,23 @@ public function index()
             ->whereMonth('orders.created_at', $currentMonth)
             ->whereYear('orders.created_at', $currentYear);
 
+        // Apply filter parameters if they exist
+        if ($request->filled('date')) {
+            $query->whereDate('orders.created_at', $request->input('date'));
+        }
+        if ($request->filled('guest_name')) {
+            $query->where('orders.guest_name', $request->input('guest_name'));
+        }
+        if ($request->filled('order_id')) {
+            $query->where('orders.order_num', $request->input('order_id'));
+        }
+        if ($request->filled('delivery_method')) {
+            $query->where('orders.delivery_type', $request->input('delivery_method'));
+        }
+        if ($request->filled('status')) {
+            $query->where('orders.status', $request->input('status'));
+        }
+
         return DataTables::eloquent($query)
         ->addColumn('action', function ($order) {
             $buttons = '

@@ -13,6 +13,13 @@ $(document).ready(function() {
             data: function(d) {
                 d.current_month = $('#monthYearLabel').data('month');
                 d.current_year = $('#monthYearLabel').data('year');
+                
+                // Add filter parameters
+                d.date = $('#filterDate').val();
+                d.guest_name = $('#filterCustomer').val();
+                d.order_id = $('#filterOrder').val();
+                d.delivery_method = $('#filterDeliveryMethod').val();
+                d.status = $('#filterStatus').val();
             }
         },
         order: [[0, 'desc']],
@@ -55,6 +62,52 @@ $(document).ready(function() {
     window.reloadTable = function() {
         table.ajax.reload();
     };
+    
+
+    
+    // Handle filter form submission
+    $('#filterForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        // Reload the table with new filter parameters
+        table.ajax.reload();
+        
+        // Close the modal
+        $('#filterModal').modal('hide');
+        
+        // Show success message
+        Swal.fire({
+            icon: 'success',
+            title: 'Filter Applied!',
+            text: 'Orders have been filtered according to your criteria.',
+            timer: 1500,
+            showConfirmButton: false
+        });
+    });
+    
+    // Handle reset filter button
+    $('#resetFilter').on('click', function() {
+        // Clear all filter fields
+        $('#filterDate').val('');
+        $('#filterCustomer').val('');
+        $('#filterOrder').val('');
+        $('#filterDeliveryMethod').val('');
+        $('#filterStatus').val('');
+        
+        // Reload the table without filters
+        table.ajax.reload();
+        
+        // Show reset message
+        Swal.fire({
+            icon: 'info',
+            title: 'Filters Reset!',
+            text: 'All filters have been cleared and orders reloaded.',
+            timer: 1500,
+            showConfirmButton: false
+        });
+    });
+    
+
 });
 
 function updateMonthLabel(month, year) {

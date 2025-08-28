@@ -11,10 +11,29 @@ class paymentController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $payment = DB::table('payment')
-        ->join('orders', 'orders.id', '=', 'payment.order_id')
-        ->whereNotIn('orders.status', ['cancelled', 'pending'])
-        ->get();
+            $query = DB::table('payment')
+                ->join('orders', 'orders.id', '=', 'payment.order_id')
+                ->whereNotIn('orders.status', ['cancelled', 'pending']);
+
+            // Apply filter parameters if they exist
+            if ($request->filled('date')) {
+                $query->whereDate('payment.created_at', $request->input('date'));
+            }
+            if ($request->filled('guest_name')) {
+                $query->where('orders.guest_name', $request->input('guest_name'));
+            }
+            if ($request->filled('order_id')) {
+                $query->where('orders.order_num', $request->input('order_id'));
+            }
+            if ($request->filled('payment_type')) {
+                $query->where('payment.payment_type', $request->input('payment_type'));
+            }
+            if ($request->filled('status')) {
+                $query->where('payment.payment_status', $request->input('status'));
+            }
+
+            $payment = $query->get();
+
             return DataTables::of($payment)
                 ->addColumn('action', function ($row) {
                     return '
@@ -27,7 +46,14 @@ class paymentController extends Controller
                 ->make(true);
         }
 
-        return view('Admin.payment.index');
+        // Get payment data for filter dropdowns
+        $payments = DB::table('payment')
+            ->join('orders', 'orders.id', '=', 'payment.order_id')
+            ->whereNotIn('orders.status', ['cancelled', 'pending'])
+            ->select('orders.guest_name', 'orders.order_num')
+            ->get();
+
+        return view('Admin.payment.index', compact('payments'));
     }
 
    public function order_detail($id)
