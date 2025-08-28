@@ -165,7 +165,7 @@ width: 250px;
 
 .data-table td {
     padding: 12px 15px;
-    vertical-align: middle;
+    /* vertical-align: middle; */
     border-top: none;
     border-bottom: 1px solid #f0f0f0;
 }
@@ -221,12 +221,12 @@ width: 250px;
     padding: 15px !important;
 }
     .data-table th,
-    .data-table td {
+    /* .data-table td {
         vertical-align: middle;
         text-align: center;
         padding: 9px;
         border: 1px solid rgb(216, 211, 211);
-    }
+    } */
 
     .data-table {
         width: 100%;
@@ -265,6 +265,7 @@ width: 250px;
 } */
 .select2-container {
     z-index: 999999 !important;
+    height: 20px !important;
 }
 .image-preview-item {
     width: 150px;

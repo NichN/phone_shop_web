@@ -17,6 +17,7 @@ $(document).ready(function () {
             url: "{{ route('purchase.index') }}",
             dataSrc: 'data'
         },
+        order: [[0, 'desc']],
         columns: [
             { data: 'id', name: 'id', render: function (data, type, row, meta) {
                 return meta.row + 1;
@@ -135,6 +136,7 @@ $(document).ready(function () {
             url: "{{ route('purchase.payment') }}",
             dataSrc: 'data'
         },
+        order: [[0, 'desc']],
         columns: [
             { data: 'id', name: 'id', render: function (data, type, row, meta) {
                 return meta.row + 1;

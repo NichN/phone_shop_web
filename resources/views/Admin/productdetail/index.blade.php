@@ -5,22 +5,82 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 <div>
     <button class="w3-button w3-xlarge w3-hide-large" onclick="w3_open()">&#9776;</button>
     <div class="w3-main">
-         <div class="flex items-center justify-between bg- px-4 py-2 rounded-md shadow-sm">
-            <h4 class="text-lg font-semibold text-gray-800">Product Variant List</h4>
+         <div class="flex items-center justify-between bg- px-4  rounded-md shadow-sm" style="background-color: aliceblue; padding: 10px;" >
+            <div class="d-flex align-items-center justify-content-between w-100">
+                <h4 class="text-lg font-semibold text-gray-800 mb-0">Product Variant List</h4>
+                <div class="d-flex gap-2">
+                    <a href="{{ route('pr_detail.add') }}">
+                        <button class="btn btn-outline-primary bg-light">
+                            <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                        </button>
+                    </a>
+                    <button class="btn btn-outline-success bg-light" data-bs-toggle="modal" data-bs-target="#filterModal">
+                        <i class="fa fa-filter" aria-hidden="true"></i>
+                    </button>
+                    <button type="reset" id="resetFilter" class="btn btn-outline-danger bg-light">
+                        <i class="fa fa-refresh"></i>
+                    </button>
+                </div>
+            </div>
+        </div>  
+         
+        <!-- Filter Modal -->
+    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+        <div class="modal-content p-3">
+            <div class="modal-heade">
+                <h5 class="modal-title text-dark" id="filterModalLabel">Filter Products</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+        
+            <form id="filterForm" method="GET" action="{{ route('pr_detail.index') }}">
+                <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Product Name</label>
+                        <select name="product_id" id="filterProduct" class="form-select">
+                            <option value="">Select Product</option>
+                            @foreach($product as $products)
+                                <option value="{{ $products->id }}">{{ $products->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Brand</label>
+                        <select name="brand_id" id="filterBrand" class="form-select">
+                            <option value="">-- Select Brand --</option>
+                            @foreach($brands as $brand)
+                                <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Category</label>
+                        <select name="cat_id" id="filterCategory" class="form-select">
+                            <option value="">-- Select Category --</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button type="submit" class="btn btn-secondary w-100">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            </form>
         </div>
-        <div class="d-flex justify-content-end mt-3">
-            <a href="{{ route('pr_detail.add') }}">
-                <button class="btn btn-outline-primary bg-light">
-                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
-                </button>
-
-            </a>
-        </div>    
+    </div>
+</div>
+ 
         <div class="container no-print">
             <div class="card-body">                                 
                 <div class="table-responsive"> 
@@ -98,14 +158,14 @@
                     <div class="row mb-4">
                         <div class="col-md-6">
                             <label for="edit_sellPrice" class="form-label fw-bold">Sell Price <span class="text-danger">*</span></label>
-                            <input type="number" class="form-control" id="edit_sellPrice" name="price" placeholder="e.g. 1500" required>
+                            <input type="number" class="form-control" id="edit_sellPrice" name="price" placeholder="e.g. 1500" disabled required>
                         </div>
                         <div class="col-md-6">
                             <label for="edit_type" class="form-label fw-bold">State <span class="text-danger">*</span></label>
                             <select class="form-select" id="edit_type" name="type" required>
                                 <option value="">Select State</option>
                                 <option value="new">New</option>
-                                <option value="old">Second Hand</option>
+                                <option value="Second hand">Second Hand</option>
                             </select>
                         </div>
                     </div>

@@ -10,11 +10,12 @@
                 serverSide: true,
                 ajax: "{{ route('size.index') }}",
                 columns:[
-                    {data: 'id',name: 'id',render: function (data, type, row, meta) {
-                        return meta.row + 1;}},
-                    {data: 'size' , name: 'size'},
-                    {data: 'created_at' , name: 'created_at'},
-                    {data: 'action', orderable: false, searchable: false}
+                    {data: 'id', name: 'id', className: 'text-center', render: function (data, type, row, meta) {
+                        return meta.row + 1;
+                    }},
+                    {data: 'size', name: 'size', className: 'text-center'},
+                    {data: 'created_at', name: 'created_at', className: 'text-center'},
+                    {data: 'action', orderable: false, searchable: false, className: 'text-center'}
                 ]
                 
             });

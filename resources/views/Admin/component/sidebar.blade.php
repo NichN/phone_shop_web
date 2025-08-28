@@ -105,12 +105,10 @@
 
     {{-- Delivery tab: show for admin and staff users only --}}
     @if(isset($roleId) && ($roleId == 1 || $roleId == 2))
-        <div class="w3-bar-item  w3-dropdown-click" onclick="toggleDropdown('deliveryDropdownAdmin')">
-            <i class="fa-solid fa-truck"></i> Delivery <i class="fa fa-caret-down" style="float:right;"></i>
-        </div>
-        <div id="deliveryDropdownAdmin" class="w3-dropdown-content" style="display: none;">
+            <a href="{{ route('delivery_option.index') }}" class="w3-bar-item w3-button"><i class="fa-solid fa-truck"></i> Delivery Order</a>
+        {{-- <div id="deliveryDropdownAdmin" class="w3-dropdown-content" style="display: none;">
             <a href="{{ route('delivery_option.index') }}" class="w3-bar-item w3-button"><i class="fa-solid fa-truck"></i>Order list</a>
-        </div>
+        </div> --}}
     @endif
 
     {{-- Pick Up - Show for Admin and Staff (role_id = 1,2) but not Delivery-only (role_id = 3) --}}

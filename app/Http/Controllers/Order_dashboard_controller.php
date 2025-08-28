@@ -9,43 +9,62 @@ use App\Models\Order;
 
 class Order_dashboard_controller extends Controller
 {
-    public function index()
+    
+
+public function index()
     {
-        $totalOrder = DB::table('orders')
-            ->count();
+        $totalOrder = Order::count();
+        $totalCanceled = Order::where('status', 'cancelled')->count();
+        $totalProcessing = Order::where('status', 'processing')->count();
+        $totalCompleted = Order::where('status', 'completed')->count();
+        $totalPending = Order::where('status', 'pending')->count();
+        $totalIncome = Order::where('status', 'completed')->sum('total_amount');
 
-        $totalCanceled = DB::table('orders')
-            ->where('status', 'cancelled')
-            ->count();
+        $query = Order::query();
 
-        // Total Processing Orders
-        $totalProcessing = DB::table('orders')
-            ->where('status', 'processing')
-            ->count();
+        if (request()->input('date')) {
+            $query->whereDate('created_at', request()->input('date'));
+        }
+        if (request()->input('guest_name')) {
+            $query->where('guest_name', request()->input('guest_name'));
+        }
+        if (request()->input('order_id')) {
+            $query->where('order_num', request()->input('order_id'));
+        }
+        if (request()->input('delivery_method')) {
+            $query->where('delivery_type', request()->input('delivery_method'));
+        }
+        if (request()->input('status')) {
+            $query->where('status', request()->input('status'));
+        }
 
-        // Total Completed Orders
-        $totalCompleted = DB::table('orders')
-            ->where('status', 'completed')
-            ->count();
-         $totalpending = DB::table('orders')
-            ->where('status', 'pending')
-            ->count();
-        
+        $filteredTotalOrder = (clone $query)->count();
+        $filteredTotalCanceled = (clone $query)->where('status', 'cancelled')->count();
+        $filteredTotalProcessing = (clone $query)->where('status', 'processing')->count();
+        $filteredTotalCompleted = (clone $query)->where('status', 'completed')->count();
+        $filteredTotalPending = (clone $query)->where('status', 'pending')->count();
+        $filteredTotalIncome = (clone $query)->where('status', 'completed')->sum('total_amount');
 
-        $totalIncome = DB::table('orders')
-            ->where('status', 'completed')
-            ->sum('total_amount');
+        $orders = $query->get();
 
         return view('Admin.order.index', [
-            'total_order'     => $totalOrder,
-            'total_canceled'  => $totalCanceled,
-            'total_processing'=> $totalProcessing,
+            'total_order' => $totalOrder,
+            'total_canceled' => $totalCanceled,
+            'total_processing' => $totalProcessing,
             'total_completed' => $totalCompleted,
-            'total_income'    => $totalIncome,
-            'total_pending'   => $totalpending,
+            'total_income' => $totalIncome,
+            'total_pending' => $totalPending,
+            'filtered_total_order' => $filteredTotalOrder,
+            'filtered_total_canceled' => $filteredTotalCanceled,
+            'filtered_total_processing' => $filteredTotalProcessing,
+            'filtered_total_completed' => $filteredTotalCompleted,
+            'filtered_total_income' => $filteredTotalIncome,
+            'filtered_total_pending' => $filteredTotalPending,
+            'orders' => $orders,
         ]);
     }
-        public function getData(Request $request)
+
+    public function getData(Request $request)
     {
         $currentMonth = $request->input('current_month', now()->month);
         $currentYear = $request->input('current_year', now()->year);

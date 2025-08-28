@@ -103,7 +103,7 @@ function addOrUpdateLocalCart(id, title, price, imgSrc, size, color, quantity) {
     const existing = cart.find(item => item.id === id && item.size === size && item.color === color);
 
     if (existing) {
-        existing.quantity += quantity;
+        existing.quantity = quantity;
     } else {
         cart.push({ id, title, price, imgSrc, size, color, quantity });
     }

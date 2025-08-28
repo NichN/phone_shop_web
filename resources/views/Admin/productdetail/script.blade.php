@@ -10,10 +10,37 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 $(document).ready(function() {
+    $('#filterModal').on('shown.bs.modal', function() {
+        $('#filterProduct').select2({
+            placeholder: "Search Product Name...",
+            allowClear: true,
+            dropdownParent: $('#filterModal')
+        });
+        $('#filterBrand').select2({
+            placeholder: "Search Brand...",
+            allowClear: true,
+            dropdownParent: $('#filterModal')
+        });
+    });
     var table = $('.data-table').DataTable({
         processing: true,
         serverSide: true,
-        ajax: "{{ route('pr_detail.index') }}",
+        ajax: {
+            url: "{{ route('pr_detail.index') }}",
+            data: function(d) {
+                d.product_id = $('#filterProduct').val();
+                d.brand_id = $('#filterBrand').val();
+                d.cat_id = $('#filterCategory').val();
+            },
+            error: function(xhr, status, error) {
+                console.error('DataTable AJAX Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to load data. Check console for details.'
+                });
+            }
+        },
        order: [[0, 'desc']],
         columns: [
             {
@@ -193,6 +220,21 @@ $(document).ready(function() {
         }
     });
 });
+ $('#filterForm').on('submit', function(e) {
+        e.preventDefault();
+        table.ajax.reload(function() {
+            $('#filterModal').modal('hide');
+            $('.modal-backdrop').remove();
+        });
+    });
+    $('#resetFilter').on('click', function() {
+        $('#filterForm')[0].reset();
+        $('#filterProduct, #filterBrand, #filterCategory').val(null).trigger('change');
+        table.ajax.reload(function() {
+            $('#filterModal').modal('hide');
+            $('.modal-backdrop').remove();
+        });
+    });
 
 
     $(document).on('click', '.delete', function() {

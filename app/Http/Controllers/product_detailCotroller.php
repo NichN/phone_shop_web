@@ -9,13 +9,15 @@ use App\Models\Size;
 use App\Models\Color;
 use App\Models\Product;
 use App\Models\productdetail;
+use App\Models\Brand;
+use App\Models\Category;
 
     class product_detailCotroller extends Controller
 {
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = DB::table('product_item')
+            $query = DB::table('product_item')
                 ->join('product', 'product_item.pro_id', '=', 'product.id')
                 ->join('brand', 'product.brand_id', '=', 'brand.id')
                 ->join('category', 'product.cat_id', '=', 'category.id')
@@ -24,50 +26,63 @@ use App\Models\productdetail;
                     'product.name as product_name',
                     'brand.name as brand',
                     'category.name as category'
-                )
-                ->get();
-               
-                return DataTables::of($data)
-                    ->addColumn('action', function ($row) {
-                        $btn = '
-                        <div class="btn-group" role="group">
-                            <button 
-                                style="background-color: #e3f2fd; border: 1px solid #90caf9; color: #1565c0; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;" 
-                                class="viewProduct" 
-                                data-id="' . $row->id . '" 
-                                data-bs-toggle="tooltip" 
-                                title="View">
-                                <i class="fa fa-eye"></i>
-                            </button>
-                            <button 
-                                style="background-color: #fffde7; border: 1px solid #ffe082; color: #fbc02d; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;" 
-                                class="editProduct_dt" 
-                                data-id="' . $row->id . '" 
-                                data-bs-toggle="tooltip" 
-                                title="Edit">
-                                <i class="fa fa-pencil"></i>
-                            </button>
-                            <button 
-                                style="background-color: #ffebee; border: 1px solid #ef9a9a; color: #c62828; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;" 
-                                class="delete" 
-                                data-id="' . $row->id . '" 
-                                data-bs-toggle="tooltip" 
-                                title="Delete">
-                                <i class="fa fa-trash"></i>
-                            </button>
-                        </div>';
-                        return $btn;
-                    })
+                );
 
-                    ->rawColumns(['action'])
-                    ->make(true);
+            // Apply filters before executing the query
+            if ($request->filled('product_id')) {
+                $query->where('product.id', $request->input('product_id'));
             }
-            $size = Size::all();
-            $color = Color::all();
-            $product = Product::all();
-            // dd($product);
 
-        return view('Admin.productdetail.index',compact('size', 'color','product'));
+            if ($request->filled('brand_id')) {
+                $query->where('brand.id', $request->input('brand_id'));
+            }
+
+            if ($request->filled('cat_id')) {
+                $query->where('category.id', $request->input('cat_id'));
+            }
+
+            return DataTables::of($query)
+                ->addColumn('action', function ($row) {
+                    $btn = '
+                    <div class="btn-group" role="group">
+                        <button 
+                            style="background-color: #e3f2fd; border: 1px solid #90caf9; color: #1565c0; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;" 
+                            class="viewProduct" 
+                            data-id="' . $row->id . '" 
+                            data-bs-toggle="tooltip" 
+                            title="View">
+                            <i class="fa fa-eye"></i>
+                        </button>
+                        <button 
+                            style="background-color: #fffde7; border: 1px solid #ffe082; color: #fbc02d; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;" 
+                            class="editProduct_dt" 
+                            data-id="' . $row->id . '" 
+                            data-bs-toggle="tooltip" 
+                            title="Edit">
+                            <i class="fa fa-pencil"></i>
+                        </button>
+                        <button 
+                            style="background-color: #ffebee; border: 1px solid #ef9a9a; color: #c62828; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;" 
+                            class="delete" 
+                            data-id="' . $row->id . '" 
+                            data-bs-toggle="tooltip" 
+                            title="Delete">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </div>';
+                    return $btn;
+                })
+                ->rawColumns(['action', 'images', 'color_code', 'is_featured'])
+                ->make(true);
+        }
+
+        $size = Size::all();
+        $color = Color::all();
+        $product = Product::all();
+        $brands = Brand::all();
+        $categories = Category::all();
+
+        return view('Admin.productdetail.index', compact('size', 'color', 'product', 'brands', 'categories'));
     }
 
      public function store(Request $request)

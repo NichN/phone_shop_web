@@ -9,6 +9,7 @@
                 processing: true,
                 serverSide: true,
                 ajax: "{{ route('supplier.index') }}",
+                order: [[0, 'desc']],
                 columns:[
                     {data: 'id',name: 'id',render: function (data, type, row, meta) {
                         return meta.row + 1;}},
