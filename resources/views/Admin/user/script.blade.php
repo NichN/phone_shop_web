@@ -18,6 +18,9 @@
             $('#userForm')[0].reset();
             $('#userId').val('');
             $('.password-fields').show();
+            $('.edit-password-section').hide();
+            $('#changePasswordCheck').prop('checked', false);
+            $('.edit-password-fields').hide();
             $('#userModalLabel').text('Add User');
             $('#userModal').modal('show');
         });
@@ -31,20 +34,85 @@
                 $('#userEmail').val(data.email);
                 $('#userRole').val(data.role_id);
                 $('.password-fields').hide();
+                $('.edit-password-section').show();
+                $('#changePasswordCheck').prop('checked', false);
+                $('.edit-password-fields').hide();
+                // Clear password fields
+                $('#editUserPassword').val('');
+                $('#editPasswordConfirmation').val('');
                 $('#userModalLabel').text('Edit User');
                 $('#userModal').modal('show');
             });
         });
 
+        // Handle change password checkbox
+        $(document).on('change', '#changePasswordCheck', function() {
+            if ($(this).is(':checked')) {
+                $('.edit-password-fields').show();
+                $('#editUserPassword').attr('required', true);
+                $('#editPasswordConfirmation').attr('required', true);
+            } else {
+                $('.edit-password-fields').hide();
+                $('#editUserPassword').attr('required', false).val('');
+                $('#editPasswordConfirmation').attr('required', false).val('');
+            }
+        });
+
         // Add/Edit User AJAX
         $('#userForm').on('submit', function(e) {
             e.preventDefault();
+            
+            // Password confirmation validation for edit mode
             let id = $('#userId').val();
+            if (id && $('#changePasswordCheck').is(':checked')) {
+                let newPassword = $('#editUserPassword').val();
+                let confirmPassword = $('#editPasswordConfirmation').val();
+                
+                if (newPassword !== confirmPassword) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Password confirmation does not match!'
+                    });
+                    return false;
+                }
+                
+                if (newPassword.length < 6) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Password must be at least 6 characters long!'
+                    });
+                    return false;
+                }
+            }
+            
+            // Password confirmation validation for add mode
+            if (!id) {
+                let password = $('#userPassword').val();
+                let confirmPassword = $('#passwordConfirmation').val();
+                
+                if (password !== confirmPassword) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Password confirmation does not match!'
+                    });
+                    return false;
+                }
+            }
+            
             let url = id ? `/admin/users/${id}` : `/admin/users`;
             let type = id ? 'POST' : 'POST';
             let method = id ? 'PUT' : 'POST';
             let formData = new FormData(this);
             if (id) formData.append('_method', 'PUT');
+            
+            // For edit mode, only send password if checkbox is checked
+            if (id && !$('#changePasswordCheck').is(':checked')) {
+                formData.delete('password');
+                formData.delete('password_confirmation');
+            }
             $.ajax({
                 url: url,
                 type: type,

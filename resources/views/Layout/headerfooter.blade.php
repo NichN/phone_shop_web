@@ -305,15 +305,341 @@
             opacity: 1;
         }
 
-        /* Search icon in header */
-        .btn-link.text-dark {
-            transition: all 0.3s ease;
+        /* Search Icon Button */
+        .search-icon-btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border-radius: 50%;
             width: 45px;
             height: 45px;
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
+        }
+
+        .search-icon-btn:hover {
+            background: linear-gradient(135deg, #70000E 0%, #8a0012 100%);
+            color: white !important;
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(112, 0, 14, 0.3);
+        }
+
+        .search-icon-btn:focus {
+            box-shadow: 0 0 0 0.25rem rgba(112, 0, 14, 0.2);
+        }
+
+        /* Modern Minimalist Search Modal - Nike Inspired */
+        #minimalistSearchModal {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+        }
+
+        #minimalistSearchModal .modal-content {
+            border: none;
+            border-radius: 20px;
+            background: #ffffff;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            max-height: 80vh;
+        }
+
+        #minimalistSearchModal .modal-dialog {
+            margin: 5rem auto;
+            max-width: 650px;
+            width: 90%;
+        }
+
+        #minimalistSearchModal .modal-header {
+            border: none;
+            padding: 0;
+            background: transparent;
+            position: absolute;
+            top: 0;
+            right: 0;
+            z-index: 10;
+        }
+
+        #minimalistSearchModal .modal-body {
+            padding: 0;
+            max-height: 75vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Search Header Section */
+        .modern-search-header {
+            padding: 2rem 2rem 1.5rem 2rem;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-bottom: 1px solid #f1f3f4;
+        }
+
+        .search-brand-text {
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #6c757d;
+            margin-bottom: 0.5rem;
+        }
+
+        .search-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 0.25rem;
+            line-height: 1.2;
+        }
+
+        .search-subtitle {
+            font-size: 0.9rem;
+            color: #6c757d;
+            font-weight: 300;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Search Input Container */
+        .minimalist-search-container {
+            position: relative;
+            padding: 0 2rem;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            background: #ffffff;
+            border: 2px solid #f1f3f4;
+            border-radius: 50px;
+            padding: 0.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .search-input-wrapper:focus-within {
+            border-color: #70000E;
+            box-shadow: 0 8px 30px rgba(112, 0, 14, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .minimalist-search-input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            font-size: 1.25rem;
+            font-weight: 400;
+            color: #2d3748;
+            outline: none;
+            padding: 1rem 1.5rem 1rem 4rem;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .minimalist-search-input::placeholder {
+            color: #a0aec0;
+            font-weight: 300;
+        }
+
+        .search-input-icon {
+            position: absolute;
+            left: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-input-wrapper:focus-within .search-input-icon {
+            color: #70000E;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        /* Search Close Button */
+        .search-close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            font-size: 1rem;
+            color: #6c757d;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-close-btn:hover {
+            background-color: #70000E;
+            color: white;
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 4px 15px rgba(112, 0, 14, 0.3);
+        }
+
+        /* Search Content Area */
+        .search-content-area {
+            flex: 1;
+            padding: 1rem 2rem 2rem 2rem;
+            overflow-y: auto;
+            max-height: 400px;
+        }
+
+        /* Quick Suggestions */
+        .quick-suggestions {
+            margin-bottom: 2rem;
+        }
+
+        .quick-suggestions h6 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #6c757d;
+            margin-bottom: 1rem;
+        }
+
+        .suggestion-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .suggestion-tag {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 25px;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            color: #2d3748;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+        }
+
+        .suggestion-tag:hover {
+            background: #70000E;
+            color: white;
+            border-color: #70000E;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(112, 0, 14, 0.3);
+        }
+
+        /* Search Suggestions in Modal */
+        .minimalist-search-suggestions {
+            background: transparent;
+        }
+
+        .suggestions-section h6 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #6c757d;
+            margin-bottom: 1rem;
+        }
+
+        .minimalist-suggestion-item {
+            padding: 1rem 0;
+            cursor: pointer;
+            border-bottom: 1px solid #f1f3f4;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            font-family: 'Poppins', sans-serif;
+            border-radius: 12px;
+            margin-bottom: 0.5rem;
+        }
+
+        .minimalist-suggestion-item:hover {
+            background-color: #f8f9fa;
+            transform: translateX(8px);
+            border-color: transparent;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .minimalist-suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        .minimalist-suggestion-item i {
+            margin-right: 1rem;
+            color: #a0aec0;
+            width: 20px;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .minimalist-suggestion-item:hover i {
+            color: #70000E;
+        }
+
+        /* Trending Searches */
+        .trending-section {
+            margin-bottom: 2rem;
+        }
+
+        .trending-section h6 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #6c757d;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .trending-section h6 i {
+            margin-right: 0.5rem;
+            color: #70000E;
+        }
+
+        .trending-item {
+            padding: 0.75rem 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 8px;
+            padding-left: 1rem;
+            padding-right: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .trending-item:hover {
+            background-color: #f8f9fa;
+            transform: translateX(4px);
+        }
+
+        .trending-item-text {
+            font-weight: 500;
+            color: #2d3748;
+        }
+
+        .trending-item-arrow {
+            color: #a0aec0;
+            transition: all 0.3s ease;
+        }
+
+        .trending-item:hover .trending-item-arrow {
+            color: #70000E;
+            transform: translateX(4px);
+        }
+
+        /* Modal Animation */
+        #minimalistSearchModal.fade .modal-dialog {
+            transform: scale(0.8) translateY(-50px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #minimalistSearchModal.show .modal-dialog {
+            transform: scale(1) translateY(0);
+            opacity: 1;
         }
 
         .btn-link.text-dark:hover {
@@ -381,13 +707,10 @@
                     </li>
                 </ul>
 
-                <!-- Search Bar -->
+                <!-- Search Icon -->
                 <div class="navbar-nav mx-3">
-                    <button class="btn btn-link text-dark p-2" type="button" data-bs-toggle="modal" data-bs-target="#searchModal">
+                    <button class="btn btn-link text-dark p-2 search-icon-btn" type="button" data-bs-toggle="modal" data-bs-target="#minimalistSearchModal">
                         <i class="fa-solid fa-search fs-5"></i>
-                    </button>
-                    <button class="btn btn-link text-warning p-2 ms-1" type="button" onclick="testSearch()" title="Test Search">
-                        <i class="fa-solid fa-vial"></i>
                     </button>
                 </div>
 
@@ -787,6 +1110,94 @@
         </div>
     </div>
 
+    <!-- Modern Search Modal -->
+    <div class="modal fade" id="minimalistSearchModal" tabindex="-1" aria-labelledby="minimalistSearchModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="search-close-btn" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Search Header -->
+                    <div class="modern-search-header">
+                        <div class="search-brand-text">TayMeng Shop</div>
+                        <h2 class="search-title">What are you<br>looking for?</h2>
+                        <p class="search-subtitle">Discover our collection of phones and accessories</p>
+                        
+                        <!-- Search Input -->
+                        <div class="minimalist-search-container">
+                            <form action="/search" method="GET" id="minimalistSearchForm">
+                                <div class="search-input-wrapper">
+                                    <i class="fa-solid fa-search search-input-icon"></i>
+                                    <input type="text" 
+                                           class="minimalist-search-input" 
+                                           id="minimalistSearchInput"
+                                           name="query"
+                                           placeholder="Search products..."
+                                           autocomplete="off">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <!-- Search Content Area -->
+                    <div class="search-content-area">
+                        <!-- Quick Suggestions (Default State) -->
+                        <div class="quick-suggestions" id="quickSuggestions">
+                            <h6>Popular Categories</h6>
+                            <div class="suggestion-tags">
+                                <div class="suggestion-tag" onclick="searchByCategory('iPhone')">iPhone</div>
+                                <div class="suggestion-tag" onclick="searchByCategory('Samsung')">Samsung</div>
+                                <div class="suggestion-tag" onclick="searchByCategory('Accessories')">Accessories</div>
+                                <div class="suggestion-tag" onclick="searchByCategory('Cases')">Cases</div>
+                                <div class="suggestion-tag" onclick="searchByCategory('Chargers')">Chargers</div>
+                                <div class="suggestion-tag" onclick="searchByCategory('Headphones')">Headphones</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Trending Searches -->
+                        <div class="trending-section">
+                            <h6><i class="fa-solid fa-fire"></i>Trending Now</h6>
+                            <div class="trending-item" onclick="searchByTrend('iPhone 15 Pro')">
+                                <span class="trending-item-text">iPhone 15 Pro</span>
+                                <i class="fa-solid fa-arrow-right trending-item-arrow"></i>
+                            </div>
+                            <div class="trending-item" onclick="searchByTrend('Samsung Galaxy S24')">
+                                <span class="trending-item-text">Samsung Galaxy S24</span>
+                                <i class="fa-solid fa-arrow-right trending-item-arrow"></i>
+                            </div>
+                            <div class="trending-item" onclick="searchByTrend('AirPods Pro')">
+                                <span class="trending-item-text">AirPods Pro</span>
+                                <i class="fa-solid fa-arrow-right trending-item-arrow"></i>
+                            </div>
+                            <div class="trending-item" onclick="searchByTrend('Wireless Charger')">
+                                <span class="trending-item-text">Wireless Charger</span>
+                                <i class="fa-solid fa-arrow-right trending-item-arrow"></i>
+                            </div>
+                        </div>
+                        
+                        <!-- Dynamic Search Suggestions -->
+                        <div class="minimalist-search-suggestions" id="minimalistSearchSuggestions" style="display: none;">
+                            <div class="suggestions-section">
+                                <h6>Suggestions</h6>
+                                <div id="dynamicSuggestions">
+                                    <!-- Dynamic suggestions will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Search Results -->
+                        <div class="minimalist-search-results" id="minimalistSearchResults" style="display: none;">
+                            <!-- Results will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <header>
         @yield('header')
     </header>
@@ -1138,6 +1549,138 @@
             //     e.preventDefault();
             //     this.submit();
             // });
+        });
+
+        // Modern Search Modal Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const minimalistSearchModal = document.getElementById('minimalistSearchModal');
+            const minimalistSearchInput = document.getElementById('minimalistSearchInput');
+            const minimalistSearchSuggestions = document.getElementById('minimalistSearchSuggestions');
+            const quickSuggestions = document.getElementById('quickSuggestions');
+            const dynamicSuggestions = document.getElementById('dynamicSuggestions');
+            const minimalistSearchForm = document.getElementById('minimalistSearchForm');
+            let searchTimeout;
+
+            // Focus on search input when modal opens
+            minimalistSearchModal.addEventListener('shown.bs.modal', function() {
+                minimalistSearchInput.focus();
+                minimalistSearchInput.value = '';
+                showDefaultState();
+            });
+
+            // Handle search input changes
+            minimalistSearchInput.addEventListener('input', function() {
+                const query = this.value.trim();
+                
+                clearTimeout(searchTimeout);
+                
+                if (query.length > 2) {
+                    searchTimeout = setTimeout(() => {
+                        fetchMinimalistSearchSuggestions(query);
+                    }, 300);
+                } else if (query.length === 0) {
+                    showDefaultState();
+                } else {
+                    hideAllSuggestions();
+                }
+            });
+
+            // Handle Enter key
+            minimalistSearchInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    performMinimalistSearch();
+                }
+            });
+
+            // Handle form submission
+            minimalistSearchForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                performMinimalistSearch();
+            });
+
+            // Show default state (categories and trending)
+            function showDefaultState() {
+                quickSuggestions.style.display = 'block';
+                minimalistSearchSuggestions.style.display = 'none';
+            }
+
+            // Hide all suggestions
+            function hideAllSuggestions() {
+                quickSuggestions.style.display = 'none';
+                minimalistSearchSuggestions.style.display = 'none';
+            }
+
+            // Fetch search suggestions
+            function fetchMinimalistSearchSuggestions(query) {
+                fetch(`/search-suggestions?query=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(suggestions => {
+                        showMinimalistSuggestions(suggestions);
+                    })
+                    .catch(error => {
+                        console.error('Search suggestions error:', error);
+                        hideAllSuggestions();
+                    });
+            }
+
+            // Show suggestions
+            function showMinimalistSuggestions(suggestions) {
+                quickSuggestions.style.display = 'none';
+                
+                if (suggestions.length === 0) {
+                    minimalistSearchSuggestions.style.display = 'none';
+                    return;
+                }
+
+                const html = suggestions.map(suggestion => 
+                    `<div class="minimalist-suggestion-item" onclick="selectMinimalistSuggestion('${suggestion.replace(/'/g, "\\'")}')">
+                        <i class="fa-solid fa-search"></i>
+                        ${suggestion}
+                    </div>`
+                ).join('');
+
+                dynamicSuggestions.innerHTML = html;
+                minimalistSearchSuggestions.style.display = 'block';
+            }
+
+            // Perform search
+            function performMinimalistSearch() {
+                const query = minimalistSearchInput.value.trim();
+                if (query) {
+                    // Close modal and redirect to search results
+                    const modal = bootstrap.Modal.getInstance(minimalistSearchModal);
+                    modal.hide();
+                    
+                    // Redirect to search results page
+                    window.location.href = `/search?query=${encodeURIComponent(query)}`;
+                }
+            }
+
+            // Global functions for category and trending searches
+            window.searchByCategory = function(category) {
+                minimalistSearchInput.value = category;
+                performMinimalistSearch();
+            };
+
+            window.searchByTrend = function(trend) {
+                minimalistSearchInput.value = trend;
+                performMinimalistSearch();
+            };
+
+            // Global function to select suggestion
+            window.selectMinimalistSuggestion = function(suggestion) {
+                minimalistSearchInput.value = suggestion;
+                performMinimalistSearch();
+            };
+
+            // Handle ESC key to close modal
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && minimalistSearchModal.classList.contains('show')) {
+                    const modal = bootstrap.Modal.getInstance(minimalistSearchModal);
+                    modal.hide();
+                }
+            });
         });
     </script>
 </body>

@@ -242,7 +242,7 @@ public function search(Request $request)
             ]);
         }
 
-        return view('customer.homepage2', compact('products', 'query'));
+        return view('customer.search_results', compact('products', 'query'));
 
     } catch (\Exception $e) {
         \Log::error('Search error: ' . $e->getMessage());

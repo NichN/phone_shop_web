@@ -61,6 +61,26 @@
             <label for="passwordConfirmation" class="form-label">Confirm Password</label>
             <input type="password" class="form-control" id="passwordConfirmation" name="password_confirmation">
           </div>
+          <!-- Edit Password Section (Hidden by default, shown during edit) -->
+          <div class="mb-3 edit-password-section" style="display: none;">
+            <div class="form-check mb-2">
+              <input class="form-check-input" type="checkbox" id="changePasswordCheck">
+              <label class="form-check-label" for="changePasswordCheck">
+                Change Password
+              </label>
+            </div>
+            <div class="edit-password-fields" style="display: none;">
+              <div class="mb-3">
+                <label for="editUserPassword" class="form-label">New Password</label>
+                <input type="password" class="form-control" id="editUserPassword" name="password" minlength="6">
+                <small class="form-text text-muted">Leave blank to keep current password</small>
+              </div>
+              <div class="mb-3">
+                <label for="editPasswordConfirmation" class="form-label">Confirm New Password</label>
+                <input type="password" class="form-control" id="editPasswordConfirmation" name="password_confirmation">
+              </div>
+            </div>
+          </div>
           <div class="mb-3">
             <label for="userRole" class="form-label">Group</label>
             <select class="form-control" id="userRole" name="role">

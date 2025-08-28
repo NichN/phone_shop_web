@@ -45,7 +45,7 @@ class Admin_user_controller extends Controller
         $rules = [
             'name'     => 'required',
             'email'    => 'required|email|unique:users',
-            'password' => 'required|min:6',
+            'password' => 'required|min:6|confirmed',
             'role'     => 'nullable|exists:roles,id',
             'avatar'   => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
@@ -92,7 +92,7 @@ class Admin_user_controller extends Controller
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
         if ($request->filled('password')) {
-            $rules['password'] = 'min:6';
+            $rules['password'] = 'min:6|confirmed';
         }
         $validated = $request->validate($rules);
 

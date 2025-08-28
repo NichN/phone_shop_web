@@ -132,6 +132,16 @@ Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink
 Route::get('/reset-password', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
 Route::post('/reset-password', [ForgotPasswordController::class, 'reset'])->name('password.update');
 
+// Check if email belongs to admin (for login page)
+Route::post('/check-admin-email', function (Request $request) {
+    $request->validate(['email' => 'required|email']);
+    
+    $user = User::where('email', $request->email)->first();
+    $isAdmin = $user && $user->role_id == 1;
+    
+    return response()->json(['is_admin' => $isAdmin]);
+})->name('check.admin.email');
+
 Route::get('/productdetail',function(){
     return view('customer.productdetail');
 })->name('productdetail');
@@ -401,6 +411,7 @@ Route::delete('/remove',[cartController::class,'remove'])->middleware('auth')->n
 Route::prefix('customer_admin')->name('customer_admin.')->group(function () {
     Route::get('/', [customer_admincontroller::class, 'index'])->name('index');
     Route::get('/add', [customer_admincontroller::class, 'add'])->name('new');
+    Route::get('/show/{id}', [customer_admincontroller::class, 'show'])->name('show');
 });
 
 Route::prefix('admin')->middleware(['auth', 'twofactor'])->group(function () {

@@ -48,7 +48,7 @@
                 </div>
 
                 <!-- Links -->
-                <div class="mt-3 text-center">
+                <div class="mt-3 text-center" id="forgot-password-link">
                     <a href="{{ route('password.request') }}" class="text-decoration-none text-danger">
                         Forgot your password?
                     </a>
@@ -61,4 +61,55 @@
             </form>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const emailInput = document.getElementById('email');
+            const forgotPasswordLink = document.getElementById('forgot-password-link');
+            let checkTimeout;
+            
+            // Function to check if email belongs to admin via API
+            async function checkAdminEmail() {
+                const email = emailInput.value.trim();
+                
+                // Show forgot password link by default if email is empty
+                if (!email || !email.includes('@')) {
+                    forgotPasswordLink.style.display = 'block';
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('{{ route("check.admin.email") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({ email: email })
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.is_admin) {
+                            forgotPasswordLink.style.display = 'none';
+                        } else {
+                            forgotPasswordLink.style.display = 'block';
+                        }
+                    }
+                } catch (error) {
+                    // On error, show the link by default
+                    forgotPasswordLink.style.display = 'block';
+                }
+            }
+            
+            // Debounced check on email input change
+            emailInput.addEventListener('input', function() {
+                clearTimeout(checkTimeout);
+                checkTimeout = setTimeout(checkAdminEmail, 500); // Wait 500ms after user stops typing
+            });
+            
+            // Immediate check on blur
+            emailInput.addEventListener('blur', checkAdminEmail);
+        });
+    </script>
 @endsection

@@ -3,6 +3,7 @@
 @section('content')
     <header>
         <link href="{{ asset('css/dashboard.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/search.css') }}" rel="stylesheet">
         <div id="carouselExampleCaptions" class="carousel slide custom-carousel-bg" data-bs-ride="carousel">
             <div class="carousel-indicators">
                 <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active"
@@ -17,18 +18,7 @@
                     <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
                         <div class="container-fluid d-flex align-items-center" style="height: 75vh;">
                             <div class="container d-flex justify-content-between align-items-center">
-                                <div class="position-absolute top-0 end-0 mt-3 me-3" style="width: 500px;">
-                                    <form action="/search" method="GET" class="d-flex rounded-pill bg-white"
-                                        id="searchForm">
-                                        <input type="text" id="searchInput"
-                                            class="form-control border-0 py-2 px-3 focus-ring focus-ring-primary"
-                                            placeholder="Search for products..." name="query"
-                                            aria-label="Search products">
-                                        <button type="submit" class="btn rounded-end-pill px-3 border-0"
-                                            aria-label="Search" style="background: black;"><i class="fas fa-search"
-                                                style="color: white;"></i></button>
-                                    </form>
-                                </div>
+
                                 <div class="text-container pt-5">
                                     <h2 class="display-4 fw-bold">Welcome to <br> TayMeng Phone Shop</h2>
                                     <p>Power Up Your Life with the Latest Electronic!</p>
