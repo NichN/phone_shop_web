@@ -54,7 +54,7 @@ class pick_upController extends Controller
                             <li>
                                 <a class="dropdown-item vieworder" href="' . route('delivery_option.show', ['id' => $row->id]) . '" data-id="' . $row->id . '">Order Detail</a>
                             </li>';
-                             if ($row->status === 'processing') {
+                             if ($row->status === 'Confirmed' || $row->status === 'Processing')  {
                                 $dropdown .= '
                                         <li>
                                             <a class="dropdown-item finish text-success" data-id="' . $row->id . '">
