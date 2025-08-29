@@ -84,10 +84,8 @@
                             </select>
                         </div>
                         <div class="form-group col-md-3">
-                        <label for="size_id" class="form-label fw-bold">
-                            Warranty
-                             <input type="text" name="warranty" id="warranty" class="form-control" value="" placeholder="Enter warranty" required>
-                        </label>
+                        <label for="size_id" class="form-label fw-bold">Warranty</label>
+                        <input type="text" name="warranty" id="warranty" class="form-control" value="" placeholder="Enter warranty" required>
                     </div>
 
                     </div>

@@ -31,55 +31,55 @@
         </div>  
          
         <!-- Filter Modal -->
-    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-        <div class="modal-content p-3">
-            <div class="modal-heade">
-                <h5 class="modal-title text-dark" id="filterModalLabel">Filter Products</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-        
-            <form id="filterForm" method="GET" action="{{ route('pr_detail.index') }}">
-                <div class="modal-body">
-                <div class="row g-3">
-                    <div class="col-md-3">
-                        <label class="form-label">Product Name</label>
-                        <select name="product_id" id="filterProduct" class="form-select">
-                            <option value="">Select Product</option>
-                            @foreach($product as $products)
-                                <option value="{{ $products->id }}">{{ $products->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Brand</label>
-                        <select name="brand_id" id="filterBrand" class="form-select">
-                            <option value="">-- Select Brand --</option>
-                            @foreach($brands as $brand)
-                                <option value="{{ $brand->id }}">{{ $brand->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Category</label>
-                        <select name="cat_id" id="filterCategory" class="form-select">
-                            <option value="">-- Select Category --</option>
-                            @foreach($categories as $category)
-                                <option value="{{ $category->id }}">{{ $category->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-3 d-flex align-items-end">
-                        <button type="submit" class="btn btn-secondary w-100">
-                            <i class="fa fa-search"></i>
-                        </button>
+        <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+            <div class="modal-content p-3">
+                <div class="modal-heade">
+                    <h5 class="modal-title text-dark" id="filterModalLabel">Filter Products</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+            
+                <form id="filterForm" method="GET" action="{{ route('pr_detail.index') }}">
+                    <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label">Product Name</label>
+                            <select name="product_id" id="filterProduct" class="form-select">
+                                <option value="">Select Product</option>
+                                @foreach($product as $products)
+                                    <option value="{{ $products->id }}">{{ $products->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Brand</label>
+                            <select name="brand_id" id="filterBrand" class="form-select">
+                                <option value="">-- Select Brand --</option>
+                                @foreach($brands as $brand)
+                                    <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Category</label>
+                            <select name="cat_id" id="filterCategory" class="form-select">
+                                <option value="">-- Select Category --</option>
+                                @foreach($categories as $category)
+                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button type="submit" class="btn btn-secondary w-100">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
+                </form>
             </div>
-            </form>
         </div>
     </div>
-</div>
  
         <div class="container no-print">
             <div class="card-body">                                 
