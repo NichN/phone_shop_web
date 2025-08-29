@@ -119,11 +119,14 @@
             </div>
 
             <!-- Add Payment Button (Hidden on Print) -->
-            <div class="d-flex justify-content-end mt-4 gap-2 mb-4 no-print">
-                <a href="{{ route('purchase.addpayment', ['id' => $purchase->id]) }}" class="btn btn-outline-success">
-                    Add Payment
-                </a>
-            </div>
+            @if ($purchase->payment_statuse != 'Paid')
+                <div class="d-flex justify-content-end mt-4 gap-2 mb-4 no-print">
+                    <a href="{{ route('purchase.addpayment', ['id' => $purchase->id]) }}" class="btn btn-outline-success">
+                        Add Payment
+                    </a>
+                </div>
+            @endif
+
         </div>
     </div>
 </div>

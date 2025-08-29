@@ -114,7 +114,7 @@ public function getByCategory($id)
                 ->where('product_item.stock', '>', 0);
         })
         ->where('product.cat_id', $id)
-        ->select('product.*', 'product_item.price', 'product_item.images', 'product_item.color_code')
+        ->select('product.*', 'product_item.price', 'product_item.images', 'product_item.color_code','product_item.id as product_item_id',)
         ->get();
     // dd($products);
 

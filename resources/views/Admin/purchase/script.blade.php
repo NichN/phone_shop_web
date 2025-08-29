@@ -256,7 +256,7 @@ $(document).ready(function () {
                         icon: 'success',
                         title: 'Success!',
                         willClose: () => {
-                            location.reload();
+                            window.location.href = "{{ route('purchase.add') }}";
                         }
                     });
                 } else {
@@ -266,7 +266,6 @@ $(document).ready(function () {
                         text: response.message || 'Update failed'
                     });
                 }
-                
             },
             error: function(xhr) {
                 Swal.fire({

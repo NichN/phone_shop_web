@@ -59,6 +59,15 @@
                 <h5 class="text-danger mb-4">
                     <strong id="product-price">{{ $product['price'] }} USD</strong>
                 </h5>
+                <div class="mb-4">
+    <h5 class="fs-6">Warranty</h5>
+    <div class="card shadow-sm border-0">
+        <div class="card-body bg-light text-dark rounded">
+            {{ $product['warranty'] ?? 'No warranty information available.' }}
+        </div>
+    </div>
+</div>
+
 
                 <div class="choose-color mb-4">
                     <h5 class="mb-4 fs-6">CHOOSE COLOR</h5>

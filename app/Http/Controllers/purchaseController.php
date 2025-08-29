@@ -126,10 +126,16 @@ class purchaseController extends Controller
                             style="background-color: #e3f2fd; border: 1px solid #90caf9; color: #1565c0; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;">
                             <i class="fa-solid fa-eye"></i>
                         </button>
-                        <button class="btn btn-sm addpayment" data-url="' . $addPaymentUrl . '" data-toggle="tooltip" title="Add Payment"
-                            style="background-color: #e8f5e9; border: 1px solid #a5d6a7; color: #2e7d32; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;">
-                            <i class="fa-solid fa-money-bill-wave"></i>
-                        </button>
+                        ' . ($row->payment_statuse !== 'Paid' ? '
+                            <button class="btn btn-sm addpayment"
+                                data-url="' . $addPaymentUrl . '"
+                                data-toggle="tooltip"
+                                title="Add Payment"
+                                style="background-color: #e8f5e9; border: 1px solid #a5d6a7; color: #2e7d32; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;">
+                                <i class="fa-solid fa-money-bill-wave"></i>
+                            </button>
+                        ' : '') . '
+
                         <button class="btn btn-sm delete" data-id="' . $row->id . '" data-toggle="tooltip" title="Delete"
                             style="background-color: #ffebee; border: 1px solid #ef9a9a; color: #c62828; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;">
                             <i class="fa-solid fa-trash"></i>
