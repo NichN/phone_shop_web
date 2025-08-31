@@ -63,13 +63,19 @@
                     <strong id="product-price">{{ $product['price'] }} USD</strong>
                 </h5>
                 <div class="mb-4">
-    <h5 class="fs-6">Warranty</h5>
-    <div class="card shadow-sm border-0">
-        <div class="card-body bg-light text-dark rounded">
-            {{ $product['warranty'] ?? 'No warranty information available.' }}
-        </div>
-    </div>
-</div>
+                    <h5 class="fs-6">Warranty</h5>
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body bg-light text-dark rounded">
+                            {{ $product['warranty'] ?? 'No warranty information available.' }}
+                        </div>
+                    </div>
+                </div>
+                <div class="quantity-selector d-flex align-items-center gap-2 mt-3">
+                    <label for="productQuantity" class="mb-0">Quantity:</label>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" id="decreaseQty">-</button>
+                    <input type="number" id="productQuantity" class="form-control form-control-sm text-center" value="1" min="1" style="width: 60px;">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" id="increaseQty">+</button>
+                </div>
 
 
                 <div class="choose-color mb-4">
@@ -104,12 +110,12 @@
                     <div class="mb-2">
                         <span class="text-muted">
                             <i class="fas fa-box me-1"></i>
-                            Stock Available: <span class="fw-bold text-primary">{{ $stock[0] ?? 'N/A' }}</span>
+                            Stock Available: <span class="fw-bold text-primary" id="variant-stock">{{ $variants[0]['stock'] ?? 'N/A' }}</span>
                         </span>
                     </div>
                     <a href="#" class="btn btn-dark px-4 py-2 custom-btn w-100 add-cart" data-product-item-id=""
                         data-title="{{ $product['name'] }}" data-price="{{ $product['price'] }}"
-                        data-img="{{ asset('storage/' . $product['image'][0]) }}" onclick="return addToCart(event)">
+                        data-img="{{ asset('storage/' . $product['image'][0]) }}" data-stock="{{ $variants[0]['stock'] ?? 0 }}" onclick="return addToCart(event)">
                         Add to Cart
                     </a>
                 </div>
@@ -188,35 +194,30 @@
             let selectedSize = document.querySelector('input[name="storage"]:checked')?.value;
 
             function updateVariantInfo() {
-                // Find all variants matching the selected color and size
-                const matchingVariants = variants.filter(v =>
-                    v.color_code.toLowerCase() === selectedColor?.toLowerCase() &&
-                    v.size.toLowerCase() === selectedSize?.toLowerCase()
-                );
+    const matches = variants.filter(v =>
+        v.color_code.toLowerCase() === selectedColor?.toLowerCase() &&
+        v.size.toLowerCase() === selectedSize?.toLowerCase()
+    );
 
-                if (matchingVariants.length > 0) {
-                    // Just pick the first matching variant to show price and update button
-                    const variant = matchingVariants[0];
+    const stockDisplay = document.getElementById('variant-stock');
 
-                    // Update price and cart data
-                    priceDisplay.innerHTML = `<strong>${variant.price} USD</strong>`;
-                    typeDisplay.innerHTML = `${variant.type}<span class="text-danger">*</span>`;
-                    addCartBtn.dataset.productItemId = variant.id;
-                    addCartBtn.dataset.price = variant.price;
+    if (matches.length > 0) {
+        const variant = matches[0];
 
-                    // OPTIONAL: show other available types with same size and color
-                    if (matchingVariants.length > 1) {
-                        let typeList = matchingVariants.map(v => v.type).join(' / ');
-                        typeDisplay.innerHTML = `${typeList}<span class="text-danger">*</span>`;
-                    }
-                } else {
-                    // No matching variant found
-                    priceDisplay.innerHTML = `<strong>N/A</strong>`;
-                    typeDisplay.innerHTML = `<span class="text-danger">Unavailable</span>`;
-                    addCartBtn.dataset.productItemId = '';
-                    addCartBtn.dataset.price = '';
-                }
-            }
+        priceDisplay.innerHTML = `<strong>${variant.price} USD</strong>`;
+        typeDisplay.innerHTML = `${variant.type}<span class="text-danger">*</span>`;
+        addCartBtn.dataset.productItemId = variant.id;
+        addCartBtn.dataset.price = variant.price;
+        stockDisplay.textContent = variant.stock;
+    } else {
+        priceDisplay.innerHTML = '<strong>N/A</strong>';
+        typeDisplay.innerHTML = '<span class="text-danger">Unavailable</span>';
+        addCartBtn.dataset.productItemId = '';
+        addCartBtn.dataset.price = '';
+        stockDisplay.textContent = 'N/A';
+    }
+}
+
             document.querySelectorAll('input[name="color"]').forEach(radio => {
                 radio.addEventListener('change', function() {
                     selectedColor = this.value;
