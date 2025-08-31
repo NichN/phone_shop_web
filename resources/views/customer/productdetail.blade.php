@@ -104,7 +104,7 @@
                     <div class="mb-2">
                         <span class="text-muted">
                             <i class="fas fa-box me-1"></i>
-                            Stock Available: <span class="fw-bold text-primary">{{ $stock[0] ?? 'N/A' }}</span>
+                            Stock Available: <span class="fw-bold text-primary" id="stock-display">{{ $stock[0] ?? 'N/A' }}</span>
                         </span>
                     </div>
                     <a href="#" class="btn btn-dark px-4 py-2 custom-btn w-100 add-cart" data-product-item-id=""
@@ -187,7 +187,61 @@
             let selectedColor = document.querySelector('input[name="color"]:checked')?.value;
             let selectedSize = document.querySelector('input[name="storage"]:checked')?.value;
 
+            function checkAllCombinations() {
+                // Get all available colors and sizes
+                const allColors = Array.from(document.querySelectorAll('input[name="color"]')).map(input => input.value);
+                const allSizes = Array.from(document.querySelectorAll('input[name="storage"]')).map(input => input.value);
+                
+                console.log('All colors:', allColors);
+                console.log('All sizes:', allSizes);
+                console.log('Available variants:', variants);
+                
+                // First, remove all unavailable classes to reset
+                document.querySelectorAll('.option-unavailable').forEach(el => {
+                    el.classList.remove('option-unavailable');
+                });
+                
+                // Check which colors are completely unavailable (no variants for any size)
+                allColors.forEach(color => {
+                    const hasAnyVariantForColor = variants.some(v => 
+                        v.color_code.toLowerCase() === color.toLowerCase()
+                    );
+                    
+                    if (!hasAnyVariantForColor) {
+                        const colorInput = document.querySelector(`input[name="color"][value="${color}"]`);
+                        if (colorInput) {
+                            const colorLabel = colorInput.nextElementSibling;
+                            if (colorLabel) {
+                                colorLabel.classList.add('option-unavailable');
+                                console.log(`Added option-unavailable to color: ${color} (no variants available)`);
+                            }
+                        }
+                    }
+                });
+                
+                // Check which sizes are completely unavailable (no variants for any color)
+                allSizes.forEach(size => {
+                    const hasAnyVariantForSize = variants.some(v => 
+                        v.size.toLowerCase() === size.toLowerCase()
+                    );
+                    
+                    if (!hasAnyVariantForSize) {
+                        const sizeInput = document.querySelector(`input[name="storage"][value="${size}"]`);
+                        if (sizeInput) {
+                            const sizeLabel = sizeInput.nextElementSibling;
+                            if (sizeLabel) {
+                                sizeLabel.classList.add('option-unavailable');
+                                console.log(`Added option-unavailable to size: ${size} (no variants available)`);
+                            }
+                        }
+                    }
+                });
+            }
+
             function updateVariantInfo() {
+                // First, re-apply unavailable styling to all options
+                checkAllCombinations();
+                
                 // Find all variants matching the selected color and size
                 const matchingVariants = variants.filter(v =>
                     v.color_code.toLowerCase() === selectedColor?.toLowerCase() &&
@@ -203,6 +257,13 @@
                     typeDisplay.innerHTML = `${variant.type}<span class="text-danger">*</span>`;
                     addCartBtn.dataset.productItemId = variant.id;
                     addCartBtn.dataset.price = variant.price;
+                    
+                    // Update stock display
+                    const stockDisplay = document.getElementById('stock-display');
+                    if (stockDisplay) {
+                        stockDisplay.textContent = variant.stock || 'N/A';
+                        stockDisplay.className = 'fw-bold text-primary';
+                    }
 
                     // OPTIONAL: show other available types with same size and color
                     if (matchingVariants.length > 1) {
@@ -211,15 +272,46 @@
                     }
                 } else {
                     // No matching variant found
-                    priceDisplay.innerHTML = `<strong>N/A</strong>`;
+                    priceDisplay.innerHTML = `<strong class="text-danger">N/A</strong>`;
                     typeDisplay.innerHTML = `<span class="text-danger">Unavailable</span>`;
                     addCartBtn.dataset.productItemId = '';
                     addCartBtn.dataset.price = '';
+                    
+                    // Update stock display to show unavailable
+                    const stockDisplay = document.getElementById('stock-display');
+                    if (stockDisplay) {
+                        stockDisplay.textContent = 'N/A';
+                        stockDisplay.className = 'fw-bold text-danger';
+                    }
+                    
+                    // Mark the currently selected options as unavailable
+                    if (selectedColor) {
+                        const selectedColorInput = document.querySelector(`input[name="color"][value="${selectedColor}"]`);
+                        if (selectedColorInput) {
+                            const selectedColorLabel = selectedColorInput.nextElementSibling;
+                            if (selectedColorLabel) {
+                                selectedColorLabel.classList.add('option-unavailable');
+                            }
+                        }
+                    }
+                    if (selectedSize) {
+                        const selectedSizeInput = document.querySelector(`input[name="storage"][value="${selectedSize}"]`);
+                        if (selectedSizeInput) {
+                            const selectedSizeLabel = selectedSizeInput.nextElementSibling;
+                            if (selectedSizeLabel) {
+                                selectedSizeLabel.classList.add('option-unavailable');
+                            }
+                        }
+                    }
                 }
             }
             document.querySelectorAll('input[name="color"]').forEach(radio => {
                 radio.addEventListener('change', function() {
                     selectedColor = this.value;
+                    // Re-enable all options first
+                    document.querySelectorAll('.option-unavailable').forEach(el => {
+                        el.classList.remove('option-unavailable');
+                    });
                     updateVariantInfo();
                 });
             });
@@ -227,10 +319,16 @@
             document.querySelectorAll('input[name="storage"]').forEach(radio => {
                 radio.addEventListener('change', function() {
                     selectedSize = this.value;
+                    // Re-enable all options first
+                    document.querySelectorAll('.option-unavailable').forEach(el => {
+                        el.classList.remove('option-unavailable');
+                    });
                     updateVariantInfo();
                 });
             });
 
+            // Check all combinations on page load to show unavailable options immediately
+            checkAllCombinations();
             updateVariantInfo();
 
             // Filter functionality
@@ -394,6 +492,13 @@
                 // Update type display
                 document.getElementById('product-type').innerHTML = `${variant.type}<span class="text-danger">*</span>`;
                 
+                // Update stock display
+                const stockDisplay = document.getElementById('stock-display');
+                if (stockDisplay) {
+                    stockDisplay.textContent = variant.stock || 'N/A';
+                    stockDisplay.className = 'fw-bold text-primary';
+                }
+                
                 // Update cart button
                 const addCartBtn = document.querySelector('.add-cart');
                 addCartBtn.dataset.productItemId = variant.id;
@@ -405,6 +510,18 @@
                 
                 if (colorInput) colorInput.checked = true;
                 if (sizeInput) sizeInput.checked = true;
+                
+                // Update global variables
+                selectedColor = variant.color_code;
+                selectedSize = variant.size;
+                
+                // Re-enable all options and re-apply unavailable styling
+                document.querySelectorAll('.option-unavailable').forEach(el => {
+                    el.classList.remove('option-unavailable');
+                });
+                
+                // Re-apply unavailable styling
+                checkAllCombinations();
                 
                 // Scroll to top of product details
                 document.querySelector('.container').scrollIntoView({ behavior: 'smooth' });

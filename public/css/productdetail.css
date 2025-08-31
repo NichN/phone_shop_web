@@ -385,3 +385,111 @@ margin-bottom: 5px; /* Space between circle and text */
         transform: translateY(0);
     }
 }
+
+/* Out of Stock Styling */
+.out-of-stock-border {
+    border: 2px solid #dc3545 !important;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: rgba(220, 53, 69, 0.05);
+    position: relative;
+}
+
+.out-of-stock-border::before {
+    content: "⚠️ Out of Stock";
+    position: absolute;
+    top: -10px;
+    left: 10px;
+    background-color: #dc3545;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    z-index: 1;
+}
+
+.out-of-stock-border .btn-check:checked + label {
+    border: 2px solid #dc3545 !important;
+    background-color: rgba(220, 53, 69, 0.1) !important;
+}
+
+.out-of-stock-border .btn-check + label {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Option Unavailable Styling - Enhanced */
+.option-unavailable {
+    position: relative;
+    opacity: 0.6;
+    cursor: pointer;
+}
+
+.option-unavailable .btn-check + label {
+    opacity: 0.5;
+    cursor: pointer;
+    color: #999 !important;
+    text-decoration: line-through;
+    position: relative;
+}
+
+.option-unavailable .btn-check + label::before {
+    content: "✗";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(220, 53, 69, 0.9);
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    z-index: 2;
+}
+
+.option-unavailable .btn-check + label span {
+    opacity: 0.3;
+}
+
+/* For storage options specifically */
+.option-unavailable .btn-check + label {
+    background-color: #f8f9fa !important;
+    border-color: #dee2e6 !important;
+    color: #6c757d !important;
+}
+
+.option-unavailable .btn-check:checked + label {
+    background-color: #f8f9fa !important;
+    border-color: #6c757d !important;
+    color: #6c757d !important;
+}
+
+/* Keep radio buttons clickable but show visual indication of unavailability */
+.option-unavailable .btn-check {
+    pointer-events: auto;
+}
+
+/* Add a subtle overlay for unavailable options */
+.option-unavailable .btn-check + label::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 2px,
+        rgba(220, 53, 69, 0.1) 2px,
+        rgba(220, 53, 69, 0.1) 4px
+    );
+    pointer-events: none;
+    z-index: 1;
+}
