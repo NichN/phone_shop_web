@@ -68,18 +68,18 @@
                                     </li>
                                 @endif
 
-                                @if (in_array(strtolower($order->status), ['accepted',]))
+                                @if (in_array(strtolower($order->status), ['pending', 'processing']))
                                     <li><a class="dropdown-item text-success" href="{{ route('checkout.payment', $order->id) }}">
                                         <i class="fas fa-credit-card me-2"></i>Payment</a></li>
                                 @endif
 
-                                @if (in_array(strtolower($order->status), ['accepted', 'pending']))
+                                {{-- @if (in_array(strtolower($order->status), ['accepted', 'pending']))
                                     <li>
                                         <button type="button" class="dropdown-item text-info verify-order-btn" data-order-id="{{ $order->id }}">
                                             <i class="fas fa-check-circle me-2"></i>Verify Order
                                         </button>
                                     </li>
-                                @endif
+                                @endif --}}
                                  {{-- 'processing' --}}
                             </ul>
                         </div>
@@ -110,10 +110,11 @@
                         <div class="package-status">
                             <p><strong>Order Status</strong></p>
                             <p class="
-                                {{ strtolower($order->status) === 'cancelled' ? 'text-danger' : '' }}
-                                {{ strtolower($order->status) === 'pending' ? 'text-orange' : '' }}
-                                {{ strtolower($order->status) === 'processing' ? 'text-warning' : '' }}
-                                {{ strtolower($order->status) === 'completed' ? 'text-success' : '' }}
+                                {{ strtolower($order->status) === 'cancelled' ? 'text-danger bg-light' : '' }}
+                                {{ strtolower($order->status) === 'pending' ? 'text-secondary bg-light' : '' }}
+                                {{ strtolower($order->status) === 'accepted' ? 'text-warning bg-light' : '' }}
+                                {{ strtolower($order->status) === 'completed' ? 'text-success bg-light' : '' }}
+                                p-2 rounded
                             ">
                                 {{ ucfirst($order->status) == 'Returned' ? 'Cancelled' : ucfirst($order->status) }}
                             </p>

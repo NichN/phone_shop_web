@@ -1,8 +1,6 @@
-<!-- Include CSS -->
+
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <link href="{{ asset('css/dashboard.css') }}" rel="stylesheet" />
-
-<!-- Include JavaScript libraries -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
@@ -34,63 +32,81 @@ $(document).ready(function () {
             data: formData,
             processData: false,
             contentType: false,
+            // success: function (response) {
+            //     if (response.success) {
+            //         localStorage.removeItem('cart');
+
+            //         Swal.fire({
+            //             title: 'Enter Verification Code',
+            //             input: 'text',
+            //             inputLabel: 'A code has been sent to your email. Please enter it below:',
+            //             inputAttributes: {
+            //                 maxlength: 6,
+            //                 autocapitalize: 'off',
+            //                 autocorrect: 'off'
+            //             },
+            //             showCancelButton: true,
+            //             confirmButtonText: 'Verify',
+            //             showLoaderOnConfirm: true,
+            //             preConfirm: (code) => {
+            //                 if (!code) {
+            //                     Swal.showValidationMessage('Please enter the code.');
+            //                     return;
+            //                 }
+            //                 return $.ajax({
+            //                     url: '/checkout/verify-code',
+            //                     method: 'POST',
+            //                     data: {
+            //                         order_id: response.order_id,
+            //                         code: code,
+            //                         _token: $('meta[name="csrf-token"]').attr('content')
+            //                     }
+            //                 }).then(response => {
+            //                     if (!response.success) {
+            //                         throw new Error(response.message);
+            //                     }
+            //                     return response;
+            //                 }).catch(error => {
+            //                     Swal.showValidationMessage(
+            //                         `Verification failed: ${error}`
+            //                     );
+            //                 });
+            //             },
+            //             allowOutsideClick: () => !Swal.isLoading()
+            //         }).then((result) => {
+            //             if (result.isConfirmed) {
+            //                 Swal.fire(
+            //                     'Success!',
+            //                     'Verification code confirmed. Redirecting...',
+            //                     'success'
+            //                 ).then(() => {
+            //                     window.location.href = '/checkout/payment/' + response.order_id;
+            //                 });
+            //             }
+            //         });
+
+            //     } else {
+            //         Swal.fire('Error', response.message, 'error');
+            //     }
+            // },
             success: function (response) {
-                if (response.success) {
-                    localStorage.removeItem('cart');
+    if (response.success) {
+        localStorage.removeItem('cart');
+        Swal.fire({
+            icon: 'success',
+            title: 'Order placed successfully!',
+            text: 'Redirecting to payment...',
+            timer: 2000,
+            showConfirmButton: false
+        }).then(() => {
+            window.location.href = '/checkout/payment/' + response.order_id;
+        });
 
-                    Swal.fire({
-                        title: 'Enter Verification Code',
-                        input: 'text',
-                        inputLabel: 'A code has been sent to your email. Please enter it below:',
-                        inputAttributes: {
-                            maxlength: 6,
-                            autocapitalize: 'off',
-                            autocorrect: 'off'
-                        },
-                        showCancelButton: true,
-                        confirmButtonText: 'Verify',
-                        showLoaderOnConfirm: true,
-                        preConfirm: (code) => {
-                            if (!code) {
-                                Swal.showValidationMessage('Please enter the code.');
-                                return;
-                            }
-                            return $.ajax({
-                                url: '/checkout/verify-code',
-                                method: 'POST',
-                                data: {
-                                    order_id: response.order_id,
-                                    code: code,
-                                    _token: $('meta[name="csrf-token"]').attr('content')
-                                }
-                            }).then(response => {
-                                if (!response.success) {
-                                    throw new Error(response.message);
-                                }
-                                return response;
-                            }).catch(error => {
-                                Swal.showValidationMessage(
-                                    `Verification failed: ${error}`
-                                );
-                            });
-                        },
-                        allowOutsideClick: () => !Swal.isLoading()
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            Swal.fire(
-                                'Success!',
-                                'Verification code confirmed. Redirecting...',
-                                'success'
-                            ).then(() => {
-                                window.location.href = '/checkout/payment/' + response.order_id;
-                            });
-                        }
-                    });
+    } else {
+        Swal.fire('Error', response.message, 'error');
+    }
+},
 
-                } else {
-                    Swal.fire('Error', response.message, 'error');
-                }
-            },
             error: function (xhr) {
                 let message = xhr.responseJSON?.message || 'Checkout failed. Please try again.';
                 Swal.fire('Error', message, 'error');

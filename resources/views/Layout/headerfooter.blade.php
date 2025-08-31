@@ -817,7 +817,7 @@
             <div class="total-price">0.00</div>
         </div>
         <div>
-            <form id="checkoutRedirectForm" method="POST" action="{{ route('checkout.show') }}">
+            <form id="checkoutRedirectForm" method="GET" action="{{ route('checkout.show') }}">
                 @csrf
                 <input type="hidden" name="cart_data" id="checkoutCartData">
                 <input type="hidden" name="user_id" id="checkoutUserId"
