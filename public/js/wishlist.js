@@ -30,7 +30,10 @@ document.addEventListener("DOMContentLoaded", function () {
         productItemId = String(productItemId);
         proId = String(proId);
 
-        const existingIndex = wishlist.findIndex(item => item.productItemId === productItemId);
+        // Check for duplicates by title (case insensitive)
+        const existingIndex = wishlist.findIndex(item => 
+            item.title.toLowerCase().trim() === title.toLowerCase().trim()
+        );
 
         if (existingIndex === -1) {
             wishlist.push({ productItemId, proId, title, price, imgSrc });
@@ -328,4 +331,25 @@ document.addEventListener("DOMContentLoaded", function () {
         updateCartCountLocal();
         loadCartFromLocalStorage();
     }
+
+    // Function to clear duplicates (run this in browser console)
+    window.clearDuplicates = function() {
+        const uniqueItems = [];
+        const seenTitles = new Set();
+        
+        wishlist.forEach(item => {
+            const titleKey = item.title.toLowerCase().trim();
+            if (!seenTitles.has(titleKey)) {
+                seenTitles.add(titleKey);
+                uniqueItems.push(item);
+            }
+        });
+        
+        wishlist = uniqueItems;
+        localStorage.setItem('wishlist', JSON.stringify(wishlist));
+        updateWishlistCount();
+        updateWishlistModal();
+        syncWishlistIcons();
+        console.log('Duplicates cleared!');
+    };
 });

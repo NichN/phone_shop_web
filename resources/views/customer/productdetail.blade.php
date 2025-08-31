@@ -6,122 +6,7 @@
     <link rel="stylesheet" href="{{ asset('css/productdetail.css') }}">
 
     <div class="container my-5">
-        <!-- Filter Section -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card shadow-sm filter-section">
-                    <div class="card-header bg-light">
-                        <h5 class="mb-0">
-                            <i class="fas fa-filter me-2"></i>Filter & Sort Options
-                            <button class="btn btn-sm btn-outline-primary float-end" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse">
-                                <i class="fas fa-chevron-down"></i>
-                            </button>
-                        </h5>
-                    </div>
-                    <div class="collapse show" id="filterCollapse">
-                    <div class="card-body p-4">
-                        <!-- Filter Grid -->
-                        <div class="row g-4">
-                            <!-- Price Range Filter -->
-                            <div class="col-lg-6 col-md-12">
-                                <div class="filter-group">
-                                    <label class="form-label fw-bold">
-                                        <i class="fas fa-dollar-sign me-1"></i>Price Range
-                                    </label>
-                                    <div class="d-flex gap-3">
-                                        <div class="flex-fill">
-                                            <input type="number" class="form-control" id="minPrice" placeholder="Min Price" min="0">
-                                        </div>
-                                        <div class="flex-fill">
-                                            <input type="number" class="form-control" id="maxPrice" placeholder="Max Price" min="0">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Color Filter -->
-                            <div class="col-lg-3 col-md-6">
-                                <div class="filter-group">
-                                    <label class="form-label fw-bold">
-                                        <i class="fas fa-palette me-1"></i>Color
-                                    </label>
-                                    <select class="form-select" id="colorFilter">
-                                        <option value="">All Colors</option>
-                                        @foreach ($color_code as $color)
-                                            <option value="{{ $color }}">{{ ucfirst($color) }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            
-                            <!-- Size Filter -->
-                            <div class="col-lg-3 col-md-6">
-                                <div class="filter-group">
-                                    <label class="form-label fw-bold">
-                                        <i class="fas fa-hdd me-1"></i>Storage
-                                    </label>
-                                    <select class="form-select" id="sizeFilter">
-                                        <option value="">All Sizes</option>
-                                        @foreach ($sizes as $size)
-                                            <option value="{{ $size }}">{{ $size }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            
-                            <!-- Type Filter -->
-                            <div class="col-lg-3 col-md-6">
-                                <div class="filter-group">
-                                    <label class="form-label fw-bold">
-                                        <i class="fas fa-tag me-1"></i>Type
-                                    </label>
-                                    <select class="form-select" id="typeFilter">
-                                        <option value="">All Types</option>
-                                        @foreach ($type as $typeItem)
-                                            <option value="{{ $typeItem }}">{{ $typeItem }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            
-                            <!-- Sort Filter -->
-                            <div class="col-lg-3 col-md-6">
-                                <div class="filter-group">
-                                    <label class="form-label fw-bold">
-                                        <i class="fas fa-sort me-1"></i>Sort By
-                                    </label>
-                                    <select class="form-select" id="sortFilter">
-                                        <option value="default">Default</option>
-                                        <option value="price_low_high">Price: Low to High</option>
-                                        <option value="price_high_low">Price: High to Low</option>
-                                        <option value="name_a_z">Name: A-Z</option>
-                                        <option value="name_z_a">Name: Z-A</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Filter Actions -->
-                        <div class="row mt-4">
-                            <div class="col-12">
-                                <div class="d-flex gap-3 justify-content-center">
-                                    <button class="btn btn-primary" id="applyFilters">
-                                        <i class="fas fa-search me-2"></i>Apply Filters
-                                    </button>
-                                    <button class="btn btn-outline-secondary" id="clearFilters">
-                                        <i class="fas fa-times me-2"></i>Clear All
-                                    </button>
-                                    <button class="btn btn-outline-info" id="resetFilters">
-                                        <i class="fas fa-undo me-2"></i>Reset to Default
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+
 
 
         <div class="row mt-3">
@@ -215,6 +100,13 @@
                     </div>
                 </div>
                 <div class="mt-3">
+                    <!-- Stock Availability -->
+                    <div class="mb-2">
+                        <span class="text-muted">
+                            <i class="fas fa-box me-1"></i>
+                            Stock Available: <span class="fw-bold text-primary">{{ $stock[0] ?? 'N/A' }}</span>
+                        </span>
+                    </div>
                     <a href="#" class="btn btn-dark px-4 py-2 custom-btn w-100 add-cart" data-product-item-id=""
                         data-title="{{ $product['name'] }}" data-price="{{ $product['price'] }}"
                         data-img="{{ asset('storage/' . $product['image'][0]) }}" onclick="return addToCart(event)">
