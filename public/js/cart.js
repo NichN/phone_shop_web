@@ -41,15 +41,15 @@ function addToCartHandler(event) {
     const quantity = parseInt(document.getElementById('productQuantity')?.value) || 1;
     const stock = parseInt(button.getAttribute('data-stock')) || 0;
 
-    // Validate quantity
-    if (isNaN(quantity) || quantity < 1) {
-        showCartMessage('Please enter a valid quantity.', 'alert-danger');
-        return;
-    }
-    if (quantity > stock) {
-        showCartMessage(`Only ${stock} items available in stock.`, 'alert-danger');
-        return;
-    }
+    // // Validate quantity
+    // if (isNaN(quantity) || quantity < 1) {
+    //     showCartMessage('Please enter a valid quantity.', 'alert-danger');
+    //     return;
+    // }
+    // if (quantity > stock) {
+    //     showCartMessage(`Only ${stock} items available in stock.`, 'alert-danger');
+    //     return;
+    // }
 
     handleAddToCart(productItemId, null, null, quantity);
 }
@@ -81,10 +81,10 @@ function handleAddToCart(productItemId, size = null, color = null, quantity = 1)
         return;
     }
 
-    if (quantity > stock) {
-        showCartMessage(`Only ${stock} items available in stock.`, 'alert-danger');
-        return;
-    }
+    // if (quantity > stock) {
+    //     showCartMessage(`Only ${stock} items available in stock.`, 'alert-danger');
+    //     return;
+    // }
 
     if (window.isAuthenticated) {
         $.ajax({
@@ -102,7 +102,7 @@ function handleAddToCart(productItemId, size = null, color = null, quantity = 1)
                     addOrUpdateLocalCart(id, title, price, imgSrc, finalSize, finalColor, quantity);
                     updateCartCount();
                     loadCartFromLocalStorage();
-                    showCartMessage(`${title} (x${quantity}) added to cart!`, 'alert-success');
+                    showCartMessage(`(x${quantity}) added to cart!`, 'alert-success');
                 } else {
                     showCartMessage("Failed: " + response.message, 'alert-danger');
                 }
@@ -259,15 +259,55 @@ function submitCheckoutForm() {
     document.getElementById('checkoutRedirectForm').submit();
 }
 
-function showCartMessage(message, alertClass) {
-    const cartMessage = document.getElementById('cartMessage');
-    if (cartMessage) {
-        cartMessage.textContent = message;
-        cartMessage.className = `alert ${alertClass} d-block`;
-        setTimeout(() => {
-            cartMessage.className = 'alert alert-info d-none';
-        }, 3000);
-    } else {
-        alert(message); // Fallback to alert if cartMessage element is not found
+function showCartMessage(message, type = 'success') {
+    // Create message container if it doesn't exist
+    let messageBox = document.getElementById('cartMessageBox');
+    if (!messageBox) {
+        messageBox = document.createElement('div');
+        messageBox.id = 'cartMessageBox';
+        messageBox.style.position = 'fixed';
+        messageBox.style.top = '20px';
+        messageBox.style.right = '20px';
+        messageBox.style.zIndex = '9999';
+        messageBox.style.maxWidth = '300px';
+        document.body.appendChild(messageBox);
     }
+
+    // Create the toast
+    const toast = document.createElement('div');
+    toast.textContent = message;
+    toast.style.padding = '12px 16px';
+    toast.style.marginBottom = '10px';
+    toast.style.borderRadius = '8px';
+    toast.style.color = '#fff';
+    toast.style.fontSize = '14px';
+    toast.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+    toast.style.opacity = '0';
+    toast.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    
+    // Different colors for success / error
+    if (type === 'success') {
+        toast.style.backgroundColor = '#28a745'; // green
+    } else if (type === 'error') {
+        toast.style.backgroundColor = '#dc3545'; // red
+    } else {
+        toast.style.backgroundColor = '#28a745'; // gray
+    }
+
+    messageBox.appendChild(toast);
+
+    // Animate in
+    setTimeout(() => {
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateY(0)';
+    }, 50);
+
+    // Auto remove after 3 seconds
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(-20px)';
+        setTimeout(() => {
+            toast.remove();
+        }, 500);
+    }, 3000);
 }
