@@ -82,7 +82,7 @@ function handleAddToCart(productItemId, size = null, color = null) {
                     addOrUpdateLocalCart(id, title, price, imgSrc, finalSize, finalColor, quantity);
                     updateCartCount();
                     loadCartFromLocalStorage();
-                    alert("Added to cart.");
+                
                 } else {
                     alert("Failed: " + response.message);
                 }
@@ -95,7 +95,6 @@ function handleAddToCart(productItemId, size = null, color = null) {
         addOrUpdateLocalCart(id, title, price, imgSrc, finalSize, finalColor, quantity);
         updateCartCountLocal();
         loadCartFromLocalStorage();
-        alert("Added to cart.");
     }
 }
 function addOrUpdateLocalCart(id, title, price, imgSrc, size, color, quantity) {
@@ -140,6 +139,45 @@ function loadCartFromLocalStorage() {
 
     cartContainer.innerHTML = '';
     let total = 0;
+
+    if (cart.length === 0) {
+        // Show empty cart state
+        const emptyCartHtml = `
+        <div class="empty-cart-container">
+            <div class="empty-cart-icon">
+                <i class="fas fa-shopping-bag"></i>
+                <div class="empty-cart-emoji">😊</div>
+            </div>
+            <div class="empty-cart-content">
+                <h4 class="empty-cart-title">Your cart is waiting for you!</h4>
+                <p class="empty-cart-subtitle">Let's find something amazing together</p>
+                <div class="empty-cart-actions">
+                    <a href="/login" class="empty-cart-btn signin-btn">
+                        <i class="fas fa-user me-2"></i>Sign In
+                    </a>
+                    <a href="/product_category/16" class="empty-cart-btn shop-btn">
+                        <i class="fas fa-shopping-bag me-2"></i>Start Shopping
+                    </a>
+                </div>
+            </div>
+        </div>
+        `;
+        cartContainer.insertAdjacentHTML('beforeend', emptyCartHtml);
+        totalEl.textContent = '0.00 $';
+        
+        // Hide checkout form when cart is empty
+        const checkoutForm = document.getElementById('checkoutRedirectForm');
+        if (checkoutForm) {
+            checkoutForm.style.display = 'none';
+        }
+        return;
+    }
+
+    // Show checkout form when cart has items
+    const checkoutForm = document.getElementById('checkoutRedirectForm');
+    if (checkoutForm) {
+        checkoutForm.style.display = 'block';
+    }
 
     cart.forEach((item, index) => {
         const subtotal = item.price * item.quantity;

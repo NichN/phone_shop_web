@@ -85,11 +85,108 @@
 </div>
 
     </section>
+    
+    {{-- Brand Grid Section --}}
+    <section class="brand-section">
+        <div class="container my-4 scroll-animate">
+            <h2 class="text-right mb-3" style="font-size: 22px;"><b>Shop by Brand</b></h2>
+            <div class="row g-3" id="brand-grid">
+                @foreach ($brands as $index => $brand)
+                    <div class="col-lg-2 col-md-3 col-sm-4 col-6 brand-item {{ $index >= 6 ? 'brand-hidden' : '' }}" data-index="{{ $index }}">
+                        <div class="brand-card" data-brand="{{ strtolower($brand->name) }}">
+                            <a href="{{ route('product_by_brand', $brand->id) }}" class="brand-link">
+                                <div class="brand-content">
+                                    <h3 class="brand-name">{{ $brand->name }}</h3>
+                                    <div class="brand-icon">
+                                        @php
+                                            $brandName = strtolower($brand->name);
+                                            $iconClass = 'fas fa-mobile-alt'; // default icon
+                                            
+                                            if (strpos($brandName, 'apple') !== false || strpos($brandName, 'iphone') !== false) {
+                                                $iconClass = 'fab fa-apple';
+                                            } elseif (strpos($brandName, 'samsung') !== false) {
+                                                $iconClass = 'fas fa-mobile-alt';
+                                            } elseif (strpos($brandName, 'huawei') !== false) {
+                                                $iconClass = 'fas fa-mobile-alt';
+                                            } elseif (strpos($brandName, 'oppo') !== false) {
+                                                $iconClass = 'fas fa-mobile-alt';
+                                            } elseif (strpos($brandName, 'xiaomi') !== false) {
+                                                $iconClass = 'fas fa-mobile-alt';
+                                            } elseif (strpos($brandName, 'oneplus') !== false) {
+                                                $iconClass = 'fas fa-mobile-alt';
+                                            } elseif (strpos($brandName, 'google') !== false) {
+                                                $iconClass = 'fab fa-google';
+                                            } elseif (strpos($brandName, 'sony') !== false) {
+                                                $iconClass = 'fas fa-mobile-alt';
+                                            } elseif (strpos($brandName, 'lg') !== false) {
+                                                $iconClass = 'fas fa-mobile-alt';
+                                            } elseif (strpos($brandName, 'nokia') !== false) {
+                                                $iconClass = 'fas fa-mobile-alt';
+                                            }
+                                        @endphp
+                                        <i class="{{ $iconClass }}"></i>
+                                    </div>
+                                    <div class="brand-arrow">
+                                        <i class="fas fa-arrow-right"></i>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+            
+            @if(count($brands) > 6)
+                <div class="text-center mt-3" id="brand-toggle-container">
+                    <button class="btn btn-outline-primary px-3 py-1" id="brand-toggle-btn" onclick="toggleBrands()">
+                        <i class="fas fa-chevron-down me-1"></i>See More Brands <span class="badge bg-secondary ms-1">{{ count($brands) - 6 }}</span>
+                    </button>
+                </div>
+            @endif
+            
+            <script>
+            function toggleBrands() {
+                console.log('Toggle function called');
+                const hiddenBrands = document.querySelectorAll('.brand-hidden');
+                const toggleBtn = document.getElementById('brand-toggle-btn');
+                const isExpanded = toggleBtn.classList.contains('expanded');
+                
+                console.log('Hidden brands found:', hiddenBrands.length);
+                console.log('Is expanded:', isExpanded);
+                
+                if (!isExpanded) {
+                    // Show hidden brands
+                    hiddenBrands.forEach((brand, index) => {
+                        setTimeout(() => {
+                            brand.classList.add('show');
+                            console.log('Showed brand', index);
+                        }, index * 100);
+                    });
+                    
+                    toggleBtn.innerHTML = '<i class="fas fa-chevron-up me-1"></i>See Less Brands';
+                    toggleBtn.classList.add('expanded');
+                } else {
+                    // Hide brands
+                    hiddenBrands.forEach((brand, index) => {
+                        setTimeout(() => {
+                            brand.classList.remove('show');
+                            console.log('Hid brand', index);
+                        }, index * 50);
+                    });
+                    
+                    toggleBtn.innerHTML = '<i class="fas fa-chevron-down me-1"></i>See More Brands <span class="badge bg-secondary ms-1">' + hiddenBrands.length + '</span>';
+                    toggleBtn.classList.remove('expanded');
+                }
+            }
+            </script>
+        </div>
+    </section>
+    
     <section>
         <div class="container my-5 scroll-animate">
             <h2 class="text-right mb-4" style="font-size: 25px;"><b>New Products</b></h2>
             <div class="row g-4">
-                @foreach ($products->take(10) as $product)
+                @foreach ($products->take(16) as $product)
                     @php $images = json_decode($product->images, true); @endphp
                     <div class="col-md-3">
                         <div class="card product-card" style="height:400px;">

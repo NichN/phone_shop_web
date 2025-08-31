@@ -109,6 +109,42 @@ class ProductController extends Controller
         return view('customer.product', compact('phone', 'brands'));
     }
 
+    public function getByBrand($brandId)
+    {
+        $brand = DB::table('brand')->where('id', $brandId)->first();
+        
+        $products = DB::table('product')
+            ->join('product_item', function ($join) {
+                $join->on('product.id', '=', 'product_item.pro_id')
+                    ->whereRaw('product_item.id = (
+                        select min(id) from product_item as pi2 
+                        where pi2.pro_id = product.id and pi2.stock > 0
+                    )')
+                    ->where('product_item.stock', '>', 0);
+            })
+            ->where('product.brand_id', $brandId)
+            ->select('product.*', 'product_item.price', 'product_item.images', 'product_item.color_code')
+            ->get();
+
+        // Get available colors for each product
+        foreach ($products as $product) {
+            $product->colors = DB::table('product_item')
+                ->where('pro_id', $product->id)
+                ->pluck('color_code')
+                ->unique()
+                ->values();
+        }
+
+        // Get all brands for the filter dropdown
+        $brands = DB::table('brand')
+            ->join('product', 'brand.id', '=', 'product.brand_id')
+            ->select('brand.id', 'brand.name')
+            ->distinct()
+            ->get();
+
+        return view('customer.product', compact('products', 'brand', 'brands'));
+    }
+
     public function product_acessory()
     {
         $products = DB::table('product')
@@ -150,7 +186,8 @@ class ProductController extends Controller
                 ->unique()
                 ->values();
         }
-        return view('customer.product_accesory', compact('products', 'accessoryProducts', 'brands'));
+        return view('customer.product_accesory', compact('products', 'accessoryProducts', 'brands'));   
+        
     }
     // public function show($pro_id)
     // {

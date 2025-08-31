@@ -93,17 +93,31 @@ public function index()
 
     $categories = DB::table('category')->get();
 
+    // Get all brands for the brand grid
+    $brands = DB::table('brand')
+        ->join('product', 'brand.id', '=', 'product.brand_id')
+        ->select('brand.id', 'brand.name')
+        ->distinct()
+        ->get();
+
     // Test Productdetail query with a valid pro_id
     $someValue = $products->isNotEmpty() ? $products->first()->id : 1; // Use first product.id or a known ID
     $productItems = Productdetail::where('pro_id', $someValue)->get(['id as product_item_id', 'pro_id', 'price', 'images', 'color_code']);
     // dd($productItems); // Should show product_item_id (product_item.id), pro_id, etc.
 
-    return view('customer.homepage2', compact('products', 'accessoryProducts', 'phone', 'categories','productItems'));
+    return view('customer.homepage2', compact('products', 'accessoryProducts', 'phone', 'categories', 'brands', 'productItems'));
 }
 public function getByCategory($id)
 {
     $category = Category::findOrFail($id);
-    $brands = Brand::all();
+    
+    // Get only brands that have products in this category
+    $brands = DB::table('brand')
+        ->join('product', 'brand.id', '=', 'product.brand_id')
+        ->where('product.cat_id', $id)
+        ->select('brand.id', 'brand.name')
+        ->distinct()
+        ->get();
 
     $products = DB::table('product')
         ->join('product_item', function ($join) {

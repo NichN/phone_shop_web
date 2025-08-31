@@ -83,11 +83,10 @@
                 <div class="dropdown me-2">
                     <button class="btn btn-outline-primary dropdown-toggle" type="button" id="brandDropdown"
                         data-bs-toggle="dropdown" aria-expanded="false">
-                        <span id="selectedBrand">All Brands</span>
+                        <span id="selectedBrand">Show All</span>
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="brandDropdown">
-                        <li><a class="dropdown-item brand-option active" href="#" data-brand="All Brands">All
-                                Brands</a></li>
+                        <li><a class="dropdown-item brand-option active" href="#" data-brand="Show All">Show All</a></li>
                         @foreach ($brands as $brand)
                             <li><a class="dropdown-item brand-option" href="#"
                                     data-brand="{{ $brand->name }}">{{ $brand->name }}</a></li>
@@ -134,7 +133,7 @@
                                     }
                                 }
                             @endphp
-                            <div class="col-md-3">
+                            <div class="col-md-3 product-item" data-brand="{{ $brandName }}">
                             <div class="card product-card" style="height:400px;">
                                 @if (!empty($images[0]))
                                     <a href="{{ route('product.show', $product->id) }}">
@@ -194,54 +193,17 @@
             const searchInput = document.getElementById('searchInput');
             const searchForm = document.getElementById('searchForm');
 
-            let currentBrand = 'All Brands';
+            let currentBrand = 'Show All';
             let currentSort = 'default';
             let currentSearch = '';
 
-            // function filterAndSort() {
-            //     // Filter
-            //     productItems.forEach(item => {
-            //         const brand = item.getAttribute('data-brand');
-            //         const name = item.querySelector('.product-title').textContent.trim().toLowerCase();
-            //         const matchesBrand = (currentBrand === 'All Brands' || brand === currentBrand);
-            //         const matchesSearch = (!currentSearch || name.includes(currentSearch));
-            //         if (matchesBrand && matchesSearch) {
-            //             item.style.display = '';
-            //         } else {
-            //             item.style.display = 'none';
-            //         }
-            //     });
-            //     // Sort
-            //     let visibleItems = productItems.filter(item => item.style.display !== 'none');
-            //     let container = visibleItems.length ? visibleItems[0].parentElement : null;
-            //     if (container) {
-            //         let sorted = [...visibleItems];
-            //         if (currentSort === 'price-asc' || currentSort === 'price-desc') {
-            //             sorted.sort((a, b) => {
-            //                 let priceA = parseFloat(a.querySelector('.card-price').textContent.replace(/[^\d.]/g, ''));
-            //                 let priceB = parseFloat(b.querySelector('.card-price').textContent.replace(/[^\d.]/g, ''));
-            //                 return currentSort === 'price-asc' ? priceA - priceB : priceB - priceA;
-            //             });
-            //         } else if (currentSort === 'name-asc' || currentSort === 'name-desc') {
-            //             sorted.sort((a, b) => {
-            //                 let nameA = a.querySelector('.product-title').textContent.trim().toLowerCase();
-            //                 let nameB = b.querySelector('.product-title').textContent.trim().toLowerCase();
-            //                 if (nameA < nameB) return currentSort === 'name-asc' ? -1 : 1;
-            //                 if (nameA > nameB) return currentSort === 'name-asc' ? 1 : -1;
-            //                 return 0;
-            //             });
-            //         }
-            //         // Re-append sorted items
-            //         sorted.forEach(item => container.appendChild(item));
-            //     }
-            // }
             function filterAndSort() {
                 // Filter
                 productItems.forEach(item => {
                     const brand = item.getAttribute('data-brand');
                     const name = item.querySelector('.product-title').textContent.trim().toLowerCase();
-                    const matchesBrand = (currentBrand === 'All Brands' || brand === currentBrand);
-                    const matchesSearch = (!currentSearch || name.includes(currentSearch));
+                    const matchesBrand = (currentBrand === 'Show All' || brand === currentBrand);
+                    const matchesSearch = (!currentSearch || name.includes(currentSearch.toLowerCase()));
                     if (matchesBrand && matchesSearch) {
                         item.style.display = '';
                     } else {
@@ -256,10 +218,8 @@
                     let sorted = [...visibleItems];
                     if (currentSort === 'price-asc' || currentSort === 'price-desc') {
                         sorted.sort((a, b) => {
-                            let priceA = parseFloat(a.querySelector('.card-price').textContent.replace(
-                                /[^\d.]/g, ''));
-                            let priceB = parseFloat(b.querySelector('.card-price').textContent.replace(
-                                /[^\d.]/g, ''));
+                            let priceA = parseFloat(a.querySelector('.card-price').textContent.replace(/[^\d.]/g, ''));
+                            let priceB = parseFloat(b.querySelector('.card-price').textContent.replace(/[^\d.]/g, ''));
                             return currentSort === 'price-asc' ? priceA - priceB : priceB - priceA;
                         });
                     } else if (currentSort === 'name-asc' || currentSort === 'name-desc') {
@@ -284,7 +244,7 @@
                 }
             }
 
-
+            // Brand filter event listeners
             brandOptions.forEach(option => {
                 option.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -295,6 +255,8 @@
                     filterAndSort();
                 });
             });
+
+            // Sort filter event listeners
             sortOptions.forEach(option => {
                 option.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -305,17 +267,23 @@
                     filterAndSort();
                 });
             });
+
+            // Search functionality
             if (searchInput) {
                 searchInput.addEventListener('input', function() {
-                    currentSearch = searchInput.value.trim().toLowerCase();
+                    currentSearch = searchInput.value.trim();
                     filterAndSort();
                 });
+                
                 searchForm.addEventListener('submit', function(e) {
                     e.preventDefault();
-                    currentSearch = searchInput.value.trim().toLowerCase();
+                    currentSearch = searchInput.value.trim();
                     filterAndSort();
                 });
             }
+
+            // Initialize
+            filterAndSort();
         });
     </script>
 @endsection
