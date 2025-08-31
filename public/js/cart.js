@@ -141,6 +141,9 @@ function loadCartFromLocalStorage() {
     let total = 0;
 
     if (cart.length === 0) {
+        // Check if user is authenticated
+        const isAuthenticated = window.isAuthenticated || false;
+        
         // Show empty cart state
         const emptyCartHtml = `
         <div class="empty-cart-container">
@@ -152,9 +155,11 @@ function loadCartFromLocalStorage() {
                 <h4 class="empty-cart-title">Your cart is waiting for you!</h4>
                 <p class="empty-cart-subtitle">Let's find something amazing together</p>
                 <div class="empty-cart-actions">
-                    <a href="/login" class="empty-cart-btn signin-btn">
-                        <i class="fas fa-user me-2"></i>Sign In
-                    </a>
+                    ${!isAuthenticated ? `
+                        <a href="/login" class="empty-cart-btn signin-btn">
+                            <i class="fas fa-user me-2"></i>Sign In
+                        </a>
+                    ` : ''}
                     <a href="/product_category/16" class="empty-cart-btn shop-btn">
                         <i class="fas fa-shopping-bag me-2"></i>Start Shopping
                     </a>
