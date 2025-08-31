@@ -78,144 +78,136 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     async function updateWishlistModal() {
-        const listwish = document.getElementById('listwish');
-        if (!listwish) return;
+    const listwish = document.getElementById('listwish');
+    if (!listwish) return;
 
-        listwish.innerHTML = '';
+    listwish.innerHTML = '';
 
-        if (wishlist.length === 0) {
-            listwish.innerHTML = `
-                <div class="text-center p-4">
-                    <i class="fa-regular fa-heart fs-1 text-muted mb-2"></i>
-                    <p class="text-muted mb-0">Your wishlist is empty.</p>
-                    <small class="text-muted">Start adding items you love ❤️</small>
-                </div>`;
-            return;
-        }
+    if (wishlist.length === 0) {
+        listwish.innerHTML = `
+            <div class="text-center p-4">
+                <i class="fa-regular fa-heart fs-1 text-muted mb-2"></i>
+                <p class="text-muted mb-0">Your wishlist is empty.</p>
+                <small class="text-muted">Start adding items you love ❤️</small>
+            </div>`;
+        return;
+    }
 
-        for (const item of wishlist) {
-            if (!item.productItemId) continue;
+    for (const item of wishlist) {
+        if (!item.productItemId) continue;
 
-            const { sizes, colors } = await fetchProductOptions(item.productItemId);
+        const { sizes, colors } = await fetchProductOptions(item.productItemId);
 
-            const sizeOptions = `<option value="">Select size</option>` + sizes.map(s => `<option value="${s}">${s}</option>`).join('');
-            const colorOptions = `<option value="">Select color</option>` + colors.map(c => `<option value="${c.code}">${c.name}</option>`).join('');
+        const priceNum = typeof item.price === 'number' ? item.price : parseFloat(item.price.replace(/[^\d.-]/g, '')) || 0;
+        const formattedPrice = priceNum.toFixed(2);
 
-            const priceNum = typeof item.price === 'number' ? item.price : parseFloat(item.price.replace(/[^\d.-]/g, '')) || 0;
-            const formattedPrice = priceNum.toFixed(2);
+        const listItem = document.createElement('li');
+        listItem.className = 'list-group-item wishlist-item-card d-flex justify-content-between align-items-center p-4 mb-3 rounded shadow-sm border-0 position-relative';
 
-            const listItem = document.createElement('li');
-            listItem.className = 'list-group-item wishlist-item-card d-flex justify-content-between align-items-center p-4 mb-3 rounded shadow-sm border-0 position-relative';
+        listItem.innerHTML = `
+            <div class="d-flex align-items-center w-100">
+                <img src="${item.imgSrc}" alt="${item.title}" class="img-fluid rounded-3" style="width: 80px; height: 80px; object-fit: cover;">
+                <div class="ms-3 flex-grow-1">
+                    <h5 class="fw-bold mb-1 product-title">${item.title}</h5>
+                    <p class="text-muted fw-bold mb-2" style="color:blue;">$${formattedPrice}</p>
 
-            listItem.innerHTML = `
-                <div class="d-flex align-items-center">
-                    <img src="${item.imgSrc}" alt="${item.title}" class="img-fluid rounded-3" style="width: 80px; height: 80px; object-fit: cover;">
-                    <div class="ms-3" style="flex: 1;">
-                        <h5 class="mb-1 fw-bold product-title">${item.title}</h5>
-                        <p class="mb-1 text-muted card-price fw-bold" style="color:blue;">$${formattedPrice}</p>
-                        <div style="display: flex; gap: 1rem; margin-bottom: 0.5rem;">
-                            <div style="flex: 1;">
-                                <label class="form-label small mb-1">Size:</label>
-                                <select class="form-select form-select-sm size-select">
-                                    ${sizeOptions}
-                                </select>
-                            </div>
-                            <div style="flex: 1;">
-                                <label class="form-label small mb-1">Color:</label>
-                                <select class="form-select form-select-sm color-select">
-                                    ${colorOptions}
-                                </select>
-                            </div>
+                    <div class="mb-2">
+                        <label class="form-label small mb-1">Choose Size:</label>
+                        <div class="btn-group size-options" role="group">
+                            ${sizes.map(s => `
+                                <button type="button" class="btn btn-outline-dark btn-sm size-btn" data-size="${s}">${s}</button>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label small mb-1">Choose Color:</label>
+                        <div class="d-flex gap-2 color-options">
+                            ${colors.map(c => `
+                                <button type="button" class="btn color-btn border" 
+                                    style="background-color: ${c.code}; width: 30px; height: 30px; border-radius: 50%;" 
+                                    title="${c.name}" data-color="${c.code}">
+                                </button>
+                            `).join('')}
                         </div>
                     </div>
                 </div>
                 <div class="d-flex flex-column align-items-end">
-                    <button class="btn btn-danger btn-sm remove-wishlist-btn position-absolute top-0 end-0" style="z-index: 1; padding: 0.25rem 0.5rem; font-size: 1.1rem;" data-product-id="${item.productItemId}">
+                    <button class="btn btn-danger btn-sm remove-wishlist-btn position-absolute top-0 end-0" style="z-index: 1;" data-product-id="${item.productItemId}">
                         <i class="fa-solid fa-trash"></i>
                     </button>
                     <button class="btn btn-outline-primary btn-sm move-to-bag-btn mt-3" data-product-id="${item.productItemId}">
                         Move To Bag
                     </button>
-                </div>`;
+                </div>
+            </div>`;
 
-            listwish.appendChild(listItem);
+        listwish.appendChild(listItem);
 
-            listItem.querySelector('.remove-wishlist-btn').addEventListener('click', () => {
-                removeFromWishlist(item.productItemId);
+        let selectedSize = null;
+        let selectedColor = null;
+
+        // Handle size selection
+        listItem.querySelectorAll('.size-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                listItem.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedSize = btn.dataset.size;
             });
+        });
 
-            listItem.querySelector('.move-to-bag-btn').addEventListener('click', () => {
-                const size = listItem.querySelector('.size-select').value;
-                const color = listItem.querySelector('.color-select').value;
-                console.log(size, color);
+        // Handle color selection
+        listItem.querySelectorAll('.color-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                listItem.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedColor = btn.dataset.color;
+            });
+        });
 
-                if (!size || !color) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Selection Required',
-                        text: 'Please select both size and color.',
-                        confirmButtonText: 'OK',
-                        customClass: {
-                            popup: 'swal2-popup-above-modal',
-                            confirmButton: 'btn btn-warning'
-                        },
-                        didOpen: () => {
-                            const popup = Swal.getPopup();
-                            popup.style.zIndex = '1080'; // Adjust based on your modal's z-index
-                        }
-                    });
-                    return;
-                }
+        // Remove from wishlist
+        listItem.querySelector('.remove-wishlist-btn').addEventListener('click', () => {
+            removeFromWishlist(item.productItemId);
+        });
 
-                fetch(`/get-product-item-id?pro_id=${item.proId}&size=${size}&color_code=${encodeURIComponent(color)}`)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error("Product variation fetch failed.");
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.success) {
-                            const finalProductItemId = data.product_item_id;
-                            removeFromWishlist(item.productItemId);
-                            moveToBag(item.title, item.price, item.imgSrc, finalProductItemId, size, color);
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Product Error',
-                                text: 'Error: Product variation not found.',
-                                confirmButtonText: 'OK',
-                                customClass: {
-                                    popup: 'swal2-popup-above-modal',
-                                    confirmButton: 'btn btn-danger'
-                                },
-                                didOpen: () => {
-                                    const popup = Swal.getPopup();
-                                    popup.style.zIndex = '1080';
-                                }
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error fetching product_item_id:', error);
+        // Move to bag
+        listItem.querySelector('.move-to-bag-btn').addEventListener('click', () => {
+            if (!selectedSize || !selectedColor) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Selection Required',
+                    text: 'Please select both size and color.',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
+
+            fetch(`/get-product-item-id?pro_id=${item.proId}&size=${selectedSize}&color_code=${encodeURIComponent(selectedColor)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const finalProductItemId = data.product_item_id;
+                        removeFromWishlist(item.productItemId);
+                        moveToBag(item.title, item.price, item.imgSrc, finalProductItemId, selectedSize, selectedColor);
+                    } else {
                         Swal.fire({
                             icon: 'error',
-                            title: 'Availability Error',
-                            text: 'Error: The product you selected is not available.',
-                            confirmButtonText: 'OK',
-                            customClass: {
-                                popup: 'swal2-popup-above-modal',
-                                confirmButton: 'btn btn-danger'
-                            },
-                            didOpen: () => {
-                                const popup = Swal.getPopup();
-                                popup.style.zIndex = '1080';
-                            }
+                            title: 'Product Error',
+                            text: 'Product variation not found.'
                         });
+                    }
+                })
+                .catch(() => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Availability Error',
+                        text: 'The product you selected is not available.'
                     });
-            });
-        }
+                });
+        });
     }
+}
+
 
     // Remove Item from Wishlist (localStorage)
     function removeItemFromLocal(productItemId) {
