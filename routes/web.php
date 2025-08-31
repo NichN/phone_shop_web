@@ -332,7 +332,7 @@ Route::prefix('faq')->name('faq.')->group(function(){
 
 // nich->middleware(['auth', 'twofactor'])
 Route::prefix('checkout')->name('checkout.')->group(function(){
-    Route::post('/', [CheckoutController::class, 'showCheckout'])->name('show');
+    Route::get('/', [CheckoutController::class, 'showCheckout'])->name('show');
     Route::post('/store',[CheckoutController::class,'storeCheckout'])->name('store');
     Route::get('/payment/{orderId}', [CheckoutController::class, 'processPayment'])->name('payment');
     Route::post('/payment/store', [CheckoutController::class, 'storePayment'])->name('payment_store');

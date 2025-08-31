@@ -115,23 +115,23 @@ class CheckoutController extends Controller
                     'price' => floatval(preg_replace('/[^\d.]/', '', $item['price'])),
                 ]);
             }
-            $orderItems = DB::table('order_item')
-                ->join('product_item', 'order_item.product_item_id', '=', 'product_item.id')
-                ->where('order_item.order_id', $order->id)
-                ->select([
-                    'product_item.product_name',
-                    'product_item.color_code',
-                    'product_item.size',
-                    'order_item.quantity',
-                    'order_item.price',
-                    'product_item.images'
-                ])
-                ->get();
-            $adminEmails = \App\Models\User::where('role_id', '1')->pluck('email')->toArray();
+            // $orderItems = DB::table('order_item')
+            //     ->join('product_item', 'order_item.product_item_id', '=', 'product_item.id')
+            //     ->where('order_item.order_id', $order->id)
+            //     ->select([
+            //         'product_item.product_name',
+            //         'product_item.color_code',
+            //         'product_item.size',
+            //         'order_item.quantity',
+            //         'order_item.price',
+            //         'product_item.images'
+            //     ])
+            //     ->get();
+            // $adminEmails = \App\Models\User::where('role_id', '1')->pluck('email')->toArray();
 
-            \Mail::to($adminEmails)->send(
-                new \App\Mail\OrderConfirmationMail($order, $orderItems)
-            );
+            // \Mail::to($adminEmails)->send(
+            //     new \App\Mail\OrderConfirmationMail($order, $orderItems)
+            // );
 
             DB::commit();
 
@@ -221,6 +221,23 @@ class CheckoutController extends Controller
             'img_verify' => $imgPath,
             'payment_status' => 'pending',
         ]);
+        $orderItems = DB::table('order_item')
+                ->join('product_item', 'order_item.product_item_id', '=', 'product_item.id')
+                ->where('order_item.order_id', $order->id)
+                ->select([
+                    'product_item.product_name',
+                    'product_item.color_code',
+                    'product_item.size',
+                    'order_item.quantity',
+                    'order_item.price',
+                    'product_item.images'
+                ])
+                ->get();
+        $adminEmails = \App\Models\User::where('role_id', '1')->pluck('email')->toArray();
+
+            \Mail::to($adminEmails)->send(
+                new \App\Mail\OrderConfirmationMail($order, $orderItems)
+            );
 
         DB::commit();
 
@@ -228,11 +245,13 @@ class CheckoutController extends Controller
             $telegramBotToken = '8108484660:AAFfEtec51wHSAJfHso1BTT6X9_H5YfcMIo';
             $telegramChatId = '@ksaranauniyear4';
 
-            $caption = "New order received!\n"
-                . "Order ID: {$order->order_num}\n"
-                . "Payment Type: online_payment\n"
+            $caption = "🛒 *New Order Received!*\n"
+                . "Order ID: *{$order->order_num}*\n"
+                . "Payment Type: _online_payment_\n"
                 . "Note: " . ($request->note ?? 'None') . "\n"
-                . "Status: Pending Payment Confirmation";
+                . "Status: *Pending Payment Confirmation*\n\n"
+                . "👉 [Review Order in Dashboard](http://127.0.0.1:8000/order_dashboard)";
+
 
             if ($imgFullPath && file_exists($imgFullPath)) {
                 $response = Http::attach(
@@ -434,7 +453,7 @@ class CheckoutController extends Controller
         $order->save();
 
         \Mail::to($order->guest_eamil)->send(new \App\Mail\OrderDeclinedMail($order));
-    } elseif ($order->status === 'processing') {
+    } elseif ($order->status === 'accepted') {
         // Restore stock
         $orderItems = OrderItem::where('order_id', $order->id)->get();
         foreach ($orderItems as $item) {
@@ -456,36 +475,75 @@ class CheckoutController extends Controller
 }
 
 
+    // public function verifyCode(Request $request)
+    // {
+    //     $request->validate([
+    //         'order_id' => 'required|integer',
+    //     ]);
+
+    //     $order = \App\Models\Order::find($request->order_id);
+
+    //     if (!$order) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Order not found.'
+    //         ]);
+    //     }
+
+    //     if ($order->code_verify !== $request->code) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Invalid verification code.'
+    //         ]);
+    //     }
+    //     $order->status = 'accepted';
+    //     $order->save();
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'message' => 'Code verified successfully.',
+    //         'order_id' => $order->id
+    //     ]);
+    // }
     public function verifyCode(Request $request)
-    {
-        $request->validate([
-            'order_id' => 'required|integer',
+{
+    $request->validate([
+        'order_id' => 'required|integer',
+    ]);
+
+    $order = \App\Models\Order::find($request->order_id);
+
+    if (!$order) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Order not found.'
         ]);
+    }
 
-        $order = \App\Models\Order::find($request->order_id);
-
-        if (!$order) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Order not found.'
-            ]);
-        }
-
-        if ($order->code_verify !== $request->code) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid verification code.'
-            ]);
-        }
-        $order->status = 'processing';
-        $order->save();
-
+    // Skip if already accepted or completed
+    if (in_array($order->status, ['accepted', 'approved', 'completed'])) {
         return response()->json([
             'success' => true,
-            'message' => 'Code verified successfully.',
+            'message' => 'Order already verified.',
             'order_id' => $order->id
         ]);
     }
+
+    // Just update the status (no code check)
+    $order->status = 'accepted';
+    $order->save();
+
+    // Optional: send confirmation email to customer
+    // Mail::to($order->guest_eamil ?? $order->user->email)->send(new \App\Mail\OrderAcceptedMail($order));
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Order has been accepted successfully.',
+        'order_id' => $order->id
+    ]);
+}
+
+
     public function confirmPayment(Order $order)
     {
         $order->status = 'Confirmed';
