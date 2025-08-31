@@ -124,7 +124,7 @@ Route::post('/logout', function (Request $request) {
     $request->session()->invalidate();
     $request->session()->regenerateToken();
     
-    return redirect('/login');
+    return redirect('/homepage');
 })->name('logout');
 
 // Password Reset Routes
