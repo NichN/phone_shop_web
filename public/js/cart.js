@@ -58,11 +58,10 @@ function closeCartSidebar() {
     document.body.classList.remove("cart-open");
 }
 
-function handleAddToCart(productItemId, size = null, color = null) {
-    const quantity = 1;
+function handleAddToCart(productItemId, size = null, color = null, quantity = 1) {
     const id = parseInt(productItemId, 10);
     if (!id || isNaN(id)) {
-        alert("Invalid product selection.");
+        showCartMessage("Invalid product selection.", 'alert-danger');
         return;
     }
     
@@ -74,16 +73,23 @@ function handleAddToCart(productItemId, size = null, color = null) {
     }
     
     const title = button?.getAttribute('data-title') || 'Untitled';
-    const price = button?.getAttribute('data-price') || '0.00';
+    const price = parseFloat(button?.getAttribute('data-price')) || 0.00;
     const imgSrc = button?.getAttribute('data-img') || '';
+    const stock = parseInt(button?.getAttribute('data-stock')) || 0;
+
     // Use provided size/color if available, otherwise fall back to DOM
     const finalSize = size || document.querySelector('input[name="storage"]:checked')?.value;
     const finalColor = color || document.querySelector('input[name="color"]:checked')?.value;
 
     if (!finalSize || !finalColor) {
-        alert("Please select both size and color.");
+        showCartMessage("Please select both size and color.", 'alert-danger');
         return;
     }
+
+    // if (quantity > stock) {
+    //     showCartMessage(`Only ${stock} items available in stock.`, 'alert-danger');
+    //     return;
+    // }
 
     if (window.isAuthenticated) {
         $.ajax({
@@ -108,11 +114,11 @@ function handleAddToCart(productItemId, size = null, color = null) {
                     }
                 
                 } else {
-                    alert("Failed: " + response.message);
+                    showCartMessage("Failed: " + response.message, 'alert-danger');
                 }
             },
             error: function (xhr) {
-                alert("Error: " + (xhr.responseJSON?.message || 'Unknown error'));
+                showCartMessage("Error: " + (xhr.responseJSON?.message || 'Unknown error'), 'alert-danger');
             }
         });
     } else {
@@ -126,12 +132,13 @@ function handleAddToCart(productItemId, size = null, color = null) {
         }
     }
 }
+
 function addOrUpdateLocalCart(id, title, price, imgSrc, size, color, quantity) {
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     const existing = cart.find(item => item.id === id && item.size === size && item.color === color);
 
     if (existing) {
-        existing.quantity = quantity;
+        existing.quantity += quantity; // Increment quantity for existing item
     } else {
         cart.push({ id, title, price, imgSrc, size, color, quantity });
     }
@@ -170,10 +177,6 @@ function loadCartFromLocalStorage() {
     let total = 0;
 
     if (cart.length === 0) {
-        // Check if user is authenticated
-        const isAuthenticated = window.isAuthenticated || false;
-        
-        // Show empty cart state
         const emptyCartHtml = `
         <div class="empty-cart-container">
             <div class="empty-cart-icon">
@@ -199,7 +202,6 @@ function loadCartFromLocalStorage() {
         cartContainer.insertAdjacentHTML('beforeend', emptyCartHtml);
         totalEl.textContent = '0.00 $';
         
-        // Hide checkout form when cart is empty
         const checkoutForm = document.getElementById('checkoutRedirectForm');
         if (checkoutForm) {
             checkoutForm.style.display = 'none';
@@ -207,7 +209,6 @@ function loadCartFromLocalStorage() {
         return;
     }
 
-    // Show checkout form when cart has items
     const checkoutForm = document.getElementById('checkoutRedirectForm');
     if (checkoutForm) {
         checkoutForm.style.display = 'block';
@@ -239,7 +240,6 @@ function loadCartFromLocalStorage() {
     totalEl.textContent = total.toFixed(2) + ' $';
 }
 
-
 function removeItemFromLocal(index) {
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     cart.splice(index, 1);
@@ -253,7 +253,7 @@ function submitCheckoutForm() {
     const userId = document.getElementById('checkoutUserId').value || 'Guest';
 
     if (!cartRaw) {
-        alert(`User ID: ${userId}\nCart is empty or not found.`);
+        showCartMessage(`User ID: ${userId}\nCart is empty or not found.`, 'alert-danger');
         return;
     }
 
@@ -261,15 +261,67 @@ function submitCheckoutForm() {
     try {
         cart = JSON.parse(cartRaw);
     } catch(e) {
-        alert(`User ID: ${userId}\nCart data corrupted.`);
+        showCartMessage(`User ID: ${userId}\nCart data corrupted.`, 'alert-danger');
         return;
     }
 
     if (!cart.length) {
-        alert(`User ID: ${userId}\nCart is empty.`);
+        showCartMessage(`User ID: ${userId}\nCart is empty.`, 'alert-danger');
         return;
     }
-
     document.getElementById('checkoutCartData').value = JSON.stringify(cart);
     document.getElementById('checkoutRedirectForm').submit();
+}
+
+function showCartMessage(message, type = 'success') {
+    // Create message container if it doesn't exist
+    let messageBox = document.getElementById('cartMessageBox');
+    if (!messageBox) {
+        messageBox = document.createElement('div');
+        messageBox.id = 'cartMessageBox';
+        messageBox.style.position = 'fixed';
+        messageBox.style.top = '20px';
+        messageBox.style.right = '20px';
+        messageBox.style.zIndex = '9999';
+        messageBox.style.maxWidth = '300px';
+        document.body.appendChild(messageBox);
+    }
+
+    // Create the toast
+    const toast = document.createElement('div');
+    toast.textContent = message;
+    toast.style.padding = '12px 16px';
+    toast.style.marginBottom = '10px';
+    toast.style.borderRadius = '8px';
+    toast.style.color = '#fff';
+    toast.style.fontSize = '14px';
+    toast.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+    toast.style.opacity = '0';
+    toast.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    
+    // Different colors for success / error
+    if (type === 'success') {
+        toast.style.backgroundColor = '#28a745'; // green
+    } else if (type === 'error') {
+        toast.style.backgroundColor = '#dc3545'; // red
+    } else {
+        toast.style.backgroundColor = '#28a745'; // gray
+    }
+
+    messageBox.appendChild(toast);
+
+    // Animate in
+    setTimeout(() => {
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateY(0)';
+    }, 50);
+
+    // Auto remove after 3 seconds
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(-20px)';
+        setTimeout(() => {
+            toast.remove();
+        }, 500);
+    }, 3000);
 }
