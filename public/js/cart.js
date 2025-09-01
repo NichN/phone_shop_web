@@ -36,7 +36,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function addToCartHandler(event) {
     event.preventDefault();
+    event.stopPropagation();
+    
+    // Check if button is disabled
+    if (this.disabled) {
+        return false;
+    }
+    
     const productItemId = this.getAttribute('data-product-item-id');
+    if (!productItemId) {
+        alert('Please select a valid product variant.');
+        return;
+    }
+    
     handleAddToCart(productItemId);
 }
 
@@ -53,7 +65,14 @@ function handleAddToCart(productItemId, size = null, color = null) {
         alert("Invalid product selection.");
         return;
     }
+    
+    // Check if the button is disabled (for additional safety)
     const button = document.querySelector(`[data-product-item-id="${id}"]`);
+    if (button && button.disabled) {
+        alert("This combination is not available.");
+        return;
+    }
+    
     const title = button?.getAttribute('data-title') || 'Untitled';
     const price = button?.getAttribute('data-price') || '0.00';
     const imgSrc = button?.getAttribute('data-img') || '';
@@ -82,6 +101,11 @@ function handleAddToCart(productItemId, size = null, color = null) {
                     addOrUpdateLocalCart(id, title, price, imgSrc, finalSize, finalColor, quantity);
                     updateCartCount();
                     loadCartFromLocalStorage();
+                    
+                    // Show success notification
+                    if (typeof showCartSuccessNotification === 'function') {
+                        showCartSuccessNotification();
+                    }
                 
                 } else {
                     alert("Failed: " + response.message);
@@ -95,6 +119,11 @@ function handleAddToCart(productItemId, size = null, color = null) {
         addOrUpdateLocalCart(id, title, price, imgSrc, finalSize, finalColor, quantity);
         updateCartCountLocal();
         loadCartFromLocalStorage();
+        
+        // Show success notification
+        if (typeof showCartSuccessNotification === 'function') {
+            showCartSuccessNotification();
+        }
     }
 }
 function addOrUpdateLocalCart(id, title, price, imgSrc, size, color, quantity) {

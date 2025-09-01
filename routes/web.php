@@ -61,6 +61,7 @@ Route::get('/product', [ProductController::class, 'index'])->name('product');
 Route::get('/product_acessory', [ProductController::class, 'product_acessory'])->name('product_acessory');
 Route::get('/products_admin', [ProductController::class, 'index'])->name('product.index');
 Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
+Route::get('/api/product-detail/{productItemId}', [ProductController::class, 'getProductDetailApi'])->name('api.product.detail');
 Route::get('/product_category/{id}', [HomeController::class, 'getByCategory'])
     ->name('product_by_category');
 Route::get('/product_brand/{id}', [ProductController::class, 'getByBrand'])->name('product_by_brand');

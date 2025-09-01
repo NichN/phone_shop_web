@@ -144,11 +144,16 @@
                                 <div class="card-body text-right" style="background-color: #ecdceb;">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <h6 class="card-title mt-2 product-title">{{ $product->name }}</h6>
-                                    <i class="fa-regular fa-heart fs-5 add-wishlist"
-                                        data-product-pro-id="{{ $product->id }}"
-                                        data-product-item-id="{{ $product->product_item_id }}">
+                                    <div class="d-flex gap-2">
+                                        <i class="fa-solid fa-cart-plus fs-5 add-cart-quick"
+                                            data-product-pro-id="{{ $product->id }}"
+                                            data-product-item-id="{{ $product->product_item_id }}"
+                                            style="cursor: pointer; color: #007bff;"></i>
+                                        <i class="fa-regular fa-heart fs-5 add-wishlist"
+                                            data-product-pro-id="{{ $product->id }}"
+                                            data-product-item-id="{{ $product->product_item_id }}">
                                         </i>
-
+                                    </div>
                                 </div>
                                 <p class="card-price"> ${{ $product->price }}</p>
                                 <p class="color" style="text-align: right;">

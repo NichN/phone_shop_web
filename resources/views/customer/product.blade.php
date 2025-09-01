@@ -81,7 +81,13 @@
                                                     {{ $product->name }}
                                                 </a>
                                             </p>
-                                            <i class="fa-regular fa-heart fs-5 add-wishlist"></i>
+                                            <div class="d-flex gap-2">
+                                                <i class="fa-solid fa-cart-plus fs-5 add-cart-quick"
+                                                    data-product-pro-id="{{ $product->id }}"
+                                                    data-product-item-id="{{ $product->product_item_id }}"
+                                                    style="cursor: pointer; color: #007bff;"></i>
+                                                <i class="fa-regular fa-heart fs-5 add-wishlist"></i>
+                                            </div>
                                         </div>
                                         <p class="card-price">{{ $product->price }}</p>
                                         <p>

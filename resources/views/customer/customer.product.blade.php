@@ -9,7 +9,13 @@
                     <p class="tag mb-0">{{ $product['category'] }}</p>
                     <div class="d-flex justify-content-between align-items-center">
                         <h5 class="card-title mt-2 product-title">{{ $product['name'] }}</h5>
-                        <i class="fa-regular fa-heart fs-5 add-wishlist"></i>
+                        <div class="d-flex gap-2">
+                            <i class="fa-solid fa-cart-plus fs-5 add-cart-quick"
+                                data-product-pro-id="{{ $product->id }}"
+                                data-product-item-id="{{ $product->product_item_id }}"
+                                style="cursor: pointer; color: #007bff;"></i>
+                            <i class="fa-regular fa-heart fs-5 add-wishlist"></i>
+                        </div>
                     </div>
                     <p class="card-price">{{ $product['price'] }}</p>
                     <a href="#" class="btn btn-primary px-4 py-2 d-inline-block custom-btn w-100 add-cart " data-product-id="{{ $product->id }}">Add to Cart</a>

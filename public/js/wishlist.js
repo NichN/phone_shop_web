@@ -39,10 +39,20 @@ document.addEventListener("DOMContentLoaded", function () {
             wishlist.push({ productItemId, proId, title, price, imgSrc });
             icon.classList.remove('fa-regular');
             icon.classList.add('fa-solid');
+            
+            // Show success notification for adding to wishlist
+            if (typeof showWishlistSuccessNotification === 'function') {
+                showWishlistSuccessNotification('Item added to wishlist successfully.');
+            }
         } else {
             wishlist.splice(existingIndex, 1);
             icon.classList.remove('fa-solid');
             icon.classList.add('fa-regular');
+            
+            // Show success notification for removing from wishlist
+            if (typeof showWishlistSuccessNotification === 'function') {
+                showWishlistSuccessNotification('Item removed from wishlist.');
+            }
         }
 
         localStorage.setItem('wishlist', JSON.stringify(wishlist));
@@ -75,6 +85,11 @@ document.addEventListener("DOMContentLoaded", function () {
         updateWishlistCount();
         updateWishlistModal();
         syncWishlistIcons();
+        
+        // Show success notification for removing from wishlist
+        if (typeof showWishlistSuccessNotification === 'function') {
+            showWishlistSuccessNotification('Item removed from wishlist.');
+        }
     }
 
     async function updateWishlistModal() {
@@ -232,6 +247,16 @@ document.addEventListener("DOMContentLoaded", function () {
     function moveToBag(title, price, imgSrc, productItemId, size, color) {
         addProductToCart(title, price, imgSrc, productItemId, size, color);
         removeFromWishlist(productItemId);
+
+        // Show success notification for moving to cart
+        if (typeof showCartSuccessNotification === 'function') {
+            showCartSuccessNotification();
+        }
+        
+        // Show wishlist notification for removal
+        if (typeof showWishlistSuccessNotification === 'function') {
+            showWishlistSuccessNotification('Item moved to cart and removed from wishlist.');
+        }
 
         // If logged in, sync with backend
         if (window.isAuthenticated) {

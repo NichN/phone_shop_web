@@ -77,6 +77,323 @@
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
         }
 
+        /* Product Detail Modal Styles */
+        #productDetailModal .modal-content {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        #productDetailModal .modal-header {
+            border-bottom: 1px solid #eee;
+            padding: 1.5rem;
+        }
+
+        #productDetailModal .modal-body {
+            padding: 1.5rem;
+        }
+
+        .thumbnail-scroll-container {
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .thumbnail-wrapper {
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .thumbnail-img {
+            transition: all 0.3s ease;
+        }
+
+        .thumbnail-img:hover {
+            transform: scale(1.05);
+        }
+
+        .selected-thumbnail {
+            border: 2px solid #007bff !important;
+        }
+
+        .add-cart-quick {
+            transition: all 0.3s ease;
+        }
+
+        .add-cart-quick:hover {
+            transform: scale(1.1);
+            color: #0056b3 !important;
+        }
+
+        /* Option Unavailable Styling for Modal */
+        .option-unavailable {
+            position: relative;
+            opacity: 0.6;
+            cursor: pointer;
+        }
+
+        .option-unavailable .btn-check + label {
+            opacity: 0.5;
+            cursor: pointer;
+            color: #999 !important;
+            text-decoration: line-through;
+            position: relative;
+        }
+
+        .option-unavailable .btn-check + label::before {
+            content: "✗";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(220, 53, 69, 0.9);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 2;
+        }
+
+        .option-unavailable .btn-check + label span {
+            opacity: 0.3;
+        }
+
+        /* For storage options specifically */
+        .option-unavailable .btn-check + label {
+            background-color: #f8f9fa !important;
+            border-color: #dee2e6 !important;
+            color: #6c757d !important;
+        }
+
+        .option-unavailable .btn-check:checked + label {
+            background-color: #f8f9fa !important;
+            border-color: #6c757d !important;
+            color: #6c757d !important;
+        }
+
+        /* Keep radio buttons clickable but show visual indication of unavailability */
+        .option-unavailable .btn-check {
+            pointer-events: auto;
+        }
+
+        /* Add a subtle overlay for unavailable options */
+        .option-unavailable .btn-check + label::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 2px,
+                rgba(220, 53, 69, 0.1) 2px,
+                rgba(220, 53, 69, 0.1) 4px
+            );
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Disabled button styling */
+        .btn-secondary:disabled {
+            opacity: 0.6;
+            background-color: #6c757d !important;
+            border-color: #6c757d !important;
+            color: #fff !important;
+            pointer-events: none !important;
+        }
+
+        .btn-secondary:disabled:hover {
+            background-color: #6c757d !important;
+            border-color: #6c757d !important;
+            color: #fff !important;
+        }
+
+        /* Additional prevention for disabled buttons */
+        .btn:disabled {
+            pointer-events: none !important;
+        }
+
+        /* Toast notification styling */
+        .toast-container {
+            z-index: 9999;
+        }
+
+        .toast {
+            min-width: 300px;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+
+        /* Custom Toast Styling */
+        .custom-toast {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+            border: none !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(40, 167, 69, 0.3) !important;
+            backdrop-filter: blur(10px) !important;
+            min-width: 320px !important;
+            max-width: 400px !important;
+            transform: translateX(-100%) scale(0.3);
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) !important;
+            opacity: 0;
+        }
+
+        .custom-toast.show {
+            transform: translateX(0) scale(1);
+            opacity: 1;
+            animation: toastBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.2s both;
+        }
+
+        .custom-toast.hide {
+            transform: translateX(100%) scale(0.8);
+            opacity: 0;
+        }
+
+        @keyframes toastBounce {
+            0% {
+                transform: translateX(0) scale(0.8);
+            }
+            50% {
+                transform: translateX(0) scale(1.05);
+            }
+            100% {
+                transform: translateX(0) scale(1);
+            }
+        }
+
+        .custom-toast .toast-body {
+            padding: 16px 20px !important;
+            border-radius: 12px !important;
+        }
+
+        .toast-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: iconPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes iconPulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 8px rgba(255, 255, 255, 0);
+            }
+        }
+
+        .toast-content {
+            flex: 1;
+            animation: contentSlideIn 0.8s ease-out 0.3s both;
+        }
+
+        .toast-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            animation: titleFadeIn 0.6s ease-out 0.5s both;
+        }
+
+        .toast-message {
+            font-size: 13px;
+            font-weight: 400;
+            opacity: 0.95;
+            line-height: 1.3;
+            animation: messageFadeIn 0.6s ease-out 0.7s both;
+        }
+
+        @keyframes contentSlideIn {
+            from {
+                transform: translateX(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes titleFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes messageFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 0.95;
+                transform: translateY(0);
+            }
+        }
+
+        .custom-toast .btn-close {
+            opacity: 0.8;
+            transition: opacity 0.2s ease;
+            filter: brightness(0) invert(1);
+        }
+
+        .custom-toast .btn-close:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        /* Toast Container Animation */
+        .toast-container {
+            pointer-events: none;
+        }
+
+        .toast-container .toast {
+            pointer-events: auto;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .custom-toast {
+                min-width: 280px !important;
+                max-width: 320px !important;
+                margin: 8px !important;
+            }
+            
+            .toast-icon {
+                width: 35px;
+                height: 35px;
+                font-size: 16px;
+            }
+            
+            .toast-title {
+                font-size: 13px;
+            }
+            
+            .toast-message {
+                font-size: 12px;
+            }
+        }
+
         #searchModal .modal-dialog {
             max-width: 600px;
             margin: 1rem auto;
@@ -853,6 +1170,54 @@
         </div>
     </div>
 
+    <!-- Product Detail Modal -->
+    <div class="modal fade" id="productDetailModal" tabindex="-1" aria-labelledby="productDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="productDetailModalLabel">Product Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="productDetailModalBody">
+                    <!-- Product detail content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Notification Toast -->
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">
+        <div id="cartSuccessToast" class="toast align-items-center text-white bg-success border-0 custom-toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body d-flex align-items-center">
+                    <div class="toast-icon me-3">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="toast-content">
+                        <div class="toast-title">Success!</div>
+                        <div class="toast-message">Item added to cart successfully.</div>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+        
+        <div id="wishlistSuccessToast" class="toast align-items-center text-white bg-success border-0 custom-toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body d-flex align-items-center">
+                    <div class="toast-icon me-3">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="toast-content">
+                        <div class="toast-title">Wishlist!</div>
+                        <div class="toast-message">Item added to wishlist successfully.</div>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
     <!-- Order History Modal for Guests -->
     <div class="modal fade" id="orderHistoryModal" tabindex="-1" aria-labelledby="orderHistoryModalLabel"
         aria-hidden="true">
@@ -1277,6 +1642,67 @@
     <script src="{{ asset('js/homepage.js') }}"></script>
     <script src="{{ asset('js/profile.js') }}"></script>
     <script src="{{ asset('js/cart.js') }}"></script>
+    <script src="{{ asset('js/product-quick-view.js') }}"></script>
+    
+    <script>
+        // Global notification functions
+        function showCartSuccessNotification() {
+            const toast = document.getElementById('cartSuccessToast');
+            if (toast) {
+                showCustomToast(toast, 'Success!', 'Item added to cart successfully.', 'fas fa-check-circle');
+            }
+        }
+
+        function showWishlistSuccessNotification(message) {
+            const toast = document.getElementById('wishlistSuccessToast');
+            if (toast) {
+                showCustomToast(toast, 'Wishlist!', message, 'fas fa-heart');
+            }
+        }
+
+        function showCustomToast(toastElement, title, message, iconClass) {
+            // Update toast content
+            const toastIcon = toastElement.querySelector('.toast-icon i');
+            const toastTitle = toastElement.querySelector('.toast-title');
+            const toastMessage = toastElement.querySelector('.toast-message');
+            
+            if (toastIcon) toastIcon.className = iconClass;
+            if (toastTitle) toastTitle.textContent = title;
+            if (toastMessage) toastMessage.textContent = message;
+
+            // Show toast with custom animation
+            toastElement.classList.remove('hide');
+            toastElement.classList.add('show');
+            
+            // Auto-dismiss after 3 seconds
+            setTimeout(() => {
+                hideCustomToast(toastElement);
+            }, 3000);
+        }
+
+        function hideCustomToast(toastElement) {
+            toastElement.classList.remove('show');
+            toastElement.classList.add('hide');
+            
+            // Remove from DOM after animation completes
+            setTimeout(() => {
+                toastElement.classList.remove('hide');
+            }, 500);
+        }
+
+        // Handle manual close button clicks
+        document.addEventListener('DOMContentLoaded', function() {
+            const closeButtons = document.querySelectorAll('.custom-toast .btn-close');
+            closeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const toast = this.closest('.custom-toast');
+                    if (toast) {
+                        hideCustomToast(toast);
+                    }
+                });
+            });
+        });
+    </script>
     <!-- Load jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

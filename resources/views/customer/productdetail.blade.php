@@ -178,6 +178,51 @@
             }
         };
 
+        // Global function to handle add to cart from product detail page
+        window.addToCart = function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            const button = event.target;
+            
+            // Check if button is disabled
+            if (button.disabled) {
+                return false;
+            }
+            
+            const productItemId = button.getAttribute('data-product-item-id');
+            if (!productItemId) {
+                alert('Please select a valid product variant.');
+                return false;
+            }
+            
+            // Use the existing cart functionality
+            if (typeof handleAddToCart === 'function') {
+                const selectedSize = document.querySelector('input[name="storage"]:checked')?.value;
+                const selectedColor = document.querySelector('input[name="color"]:checked')?.value;
+                handleAddToCart(productItemId, selectedSize, selectedColor);
+                
+                // Show success message on button
+                button.innerHTML = '<i class="fas fa-check me-2"></i>Added to Cart';
+                button.classList.remove('btn-dark');
+                button.classList.add('btn-success');
+                
+                // Show global notification
+                if (typeof showCartSuccessNotification === 'function') {
+                    showCartSuccessNotification();
+                }
+                
+                setTimeout(() => {
+                    button.innerHTML = 'Add to Cart';
+                    button.classList.remove('btn-success');
+                    button.classList.add('btn-dark');
+                }, 2000);
+            } else {
+                alert('Cart functionality not available.');
+            }
+            
+            return false;
+        };
+
         document.addEventListener('DOMContentLoaded', function() {
             const variants = @json($variants);
             const priceDisplay = document.getElementById('product-price');
@@ -258,6 +303,13 @@
                     addCartBtn.dataset.productItemId = variant.id;
                     addCartBtn.dataset.price = variant.price;
                     
+                    // Enable the cart button
+                    addCartBtn.disabled = false;
+                    addCartBtn.classList.remove('btn-secondary');
+                    addCartBtn.classList.add('btn-dark');
+                    addCartBtn.style.cursor = 'pointer';
+                    addCartBtn.textContent = 'Add to Cart';
+                    
                     // Update stock display
                     const stockDisplay = document.getElementById('stock-display');
                     if (stockDisplay) {
@@ -276,6 +328,13 @@
                     typeDisplay.innerHTML = `<span class="text-danger">Unavailable</span>`;
                     addCartBtn.dataset.productItemId = '';
                     addCartBtn.dataset.price = '';
+                    
+                    // Disable the cart button
+                    addCartBtn.disabled = true;
+                    addCartBtn.classList.remove('btn-dark');
+                    addCartBtn.classList.add('btn-secondary');
+                    addCartBtn.style.cursor = 'not-allowed';
+                    addCartBtn.textContent = 'Add to Cart';
                     
                     // Update stock display to show unavailable
                     const stockDisplay = document.getElementById('stock-display');

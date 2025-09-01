@@ -67,6 +67,7 @@ class ProductController extends Controller
             ->select(
                 'product.*',
                 'category.name as category_name',
+                'product_item.id as product_item_id',
                 'product_item.price',
                 'product_item.images',
                 'product_item.color_code'
@@ -123,7 +124,7 @@ class ProductController extends Controller
                     ->where('product_item.stock', '>', 0);
             })
             ->where('product.brand_id', $brandId)
-            ->select('product.*', 'product_item.price', 'product_item.images', 'product_item.color_code')
+            ->select('product.*', 'product_item.id as product_item_id', 'product_item.price', 'product_item.images', 'product_item.color_code')
             ->get();
 
         // Get available colors for each product
@@ -156,7 +157,7 @@ class ProductController extends Controller
                         )')
                     ->where('product_item.stock', '>', 0);
             })
-            ->select('product.*', 'product_item.price', 'product_item.images', 'product_item.color_code')
+            ->select('product.*', 'product_item.id as product_item_id', 'product_item.price', 'product_item.images', 'product_item.color_code')
             ->get();
 
         $accessoryProducts = DB::table('product')
@@ -169,7 +170,7 @@ class ProductController extends Controller
                         )');
             })
             ->where('category.name', 'Accesories')
-            ->select('product.*', 'category.name as category_name', 'product_item.price', 'product_item.images', 'product_item.color_code')
+            ->select('product.*', 'category.name as category_name', 'product_item.id as product_item_id', 'product_item.price', 'product_item.images', 'product_item.color_code')
             ->get();
 
         $brands = DB::table('brand')
@@ -327,4 +328,74 @@ class ProductController extends Controller
     ]);
 }
 
+    // API method to get product details for modal
+    public function getProductDetailApi($productItemId)
+    {
+        try {
+            \Log::info('API called with productItemId: ' . $productItemId);
+            
+            $productItem = Productdetail::find($productItemId);
+            
+            if (!$productItem) {
+                \Log::warning('Product not found for ID: ' . $productItemId);
+                return response()->json(['error' => 'Product not found'], 404);
+            }
+
+            // Get all variants of this product
+            $variants = Productdetail::where('pro_id', $productItem->pro_id)->get();
+            
+            // Get all images for this product
+            $allImages = [];
+            foreach ($variants as $variant) {
+                if ($variant->images && is_array($variant->images)) {
+                    $allImages = array_merge($allImages, $variant->images);
+                }
+            }
+            $allImages = array_unique($allImages);
+            
+            // Get unique colors and sizes
+            $colors = $variants->pluck('color_code')->unique()->values();
+            $sizes = $variants->pluck('size')->unique()->values();
+            
+            // Get stock for current variant
+            $stock = $productItem->stock;
+            
+            // Get product description
+            $productDescription = Product::where('name', $productItem->product_name)->value('description');
+            
+            // Prepare variants data
+            $variantsData = $variants->map(function ($variant) {
+                return [
+                    'id' => $variant->id,
+                    'color_code' => $variant->color_code,
+                    'size' => $variant->size,
+                    'price' => $variant->price,
+                    'stock' => $variant->stock,
+                    'type' => $variant->type
+                ];
+            });
+
+            $response = [
+                'name' => $productItem->product_name,
+                'mainImage' => asset('storage/' . ($productItem->images[0] ?? '')),
+                'images' => array_map(function($img) {
+                    return asset('storage/' . $img);
+                }, $allImages),
+                'price' => $productItem->price,
+                'type' => $productItem->type,
+                'warranty' => $productItem->warranty,
+                'description' => $productDescription,
+                'colors' => $colors,
+                'sizes' => $sizes,
+                'stock' => $stock,
+                'productItemId' => $productItem->id,
+                'variants' => $variantsData
+            ];
+
+            return response()->json($response);
+            
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to load product details'], 500);
+        }
+    }
 }
