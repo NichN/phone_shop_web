@@ -142,7 +142,6 @@
             </div>
         </div>
     </div>
-
 </div>
 
 <style>
@@ -188,7 +187,8 @@
             if (typeof handleAddToCart === 'function') {
                 const selectedSize = document.querySelector('input[name="storage"]:checked')?.value;
                 const selectedColor = document.querySelector('input[name="color"]:checked')?.value;
-                handleAddToCart(productItemId, selectedSize, selectedColor);
+                const quantity = parseInt(document.getElementById('productQuantity')?.value);
+                handleAddToCart(productItemId, selectedSize, selectedColor, quantity);
                 
                 // Show success message on button
                 button.innerHTML = '<i class="fas fa-check me-2"></i>Added to Cart';
@@ -214,162 +214,177 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             const variants = @json($variants);
-            const priceDisplay = document.getElementById('product-price');
-            const typeDisplay = document.getElementById('product-type');
-            const addCartBtn = document.querySelector('.add-cart');
+        const priceDisplay = document.getElementById('product-price');
+        const typeDisplay = document.getElementById('product-type');
+        const addCartBtn = document.querySelector('.add-cart');
+        const qtyInput = document.getElementById('productQuantity');
+    const decreaseBtn = document.getElementById('decreaseQty');
+    const increaseBtn = document.getElementById('increaseQty');
+    const stockDisplay = document.getElementById('stock-display');
 
-    let selectedColor = document.querySelector('input[name="color"]:checked')?.value;
-    let selectedSize = document.querySelector('input[name="storage"]:checked')?.value;
+        let selectedColor = document.querySelector('input[name="color"]:checked')?.value;
+        let selectedSize = document.querySelector('input[name="storage"]:checked')?.value;
 
-    // Thumbnail click
-    document.querySelectorAll('.thumbnail-img').forEach(thumbnail => {
-        thumbnail.addEventListener('click', function() {
-            document.querySelectorAll('.thumbnail-img').forEach(img => img.classList.remove('selected-thumbnail'));
-            this.classList.add('selected-thumbnail');
-            mainImage.src = this.dataset.fullImage;
-            addCartBtn.dataset.img = this.dataset.fullImage;
+        // Thumbnail click
+        document.querySelectorAll('.thumbnail-img').forEach(thumbnail => {
+            thumbnail.addEventListener('click', function() {
+                document.querySelectorAll('.thumbnail-img').forEach(img => img.classList.remove('selected-thumbnail'));
+                this.classList.add('selected-thumbnail');
+                mainImage.src = this.dataset.fullImage;
+                addCartBtn.dataset.img = this.dataset.fullImage;
+            });
         });
-    });
-
-    function checkAllCombinations() {
-        const allColors = Array.from(document.querySelectorAll('input[name="color"]')).map(input => input.value);
-        const allSizes = Array.from(document.querySelectorAll('input[name="storage"]')).map(input => input.value);
-
-        document.querySelectorAll('.option-unavailable').forEach(el => el.classList.remove('option-unavailable'));
-
-        allColors.forEach(color => {
-            if (!variants.some(v => v.color_code.toLowerCase() === color.toLowerCase())) {
-                document.querySelector(`input[name="color"][value="${color}"]`)
-                    ?.nextElementSibling?.classList.add('option-unavailable');
+        decreaseBtn.addEventListener('click', function () {
+            let currentVal = parseInt(qtyInput.value) || 1;
+            if (currentVal > 1) {
+                qtyInput.value = currentVal - 1;
             }
         });
 
-        allSizes.forEach(size => {
-            if (!variants.some(v => v.size.toLowerCase() === size.toLowerCase())) {
-                document.querySelector(`input[name="storage"][value="${size}"]`)
-                    ?.nextElementSibling?.classList.add('option-unavailable');
+        increaseBtn.addEventListener('click', function () {
+            let currentVal = parseInt(qtyInput.value) || 1;
+            let maxStock = parseInt(stockDisplay.textContent) || 999; // Prevent over stock
+            if (currentVal < maxStock) {
+                qtyInput.value = currentVal + 1;
             }
         });
-    }
 
-    function updateVariantInfo() {
-    checkAllCombinations();
+        function checkAllCombinations() {
+            const allColors = Array.from(document.querySelectorAll('input[name="color"]')).map(input => input.value);
+            const allSizes = Array.from(document.querySelectorAll('input[name="storage"]')).map(input => input.value);
 
-    const matchingVariants = variants.filter(v =>
-        v.color_code.toLowerCase() === selectedColor?.toLowerCase() &&
-        v.size.toLowerCase() === selectedSize?.toLowerCase()
-    );
+            document.querySelectorAll('.option-unavailable').forEach(el => el.classList.remove('option-unavailable'));
 
-    if (matchingVariants.length > 0) {
-        const variant = matchingVariants[0];
+            allColors.forEach(color => {
+                if (!variants.some(v => v.color_code.toLowerCase() === color.toLowerCase())) {
+                    document.querySelector(`input[name="color"][value="${color}"]`)
+                        ?.nextElementSibling?.classList.add('option-unavailable');
+                }
+            });
 
-                    // Update price and cart data
-                    priceDisplay.innerHTML = `<strong>${variant.price} USD</strong>`;
-                    typeDisplay.innerHTML = `${variant.type}<span class="text-danger">*</span>`;
-                    addCartBtn.dataset.productItemId = variant.id;
-                    addCartBtn.dataset.price = variant.price;
-                    
-                    // Enable the cart button
-                    addCartBtn.disabled = false;
-                    addCartBtn.classList.remove('btn-secondary');
-                    addCartBtn.classList.add('btn-dark');
-                    addCartBtn.style.cursor = 'pointer';
-                    addCartBtn.textContent = 'Add to Cart';
-                    
-                    // Update stock display
-                    const stockDisplay = document.getElementById('stock-display');
-                    if (stockDisplay) {
-                        stockDisplay.textContent = variant.stock || 'N/A';
-                        stockDisplay.className = 'fw-bold text-primary';
-                    }
+            allSizes.forEach(size => {
+                if (!variants.some(v => v.size.toLowerCase() === size.toLowerCase())) {
+                    document.querySelector(`input[name="storage"][value="${size}"]`)
+                        ?.nextElementSibling?.classList.add('option-unavailable');
+                }
+            });
+        }
 
-                    // OPTIONAL: show other available types with same size and color
-                    if (matchingVariants.length > 1) {
-                        let typeList = matchingVariants.map(v => v.type).join(' / ');
-                        typeDisplay.innerHTML = `${typeList}<span class="text-danger">*</span>`;
-                    }
-                } else {
-                    // No matching variant found
-                    priceDisplay.innerHTML = `<strong class="text-danger">N/A</strong>`;
-                    typeDisplay.innerHTML = `<span class="text-danger">Unavailable</span>`;
-                    addCartBtn.dataset.productItemId = '';
-                    addCartBtn.dataset.price = '';
-                    
-                    // Disable the cart button
-                    addCartBtn.disabled = true;
-                    addCartBtn.classList.remove('btn-dark');
-                    addCartBtn.classList.add('btn-secondary');
-                    addCartBtn.style.cursor = 'not-allowed';
-                    addCartBtn.textContent = 'Add to Cart';
-                    
-                    // Update stock display to show unavailable
-                    const stockDisplay = document.getElementById('stock-display');
-                    if (stockDisplay) {
-                        stockDisplay.textContent = 'N/A';
-                        stockDisplay.className = 'fw-bold text-danger';
-                    }
-                    
-                    // Mark the currently selected options as unavailable
-                    if (selectedColor) {
-                        const selectedColorInput = document.querySelector(`input[name="color"][value="${selectedColor}"]`);
-                        if (selectedColorInput) {
-                            const selectedColorLabel = selectedColorInput.nextElementSibling;
-                            if (selectedColorLabel) {
-                                selectedColorLabel.classList.add('option-unavailable');
+        function updateVariantInfo() {
+        checkAllCombinations();
+
+        const matchingVariants = variants.filter(v =>
+            v.color_code.toLowerCase() === selectedColor?.toLowerCase() &&
+            v.size.toLowerCase() === selectedSize?.toLowerCase()
+        );
+
+        if (matchingVariants.length > 0) {
+            const variant = matchingVariants[0];
+
+                        // Update price and cart data
+                        priceDisplay.innerHTML = `<strong>${variant.price} USD</strong>`;
+                        typeDisplay.innerHTML = `${variant.type}<span class="text-danger">*</span>`;
+                        addCartBtn.dataset.productItemId = variant.id;
+                        addCartBtn.dataset.price = variant.price;
+                        
+                        // Enable the cart button
+                        addCartBtn.disabled = false;
+                        addCartBtn.classList.remove('btn-secondary');
+                        addCartBtn.classList.add('btn-dark');
+                        addCartBtn.style.cursor = 'pointer';
+                        addCartBtn.textContent = 'Add to Cart';
+                        
+                        // Update stock display
+                        const stockDisplay = document.getElementById('stock-display');
+                        if (stockDisplay) {
+                            stockDisplay.textContent = variant.stock || 'N/A';
+                            stockDisplay.className = 'fw-bold text-primary';
+                        }
+
+                        // OPTIONAL: show other available types with same size and color
+                        if (matchingVariants.length > 1) {
+                            let typeList = matchingVariants.map(v => v.type).join(' / ');
+                            typeDisplay.innerHTML = `${typeList}<span class="text-danger">*</span>`;
+                        }
+                    } else {
+                        // No matching variant found
+                        priceDisplay.innerHTML = `<strong class="text-danger">N/A</strong>`;
+                        typeDisplay.innerHTML = `<span class="text-danger">Unavailable</span>`;
+                        addCartBtn.dataset.productItemId = '';
+                        addCartBtn.dataset.price = '';
+                        
+                        // Disable the cart button
+                        addCartBtn.disabled = true;
+                        addCartBtn.classList.remove('btn-dark');
+                        addCartBtn.classList.add('btn-secondary');
+                        addCartBtn.style.cursor = 'not-allowed';
+                        addCartBtn.textContent = 'Add to Cart';
+                        
+                        // Update stock display to show unavailable
+                        const stockDisplay = document.getElementById('stock-display');
+                        if (stockDisplay) {
+                            stockDisplay.textContent = 'N/A';
+                            stockDisplay.className = 'fw-bold text-danger';
+                        }
+                        
+                        // Mark the currently selected options as unavailable
+                        if (selectedColor) {
+                            const selectedColorInput = document.querySelector(`input[name="color"][value="${selectedColor}"]`);
+                            if (selectedColorInput) {
+                                const selectedColorLabel = selectedColorInput.nextElementSibling;
+                                if (selectedColorLabel) {
+                                    selectedColorLabel.classList.add('option-unavailable');
+                                }
                             }
                         }
-                    }
-                    if (selectedSize) {
-                        const selectedSizeInput = document.querySelector(`input[name="storage"][value="${selectedSize}"]`);
-                        if (selectedSizeInput) {
-                            const selectedSizeLabel = selectedSizeInput.nextElementSibling;
-                            if (selectedSizeLabel) {
-                                selectedSizeLabel.classList.add('option-unavailable');
+                        if (selectedSize) {
+                            const selectedSizeInput = document.querySelector(`input[name="storage"][value="${selectedSize}"]`);
+                            if (selectedSizeInput) {
+                                const selectedSizeLabel = selectedSizeInput.nextElementSibling;
+                                if (selectedSizeLabel) {
+                                    selectedSizeLabel.classList.add('option-unavailable');
+                                }
                             }
                         }
                     }
                 }
-            }
-            document.querySelectorAll('input[name="color"]').forEach(radio => {
-                radio.addEventListener('change', function() {
-                    selectedColor = this.value;
-                    // Re-enable all options first
-                    document.querySelectorAll('.option-unavailable').forEach(el => {
-                        el.classList.remove('option-unavailable');
+                document.querySelectorAll('input[name="color"]').forEach(radio => {
+                    radio.addEventListener('change', function() {
+                        selectedColor = this.value;
+                        // Re-enable all options first
+                        document.querySelectorAll('.option-unavailable').forEach(el => {
+                            el.classList.remove('option-unavailable');
+                        });
+                        updateVariantInfo();
                     });
-                    updateVariantInfo();
                 });
+
+        document.querySelectorAll('input[name="storage"]').forEach(radio => {
+            radio.addEventListener('change', () => {
+                selectedSize = radio.value;
+                updateVariantInfo();
             });
-
-    document.querySelectorAll('input[name="storage"]').forEach(radio => {
-        radio.addEventListener('change', () => {
-            selectedSize = radio.value;
-            updateVariantInfo();
         });
-    });
 
-    // Initial load
-    checkAllCombinations();
-    updateVariantInfo();
+        // Initial load
+        checkAllCombinations();
+        updateVariantInfo();
 
-    // Add-to-Cart button handler
-    // Add-to-Cart button handler
-addCartBtn.addEventListener('click', function(e) {
-    e.preventDefault();
+        // Add-to-Cart button handler
+            addCartBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
 
-    const productItemId = this.dataset.productItemId;
-    const title = this.dataset.title;
-    const price = parseFloat(this.dataset.price) || 0;
-    const img = this.dataset.img;
-    const quantity = parseInt(document.getElementById('productQuantity')?.value) || 1;
-    const stock = parseInt(stockDisplay.textContent) || 0;
+            const productItemId = this.dataset.productItemId;
+            const selectedSize = document.querySelector('input[name="storage"]:checked')?.value;
+            const selectedColor = document.querySelector('input[name="color"]:checked')?.value;
+            const quantity = parseInt(document.getElementById('productQuantity')?.value);
 
-    // Update stock in button dataset
-    this.dataset.stock = stock;
+            handleAddToCart(productItemId, selectedSize, selectedColor, quantity);
+            updateCartCountLocal();
+        });
 
-    // Call the global addToCartHandler from cart.js
-    addToCartHandler(productItemId, null, null, quantity);
-});
+
 
 });
 </script>

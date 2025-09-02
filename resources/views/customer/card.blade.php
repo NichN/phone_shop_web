@@ -29,7 +29,7 @@
                             @php
                                 $decodedImages = json_decode($item->imgSrc, true);
                                 $images = is_array($decodedImages) ? $decodedImages : [];
-
+                                
                                 $imgSrc = count($images) > 0 ? $images[0] : 'default-image.jpg';
 
                                 $title = $item->title ?? 'Unknown Product';
@@ -100,6 +100,18 @@
                                 </div>
                             </label>
                         </div>
+                        <div class="payment-option">
+                            <input class="form-check-input" type="radio" name="payment_type" id="take_sh" value="Cash at Pickup" checked>
+                            <label class="payment-label" for="take_sh">
+                                <div class="payment-content d-flex align-items-center">
+                                    <img src="{{ asset('image/shop.png') }}" alt="shop pickup" class="payment-icon rounded me-2">
+                                    <div>
+                                        <span class="payment-title">Cash at Pickup</span><br>
+                                        <small class="payment-description">Pay When You Arrived Shop</small>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
                     @else
                         {{-- Cash on Delivery --}}
                         <div class="payment-option mb-2">
@@ -144,5 +156,5 @@
         </div>
     </form>
 </div>
-@endsection
 @include('customer.script_payment')
+@endsection

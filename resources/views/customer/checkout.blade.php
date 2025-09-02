@@ -141,7 +141,6 @@
 
 <script src="{{ asset('js/cart.js') }}"></script>
 @include('customer.script_order')
-@endsection
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -249,4 +248,4 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 </script>
-
+@endsection
