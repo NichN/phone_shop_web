@@ -1,6 +1,4 @@
 @extends('Layout.headerfooter')
-
-@section('title', 'Payment & Delivery')
 <link href="{{ asset('css/payment.css') }}" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <!-- Load jQuery FIRST -->
@@ -10,8 +8,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-
-
+@section('title', 'Payment')
 @section('content')
 <div class="container py-4">
     <form method="POST" action="{{ route('checkout.payment_store') }}">
@@ -94,7 +91,7 @@
                                 <div class="payment-content d-flex align-items-center">
                                     <img src="{{ asset('image/barkog.png') }}" alt="KH QR Payment" class="payment-icon rounded me-2">
                                     <div>
-                                        <span class="payment-title">Online Payment</span><br>
+                                        <span class="payment-title">Upload Screenshot Payment</span><br>
                                         <small class="payment-description">Scan QR code to pay instantly</small>
                                     </div>
                                 </div>
@@ -132,9 +129,9 @@
                             <input class="form-check-input" type="radio" name="payment_type" id="kh_qr" value="online_payment">
                             <label class="payment-label" for="kh_qr">
                                 <div class="payment-content d-flex align-items-center">
-                                    <img src="{{ asset('image/barkog.png') }}" alt="Online Payment" class="payment-icon rounded me-2">
+                                    <img src="{{ asset('image/barkog.png') }}" alt="Upload Screenshot Payment" class="payment-icon rounded me-2">
                                     <div>
-                                        <span class="payment-title">Online Payment</span><br>
+                                        <span class="payment-title">Upload Screenshot Payment</span><br>
                                         <small class="payment-description">Scan QR code to pay instantly</small>
                                     </div>
                                 </div>
@@ -156,5 +153,5 @@
         </div>
     </form>
 </div>
-@include('customer.script_payment')
 @endsection
+@include('customer.script_payment')

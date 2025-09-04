@@ -13,6 +13,10 @@ $(document).ready(function(){
                     return meta.row + 1;
                 }
             },
+            {data: 'logo', render: function(data) {
+                        console.log(data);
+                        return data ? `<img src="/storage/${data}" width="50">` : 'No Image';
+                    }},
             { data: 'name', name: 'name' },
             { data: 'description', name: 'description' },
             {
@@ -95,6 +99,7 @@ $(document).ready(function(){
         $.get(url, function(data) {
             $('#brandId').val(data.id);
             $('#editName').val(data.name);
+            $('#editLogo').val(data.logo);
             $('#edit_description').val(data.description);
             $('#editModal').modal('show');
         });

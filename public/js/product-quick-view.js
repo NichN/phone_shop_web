@@ -91,7 +91,25 @@ function renderProductDetail(productData) {
     if (!modalBody) return;
     
     // Create product detail HTML
+    const style = `
+        <style>
+            .selected-color {
+                border: 2px solid #007bff !important;
+                box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+            }
+            .out-of-stock {
+                border: 2px solid #dc3545 !important;
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+            .na-selection {
+                border: 2px solid #dc3545 !important;
+                box-shadow: 0 0 5px rgba(220, 53, 69, 0.5);
+            }
+        </style>
+    `;
     const productHTML = `
+        ${style}
         <div class="row">
             <div class="col-md-6">
                 <div class="main-image-container border">
@@ -214,10 +232,13 @@ document.addEventListener('click', function(e) {
     if (!qtyInput) return;
     
     if (e.target.id === 'increaseQty') {
-        qtyInput.value = Math.min(parseInt(qtyInput.value || 1) + 1, 999);
+        if (e.target.id === 'increaseQty') {
+    qtyInput.value = Math.min(parseInt(qtyInput.value) + 1, 999);
+}
+
     }
     if (e.target.id === 'decreaseQty') {
-        qtyInput.value = Math.max(parseInt(qtyInput.value || 1) - 1, 1);
+        qtyInput.value = Math.max(parseInt(qtyInput.value) - 1, 1);
     }
 });
 
@@ -230,10 +251,6 @@ function handleAddToCart(productItemId, size = null, color = null, quantity = 1)
     }
 
     const button = document.querySelector(`[data-product-item-id="${id}"]`);
-    if (!button) {
-        showCartMessage("Cart button not found.", 'error');
-        return;
-    }
     
     if (button.disabled) {
         alert("This combination is not available.");
@@ -295,11 +312,14 @@ function handleAddToCart(productItemId, size = null, color = null, quantity = 1)
 document.addEventListener('click', function(e) {
     if (e.target.classList.contains('add-cart-modal')) {
         const qty = parseInt(document.getElementById('modalProductQuantity')?.value) || 1;
+        // console.log('Add to cart clicked. Quantity:', qty);
         const productId = e.target.dataset.productItemId;
         const selectedColor = document.querySelector('input[name="modalColor"]:checked')?.value;
         const selectedSize = document.querySelector('input[name="modalStorage"]:checked')?.value;
         
-        handleAddToCart(productId, selectedSize, selectedColor, qty);
+        // handleAddToCart(productId, selectedSize, selectedColor, qty);
+        // console.log('Add to cart clicked. Quantity:', qty);
+
     }
 });
 
@@ -308,11 +328,27 @@ function setupModalEventListeners(productData) {
     const colorInputs = document.querySelectorAll('input[name="modalColor"]');
     const storageInputs = document.querySelectorAll('input[name="modalStorage"]');
     
+    // Highlight selected color
+    function highlightSelectedColor() {
+        colorInputs.forEach(input => {
+            const label = input.nextElementSibling;
+            if (label) {
+                if (input.checked && !input.disabled) {
+                    label.classList.add('selected-color');
+                    label.classList.remove('na-selection');
+                } else {
+                    label.classList.remove('selected-color');
+                }
+            }
+        });
+    }
+    
     colorInputs.forEach(input => {
         input.addEventListener('change', () => {
             document.querySelectorAll('.option-unavailable').forEach(el => {
                 el.classList.remove('option-unavailable');
             });
+            highlightSelectedColor();
             updateModalVariant(productData);
         });
     });
@@ -326,12 +362,9 @@ function setupModalEventListeners(productData) {
         });
     });
     
-    // Handle add to cart button
-    
-    
-    
     // Check all combinations on modal load
     checkModalCombinations(productData);
+    highlightSelectedColor();
     updateModalVariant(productData);
 }
 
@@ -343,22 +376,25 @@ function checkModalCombinations(productData) {
     const allSizes = Array.from(document.querySelectorAll('input[name="modalStorage"]')).map(input => input.value);
     
     // Reset unavailable classes
-    document.querySelectorAll('.option-unavailable').forEach(el => {
-        el.classList.remove('option-unavailable');
+    document.querySelectorAll('.option-unavailable, .out-of-stock').forEach(el => {
+        el.classList.remove('option-unavailable', 'out-of-stock');
     });
     
-    // Check unavailable colors
+    // Check unavailable colors and out-of-stock status
     allColors.forEach(color => {
         const hasAnyVariantForColor = productData.variants.some(v => 
             v.color_code.toLowerCase() === color.toLowerCase()
         );
+        const hasStockForColor = productData.variants.some(v => 
+            v.color_code.toLowerCase() === color.toLowerCase() && parseInt(v.stock) > 0
+        );
         
-        if (!hasAnyVariantForColor) {
-            const colorInput = document.querySelector(`input[name="modalColor"][value="${color}"]`);
-            if (colorInput) {
-                const colorLabel = colorInput.nextElementSibling;
-                if (colorLabel) {
-                    colorLabel.classList.add('option-unavailable');
+        const colorInput = document.querySelector(`input[name="modalColor"][value="${color}"]`);
+        if (colorInput) {
+            const colorLabel = colorInput.nextElementSibling;
+            if (colorLabel) {
+                if (!hasAnyVariantForColor || !hasStockForColor) {
+                    colorLabel.classList.add('out-of-stock');
                     colorInput.disabled = true;
                 }
             }
@@ -387,22 +423,31 @@ function checkModalCombinations(productData) {
 // Function to update modal variant based on selection
 function updateModalVariant(productData) {
     if (!productData.variants) return;
-    
+
     const selectedColor = document.querySelector('input[name="modalColor"]:checked')?.value;
     const selectedSize = document.querySelector('input[name="modalStorage"]:checked')?.value;
-    
+
+    const qtyInput = document.getElementById('modalProductQuantity');
+    const increaseBtn = document.getElementById('increaseQty');
+    const decreaseBtn = document.getElementById('decreaseQty');
+    const addCartBtn = document.querySelector('.add-cart-modal');
+    const selectedColorInput = document.querySelector('input[name="modalColor"]:checked');
+    const selectedSizeInput = document.querySelector('input[name="modalStorage"]:checked');
+    const selectedColorLabel = selectedColorInput?.nextElementSibling;
+    const selectedSizeLabel = selectedSizeInput?.nextElementSibling;
+
     if (selectedColor && selectedSize) {
-        const variant = productData.variants.find(v => 
-            v.color_code.toLowerCase() === selectedColor.toLowerCase() && 
+        const variant = productData.variants.find(v =>
+            v.color_code.toLowerCase() === selectedColor.toLowerCase() &&
             v.size.toLowerCase() === selectedSize.toLowerCase()
         );
-        
-        const addCartBtn = document.querySelector('.add-cart-modal');
-        if (variant) {
+
+        if (variant && parseInt(variant.stock) > 0) {
             document.getElementById('modalProductPrice').innerHTML = `<strong>${variant.price || 'N/A'} USD</strong>`;
-            document.getElementById('modalStockDisplay').textContent = variant.stock || 'N/A';
+            document.getElementById('modalStockDisplay').textContent = variant.stock ?? 'N/A';
             document.getElementById('modalStockDisplay').className = 'fw-bold text-primary';
-            
+
+            // Update Add to Cart button
             if (addCartBtn) {
                 addCartBtn.dataset.productItemId = variant.id || '';
                 addCartBtn.dataset.price = variant.price || '';
@@ -412,11 +457,28 @@ function updateModalVariant(productData) {
                 addCartBtn.classList.add('btn-dark');
                 addCartBtn.style.cursor = 'pointer';
             }
+
+            // Enable quantity controls
+            if (qtyInput && increaseBtn && decreaseBtn) {
+                qtyInput.disabled = false;
+                increaseBtn.disabled = false;
+                decreaseBtn.disabled = false;
+            }
+
+            // Remove N/A selection highlight, keep normal selection highlight
+            if (selectedColorLabel) {
+                selectedColorLabel.classList.remove('na-selection');
+                selectedColorLabel.classList.add('selected-color');
+            }
+            if (selectedSizeLabel) {
+                selectedSizeLabel.classList.remove('na-selection');
+            }
         } else {
+            // Variant not found or out of stock
             document.getElementById('modalProductPrice').innerHTML = `<strong class="text-danger">N/A</strong>`;
             document.getElementById('modalStockDisplay').textContent = 'N/A';
             document.getElementById('modalStockDisplay').className = 'fw-bold text-danger';
-            
+
             if (addCartBtn) {
                 addCartBtn.dataset.productItemId = '';
                 addCartBtn.dataset.price = '';
@@ -426,25 +488,21 @@ function updateModalVariant(productData) {
                 addCartBtn.classList.add('btn-secondary');
                 addCartBtn.style.cursor = 'not-allowed';
             }
-            
-            // Mark unavailable options
-            if (selectedColor) {
-                const selectedColorInput = document.querySelector(`input[name="modalColor"][value="${selectedColor}"]`);
-                if (selectedColorInput) {
-                    const selectedColorLabel = selectedColorInput.nextElementSibling;
-                    if (selectedColorLabel) {
-                        selectedColorLabel.classList.add('option-unavailable');
-                    }
-                }
+
+            // Disable quantity controls
+            if (qtyInput && increaseBtn && decreaseBtn) {
+                qtyInput.disabled = true;
+                increaseBtn.disabled = true;
+                decreaseBtn.disabled = true;
             }
-            if (selectedSize) {
-                const selectedSizeInput = document.querySelector(`input[name="modalStorage"][value="${selectedSize}"]`);
-                if (selectedSizeInput) {
-                    const selectedSizeLabel = selectedSizeInput.nextElementSibling;
-                    if (selectedSizeLabel) {
-                        selectedSizeLabel.classList.add('option-unavailable');
-                    }
-                }
+
+            // Apply red border to selected size and color
+            if (selectedColorLabel) {
+                selectedColorLabel.classList.remove('selected-color');
+                selectedColorLabel.classList.add('na-selection');
+            }
+            if (selectedSizeLabel) {
+                selectedSizeLabel.classList.add('na-selection');
             }
         }
     }

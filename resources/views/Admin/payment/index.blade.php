@@ -96,7 +96,7 @@
                             <select name="payment_type" id="filterPaymentType" class="form-select">
                                 <option value="">-- Select Payment Type --</option>
                                 <option value="cash">Cash on Delivery</option>
-                                <option value="aba">Online Payment</option>
+                                <option value="upload_screenshot">Upload Screenshot Payment</option>
                             </select>
                         </div>
                         <div class="col-md-4">

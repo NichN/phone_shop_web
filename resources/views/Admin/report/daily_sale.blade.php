@@ -32,7 +32,7 @@
                                     <select class="form-select" id="paid_by">
                                         <option value="">Select Payment Type</option>
                                         <option value="cash">Cash on Delivery</option>
-                                        <option value="aba">Online Payment</option>
+                                        <option value="aba">Upload Screenshot Payment</option>
                                     </select>
                                 </div>
                                 <div class="col-md-4">

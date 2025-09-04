@@ -12,9 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const productItemId = icon.getAttribute('data-product-item-id');
             const proId = icon.getAttribute('data-product-pro-id');
 
-            if (!productItemId || !proId) {
-                return; // Removed the alert
-            }
+            if (!productItemId || !proId) return;
 
             const productCard = icon.closest('.product-card') || icon.closest('.card-body');
             const title = productCard.querySelector('.product-title')?.innerText || 'Untitled';
@@ -25,13 +23,11 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // Toggle Wishlist: Add/Remove Items from Wishlist in LocalStorage
     function toggleWishlist(productItemId, proId, title, price, imgSrc, icon) {
         productItemId = String(productItemId);
         proId = String(proId);
 
-        // Check for duplicates by title (case insensitive)
-        const existingIndex = wishlist.findIndex(item => 
+        const existingIndex = wishlist.findIndex(item =>
             item.title.toLowerCase().trim() === title.toLowerCase().trim()
         );
 
@@ -39,20 +35,10 @@ document.addEventListener("DOMContentLoaded", function () {
             wishlist.push({ productItemId, proId, title, price, imgSrc });
             icon.classList.remove('fa-regular');
             icon.classList.add('fa-solid');
-            
-            // Show success notification for adding to wishlist
-            if (typeof showWishlistSuccessNotification === 'function') {
-                showWishlistSuccessNotification('Item added to wishlist successfully.');
-            }
         } else {
             wishlist.splice(existingIndex, 1);
             icon.classList.remove('fa-solid');
             icon.classList.add('fa-regular');
-            
-            // Show success notification for removing from wishlist
-            if (typeof showWishlistSuccessNotification === 'function') {
-                showWishlistSuccessNotification('Item removed from wishlist.');
-            }
         }
 
         localStorage.setItem('wishlist', JSON.stringify(wishlist));
@@ -61,13 +47,11 @@ document.addEventListener("DOMContentLoaded", function () {
         syncWishlistIcons();
     }
 
-    // Update the Wishlist Count
     function updateWishlistCount() {
         const wishlistCount = document.getElementById('count_heart_cart');
         if (wishlistCount) wishlistCount.textContent = wishlist.length;
     }
 
-    // Fetch product options (size/color)
     async function fetchProductOptions(productItemId) {
         try {
             const response = await fetch(`/product-items/${productItemId}`);
@@ -85,155 +69,138 @@ document.addEventListener("DOMContentLoaded", function () {
         updateWishlistCount();
         updateWishlistModal();
         syncWishlistIcons();
-        
-        // Show success notification for removing from wishlist
-        if (typeof showWishlistSuccessNotification === 'function') {
-            showWishlistSuccessNotification('Item removed from wishlist.');
-        }
     }
 
     async function updateWishlistModal() {
-    const listwish = document.getElementById('listwish');
-    if (!listwish) return;
+        const listwish = document.getElementById('listwish');
+        if (!listwish) return;
 
-    listwish.innerHTML = '';
+        listwish.innerHTML = '';
 
-    if (wishlist.length === 0) {
-        listwish.innerHTML = `
-            <div class="text-center p-4">
-                <i class="fa-regular fa-heart fs-1 text-muted mb-2"></i>
-                <p class="text-muted mb-0">Your wishlist is empty.</p>
-                <small class="text-muted">Start adding items you love ❤️</small>
-            </div>`;
-        return;
-    }
+        if (wishlist.length === 0) {
+            listwish.innerHTML = `
+                <div class="text-center p-4">
+                    <i class="fa-regular fa-heart fs-1 text-muted mb-2"></i>
+                    <p class="text-muted mb-0">Your wishlist is empty.</p>
+                    <small class="text-muted">Start adding items you love ❤️</small>
+                </div>`;
+            return;
+        }
 
-    for (const item of wishlist) {
-        if (!item.productItemId) continue;
+        for (const item of wishlist) {
+            if (!item.productItemId) continue;
 
-        const { sizes, colors } = await fetchProductOptions(item.productItemId);
+            const { sizes, colors } = await fetchProductOptions(item.productItemId);
+            const priceNum = typeof item.price === 'number' ? item.price : parseFloat(item.price.replace(/[^\d.-]/g, '')) || 0;
+            const formattedPrice = priceNum.toFixed(2);
 
-        const priceNum = typeof item.price === 'number' ? item.price : parseFloat(item.price.replace(/[^\d.-]/g, '')) || 0;
-        const formattedPrice = priceNum.toFixed(2);
+            const listItem = document.createElement('li');
+            listItem.className = 'list-group-item wishlist-item-card d-flex justify-content-between align-items-center p-4 mb-3 rounded shadow-sm border-0 position-relative';
 
-        const listItem = document.createElement('li');
-        listItem.className = 'list-group-item wishlist-item-card d-flex justify-content-between align-items-center p-4 mb-3 rounded shadow-sm border-0 position-relative';
+            listItem.innerHTML = `
+                <div class="d-flex align-items-center w-100">
+                    <img src="${item.imgSrc}" alt="${item.title}" class="img-fluid rounded-3" style="width: 80px; height: 80px; object-fit: cover;">
+                    <div class="ms-3 flex-grow-1">
+                        <h5 class="fw-bold mb-1 product-title">${item.title}</h5>
+                        <p class="text-muted fw-bold mb-2" style="color:blue;">$${formattedPrice}</p>
 
-        listItem.innerHTML = `
-            <div class="d-flex align-items-center w-100">
-                <img src="${item.imgSrc}" alt="${item.title}" class="img-fluid rounded-3" style="width: 80px; height: 80px; object-fit: cover;">
-                <div class="ms-3 flex-grow-1">
-                    <h5 class="fw-bold mb-1 product-title">${item.title}</h5>
-                    <p class="text-muted fw-bold mb-2" style="color:blue;">$${formattedPrice}</p>
-
-                    <div class="mb-2">
-                        <label class="form-label small mb-1">Choose Size:</label>
-                        <div class="btn-group size-options" role="group">
-                            ${sizes.map(s => `
-                                <button type="button" class="btn btn-outline-dark btn-sm size-btn" data-size="${s}">${s}</button>
-                            `).join('')}
+                        <div class="mb-2">
+                            <label class="form-label small mb-1">Choose Size:</label>
+                            <div class="btn-group size-options" role="group">
+                                ${sizes.map(s => `
+                                    <button type="button" class="btn btn-outline-dark btn-sm size-btn" data-size="${s}">${s}</button>
+                                `).join('')}
+                            </div>
                         </div>
+
+                        <div class="mb-2">
+                            <label class="form-label small mb-1">Choose Color:</label>
+                            <div class="d-flex gap-2 color-options">
+                                ${colors.map(c => `
+                                    <button type="button" class="btn color-btn border" 
+                                        style="background-color: ${c.code}; width: 30px; height: 30px; border-radius: 50%;" 
+                                        title="${c.name}" data-color="${c.code}">
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <div class="variant-error-msg mt-2 text-danger small d-none"></div>
                     </div>
 
-                    <div class="mb-2">
-                        <label class="form-label small mb-1">Choose Color:</label>
-                        <div class="d-flex gap-2 color-options">
-                            ${colors.map(c => `
-                                <button type="button" class="btn color-btn border" 
-                                    style="background-color: ${c.code}; width: 30px; height: 30px; border-radius: 50%;" 
-                                    title="${c.name}" data-color="${c.code}">
-                                </button>
-                            `).join('')}
-                        </div>
+                    <div class="d-flex flex-column align-items-end">
+                        <button class="btn btn-danger btn-sm remove-wishlist-btn position-absolute top-0 end-0" style="z-index: 1;" data-product-id="${item.productItemId}">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                        <button class="btn btn-outline-primary btn-sm move-to-bag-btn mt-3" data-product-id="${item.productItemId}">
+                            Move To Bag
+                        </button>
                     </div>
-                </div>
-                <div class="d-flex flex-column align-items-end">
-                    <button class="btn btn-danger btn-sm remove-wishlist-btn position-absolute top-0 end-0" style="z-index: 1;" data-product-id="${item.productItemId}">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                    <button class="btn btn-outline-primary btn-sm move-to-bag-btn mt-3" data-product-id="${item.productItemId}">
-                        Move To Bag
-                    </button>
-                </div>
-            </div>`;
+                </div>`;
 
-        listwish.appendChild(listItem);
+            listwish.appendChild(listItem);
 
-        let selectedSize = null;
-        let selectedColor = null;
+            let selectedSize = null;
+            let selectedColor = null;
 
-        // Handle size selection
-        listItem.querySelectorAll('.size-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                listItem.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                selectedSize = btn.dataset.size;
-            });
-        });
-
-        // Handle color selection
-        listItem.querySelectorAll('.color-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                listItem.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                selectedColor = btn.dataset.color;
-            });
-        });
-
-        // Remove from wishlist
-        listItem.querySelector('.remove-wishlist-btn').addEventListener('click', () => {
-            removeFromWishlist(item.productItemId);
-        });
-
-        // Move to bag
-        listItem.querySelector('.move-to-bag-btn').addEventListener('click', () => {
-            if (!selectedSize || !selectedColor) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Selection Required',
-                    text: 'Please select both size and color.',
-                    confirmButtonText: 'OK'
+            listItem.querySelectorAll('.size-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    listItem.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    selectedSize = btn.dataset.size;
                 });
-                return;
-            }
+            });
 
-            fetch(`/get-product-item-id?pro_id=${item.proId}&size=${selectedSize}&color_code=${encodeURIComponent(selectedColor)}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
+            listItem.querySelectorAll('.color-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    listItem.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    selectedColor = btn.dataset.color;
+                });
+            });
+
+            listItem.querySelector('.remove-wishlist-btn').addEventListener('click', () => {
+                removeFromWishlist(item.productItemId);
+            });
+
+            listItem.querySelector('.move-to-bag-btn').addEventListener('click', () => {
+                const errorBox = listItem.querySelector('.variant-error-msg');
+                errorBox.classList.add('d-none');
+                errorBox.textContent = '';
+
+                if (!selectedSize || !selectedColor) {
+                    errorBox.textContent = 'Please select both size and color.';
+                    errorBox.classList.remove('d-none');
+                    return;
+                }
+
+                fetch(`/get-product-item-id?pro_id=${item.proId}&size=${selectedSize}&color_code=${encodeURIComponent(selectedColor)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.success || !data.product_item_id) {
+                            errorBox.textContent = 'This product variant is not available.';
+                            errorBox.classList.remove('d-none');
+                            return;
+                        }
+
+                        if (data.stock !== undefined && parseInt(data.stock) <= 0) {
+                            errorBox.textContent = 'This item is currently out of stock.';
+                            errorBox.classList.remove('d-none');
+                            return;
+                        }
+
                         const finalProductItemId = data.product_item_id;
                         removeFromWishlist(item.productItemId);
                         moveToBag(item.title, item.price, item.imgSrc, finalProductItemId, selectedSize, selectedColor);
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Product Error',
-                            text: 'Product variation not found.'
-                        });
-                    }
-                })
-                .catch(() => {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Availability Error',
-                        text: 'The product you selected is not available.'
+                    })
+                    .catch(() => {
+                        errorBox.textContent = 'Failed to check product availability.';
+                        errorBox.classList.remove('d-none');
                     });
-                });
-        });
-    }
-}
-
-
-    // Remove Item from Wishlist (localStorage)
-    function removeItemFromLocal(productItemId) {
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        cart = cart.filter(item => item.productItemId !== productItemId);
-        localStorage.setItem('cart', JSON.stringify(cart));
-        updateCartCountLocal();
-        loadCartFromLocalStorage();
+            });
+        }
     }
 
-    // Sync Wishlist Icons
     function syncWishlistIcons() {
         wishlistIcons.forEach(icon => {
             const productItemId = icon.getAttribute('data-product-item-id');
@@ -243,33 +210,19 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Move to Cart and Clear from Wishlist
     function moveToBag(title, price, imgSrc, productItemId, size, color) {
         addProductToCart(title, price, imgSrc, productItemId, size, color);
         removeFromWishlist(productItemId);
 
-        // Show success notification for moving to cart
         if (typeof showCartSuccessNotification === 'function') {
             showCartSuccessNotification();
         }
-        
-        // Show wishlist notification for removal
-        if (typeof showWishlistSuccessNotification === 'function') {
-            showWishlistSuccessNotification('Item moved to cart and removed from wishlist.');
-        }
 
-        // If logged in, sync with backend
-        if (window.isAuthenticated) {
-            if (typeof handleAddToCart === 'function') {
-                handleAddToCart(productItemId, size, color);
-            } else {
-                console.error('handleAddToCart function is not defined.');
-                alert('Error: Unable to sync cart with server.');
-            }
+        if (isAuthenticated && typeof handleAddToCart === 'function') {
+            handleAddToCart(productItemId, size, color);
         }
     }
 
-    // Add Product to Cart (localStorage)
     function addProductToCart(title, price, imgSrc, productItemId, size, color) {
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
         const priceNumeric = parseFloat(price.replace(/[^\d.]/g, '')) || 0;
@@ -294,7 +247,6 @@ document.addEventListener("DOMContentLoaded", function () {
         loadCartFromLocalStorage();
     }
 
-    // Update Cart Count
     function updateCartCountLocal() {
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
         const totalQty = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -349,11 +301,11 @@ document.addEventListener("DOMContentLoaded", function () {
         loadCartFromLocalStorage();
     }
 
-    // Function to clear duplicates (run this in browser console)
-    window.clearDuplicates = function() {
+    // Helper to clear duplicates from wishlist (browser console)
+    window.clearDuplicates = function () {
         const uniqueItems = [];
         const seenTitles = new Set();
-        
+
         wishlist.forEach(item => {
             const titleKey = item.title.toLowerCase().trim();
             if (!seenTitles.has(titleKey)) {
@@ -361,7 +313,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 uniqueItems.push(item);
             }
         });
-        
+
         wishlist = uniqueItems;
         localStorage.setItem('wishlist', JSON.stringify(wishlist));
         updateWishlistCount();

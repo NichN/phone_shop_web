@@ -221,23 +221,36 @@ class CheckoutController extends Controller
             'img_verify' => $imgPath,
             'payment_status' => 'pending',
         ]);
+
         $orderItems = DB::table('order_item')
-                ->join('product_item', 'order_item.product_item_id', '=', 'product_item.id')
-                ->where('order_item.order_id', $order->id)
-                ->select([
-                    'product_item.product_name',
-                    'product_item.color_code',
-                    'product_item.size',
-                    'order_item.quantity',
-                    'order_item.price',
-                    'product_item.images'
-                ])
-                ->get();
+            ->join('product_item', 'order_item.product_item_id', '=', 'product_item.id')
+            ->where('order_item.order_id', $order->id)
+            ->select([
+                'product_item.product_name',
+                'product_item.color_code',
+                'product_item.size',
+                'order_item.quantity',
+                'order_item.price',
+                'product_item.images'
+            ])
+            ->get();
+
         $adminEmails = \App\Models\User::where('role_id', '1')->pluck('email')->toArray();
 
-            \Mail::to($adminEmails)->send(
-                new \App\Mail\OrderConfirmationMail($order, $orderItems)
-            );
+        \Mail::to($adminEmails)->send(
+            new \App\Mail\OrderConfirmationMail($order, $orderItems)
+        );
+
+        // Store order details in session for guest users
+        if (!Auth::check()) {
+            $guestOrderData = session()->get('guest_orders', []);
+            $guestOrderData[] = [
+                'order_id' => $order->id,
+                'order_num' => $order->order_num,
+                'guest_eamil' => $order->guest_eamil,
+            ];
+            session()->put('guest_orders', $guestOrderData);
+        }
 
         DB::commit();
 
@@ -252,7 +265,6 @@ class CheckoutController extends Controller
                 . "Status: *Pending Payment Confirmation*\n\n"
                 . "👉 [Review Order in Dashboard](http://127.0.0.1:8000/order_dashboard)";
 
-
             if ($imgFullPath && file_exists($imgFullPath)) {
                 $response = Http::attach(
                     'photo', file_get_contents($imgFullPath), basename($imgFullPath)
@@ -265,7 +277,6 @@ class CheckoutController extends Controller
                     \Log::error('Telegram sendPhoto failed', ['response' => $response->body()]);
                 }
             } else {
-                // fallback text message if no image
                 Http::get("https://api.telegram.org/bot{$telegramBotToken}/sendMessage", [
                     'chat_id' => $telegramChatId,
                     'text' => $caption,
@@ -294,49 +305,56 @@ class CheckoutController extends Controller
     }
 }
     public function orderHistory(Request $request)
-    {
-        $query = Order::query();
+{
+    $query = Order::query();
 
-        if (auth()->check()) {
-            $query->where('user_id', auth()->id());
-        } else {
-            $guestEmail = $request->query('guest_eamil'); 
-            $guestToken = $request->query('order_num');
+    if (auth()->check()) {
+        $query->where('user_id', auth()->id());
+    } else {
+        $guestEmail = $request->query('guest_eamil');
+        $guestToken = $request->query('order_num');
+        $guestOrders = session()->get('guest_orders', []);
 
-            if (!$guestEmail || !$guestToken) {
-                return view('customer.history', [
-                    'orders' => collect(),
-                    'error' => 'Please provide both email and order number.'
-                ]);
-            }
+        if (!$guestEmail && !$guestToken && empty($guestOrders)) {
+            return view('customer.history', [
+                'orders' => collect(),
+                'error' => 'Please provide both email and order number or place an order first.'
+            ]);
+        }
 
+        if ($guestEmail && $guestToken) {
             $query->where('guest_eamil', $guestEmail)
-                ->where('order_num', $guestToken);
+                  ->where('order_num', $guestToken);
+        } elseif (!empty($guestOrders)) {
+            // Fetch orders from session data
+            $orderIds = collect($guestOrders)->pluck('order_id')->toArray();
+            $query->whereIn('id', $orderIds);
         }
-
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('order_num', 'like', "%{$search}%")
-                    ->orWhere('guest_name', 'like', "%{$search}%");
-            });
-        }
-
-        if ($request->filled('date')) {
-            $query->whereDate('created_at', $request->date);
-        }
-
-        $orders = $query->orderBy('created_at', 'desc')->get();
-
-        return view('customer.history', [
-            'orders' => $orders,
-            'isGuest' => !auth()->check()
-        ]);
     }
+
+    if ($request->filled('status')) {
+        $query->where('status', $request->status);
+    }
+
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $query->where(function ($q) use ($search) {
+            $q->where('order_num', 'like', "%{$search}%")
+              ->orWhere('guest_name', 'like', "%{$search}%");
+        });
+    }
+
+    if ($request->filled('date')) {
+        $query->whereDate('created_at', $request->date);
+    }
+
+    $orders = $query->orderBy('created_at', 'desc')->get();
+
+    return view('customer.history', [
+        'orders' => $orders,
+        'isGuest' => !auth()->check()
+    ]);
+}
 
     public function orderDetails($id)
     {

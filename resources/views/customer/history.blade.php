@@ -16,6 +16,7 @@
     @if(!auth()->check())
         <div class="container mt-4 mb-4">
             <h4 class="text-center mb-3">Guest Order History Lookup</h4>
+            <p class="text-center text-muted">Your recent orders are shown below. Use this form to look up other orders.</p>
             <form method="GET" action="{{ route('checkout.history') }}" class="row g-2 justify-content-center">
                 <div class="col-md-4">
                     <input type="email" name="guest_eamil" class="form-control" placeholder="Your Email" value="{{ request('guest_eamil') }}" required>

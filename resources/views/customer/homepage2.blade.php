@@ -16,19 +16,23 @@
             <div class="carousel-inner">
                 @foreach (['slide.jpg', 'img1.jpg', 'slide2.jpg'] as $index => $slide)
                     <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                        <div class="container-fluid d-flex align-items-center" style="height: 75vh;">
-                            <div class="container d-flex justify-content-between align-items-center">
+                    <div class="container-fluid d-flex align-items-center" style="height: 75vh;">
+                        <div class="container d-flex justify-content-between align-items-center">
+                            <div class="text-container pt-5">
+                                <h2 class="display-4 fw-bold">Welcome to <br> TayMeng Phone Shop</h2>
+                                <p>Power Up Your Life with the Latest Electronic!</p>
 
-                                <div class="text-container pt-5">
-                                    <h2 class="display-4 fw-bold">Welcome to <br> TayMeng Phone Shop</h2>
-                                    <p>Power Up Your Life with the Latest Electronic!</p>
-                                </div>
-                                <div class="image-container">
-                                    <img src="{{ asset('image/' . $slide) }}" alt="" class="img-fluid">
-                                </div>
+                                <a href="{{ route('product.all') }}" class="btn btn-dark mt-3 px-4 py-2" style="font-size: 1.1rem;">
+                                    <i class="fa-solid fa-cart-shopping me-2"></i>Shop Now
+                                </a>
+                            </div>
+                            <div class="image-container">
+                                <img src="{{ asset('image/' . $slide) }}" alt="" class="img-fluid">
                             </div>
                         </div>
                     </div>
+                </div>
+
                 @endforeach
             </div>
             <button class="carousel-control-prev custom-carousel" type="button" data-bs-target="#carouselExampleCaptions"
@@ -97,35 +101,10 @@
                             <a href="{{ route('product_by_brand', $brand->id) }}" class="brand-link">
                                 <div class="brand-content">
                                     <h3 class="brand-name">{{ $brand->name }}</h3>
-                                    <div class="brand-icon">
-                                        @php
-                                            $brandName = strtolower($brand->name);
-                                            $iconClass = 'fas fa-mobile-alt'; // default icon
-                                            
-                                            if (strpos($brandName, 'apple') !== false || strpos($brandName, 'iphone') !== false) {
-                                                $iconClass = 'fab fa-apple';
-                                            } elseif (strpos($brandName, 'samsung') !== false) {
-                                                $iconClass = 'fas fa-mobile-alt';
-                                            } elseif (strpos($brandName, 'huawei') !== false) {
-                                                $iconClass = 'fas fa-mobile-alt';
-                                            } elseif (strpos($brandName, 'oppo') !== false) {
-                                                $iconClass = 'fas fa-mobile-alt';
-                                            } elseif (strpos($brandName, 'xiaomi') !== false) {
-                                                $iconClass = 'fas fa-mobile-alt';
-                                            } elseif (strpos($brandName, 'oneplus') !== false) {
-                                                $iconClass = 'fas fa-mobile-alt';
-                                            } elseif (strpos($brandName, 'google') !== false) {
-                                                $iconClass = 'fab fa-google';
-                                            } elseif (strpos($brandName, 'sony') !== false) {
-                                                $iconClass = 'fas fa-mobile-alt';
-                                            } elseif (strpos($brandName, 'lg') !== false) {
-                                                $iconClass = 'fas fa-mobile-alt';
-                                            } elseif (strpos($brandName, 'nokia') !== false) {
-                                                $iconClass = 'fas fa-mobile-alt';
-                                            }
-                                        @endphp
-                                        <i class="{{ $iconClass }}"></i>
-                                    </div>
+                                    <img src="{{ asset('storage/' . $brand->logo) }}" 
+                                         alt="{{ $brand->name }}" 
+                                         class="img-fluid"
+                                         style="width:80px; height:80px; object-fit:contain; display:block; margin:auto;">
                                     <div class="brand-arrow">
                                         <i class="fas fa-arrow-right"></i>
                                     </div>
@@ -203,7 +182,7 @@
                                         <i class="fa-solid fa-cart-plus fs-5 add-cart-quick"
                                             data-product-pro-id="{{ $product->id }}"
                                             data-product-item-id="{{ $product->product_item_id }}"
-                                            style="cursor: pointer; color: #007bff;"></i>
+                                            ></i>
                                         <i class="fa-regular fa-heart fs-5 add-wishlist"
                                             data-product-pro-id="{{ $product->id }}"
                                             data-product-item-id="{{ $product->product_item_id }}">
@@ -266,52 +245,55 @@
             <h2 class="text-right mb-4" style="font-size: 25px;"><b>Accessories</b></h2>
             <div class="row g-4">
                 @if ($accessoryProducts->isNotEmpty())
-                    @foreach ($accessoryProducts->shuffle()->take(4) as $product)
-                        @php $images = json_decode($product->images, true); @endphp
-                        <div class="col-md-3">
-                            <div class="card product-card" style="height:400px;">
-                                @if (!empty($images[0]))
-                                    <a href="{{ route('product.show', $product->id) }}">
-                                        <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img"
-                                            style="object-fit: cover; object-position: center; width: 100%; height:250px;">
-                                    </a>
-                                @endif
-                                <div class="card-body text-right" style="background-color: #ecdceb;">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <h6 class="card-title mt-2 product-title">{{ $product->name }}</h6>
-                                    <div class="d-flex gap-2">
-                                        <i class="fa-solid fa-cart-plus fs-5 add-cart-quick"
-                                            data-product-pro-id="{{ $product->id }}"
-                                            data-product-item-id="{{ $product->product_item_id }}"
-                                            style="cursor: pointer; color: #007bff;"></i>
-                                        <i class="fa-regular fa-heart fs-5 add-wishlist"
-                                            data-product-pro-id="{{ $product->id }}"
-                                            data-product-item-id="{{ $product->product_item_id }}">
-                                        </i>
-                                    </div>
-                                </div>
-                                <p class="card-price"> ${{ $product->price }}</p>
-                                <p class="color" style="text-align: right;">
-                                    @foreach ($product->colors as $color)
-                                        <span class="rounded-circle d-inline-block mx-1"
-                                            style="width: 20px; height: 20px; background-color: {{ strtolower($color) }}; margin-bottom: 20px;"
-                                            title="{{ $color }}">
-                                        </span>
-                                    @endforeach
-                                </p>
+    <div class="row">
+        @foreach ($accessoryProducts->shuffle()->take(8) as $product)
+            @php $images = json_decode($product->images, true); @endphp
+            <div class="col-md-3">
+                <div class="card product-card" style="height: 400px;">
+                    @if (!empty($images[0]))
+                        <a href="{{ route('product.show', $product->id) }}">
+                            <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top product-img"
+                                 style="object-fit: cover; object-position: center; width: 100%; height: 250px;">
+                        </a>
+                    @endif
 
-                            </div>
+                    <div class="card-body text-right" style="background-color: #ecdceb;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6 class="card-title mt-2 product-title">{{ $product->name }}</h6>
+                            <div class="d-flex gap-2">
+                                <i class="fa-solid fa-cart-plus fs-5 add-cart-quick"
+                                   data-product-pro-id="{{ $product->id }}"
+                                   data-product-item-id="{{ $product->product_item_id }}"></i>
+
+                                <i class="fa-regular fa-heart fs-5 add-wishlist"
+                                   data-product-pro-id="{{ $product->id }}"
+                                   data-product-item-id="{{ $product->product_item_id }}"></i>
                             </div>
                         </div>
-                    @endforeach
-                @endif
+
+                        <p class="card-price">${{ $product->price }}</p>
+
+                        <p class="color" style="text-align: right;">
+                            @foreach ($product->colors as $color)
+                                <span class="rounded-circle d-inline-block mx-1"
+                                      style="width: 20px; height: 20px; background-color: {{ strtolower($color) }};"
+                                      title="{{ $color }}">
+                                </span>
+                            @endforeach
+                        </p>
+                    </div>
+                </div>
             </div>
-            <div class="text-end mt-3">
-                <a href="{{ route('product_acessory') }}" class="text-decoration-none btn btn-light"
-                    style="color: black">
-                    Shop More
-                </a>
-            </div>
+        @endforeach
+    </div>
+
+    <div class="text-end mt-3">
+        <a href="{{ route('product.all') }}" class="text-decoration-none btn btn-light" style="color: black;">
+            Shop More
+        </a>
+    </div>
+@endif
+
         </div>
     </section>
     <section class="my-5">
@@ -319,7 +301,7 @@
             <h2 class="text-right mb-4" style="font-size: 25px;"><b>Smartphone</b></h2>
             <div class="row g-4">
                 @if ($phone->isNotEmpty())
-                    @foreach ($phone->shuffle()->take(4) as $product)
+                    @foreach ($phone->shuffle()->take(8) as $product)
                         @php
                             $images = json_decode($product->images, true);
                         @endphp
@@ -338,7 +320,7 @@
                                         <i class="fa-solid fa-cart-plus fs-5 add-cart-quick"
                                             data-product-pro-id="{{ $product->id }}"
                                             data-product-item-id="{{ $product->product_item_id }}"
-                                            style="cursor: pointer; color: #007bff;"></i>
+                                            ></i>
                                         <i class="fa-regular fa-heart fs-5 add-wishlist"
                                             data-product-pro-id="{{ $product->id }}"
                                             data-product-item-id="{{ $product->product_item_id }}">
@@ -362,7 +344,7 @@
                 @endif
             </div>
             <div class="text-end mt-3">
-                <a href="{{ route('product') }}" class="btn btn-light">
+                <a href="{{ route('product.all') }}" class="btn btn-light">
                     Shop More
                 </a>
             </div>
@@ -370,29 +352,32 @@
     </section>
     <section>
         <div class="container my-5 scroll-animate">
-            <div class="container-fluid text-black custom-bg">
-                <div class="row align-items-center">
-                    <div class="col-md-6">
-                        <div class="d-flex justify-content-center">
-                            {{-- <img src="{{ asset('image/oppo2.jpg') }}" alt="..." class="img-fluid"> --}}
-                            <img src="{{ asset('image/huaweipura.png') }}" alt="..." class="img-fluid">
-                        </div>
-                    </div>
-                    {{-- <div class="col-md-6 text-center text-md-start"> --}}
-                    <div class="col-md-6 text-center text-md-start" style="padding: 50px;">
-                        {{-- <h2 class="fw-bold">Upgrade to a Fully-fledged <span class="text-uppercase">Electromo!</span></h2> --}}
-                        <h2 class="fw-bold">Huawei Pura 80 Serious</h2>
-                        {{-- <p class="lead">Featuring additional pages, plugins, beautiful pictures, and full functionality!</p> --}}
-                        <p class="lead text-justify" style="font-size: 1rem; text-align: justify; line-height: 1.8;">
-                            Flagship Pura 80 Ultra
-                            combines premium design with top-tier performance. It has a 6.8-inch LTPO OLED display and
-                            runs on the Kirin 9020 chip with HarmonyOS 5.1. Its standout camera system includes a 50MP
-                            1-inch
-                            main sensor and dual switchable telephoto lens, plus a 40MP ultra-wide shooter. The 5,700 mAh
-                            battery supports 100 W wired and 80 W wireless fast charging.</p>
-                    </div>
+            @if ($latestProduct)
+    <div class="container-fluid text-black custom-bg">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <div class="d-flex justify-content-center">
+                    @php
+                        $images = json_decode($latestProduct->images, true);
+                    @endphp
+                    @if (!empty($images))
+                        <img src="{{ asset('storage/' . $images[0]) }}" alt="{{ $latestProduct->name }}" class="img-fluid">
+                    @else
+                        <img src="{{ asset('image/default.jpg') }}" alt="Default Image" class="img-fluid">
+                    @endif
                 </div>
             </div>
+            <div class="col-md-6 text-center text-md-start" style="padding: 50px;">
+                <h2 class="fw-bold">{{ $latestProduct->name }}</h2>
+                <p class="lead text-justify" style="font-size: 1rem; text-align: justify; line-height: 1.8;">
+                    {{ $latestProduct->description ?? 'High quality product just arrived in our store!' }}
+                </p>
+                <a href="{{ route('product.show', $latestProduct->id) }}" class="btn btn-dark mt-3">Read More</a>
+            </div>
+        </div>
+    </div>
+@endif
+
         </div>
     </section>
 @endsection

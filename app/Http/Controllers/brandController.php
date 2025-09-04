@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Brand;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Storage;
 
 class BrandController extends Controller
 {
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = Brand::select(['id', 'name', 'description', 'created_at']);
+            $data = Brand::select(['id', 'name', 'description', 'created_at','logo']);
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function($row){
@@ -36,6 +37,12 @@ class BrandController extends Controller
                     'name' => $validated['name'],
                     'description' => $validated['description'] ?? null,
                 ];
+                if ($request->hasFile('logo')) {
+                    $path = $request->file('logo')->store('public/brand_logos');
+                    $data['logo'] = str_replace('public/', '', $path);
+
+                    // dd($path, $data['image'], storage_path('app/'.$path), public_path('storage/'.$data['image']));
+                }
                 Brand::create($data);
         
                 return response()->json([
@@ -72,13 +79,26 @@ class BrandController extends Controller
         return response()->json($brand);
     }
     public function update(Request $request, $id)
-    {
-        $brand = Brand::findOrFail($id);
-        $brand->update([
-            'name' => $request->name,
-            'description' => $request->description
-        ]);
+{
+    $brand = Brand::findOrFail($id);
 
-        return response()->json(['success' => true]);
+    $data = [
+        'name' => $request->name,
+        'description' => $request->description,
+    ];
+
+    if ($request->hasFile('logo')) {
+        if ($brand->logo) {
+            Storage::delete('public/' . $brand->logo);
+        }
+
+        $path = $request->file('logo')->store('public/brand_logos');
+        $data['logo'] = str_replace('public/', '', $path);
     }
+
+    $brand->update($data);
+
+    return response()->json(['success' => true]);
+}
+
 }

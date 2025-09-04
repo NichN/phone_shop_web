@@ -119,7 +119,7 @@
         </div>
         <section class="my-5">
             <div class="container scroll-animate">
-                <h2 class="text-right mb-4" style="font-size: 25px;"><b>{{ $category->name }}</b></h2>
+                {{-- <h2 class="text-right mb-4" style="font-size: 25px;"><b>{{ $category->name }}</b></h2> --}}
                 <div class="row g-4">
                     @if ($products->isNotEmpty())
                         @foreach ($products as $product)

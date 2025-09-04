@@ -14,6 +14,10 @@
                             <label for="brandName" class="form-label fw-bold">Brand Name <span class="text-danger">*</span></label>
                             <input type="text" class="form-control " id="brandName" name="name" placeholder="" required>
                         </div>
+                        <div class="col-md-6">
+                            <label for="brandLogo" class="form-label fw-bold">Brand Logo <span class="text-danger">*</span></label>
+                            <input type="file" class="form-control" id="brandLogo" name="logo" accept="image/*" required>
+                        </div>
                     </div>
                     <div class="mb-4">
                         <label for="brandDescription" class="form-label fw-bold">Description</label>

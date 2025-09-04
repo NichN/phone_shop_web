@@ -24,6 +24,7 @@
                         <thead style="text-align:center;">
                             <tr>
                                 <th style="background-color: #2e3b56 !important; color: white !important;">No</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Logo</th>
                                 <th style="background-color: #2e3b56 !important; color: white !important;">Name</th>
                                 <th style="background-color: #2e3b56 !important; color: white !important;">Description</th>
                                 <th style="background-color: #2e3b56 !important; color: white !important;">Created Date</th>
@@ -52,6 +53,13 @@
                     <div class="mb-3">
                         <label for="editName" class="form-label">Name</label>
                         <input type="text" class="form-control" id="editName" name="name">
+                    </div>
+                    <div class="mb-4">
+                        <label for="brandLogo" class="form-label fw-bold">Brand Logo </label>
+                        <div class="file-upload-wrapper">
+                            <input type="file" class="form-control" id="brandLogo" name="logo" accept="image/*">
+                            <small class="text-muted">Max file size: 2MB (JPEG, PNG, WEBP)</small>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Description</label>

@@ -64,6 +64,7 @@ Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.s
 Route::get('/api/product-detail/{productItemId}', [ProductController::class, 'getProductDetailApi'])->name('api.product.detail');
 Route::get('/product_category/{id}', [HomeController::class, 'getByCategory'])
     ->name('product_by_category');
+Route::get('/all_products', [HomeController::class, 'getAllProducts'])->name('product.all');
 Route::get('/product_brand/{id}', [ProductController::class, 'getByBrand'])->name('product_by_brand');
 
 

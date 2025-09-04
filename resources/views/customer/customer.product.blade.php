@@ -13,7 +13,7 @@
                             <i class="fa-solid fa-cart-plus fs-5 add-cart-quick"
                                 data-product-pro-id="{{ $product->id }}"
                                 data-product-item-id="{{ $product->product_item_id }}"
-                                style="cursor: pointer; color: #007bff;"></i>
+                                ></i>
                             <i class="fa-regular fa-heart fs-5 add-wishlist"></i>
                         </div>
                     </div>

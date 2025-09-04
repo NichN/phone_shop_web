@@ -96,16 +96,37 @@ public function index()
     // Get all brands for the brand grid
     $brands = DB::table('brand')
         ->join('product', 'brand.id', '=', 'product.brand_id')
-        ->select('brand.id', 'brand.name')
+        ->select('brand.id', 'brand.name','brand.logo')
         ->distinct()
         ->get();
+        
+$latestProduct = DB::table('product')
+    ->join('product_item', function ($join) {
+        $join->on('product.id', '=', 'product_item.pro_id')
+             ->whereRaw('product_item.id = (
+                 select min(id) from product_item as pi2 
+                 where pi2.pro_id = product.id and pi2.stock > 0
+             )')
+             ->where('product_item.stock', '>', 0);
+    })
+    ->orderBy('product.created_at', 'desc')
+    ->select(
+        'product.*',
+        'product_item.id as product_item_id',
+        'product_item.price',
+        'product_item.images',
+        'product_item.color_code'
+    )
+    ->first();
+
+
 
     // Test Productdetail query with a valid pro_id
     $someValue = $products->isNotEmpty() ? $products->first()->id : 1; // Use first product.id or a known ID
     $productItems = Productdetail::where('pro_id', $someValue)->get(['id as product_item_id', 'pro_id', 'price', 'images', 'color_code']);
     // dd($productItems); // Should show product_item_id (product_item.id), pro_id, etc.
 
-    return view('customer.homepage2', compact('products', 'accessoryProducts', 'phone', 'categories', 'brands', 'productItems'));
+    return view('customer.homepage2', compact('products', 'accessoryProducts', 'phone', 'categories', 'brands', 'productItems','latestProduct'));
 }
 public function getByCategory($id)
 {
@@ -423,10 +444,42 @@ public function getProductItemId(Request $request)
         'message' => 'Product variation not found.'
     ], 404);
 }
+public function getAllProducts(Request $request)
+{
+    $category = Category::all();
 
+    $brands = DB::table('brand')
+        ->join('product', 'brand.id', '=', 'product.brand_id')
+        ->select('brand.id', 'brand.name')
+        ->distinct()
+        ->get();
 
+    $products = DB::table('product')
+        ->join('product_item', function ($join) {
+            $join->on('product.id', '=', 'product_item.pro_id')
+                ->whereRaw('product_item.id = (
+                    select min(id) from product_item as pi2 where pi2.pro_id = product.id and pi2.stock > 0
+                )')
+                ->where('product_item.stock', '>', 0);
+        })
+        ->select(
+            'product.*',
+            'product_item.price',
+            'product_item.images',
+            'product_item.color_code',
+            'product_item.id as product_item_id'
+        )
+        ->get();
 
+    foreach ($products as $product) {
+        $product->colors = DB::table('product_item')
+            ->where('pro_id', $product->id)
+            ->pluck('color_code')
+            ->unique()
+            ->values();
+    }
 
-
+    return view('customer.all_products', compact('products', 'brands', 'category'));
+}
 }
 

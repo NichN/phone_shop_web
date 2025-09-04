@@ -91,12 +91,14 @@ $(document).ready(function () {
                         imageWidth: 150,
                         imageHeight: 150,
                         confirmButtonText: 'My Order',
-                        cancelButtonText: 'No',
+                        cancelButtonText: 'View Product',
                         showCancelButton: true,
                         reverseButtons: true
                     }).then((result) => {
                         if (result.isConfirmed) {
                             window.location.href = '/checkout/history';
+                        } else if (result.dismiss === Swal.DismissReason.cancel) {
+                            window.location.href = '/all_products';
                         }
                     });
                 } else {
