@@ -419,7 +419,7 @@ class CheckoutController extends Controller
             $code = rand(100000, 999999);
 
             $order->code_verify = $code;
-            $order->status = 'accepted';
+            $order->status = 'processing';
             $order->save();
 
             $orderItems = OrderItem::where('order_id', $order->id)->get();
@@ -471,7 +471,7 @@ class CheckoutController extends Controller
         $order->save();
 
         \Mail::to($order->guest_eamil)->send(new \App\Mail\OrderDeclinedMail($order));
-    } elseif ($order->status === 'accepted') {
+    } elseif ($order->status === 'processing') {
         // Restore stock
         $orderItems = OrderItem::where('order_id', $order->id)->get();
         foreach ($orderItems as $item) {
@@ -539,7 +539,7 @@ class CheckoutController extends Controller
     }
 
     // Skip if already accepted or completed
-    if (in_array($order->status, ['accepted', 'approved', 'completed'])) {
+    if (in_array($order->status, ['processing', 'approved', 'completed'])) {
         return response()->json([
             'success' => true,
             'message' => 'Order already verified.',
@@ -548,7 +548,7 @@ class CheckoutController extends Controller
     }
 
     // Just update the status (no code check)
-    $order->status = 'accepted';
+    $order->status = 'processing';
     $order->save();
 
     // Optional: send confirmation email to customer

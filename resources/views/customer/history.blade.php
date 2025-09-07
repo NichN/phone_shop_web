@@ -113,7 +113,7 @@
                             <p class="
                                 {{ strtolower($order->status) === 'cancelled' ? 'text-danger bg-light' : '' }}
                                 {{ strtolower($order->status) === 'pending' ? 'text-secondary bg-light' : '' }}
-                                {{ strtolower($order->status) === 'accepted' ? 'text-warning bg-light' : '' }}
+                                {{-- {{ strtolower($order->status) === 'accepted' ? 'text-warning bg-light' : '' }} --}}
                                 {{ strtolower($order->status) === 'completed' ? 'text-success bg-light' : '' }}
                                 p-2 rounded
                             ">

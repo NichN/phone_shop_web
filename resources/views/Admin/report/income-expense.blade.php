@@ -83,7 +83,7 @@
                             <td style="text-align: center;">{{ \Carbon\Carbon::parse($order->created_at)->format('M d, Y') }}</td>
                             <td style="text-align: center;">${{ number_format($order->total_amount, 2) }}</td>
                             <td style="text-align: center;">
-                            <span class="badge @if($order->status === 'accepted' || $order->status === 'approved') bg-success-light
+                            <span class="badge @if($order->status === 'approved') bg-success-light
                                 @elseif($order->status === 'processing') bg-info-light
                                 @elseif($order->status === 'completed') bg-teal-light
                                 @elseif($order->status === 'pending') bg-warning-light

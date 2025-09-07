@@ -318,7 +318,7 @@ $formattedExpenseThisMonth = number_format($expenseThisMonth, 2, '.', '');
         DB::raw('DATE(created_at) as date'),
         DB::raw('SUM(total_amount) as total_income')
     )
-    ->whereIn('status', ['accepted', 'processing', 'paid', 'completed','Confirmed'])
+    ->whereIn('status', ['processing', 'paid', 'completed','Confirmed'])
     ->whereDate('created_at', today())
     ->groupBy(DB::raw('DATE(created_at)'))
     ->get();
@@ -362,7 +362,7 @@ $formattedExpenseThisMonth = number_format($expenseThisMonth, 2, '.', '');
                 DB::raw('WEEK(created_at, 1) as week_number'),
                 DB::raw('SUM(total_amount) as total_income')
             )
-            ->whereIn('status', ['accepted', 'processing', 'completed','Confirmed'])
+            ->whereIn('status', ['processing', 'completed','Confirmed'])
             ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
             ->groupBy(DB::raw('WEEK(created_at, 1)'))
             ->having('week_number', '=', $dynamicWeekOffset) // Use the calculated PHP week
@@ -596,7 +596,7 @@ if ($monthlyIncome_cancel->isNotEmpty()) {
 // Query for Total Monthly Income (for the current month)
 $monthlyIncome = DB::table('orders')
     ->select(DB::raw('SUM(total_amount) as total_income'))
-    ->whereIn('status', ['accepted', 'processing', 'paid', 'completed', 'Confirmed'])
+    ->whereIn('status', ['processing', 'paid', 'completed', 'Confirmed'])
     ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()]) // Dynamic: Current month only
     ->get();
 
