@@ -236,6 +236,9 @@ Route::prefix('photo')->name('photo.')->group(function(){
     Route::get('/',[imageController::class,'index'])->name('index');
     Route::post('/store',[imageController::class,'store'])->name('store');
     Route::delete('/delete/{id}',[imageController::class,'delete'])->name('delete');
+    Route::post('/update-featured-status/{id}', [imageController::class, 'updateDefaultStatus'])->name('update_default');
+    Route::get('/edit/{id}',[imageController::class,'edit'])->name('edit');
+    Route::post('/update/{id}',[imageController::class,'update'])->name('update');
     // Route::delete('/',[imageController::class,'delete'])->name('delete'); 
 });
 Route::prefix('size')->name('size.')->group(function(){

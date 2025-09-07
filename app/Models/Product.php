@@ -14,4 +14,27 @@ class Product extends Model
         'created_at',
         'updated_at',
     ];
+
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'cat_id', 'id');
+    }
+    public function brand()
+    {
+        return $this->belongsTo(Brand::class, 'brand_id', 'id');
+    }
+
+    public function items()
+    {
+        return $this->hasMany(productdetail ::class, 'pro_id');
+    }
+    public function minProductItem()
+{
+    return $this->hasOne(Productdetail::class, 'pro_id')
+        ->where('stock', '>', 0)
+        ->orderBy('id');
+}
+
+
 }

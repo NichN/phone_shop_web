@@ -123,17 +123,14 @@
                 <div class="row g-4">
                     @if ($products->isNotEmpty())
                         @foreach ($products as $product)
-                            @php
-                                $images = json_decode($product->images, true);
-                                $brandName = null;
-                                foreach ($brands as $brand) {
-                                    if (isset($product->brand_id) && $brand->id == $product->brand_id) {
-                                        $brandName = $brand->name;
-                                        break;
-                                    }
-                                }
-                            @endphp
-                            <div class="col-md-3 product-item" data-brand="{{ $brandName }}">
+                        @php
+                            // $product->images is already an array
+                            $images = $product->images;
+
+                            // Get brand name
+                            $brandName = $brands->firstWhere('id', $product->brand_id)->name ?? null;
+                        @endphp
+                        <div class="col-md-3 product-item" data-brand="{{ $brandName }}">
                             <div class="card product-card" style="height:400px;">
                                 @if (!empty($images[0]))
                                     <a href="{{ route('product.show', $product->id) }}">
@@ -142,33 +139,30 @@
                                     </a>
                                 @endif
                                 <div class="card-body text-right" style="background-color: #ecdceb;">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <h6 class="card-title mt-2 product-title">{{ $product->name }}</h6>
-                                    <div class="d-flex gap-2">
-                                        <i class="fa-solid fa-cart-plus fs-5 add-cart-quick"
-                                            data-product-pro-id="{{ $product->id }}"
-                                            data-product-item-id="{{ $product->product_item_id }}"
-                                           ></i>
-                                        <i class="fa-regular fa-heart fs-5 add-wishlist"
-                                            data-product-pro-id="{{ $product->id }}"
-                                            data-product-item-id="{{ $product->product_item_id }}">
-                                        </i>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h6 class="card-title mt-2 product-title">{{ $product->name }}</h6>
+                                        <div class="d-flex gap-2">
+                                            <i class="fa-solid fa-cart-plus fs-5 add-cart-quick"
+                                                data-product-pro-id="{{ $product->id }}"
+                                                data-product-item-id="{{ $product->product_item_id }}"></i>
+                                            <i class="fa-regular fa-heart fs-5 add-wishlist"
+                                                data-product-pro-id="{{ $product->id }}"
+                                                data-product-item-id="{{ $product->product_item_id }}"></i>
+                                        </div>
                                     </div>
+                                    <p class="card-price"> ${{ $product->price }}</p>
+                                    <p class="color" style="text-align: right;">
+                                        @foreach ($product->colors as $color)
+                                            <span class="rounded-circle d-inline-block mx-1"
+                                                style="width: 20px; height: 20px; background-color: {{ strtolower($color) }}; margin-bottom: 20px;"
+                                                title="{{ $color }}">
+                                            </span>
+                                        @endforeach
+                                    </p>
                                 </div>
-                                <p class="card-price"> ${{ $product->price }}</p>
-                                <p class="color" style="text-align: right;">
-                                    @foreach ($product->colors as $color)
-                                        <span class="rounded-circle d-inline-block mx-1"
-                                            style="width: 20px; height: 20px; background-color: {{ strtolower($color) }}; margin-bottom: 20px;"
-                                            title="{{ $color }}">
-                                        </span>
-                                    @endforeach
-                                </p>
-
-                            </div>
                             </div>
                         </div>
-                        @endforeach
+                    @endforeach
                     @else
                         <div class="text-center w-100" style="height: 400px; line-height: 400px; font-size: 1.5rem; color: #555;">
                             No products found in this category.
@@ -185,110 +179,122 @@
         </section>
     </div>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Brand filter
-            const brandOptions = document.querySelectorAll('.brand-option');
-            const selectedBrandSpan = document.getElementById('selectedBrand');
-            // Sort
-            const sortOptions = document.querySelectorAll('.sort-option');
-            const selectedSortSpan = document.getElementById('selectedSort');
-            // Products
-            const productItems = Array.from(document.querySelectorAll('.product-item'));
-            // Search
-            const searchInput = document.getElementById('searchInput');
-            const searchForm = document.getElementById('searchForm');
+    document.addEventListener('DOMContentLoaded', function() {
+        // Elements
+        const brandOptions = document.querySelectorAll('.brand-option');
+        const selectedBrandSpan = document.getElementById('selectedBrand');
+        const sortOptions = document.querySelectorAll('.sort-option');
+        const selectedSortSpan = document.getElementById('selectedSort');
+        const productItems = Array.from(document.querySelectorAll('.product-item'));
+        const searchInput = document.getElementById('searchInput');
+        const searchForm = document.getElementById('searchForm');
+        const noMessage = document.getElementById('noProductsMessage');
 
-            let currentBrand = 'Show All';
-            let currentSort = 'default';
-            let currentSearch = '';
+        // Current filter/sort/search
+        let currentBrand = 'Show All';
+        let currentSort = 'default';
+        let currentSearch = '';
 
-            function filterAndSort() {
-                // Filter
-                productItems.forEach(item => {
-                    const brand = item.getAttribute('data-brand');
-                    const name = item.querySelector('.product-title').textContent.trim().toLowerCase();
-                    const matchesBrand = (currentBrand === 'Show All' || brand === currentBrand);
-                    const matchesSearch = (!currentSearch || name.includes(currentSearch.toLowerCase()));
-                    if (matchesBrand && matchesSearch) {
-                        item.style.display = '';
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
-
-                // Sort
-                let visibleItems = productItems.filter(item => item.style.display !== 'none');
-                let container = visibleItems.length ? visibleItems[0].parentElement : null;
-                if (container) {
-                    let sorted = [...visibleItems];
-                    if (currentSort === 'price-asc' || currentSort === 'price-desc') {
-                        sorted.sort((a, b) => {
-                            let priceA = parseFloat(a.querySelector('.card-price').textContent.replace(/[^\d.]/g, ''));
-                            let priceB = parseFloat(b.querySelector('.card-price').textContent.replace(/[^\d.]/g, ''));
-                            return currentSort === 'price-asc' ? priceA - priceB : priceB - priceA;
-                        });
-                    } else if (currentSort === 'name-asc' || currentSort === 'name-desc') {
-                        sorted.sort((a, b) => {
-                            let nameA = a.querySelector('.product-title').textContent.trim().toLowerCase();
-                            let nameB = b.querySelector('.product-title').textContent.trim().toLowerCase();
-                            if (nameA < nameB) return currentSort === 'name-asc' ? -1 : 1;
-                            if (nameA > nameB) return currentSort === 'name-asc' ? 1 : -1;
-                            return 0;
-                        });
-                    }
-                    // Re-append sorted items
-                    sorted.forEach(item => container.appendChild(item));
-                }
-
-                // Show "No product found" if no visible items
-                const noMessage = document.getElementById('noProductsMessage');
-                if (visibleItems.length === 0) {
-                    noMessage.style.display = 'block';
-                } else {
-                    noMessage.style.display = 'none';
-                }
+        // Initialize brand from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const activeBrand = urlParams.get('brand') || 'Show All';
+        currentBrand = activeBrand;
+        selectedBrandSpan.textContent = activeBrand;
+        brandOptions.forEach(o => {
+            if (o.getAttribute('data-brand') === activeBrand) {
+                o.classList.add('active');
             }
-
-            // Brand filter event listeners
-            brandOptions.forEach(option => {
-                option.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    brandOptions.forEach(o => o.classList.remove('active'));
-                    this.classList.add('active');
-                    currentBrand = this.getAttribute('data-brand');
-                    selectedBrandSpan.textContent = currentBrand;
-                    filterAndSort();
-                });
-            });
-
-            // Sort filter event listeners
-            sortOptions.forEach(option => {
-                option.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    sortOptions.forEach(o => o.classList.remove('active'));
-                    this.classList.add('active');
-                    currentSort = this.getAttribute('data-sort');
-                    selectedSortSpan.textContent = 'Sort: ' + this.textContent;
-                    filterAndSort();
-                });
-            });
-
-            // Search functionality
-            if (searchInput) {
-                searchInput.addEventListener('input', function() {
-                    currentSearch = searchInput.value.trim();
-                    filterAndSort();
-                });
-                
-                searchForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    currentSearch = searchInput.value.trim();
-                    filterAndSort();
-                });
-            }
-
-            // Initialize
-            filterAndSort();
         });
-    </script>
+
+        // Filter & sort function
+        function filterAndSort() {
+            productItems.forEach(item => {
+                const brand = item.getAttribute('data-brand');
+                const name = item.querySelector('.product-title').textContent.trim().toLowerCase();
+                const matchesBrand = (currentBrand === 'Show All' || brand === currentBrand);
+                const matchesSearch = (!currentSearch || name.includes(currentSearch.toLowerCase()));
+                item.style.display = (matchesBrand && matchesSearch) ? '' : 'none';
+            });
+
+            // Sort visible items
+            let visibleItems = productItems.filter(item => item.style.display !== 'none');
+            if (visibleItems.length) {
+                let container = visibleItems[0].parentElement;
+                let sorted = [...visibleItems];
+
+                if (currentSort === 'price-asc' || currentSort === 'price-desc') {
+                    sorted.sort((a, b) => {
+                        let priceA = parseFloat(a.querySelector('.card-price').textContent.replace(/[^\d.]/g, ''));
+                        let priceB = parseFloat(b.querySelector('.card-price').textContent.replace(/[^\d.]/g, ''));
+                        return currentSort === 'price-asc' ? priceA - priceB : priceB - priceA;
+                    });
+                } else if (currentSort === 'name-asc' || currentSort === 'name-desc') {
+                    sorted.sort((a, b) => {
+                        let nameA = a.querySelector('.product-title').textContent.trim().toLowerCase();
+                        let nameB = b.querySelector('.product-title').textContent.trim().toLowerCase();
+                        return currentSort === 'name-asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
+                    });
+                }
+
+                sorted.forEach(item => container.appendChild(item));
+            }
+
+            // No product message
+            noMessage.style.display = visibleItems.length === 0 ? 'block' : 'none';
+        }
+
+        // Brand filter event
+        brandOptions.forEach(option => {
+            option.addEventListener('click', function(e) {
+                e.preventDefault();
+                brandOptions.forEach(o => o.classList.remove('active'));
+                this.classList.add('active');
+
+                currentBrand = this.getAttribute('data-brand');
+                selectedBrandSpan.textContent = currentBrand;
+
+                // Update URL without reloading
+                const currentUrl = new URL(window.location.href);
+                if (currentBrand === 'Show All') {
+                    currentUrl.searchParams.delete('brand');
+                } else {
+                    currentUrl.searchParams.set('brand', currentBrand);
+                }
+                window.history.replaceState({}, '', currentUrl);
+
+                filterAndSort();
+            });
+        });
+
+        // Sort filter event
+        sortOptions.forEach(option => {
+            option.addEventListener('click', function(e) {
+                e.preventDefault();
+                sortOptions.forEach(o => o.classList.remove('active'));
+                this.classList.add('active');
+
+                currentSort = this.getAttribute('data-sort');
+                selectedSortSpan.textContent = 'Sort: ' + this.textContent;
+                filterAndSort();
+            });
+        });
+
+        // Search functionality
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                currentSearch = searchInput.value.trim();
+                filterAndSort();
+            });
+            searchForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                currentSearch = searchInput.value.trim();
+                filterAndSort();
+            });
+        }
+
+        // Initialize filter & sort
+        filterAndSort();
+    });
+</script>
+
 @endsection

@@ -33,4 +33,17 @@ class productdetail extends Model
     protected $casts = [
     'images' => 'array',
     ];
+
+    public function color()
+    {
+        return $this->belongsTo(Color::class, 'color_id', 'id');
+    }
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'pro_id', 'id');
+    }
+    public function size()
+    {
+        return $this->belongsTo(Size::class, 'size_id', 'id');
+    }
 }

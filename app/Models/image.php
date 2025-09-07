@@ -15,7 +15,10 @@ class image extends Model
         'file_name',
         'file_path',
         'name',
-        'img_type'
+        'img_type',
+        'is_default',
+        'caption',
+        'description',
     ];
     protected $dates = [
         'created_at',

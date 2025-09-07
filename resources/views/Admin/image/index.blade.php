@@ -22,9 +22,12 @@
                         <thead style="text-align:center;">
                             <tr>
                                 <th style="background-color: #2e3b56 !important; color: white !important;">No</th>
-                                <th style="background-color: #2e3b56 !important; color: white !important;">image</th>
-                                <th style="background-color: #2e3b56 !important; color: white !important;">name</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Image</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Name</th>
+                                <th style ="background-color: #2e3b56 !important; color: white !important;">Title</th>
                                 <th style="background-color: #2e3b56 !important; color: white !important;">Image Type</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Description</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Default</th>
                                 <th style="background-color: #2e3b56 !important; color: white !important;">Action</th>
                             </tr>
                         </thead>                                
@@ -57,8 +60,6 @@
                                 <option value="Homepage Banner1">Homepage Banner1</option>
                                 <option value="Homepage Banner2">Homepage Banner2</option>
                                 <option value="Homepage Banner3">Homepage Banner3</option>
-                                <option value="Homepage Banner4">Homepage Banner4</option>
-                                <option value="Homepage Banner5">Homepage Banner5</option>
                                 <option value="bottom Banner">bottom Banner</option>
                                 <option value="Homepage box1">Homepage box1</option>
                                 <option value="Homepage box2">Homepage box2</option>
@@ -66,12 +67,33 @@
                                 <option value="Contact us Banner">Contact us Banner</option>
                             </select>
                         </div>
+                        <div class="col-md-6 mt-3">
+                            <label for="image_title" class="form-label fw-bold">Title</label>
+                            <input type="text" class="form-control" id="image_title" name="title" placeholder="Enter image title">
+                        </div>
+                        <div class="col-md-12 mt-3">
+                            <label for="image_description" class="form-label fw-bold">Description</label>
+                            <textarea class="form-control" id="image_description" name="description" rows="3" placeholder="Enter image description"></textarea>
+                        </div>
+
                         <br>
                         <div class="col-md-12 mt-3">
                             <label for="suppler_add" class="form-label fw-bold">Image<span class="text-danger">*</span></label>
                             <input type="file" class="form-control" id="file_path" name="file_path" required>
                         </div>
                     </div>
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label fw-bold">Set as Default <span class="text-danger">*</span></label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="is_default" id="defaultYes" value="1">
+                            <label class="form-check-label" for="defaultYes">Active</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="is_default" id="defaultNo" value="0" checked>
+                            <label class="form-check-label" for="defaultNo">Not Active</label>
+                        </div>
+                    </div>
+
                     <div class="d-flex justify-content-end border-top pt-4">
                         <button type="submit" id="saveBtn" class="btn btn-primary px-4">
                             <i class="fas fa-save me-2"></i> Save
@@ -82,4 +104,71 @@
         </div>
     </div>
 </div>
+// edit
+<!-- Edit Modal -->
+<div class="modal fade" id="editImageModal" tabindex="-1" aria-labelledby="editImageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editImageModalLabel">Edit Image</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editImageForm" enctype="multipart/form-data">
+                    @csrf
+                    <input type="hidden" name="id" id="edit_image_id">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label">Image Name</label>
+                            <input type="text" class="form-control" id="edit_name" name="name" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Image Type</label>
+                            <select class="form-select" id="edit_img_type" name="img_type" required>
+                                <option value="">Select Image Type</option>
+                                <option value="Homepage Banner1">Homepage Banner1</option>
+                                <option value="Homepage Banner2">Homepage Banner2</option>
+                                <option value="Homepage Banner3">Homepage Banner3</option>
+                                <option value="bottom Banner">bottom Banner</option>
+                                <option value="Homepage box1">Homepage box1</option>
+                                <option value="Homepage box2">Homepage box2</option>
+                                <option value="About us Banner">About us Banner</option>
+                                <option value="Contact us Banner">Contact us Banner</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mt-3">
+                            <label class="form-label">Title</label>
+                            <input type="text" class="form-control" id="edit_title" name="title" placeholder="Enter image title">
+                        </div>
+                        <div class="col-md-12 mt-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" id="edit_description" name="description" rows="3" placeholder="Enter image description"></textarea>
+                        </div>
+
+                        <div class="col-md-12 mt-3">
+                            <label class="form-label">Image</label>
+                            <input type="file" class="form-control" id="edit_file_path" name="file_path">
+                            <div id="currentImage" class="mt-2"></div>
+                        </div>
+                        <div class="col-md-6 mt-3">
+                            <label class="form-label">Set as Default</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="is_default" id="edit_defaultYes" value="1">
+                                <label class="form-check-label" for="edit_defaultYes">Active</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="is_default" id="edit_defaultNo" value="0">
+                                <label class="form-check-label" for="edit_defaultNo">Not Active</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end border-top pt-4">
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 @include('Admin.image.script')

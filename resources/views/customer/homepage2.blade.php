@@ -5,47 +5,59 @@
         <link href="{{ asset('css/dashboard.css') }}" rel="stylesheet">
         <link href="{{ asset('css/search.css') }}" rel="stylesheet">
         <div id="carouselExampleCaptions" class="carousel slide custom-carousel-bg" data-bs-ride="carousel">
-            <div class="carousel-indicators">
-                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active"
-                    aria-current="true" aria-label="Slide 1"></button>
-                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1"
-                    aria-label="Slide 2"></button>
-                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2"
-                    aria-label="Slide 3"></button>
-            </div>
-            <div class="carousel-inner">
-                @foreach (['slide.jpg', 'img1.jpg', 'slide2.jpg'] as $index => $slide)
-                    <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
+        <div class="carousel-indicators">
+            @php $count = 0; @endphp
+            @foreach($banners as $type => $images)
+                @foreach($images as $index => $image)
+                    <button type="button" data-bs-target="#carouselExampleCaptions" 
+                        data-bs-slide-to="{{ $count }}" 
+                        class="{{ $count == 0 ? 'active' : '' }}" 
+                        aria-current="{{ $count == 0 ? 'true' : 'false' }}" 
+                        aria-label="Slide {{ $count + 1 }}"></button>
+                    @php $count++; @endphp
+                @endforeach
+            @endforeach
+        </div>
+
+    <div class="carousel-inner">
+        @php $count = 0; @endphp
+        @foreach($banners as $type => $images)
+            @foreach($images as $image)
+                <div class="carousel-item {{ $count == 0 ? 'active' : '' }}">
                     <div class="container-fluid d-flex align-items-center" style="height: 75vh;">
                         <div class="container d-flex justify-content-between align-items-center">
                             <div class="text-container pt-5">
-                                <h2 class="display-4 fw-bold">Welcome to <br> TayMeng Phone Shop</h2>
-                                <p>Power Up Your Life with the Latest Electronic!</p>
-
+                                <h2 class="display-4 fw-bold" style="width: 400px;">{{ $image->caption ?? 'Welcome to TayMeng Phone Shop'}}</h2>
+                                <p>{{$image->description ?? ''}}</p>
                                 <a href="{{ route('product.all') }}" class="btn btn-dark mt-3 px-4 py-2" style="font-size: 1.1rem;">
                                     <i class="fa-solid fa-cart-shopping me-2"></i>Shop Now
                                 </a>
                             </div>
-                            <div class="image-container">
-                                <img src="{{ asset('image/' . $slide) }}" alt="" class="img-fluid">
+                            <div class="image-container text-center">
+                                <img src="{{ asset('storage/' . $image->file_path) }}" 
+                                    alt="{{ $image->name }}" 
+                                    class="img-fluid rounded-circle"
+                                    style="width: 300px; height: 300px; object-fit: cover;">
                             </div>
+
                         </div>
                     </div>
                 </div>
+                @php $count++; @endphp
+            @endforeach
+        @endforeach
+    </div>
 
-                @endforeach
-            </div>
-            <button class="carousel-control-prev custom-carousel" type="button" data-bs-target="#carouselExampleCaptions"
-                data-bs-slide="prev">
-                <i class="fa-solid fa-circle-chevron-left fa-2x"></i>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next custom-carousel" type="button" data-bs-target="#carouselExampleCaptions"
-                data-bs-slide="next">
-                <i class="fa-solid fa-circle-chevron-right fa-2x"></i>
-                <span class="visually-hidden">Next</span>
-            </button>
-        </div>
+    <button class="carousel-control-prev custom-carousel" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+        <i class="fa-solid fa-circle-chevron-left fa-2x"></i>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next custom-carousel" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+        <i class="fa-solid fa-circle-chevron-right fa-2x"></i>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+
     </header>
 
     {{-- Wishlist Modal --}}
@@ -166,7 +178,7 @@
             <h2 class="text-right mb-4" style="font-size: 25px;"><b>New Products</b></h2>
             <div class="row g-4">
                 @foreach ($products->take(16) as $product)
-                    @php $images = json_decode($product->images, true); @endphp
+                    @php $images = is_string($product->images) ? json_decode($product->images) : $product->images; @endphp
                     <div class="col-md-3">
                         <div class="card product-card" style="height:400px;">
                             @if (!empty($images[0]))
@@ -247,7 +259,7 @@
                 @if ($accessoryProducts->isNotEmpty())
     <div class="row">
         @foreach ($accessoryProducts->shuffle()->take(8) as $product)
-            @php $images = json_decode($product->images, true); @endphp
+            @php $images = is_string($product->images) ? json_decode($product->images) : $product->images; @endphp
             <div class="col-md-3">
                 <div class="card product-card" style="height: 400px;">
                     @if (!empty($images[0]))
@@ -286,12 +298,16 @@
             </div>
         @endforeach
     </div>
+    @foreach ($categories as $category)
+    @if (strtolower($category->name) === 'accessories')
+        <div class="text-end mt-3">
+            <a href="{{ route('product_by_category', $category->id) }}" class="btn btn-light">
+                Shop More
+            </a>
+        </div>
+    @endif
+@endforeach
 
-    <div class="text-end mt-3">
-        <a href="{{ route('product.all') }}" class="text-decoration-none btn btn-light" style="color: black;">
-            Shop More
-        </a>
-    </div>
 @endif
 
         </div>
@@ -303,7 +319,7 @@
                 @if ($phone->isNotEmpty())
                     @foreach ($phone->shuffle()->take(8) as $product)
                         @php
-                            $images = json_decode($product->images, true);
+                            $images = is_string($product->images) ? json_decode($product->images) : $product->images;
                         @endphp
                         <div class="col-md-3">
                             <div class="card product-card" style="height:400px;">
@@ -343,41 +359,45 @@
                     @endforeach
                 @endif
             </div>
-            <div class="text-end mt-3">
-                <a href="{{ route('product.all') }}" class="btn btn-light">
-                    Shop More
-                </a>
-            </div>
+            @foreach ($categories as $category)
+                @if (strtolower($category->name) === 'smartphone')
+                    <div class="text-end mt-3">
+                        <a href="{{ route('product_by_category', $category->id) }}" class="btn btn-light">
+                            Shop More
+                        </a>
+                    </div>
+                @endif
+            @endforeach
+
         </div>
     </section>
     <section>
         <div class="container my-5 scroll-animate">
             @if ($latestProduct)
-    <div class="container-fluid text-black custom-bg">
-        <div class="row align-items-center">
-            <div class="col-md-6">
-                <div class="d-flex justify-content-center">
-                    @php
-                        $images = json_decode($latestProduct->images, true);
-                    @endphp
-                    @if (!empty($images))
-                        <img src="{{ asset('storage/' . $images[0]) }}" alt="{{ $latestProduct->name }}" class="img-fluid">
-                    @else
-                        <img src="{{ asset('image/default.jpg') }}" alt="Default Image" class="img-fluid">
-                    @endif
+                <div class="container-fluid text-black custom-bg">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-center">
+                                @php
+                                    $images = is_string($latestProduct->images) ? json_decode($latestProduct->images) : $latestProduct->images;
+                                @endphp
+                                @if (!empty($images))
+                                    <img src="{{ asset('storage/' . $images[0]) }}" alt="{{ $latestProduct->name }}" class="img-fluid">
+                                @else
+                                    <img src="{{ asset('image/default.jpg') }}" alt="Default Image" class="img-fluid">
+                                @endif
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-center text-md-start" style="padding: 50px;">
+                            <h2 class="fw-bold">{{ $latestProduct->name }}</h2>
+                            <p class="lead text-justify" style="font-size: 1rem; text-align: justify; line-height: 1.8;">
+                                {{ $latestProduct->description ?? 'High quality product just arrived in our store!' }}
+                            </p>
+                            <a href="{{ route('product.show', $latestProduct->id) }}" class="btn btn-dark mt-3">Read More</a>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-6 text-center text-md-start" style="padding: 50px;">
-                <h2 class="fw-bold">{{ $latestProduct->name }}</h2>
-                <p class="lead text-justify" style="font-size: 1rem; text-align: justify; line-height: 1.8;">
-                    {{ $latestProduct->description ?? 'High quality product just arrived in our store!' }}
-                </p>
-                <a href="{{ route('product.show', $latestProduct->id) }}" class="btn btn-dark mt-3">Read More</a>
-            </div>
-        </div>
-    </div>
-@endif
-
+            @endif
         </div>
     </section>
 @endsection

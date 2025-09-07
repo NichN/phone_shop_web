@@ -71,17 +71,5 @@ if (modalElement) {
     });
 
     // Print invoice
-    function printInvoice() {
-        var printContents = document.getElementById('invoiceContent').innerHTML;
-        var win = window.open('', '', 'height=700,width=900');
-        win.document.write('<html><head><title>Invoice</title>');
-        win.document.write('<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">');
-        win.document.write('</head><body>');
-        win.document.write(printContents);
-        win.document.write('</body></html>');
-        win.document.close();
-        win.focus();
-        win.print();
-        win.close();
-    }
+    
 </script>

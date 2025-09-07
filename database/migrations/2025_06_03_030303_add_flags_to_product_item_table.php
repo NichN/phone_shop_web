@@ -12,8 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('product_item', function (Blueprint $table) {
-            $table->boolean('is_featured')->default(false);
-            $table->boolean('is_new')->default(false);
+            // Add columns only if they do not exist
+            if (!Schema::hasColumn('product_item', 'is_featured')) {
+                $table->boolean('is_featured')->default(false);
+            }
+            if (!Schema::hasColumn('product_item', 'is_new')) {
+                $table->boolean('is_new')->default(false);
+            }
         });
     }
 
@@ -23,7 +28,13 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('product_item', function (Blueprint $table) {
-            //
+            // Drop the columns if they exist
+            if (Schema::hasColumn('product_item', 'is_featured')) {
+                $table->dropColumn('is_featured');
+            }
+            if (Schema::hasColumn('product_item', 'is_new')) {
+                $table->dropColumn('is_new');
+            }
         });
     }
 };

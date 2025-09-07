@@ -27,143 +27,139 @@ public function index()
         ->get();
 
     $accessoryProducts = DB::table('product')
-        ->join('category', 'product.cat_id', '=', 'category.id')
-        ->join('product_item', function ($join) {
-            $join->on('product.id', '=', 'product_item.pro_id')
-                 ->whereRaw('product_item.id = (
-                     select min(id) from product_item as pi2 
-                     where pi2.pro_id = product.id and pi2.stock > 0
-                 )');
-        })
-        ->where('category.name', 'Accessories')
-        ->select(
-            'product.*',
-            'category.name as category_name',
-            'product_item.id as product_item_id',
-            'product_item.price',
-            'product_item.images',
-            'product_item.color_code'
-        )
-        ->get();
-
-    $phone = DB::table('product')
-        ->join('category', 'product.cat_id', '=', 'category.id')
-        ->join('product_item', function ($join) {
-            $join->on('product.id', '=', 'product_item.pro_id')
-                 ->whereRaw('product_item.id = (
-                     select min(id) from product_item as pi2 
-                     where pi2.pro_id = product.id and pi2.stock > 0
-                 )');
-        })
-        ->where('category.name', 'Smartphone')
-        ->select(
-            'product.*',
-            'category.name as category_name',
-            'product_item.id as product_item_id',
-            'product_item.price',
-            'product_item.images',
-            'product_item.color_code'
-        )
-        ->get();
-
-    // Attach colors
-    foreach ($products as $product) {
-        $product->colors = DB::table('product_item')
-            ->where('pro_id', $product->id)
-            ->pluck('color_code')
-            ->unique()
-            ->values();
-    }
-
-    foreach ($accessoryProducts as $product) {
-        $product->colors = DB::table('product_item')
-            ->where('pro_id', $product->id)
-            ->pluck('color_code')
-            ->unique()
-            ->values();
-    }
-
-    foreach ($phone as $product) {
-        $product->colors = DB::table('product_item')
-            ->where('pro_id', $product->id)
-            ->pluck('color_code')
-            ->unique()
-            ->values();
-    }
-
-    $categories = DB::table('category')->get();
-
-    // Get all brands for the brand grid
-    $brands = DB::table('brand')
-        ->join('product', 'brand.id', '=', 'product.brand_id')
-        ->select('brand.id', 'brand.name','brand.logo')
-        ->distinct()
-        ->get();
-        
-$latestProduct = DB::table('product')
+    ->join('category', 'product.cat_id', '=', 'category.id')
     ->join('product_item', function ($join) {
         $join->on('product.id', '=', 'product_item.pro_id')
              ->whereRaw('product_item.id = (
                  select min(id) from product_item as pi2 
                  where pi2.pro_id = product.id and pi2.stock > 0
-             )')
-             ->where('product_item.stock', '>', 0);
+             )');
     })
-    ->orderBy('product.created_at', 'desc')
+    ->where('category.name', 'Accessories')
     ->select(
         'product.*',
+        'category.id as category_id', // <-- add this
+        'category.name as category_name',
         'product_item.id as product_item_id',
         'product_item.price',
         'product_item.images',
         'product_item.color_code'
     )
-    ->first();
+    ->get();
+
+$phone = DB::table('product')
+    ->join('category', 'product.cat_id', '=', 'category.id')
+    ->join('product_item', function ($join) {
+        $join->on('product.id', '=', 'product_item.pro_id')
+             ->whereRaw('product_item.id = (
+                 select min(id) from product_item as pi2 
+                 where pi2.pro_id = product.id and pi2.stock > 0
+             )');
+    })
+    ->where('category.name', 'Smartphone')
+    ->select(
+        'product.*',
+        'category.id as category_id',
+        'category.name as category_name',
+        'product_item.id as product_item_id',
+        'product_item.price',
+        'product_item.images',
+        'product_item.color_code'
+    )
+    ->get();
 
 
+    // Batch attach colors for products
+    $this->attachColorsToProducts($products);
+    $this->attachColorsToProducts($accessoryProducts);
+    $this->attachColorsToProducts($phone);
 
-    // Test Productdetail query with a valid pro_id
-    $someValue = $products->isNotEmpty() ? $products->first()->id : 1; // Use first product.id or a known ID
-    $productItems = Productdetail::where('pro_id', $someValue)->get(['id as product_item_id', 'pro_id', 'price', 'images', 'color_code']);
-    // dd($productItems); // Should show product_item_id (product_item.id), pro_id, etc.
+    $categories = DB::table('category')->get();
 
-    return view('customer.homepage2', compact('products', 'accessoryProducts', 'phone', 'categories', 'brands', 'productItems','latestProduct'));
-}
-public function getByCategory($id)
-{
-    $category = Category::findOrFail($id);
-    
-    // Get only brands that have products in this category
     $brands = DB::table('brand')
         ->join('product', 'brand.id', '=', 'product.brand_id')
-        ->where('product.cat_id', $id)
-        ->select('brand.id', 'brand.name')
+        ->select('brand.id', 'brand.name', 'brand.logo')
         ->distinct()
         ->get();
 
-    $products = DB::table('product')
+    $latestProduct = DB::table('product')
         ->join('product_item', function ($join) {
             $join->on('product.id', '=', 'product_item.pro_id')
-                ->whereRaw('product_item.id = (
-                    select min(id) from product_item as pi2 where pi2.pro_id = product.id and pi2.stock > 0
-                )')
-                ->where('product_item.stock', '>', 0);
+                 ->whereRaw('product_item.id = (
+                     select min(id) from product_item as pi2 where pi2.pro_id = product.id and pi2.stock > 0
+                 )')
+                 ->where('product_item.stock', '>', 0);
         })
-        ->where('product.cat_id', $id)
-        ->select('product.*', 'product_item.price', 'product_item.images', 'product_item.color_code','product_item.id as product_item_id',)
-        ->get();
-    // dd($products);
+        ->orderBy('product.created_at', 'desc')
+        ->select('product.*', 'product_item.id as product_item_id', 'product_item.price', 'product_item.images', 'product_item.color_code')
+        ->first();
 
-    // Attach colors array to each product
+    $someValue = $products->isNotEmpty() ? $products->first()->id : 1;
+    $productItems = Productdetail::where('pro_id', $someValue)->get(['id as product_item_id', 'pro_id', 'price', 'images', 'color_code']);
+    $banners = Image::where('is_default', 1)->get()->groupBy('img_type');
+
+    return view('customer.homepage2', compact('products', 'accessoryProducts', 'phone', 'categories', 'brands', 'productItems', 'latestProduct', 'banners'));
+}
+
+protected function attachColorsToProducts($products)
+{
+    $productIds = $products->pluck('id')->all();
+
+    // Fetch all product_items for given product IDs
+    $productItems = DB::table('product_item')
+        ->whereIn('pro_id', $productIds)
+        ->select('pro_id', 'color_code')
+        ->get()
+        ->groupBy('pro_id');
+
     foreach ($products as $product) {
-        $product->colors = DB::table('product_item')
-            ->where('pro_id', $product->id)
-            ->pluck('color_code')
-            ->unique()
-            ->values();
+        $colors = $productItems->get($product->id);
+        $product->colors = $colors ? $colors->pluck('color_code')->unique()->values() : collect();
     }
+}
+
+public function getByCategory($id)
+{
+    $category = Category::findOrFail($id);
+    $brands = Brand::whereHas('products', function ($query) use ($id) {
+        $query->where('cat_id', $id);
+    })->get(['id', 'name']);
+
+    // Get products  items (stock > 0)
+    $products = Product::with(['items' => function ($query) {
+        $query->where('stock', '>', 0)->orderBy('id', 'asc');
+    }])
+    ->where('cat_id', $id)
+    ->get()
+    ->map(function ($product) {
+        $minItem = $product->items->first();
+
+        if ($minItem) {
+            $product->price = $minItem->price;
+            if (is_string($minItem->images)) {
+                $product->images = json_decode($minItem->images, true) ?: [];
+            } elseif (is_array($minItem->images)) {
+                $product->images = $minItem->images;
+            } else {
+                $product->images = [];
+            }
+
+            $product->product_item_id = $minItem->id;
+            $product->colors = $product->items->pluck('color_code')->unique()->values();
+        } else {
+            $product->price = null;
+            $product->images = [];
+            $product->product_item_id = null;
+            $product->colors = collect();
+        }
+
+        return $product;
+    });
 
     return view('customer.product_accesory', compact('category', 'products', 'brands'));
 }
+
+
 public function search(Request $request)
 {
     $query = trim($request->input('query'));
@@ -175,7 +171,7 @@ public function search(Request $request)
     }
 
     try {
-        // Search across ALL data using your existing structure
+
         $products = DB::table('product')
             ->leftJoin('category', 'product.cat_id', '=', 'category.id')
             ->leftJoin('brand', 'product.brand_id', '=', 'brand.id')
@@ -446,40 +442,42 @@ public function getProductItemId(Request $request)
 }
 public function getAllProducts(Request $request)
 {
-    $category = Category::all();
+    $categories = Category::all();
+    $brands = Brand::whereHas('products')->get(['id', 'name']);
+    $products = Product::with(['items' => function ($query) {
+        $query->where('stock', '>', 0)->orderBy('id', 'asc');
+    }])->get();
 
-    $brands = DB::table('brand')
-        ->join('product', 'brand.id', '=', 'product.brand_id')
-        ->select('brand.id', 'brand.name')
-        ->distinct()
-        ->get();
+    $products = $products->map(function ($product) {
+        $minItem = $product->items->first();
 
-    $products = DB::table('product')
-        ->join('product_item', function ($join) {
-            $join->on('product.id', '=', 'product_item.pro_id')
-                ->whereRaw('product_item.id = (
-                    select min(id) from product_item as pi2 where pi2.pro_id = product.id and pi2.stock > 0
-                )')
-                ->where('product_item.stock', '>', 0);
-        })
-        ->select(
-            'product.*',
-            'product_item.price',
-            'product_item.images',
-            'product_item.color_code',
-            'product_item.id as product_item_id'
-        )
-        ->get();
+        if ($minItem) {
+            $product->price = $minItem->price;
+            if (is_string($minItem->images)) {
+                $product->images = json_decode($minItem->images, true) ?: [];
+            } elseif (is_array($minItem->images)) {
+                $product->images = $minItem->images;
+            } else {
+                $product->images = [];
+            }
 
-    foreach ($products as $product) {
-        $product->colors = DB::table('product_item')
-            ->where('pro_id', $product->id)
-            ->pluck('color_code')
-            ->unique()
-            ->values();
-    }
+            $product->product_item_id = $minItem->id;
+            $product->colors = $product->items->pluck('color_code')->unique()->values();
+        } else {
+            $product->price = null;
+            $product->images = [];
+            $product->product_item_id = null;
+            $product->colors = collect();
+        }
 
-    return view('customer.all_products', compact('products', 'brands', 'category'));
+        return $product;
+    });
+
+    return view('customer.all_products', [
+        'products' => $products,
+        'brands' => $brands,
+        'categories' => $categories,
+    ]);
 }
 }
 

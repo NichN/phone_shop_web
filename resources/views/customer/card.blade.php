@@ -1,10 +1,7 @@
 @extends('Layout.headerfooter')
 <link href="{{ asset('css/payment.css') }}" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<!-- Load jQuery FIRST -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<!-- THEN load other scripts that use jQuery -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
