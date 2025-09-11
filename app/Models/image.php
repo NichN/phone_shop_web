@@ -11,7 +11,6 @@ class image extends Model
     protected $table = 'image';
     protected $fillable = [
         'id',
-        'pr_item_id',
         'file_name',
         'file_path',
         'name',
@@ -19,10 +18,15 @@ class image extends Model
         'is_default',
         'caption',
         'description',
+        'product_item_id',
     ];
     protected $dates = [
         'created_at',
         'updated_at',
     ];
+    public function productItem()
+    {
+        return $this->belongsTo(Product::class, 'product_item_id');
+    }
 
 }

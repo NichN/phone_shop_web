@@ -128,13 +128,13 @@ public function index()
                             </li>';
 
                 // Show Confirm button if payment_type = 'kh_qr'
-                    if ($order->payment_type === 'online_payment' || $order->status  == 'Confirm') {
+                    if ($order->status  == 'processing') {
                         $buttons .= '
                             <li>
                                 <form action="' . route('checkout.confirm', $order->id) . '" method="POST">
                                     ' . csrf_field() . '
                                     <button type="submit" class="dropdown-item text-warning">
-                                        <i class="fas fa-check"></i> Confirm
+                                        <i class="fas fa-check"></i> Finish Order
                                     </button>
                                 </form>
                             </li>';

@@ -564,7 +564,7 @@ class CheckoutController extends Controller
 
     public function confirmPayment(Order $order)
     {
-        $order->status = 'Confirmed';
+        $order->status = 'Completed';
         $order->save();
         if ($order->guest_eamil) {
             Mail::to($order->guest_eamil)->send(new PaymentConfirmed($order));

@@ -125,13 +125,14 @@ public function getByCategory($id)
         $query->where('cat_id', $id);
     })->get(['id', 'name']);
 
-    // Get products  items (stock > 0)
     $products = Product::with(['items' => function ($query) {
         $query->where('stock', '>', 0)->orderBy('id', 'asc');
     }])
     ->where('cat_id', $id)
-    ->get()
-    ->map(function ($product) {
+    ->paginate(12);
+
+    
+    $products->getCollection()->transform(function ($product) {
         $minItem = $product->items->first();
 
         if ($minItem) {
@@ -158,7 +159,6 @@ public function getByCategory($id)
 
     return view('customer.product_accesory', compact('category', 'products', 'brands'));
 }
-
 
 public function search(Request $request)
 {
@@ -444,11 +444,13 @@ public function getAllProducts(Request $request)
 {
     $categories = Category::all();
     $brands = Brand::whereHas('products')->get(['id', 'name']);
+    
     $products = Product::with(['items' => function ($query) {
         $query->where('stock', '>', 0)->orderBy('id', 'asc');
-    }])->get();
+    }])
+    ->paginate(12);
 
-    $products = $products->map(function ($product) {
+    $products->getCollection()->transform(function ($product) {
         $minItem = $product->items->first();
 
         if ($minItem) {
@@ -479,5 +481,6 @@ public function getAllProducts(Request $request)
         'categories' => $categories,
     ]);
 }
+
 }
 

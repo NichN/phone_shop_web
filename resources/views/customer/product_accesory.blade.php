@@ -125,10 +125,7 @@
                     @if ($products->isNotEmpty())
                         @foreach ($products as $product)
                         @php
-                            // $product->images is already an array
                             $images = $product->images;
-
-                            // Get brand name
                             $brandName = $brands->firstWhere('id', $product->brand_id)->name ?? null;
                         @endphp
                         <div class="col-md-3 product-item" data-brand="{{ $brandName }}">
@@ -170,8 +167,6 @@
                             No products found in this category.
                         </div>
                     @endif
-
-                    <!-- No product found message -->
                     <div id="noProductsMessage" class="text-center w-100"
                         style="display: none; height: 400px; line-height: 400px; font-size: 1.5rem; color: #555;">
                         No product found
@@ -179,10 +174,12 @@
                 </div>
             </div>
         </section>
+        <div class="pagination-container d-flex justify-content-center mt-4">
+            {{ $products->links('pagination::bootstrap-4') }}
+        </div>
     </div>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Elements
         const brandOptions = document.querySelectorAll('.brand-option');
         const selectedBrandSpan = document.getElementById('selectedBrand');
         const sortOptions = document.querySelectorAll('.sort-option');
@@ -191,8 +188,6 @@
         const searchInput = document.getElementById('searchInput');
         const searchForm = document.getElementById('searchForm');
         const noMessage = document.getElementById('noProductsMessage');
-
-        // Current filter/sort/search
         let currentBrand = 'Show All';
         let currentSort = 'default';
         let currentSearch = '';
@@ -241,11 +236,8 @@
                 sorted.forEach(item => container.appendChild(item));
             }
 
-            // No product message
             noMessage.style.display = visibleItems.length === 0 ? 'block' : 'none';
         }
-
-        // Brand filter event
         brandOptions.forEach(option => {
             option.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -294,7 +286,6 @@
             });
         }
 
-        // Initialize filter & sort
         filterAndSort();
     });
 </script>

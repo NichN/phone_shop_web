@@ -3,6 +3,8 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <div>
     <button class="w3-button w3-xlarge w3-hide-large" onclick="w3_open()">&#9776;</button>
@@ -46,42 +48,61 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="imageForm" action="{{ route('photo.store') }}"  method="POST" enctype="multipart/form-data">
+                <form id="imageForm" action="{{ route('photo.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="row mb-4">
+                        <!-- Image Name -->
                         <div class="col-md-6">
-                            <label for="supplierName" class="form-label fw-bold">Image Name <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="image_Name" name="name" placeholder="Enter Supplier name" required>
+                            <label for="image_Name" class="form-label fw-bold">Image Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="image_Name" name="name" placeholder="Enter image name" required>
                         </div>
+
+                        <!-- Image Type -->
                         <div class="col-md-6">
                             <label for="img_type" class="form-label fw-bold">Image Type <span class="text-danger">*</span></label>
                             <select class="form-select" id="img_type" name="img_type" required>
                                 <option value="">Select Image Type</option>
-                                <option value="Homepage Banner1">Homepage Banner1</option>
-                                <option value="Homepage Banner2">Homepage Banner2</option>
-                                <option value="Homepage Banner3">Homepage Banner3</option>
-                                <option value="bottom Banner">bottom Banner</option>
+                                <option value="Homepage Banner1">Homepage Banner</option>
                                 <option value="Homepage box1">Homepage box1</option>
                                 <option value="Homepage box2">Homepage box2</option>
                                 <option value="About us Banner">About us Banner</option>
                                 <option value="Contact us Banner">Contact us Banner</option>
                             </select>
                         </div>
+
+                        <!-- Image Title -->
                         <div class="col-md-6 mt-3">
                             <label for="image_title" class="form-label fw-bold">Title</label>
                             <input type="text" class="form-control" id="image_title" name="title" placeholder="Enter image title">
                         </div>
+
+                        <!-- Image Description -->
                         <div class="col-md-12 mt-3">
                             <label for="image_description" class="form-label fw-bold">Description</label>
                             <textarea class="form-control" id="image_description" name="description" rows="3" placeholder="Enter image description"></textarea>
                         </div>
 
-                        <br>
+                       
+                            <div class="col-md-12 mt-3">
+                                <label class="form-label fw-bold">Product (optional)</label>
+                                <select name="product_item_id" id="create_product_item_id" class="form-select select2-create">
+                                    <option value="">-- Select Product --</option>
+                                    @foreach($products as $product)
+                                        <option value="{{ $product->id }}">{{ $product->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+
+
+                        <!-- Image Upload -->
                         <div class="col-md-12 mt-3">
-                            <label for="suppler_add" class="form-label fw-bold">Image<span class="text-danger">*</span></label>
+                            <label for="file_path" class="form-label fw-bold">Image <span class="text-danger">*</span></label>
                             <input type="file" class="form-control" id="file_path" name="file_path" required>
                         </div>
                     </div>
+
+                    <!-- Default Status -->
                     <div class="col-md-6 mt-3">
                         <label class="form-label fw-bold">Set as Default <span class="text-danger">*</span></label>
                         <div class="form-check">
@@ -94,6 +115,7 @@
                         </div>
                     </div>
 
+                    <!-- Submit -->
                     <div class="d-flex justify-content-end border-top pt-4">
                         <button type="submit" id="saveBtn" class="btn btn-primary px-4">
                             <i class="fas fa-save me-2"></i> Save
@@ -101,6 +123,7 @@
                     </div>
                 </form>
             </div>
+
         </div>
     </div>
 </div>
@@ -126,10 +149,7 @@
                             <label class="form-label">Image Type</label>
                             <select class="form-select" id="edit_img_type" name="img_type" required>
                                 <option value="">Select Image Type</option>
-                                <option value="Homepage Banner1">Homepage Banner1</option>
-                                <option value="Homepage Banner2">Homepage Banner2</option>
-                                <option value="Homepage Banner3">Homepage Banner3</option>
-                                <option value="bottom Banner">bottom Banner</option>
+                                <option value="Homepage Banner1">Homepage Banner</option>
                                 <option value="Homepage box1">Homepage box1</option>
                                 <option value="Homepage box2">Homepage box2</option>
                                 <option value="About us Banner">About us Banner</option>
@@ -144,6 +164,17 @@
                             <label class="form-label">Description</label>
                             <textarea class="form-control" id="edit_description" name="description" rows="3" placeholder="Enter image description"></textarea>
                         </div>
+                        <!-- Product Item Dropdown (Edit) -->
+                        <div class="col-md-12 mt-3">
+                            <label class="form-label fw-bold">Link to Product (optional)</label>
+                            <select name="product_item_id" id="edit_product_item_id" class="form-select select2-edit">
+                                <option value="">-- Select Product --</option>
+                                @foreach($products as $product)
+                                    <option value="{{ $product->id }}">{{ $product->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
 
                         <div class="col-md-12 mt-3">
                             <label class="form-label">Image</label>

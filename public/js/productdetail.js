@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function updateSelectedOption(type, selectedId) {
         document.querySelectorAll(`input[name='${type}'] + label`).forEach(label => {
-            label.style.border = "1px solid black"; // Reset border for all labels
+            label.style.border = "1px solid black";
         });
 
         const selectedLabel = document.querySelector(`label[for='${selectedId}']`);

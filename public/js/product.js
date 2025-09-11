@@ -1,8 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const input = document.getElementById('productSearchInput');
     const productList = document.getElementById('productList');
-    
-    // Check if elements exist before adding event listener
+
     if (input && productList) {
         const products = productList.getElementsByTagName('li');
 
@@ -18,30 +17,22 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-
-    // Simple Product Filtering and Sorting Functionality
     const productsContainer = document.querySelector('.row.g-4');
     
     if (productsContainer) {
-        // Get all product cards
         const productCards = productsContainer.querySelectorAll('.col-md-3');
         const originalProducts = Array.from(productCards);
         
-        // Store current filter states
         let currentBrand = '';
         let currentSort = 'default';
         let currentSearch = '';
 
         function applyFilters() {
             let filteredProducts = originalProducts.filter(card => {
-                // Get product data
                 const productName = card.querySelector('.product-title a').textContent.toLowerCase();
                 const brandId = card.getAttribute('data-brand') || '';
-
-                // Apply brand filter (if brand filter exists)
                 const brandMatch = !currentBrand || brandId === currentBrand;
-                
-                // Apply search filter
+            
                 const searchMatch = !currentSearch || productName.includes(currentSearch.toLowerCase());
 
                 return brandMatch && searchMatch;
@@ -71,13 +62,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     case 'name_z_a':
                         return nameB.localeCompare(nameA);
                     default:
-                        return 0; // Keep original order
+                        return 0;
                 }
             });
         }
 
         function displayProducts(products) {
-            // Clear current display
             productsContainer.innerHTML = '';
 
             if (products.length === 0) {
@@ -89,13 +79,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 `;
             } else {
-                // Add filtered products
                 products.forEach(card => {
                     productsContainer.appendChild(card.cloneNode(true));
                 });
             }
-
-            // Update product count
             updateProductCount(products.length);
         }
 
@@ -107,23 +94,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 countElement.textContent = `${count} products`;
             }
         }
-
-        // Brand filter event listeners
         document.querySelectorAll('[data-brand]').forEach(item => {
             item.addEventListener('click', function(e) {
                 e.preventDefault();
                 
                 // Remove active class from all brand items
                 document.querySelectorAll('[data-brand]').forEach(i => i.classList.remove('active'));
-                
-                // Add active class to clicked item
                 this.classList.add('active');
                 
-                // Update button text
                 const brandButton = document.querySelector('.btn-outline-primary');
                 brandButton.textContent = this.textContent;
                 
-                // Update current brand
                 currentBrand = this.getAttribute('data-brand');
                 
                 // Apply filters
@@ -139,19 +120,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Remove active class from all sort items
                 document.querySelectorAll('[data-sort]').forEach(i => i.classList.remove('active'));
                 
-                // Add active class to clicked item
                 this.classList.add('active');
                 
-                // Update button text
                 const sortButton = document.querySelector('.btn-outline-secondary');
                 if (sortButton) {
                     sortButton.textContent = 'Sort: ' + this.textContent;
                 }
                 
-                // Update current sort
                 currentSort = this.getAttribute('data-sort');
                 
-                // Apply filters
                 applyFilters();
             });
         });
@@ -174,8 +151,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 applyFilters();
             });
         }
-
-        // Enter key search
         if (searchInput) {
             searchInput.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
@@ -185,7 +160,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
-        // Initialize with all products
         updateProductCount(originalProducts.length);
     }
 });

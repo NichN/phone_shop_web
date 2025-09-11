@@ -177,6 +177,9 @@
                 </div>
             </div>
         </section>
+         <div class="pagination-container d-flex justify-content-center mt-4">
+            {{ $products->links('pagination::bootstrap-4') }}
+        </div>
     </div>
     <script>
     document.addEventListener('DOMContentLoaded', function() {

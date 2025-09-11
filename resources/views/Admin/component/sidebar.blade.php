@@ -9,10 +9,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    {{-- <script src="{{ asset('js/search.js') }}"></script> --}}
     <link href="{{ asset('css/mainstyle.css')}}" rel="stylesheet">
     <link href="{{ asset('css/dashboard.css')}}" rel="stylesheet">
-    {{-- <link href="{{ asset('css/search.css')}}" rel="stylesheet"> --}}
 </head>
 <body>
 <div class="w3-sidebar w3-bar-block w3-collapse w3-card w3-animate-left" style="width:250px;" id="mySidebar">
@@ -23,8 +21,6 @@
         <h4>Tay Meng</h4>
     </div>
     @endif
-
-    {{-- Sidebar navigation with role-based visibility --}}
     @if(Auth::check())
         @php $roleId = Auth::user()->role_id; @endphp
     @endif
@@ -112,9 +108,9 @@
     @endif
 
     {{-- Pick Up - Show for Admin and Staff (role_id = 1,2) but not Delivery-only (role_id = 3) --}}
-    @if(!isset($roleId) || $roleId != 3)
+    {{-- @if(!isset($roleId) || $roleId != 3)
         <a href="{{ route('pick_up.index')}}" class="w3-bar-item w3-button order-link"><i class="fas fa-shopping-cart"></i> Pick Up</a>
-    @endif
+    @endif --}}
 
     {{-- Customer - Show for Admin and Staff (role_id = 1,2) but not Delivery-only (role_id = 3) --}}
     @if(!isset($roleId) || $roleId != 3)

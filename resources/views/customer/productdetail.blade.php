@@ -32,7 +32,7 @@
 
         <div class="col-md-6">
             <div class="d-flex justify-content-between align-items-start mb-3">
-                <h3 class="fw-bold text-primary">{{ $product['name'] }}</h3>
+                <h3 class="fw-bold text-primary" id="product-title">{{ $product['name'] }}</h3>
                 <span class="badge fs-6" id="product-type" style="background-color: #90EE90; color: #000;">
                     {{ $product['type'] }}<span>*</span>
                 </span>
@@ -61,6 +61,7 @@
                            value="1" min="1" max="999" style="width: 60px;">
                     <button type="button" class="btn btn-outline-secondary btn-sm" id="increaseQty">+</button>
                 </div>
+                <div id="stock-warning" class="text-danger mt-2" style="display: none;"></div>
             </div>
 
             <!-- Colors -->
@@ -78,7 +79,7 @@
                         </label>
                     @endforeach
                 </div>
-            </div>
+                </div>
 
             <!-- Storage -->
             <div class="choose-storage">
@@ -156,6 +157,12 @@
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
     border-radius: 5px;
 }
+.out-of-stock {
+    border: 2px solid #ff0000 !important;
+}
+.out-of-stock-title {
+    color: #ff0000 !important;
+}
 </style>
 
 <script src="{{ asset('js/cart.js') }}"></script>
@@ -166,11 +173,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const variants = @json($variants);
     const priceDisplay = document.getElementById('product-price');
     const typeDisplay = document.getElementById('product-type');
+    const titleDisplay = document.getElementById('product-title');
     const addCartBtn = document.querySelector('.add-cart');
     const qtyInput = document.getElementById('productQuantity');
     const decreaseBtn = document.getElementById('decreaseQty');
     const increaseBtn = document.getElementById('increaseQty');
     const stockDisplay = document.getElementById('stock-display');
+    const stockWarning = document.getElementById('stock-warning');
     let selectedColor = document.querySelector('input[name="color"]:checked')?.value;
     let selectedSize = document.querySelector('input[name="storage"]:checked')?.value;
 
@@ -184,15 +193,26 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Decrease quantity button
     decreaseBtn.addEventListener('click', () => {
         let currentVal = parseInt(qtyInput.value) || 1;
-        if (currentVal > 1) qtyInput.value = currentVal - 1;
+        if (currentVal > 1) {
+            qtyInput.value = currentVal - 1;
+            stockWarning.style.display = 'none'; // Hide warning when decreasing
+        }
     });
 
+    // Increase quantity button
     increaseBtn.addEventListener('click', () => {
         let currentVal = parseInt(qtyInput.value) || 1;
         let maxStock = parseInt(stockDisplay.textContent) || 999;
-        if (currentVal < maxStock) qtyInput.value = currentVal + 1;
+        if (currentVal < maxStock) {
+            qtyInput.value = currentVal + 1;
+            stockWarning.style.display = 'none'; // Hide warning when increasing within stock
+        } else {
+            stockWarning.textContent = `Only ${maxStock} in stock`;
+            stockWarning.style.display = 'block'; // Show warning when at max stock
+        }
     });
 
     function checkAllCombinations() {
@@ -248,11 +268,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 addCartBtn.classList.add('btn-secondary');
                 addCartBtn.textContent = 'Out of Stock';
                 addCartBtn.style.cursor = 'not-allowed';
+                addCartBtn.classList.add('out-of-stock');
+                titleDisplay.classList.add('out-of-stock-title');
+                stockWarning.textContent = 'Out of stock';
+                stockWarning.style.display = 'block';
             } else {
                 qtyInput.value = 1;
                 qtyInput.disabled = false;
                 increaseBtn.disabled = false;
                 decreaseBtn.disabled = false;
+                addCartBtn.classList.remove('out-of-stock');
+                titleDisplay.classList.remove('out-of-stock-title');
+                qtyInput.max = stock; // Set max quantity to available stock
+                stockWarning.style.display = 'none'; // Hide warning when stock is available
             }
 
         } else {
@@ -265,6 +293,8 @@ document.addEventListener('DOMContentLoaded', function() {
             addCartBtn.classList.add('btn-secondary');
             addCartBtn.textContent = 'Add to Cart';
             addCartBtn.style.cursor = 'not-allowed';
+            addCartBtn.classList.add('out-of-stock');
+            titleDisplay.classList.add('out-of-stock-title');
 
             stockDisplay.textContent = 'N/A';
             stockDisplay.className = 'fw-bold text-danger';
@@ -273,6 +303,8 @@ document.addEventListener('DOMContentLoaded', function() {
             qtyInput.disabled = true;
             increaseBtn.disabled = true;
             decreaseBtn.disabled = true;
+            stockWarning.textContent = 'Out of stock';
+            stockWarning.style.display = 'block';
         }
     }
 
@@ -286,6 +318,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Handle selected size change
     document.querySelectorAll('input[name="storage"]').forEach(radio => {
         radio.addEventListener('change', function () {
             selectedSize = this.value;
@@ -315,5 +348,6 @@ document.addEventListener('DOMContentLoaded', function() {
         updateCartCountLocal();
     });
 });
+
 </script>
 @endsection

@@ -9,44 +9,55 @@
             @php $count = 0; @endphp
             @foreach($banners as $type => $images)
                 @foreach($images as $index => $image)
+                @if(Str::startsWith($type, 'Homepage Banner'))
                     <button type="button" data-bs-target="#carouselExampleCaptions" 
                         data-bs-slide-to="{{ $count }}" 
                         class="{{ $count == 0 ? 'active' : '' }}" 
                         aria-current="{{ $count == 0 ? 'true' : 'false' }}" 
                         aria-label="Slide {{ $count + 1 }}"></button>
                     @php $count++; @endphp
+                @endif
                 @endforeach
             @endforeach
         </div>
 
     <div class="carousel-inner">
-        @php $count = 0; @endphp
-        @foreach($banners as $type => $images)
-            @foreach($images as $image)
+    @php $count = 0; @endphp
+    @foreach($banners as $type => $images)
+        @foreach($images as $image)
+            @if(Str::startsWith($type, 'Homepage Banner'))
                 <div class="carousel-item {{ $count == 0 ? 'active' : '' }}">
                     <div class="container-fluid d-flex align-items-center" style="height: 75vh;">
                         <div class="container d-flex justify-content-between align-items-center">
                             <div class="text-container pt-5">
                                 <h2 class="display-4 fw-bold" style="width: 400px;">{{ $image->caption ?? 'Welcome to TayMeng Phone Shop'}}</h2>
-                                <p>{{$image->description ?? ''}}</p>
-                                <a href="{{ route('product.all') }}" class="btn btn-dark mt-3 px-4 py-2" style="font-size: 1.1rem;">
-                                    <i class="fa-solid fa-cart-shopping me-2"></i>Shop Now
-                                </a>
+                                <p>{{ $image->description ?? '' }}</p>
+
+                                @if($image->productItem)  <!-- Check if image has associated product -->
+                                    <a href="{{ route('product.show', $image->productItem->id) }}" class="btn btn-dark mt-3 px-4 py-2" style="font-size: 1.1rem;">
+                                        <i class="fa-solid fa-cart-shopping me-2"></i>Shop Now
+                                    </a>
+                                @else
+                                    <a href="{{ route('product.all') }}" class="btn btn-dark mt-3 px-4 py-2" style="font-size: 1.1rem;">
+                                        <i class="fa-solid fa-cart-shopping me-2"></i>Shop Now
+                                    </a>
+                                @endif
                             </div>
                             <div class="image-container text-center">
                                 <img src="{{ asset('storage/' . $image->file_path) }}" 
-                                    alt="{{ $image->name }}" 
-                                    class="img-fluid rounded-circle"
-                                    style="width: 300px; height: 300px; object-fit: cover;">
+                                     alt="{{ $image->name }}" 
+                                     class="img-fluid rounded-circle"
+                                     style="width: 400px; height: 400px; object-fit: cover;">
                             </div>
-
                         </div>
                     </div>
                 </div>
                 @php $count++; @endphp
-            @endforeach
+            @endif
         @endforeach
-    </div>
+    @endforeach
+</div>
+
 
     <button class="carousel-control-prev custom-carousel" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
         <i class="fa-solid fa-circle-chevron-left fa-2x"></i>
@@ -216,6 +227,11 @@
                     </div>
                 @endforeach
             </div>
+            <div class="text-end mt-3">
+            <a href="{{ route('product.all')}}" class="btn btn-light">
+                Shop More
+            </a>
+        </div>
         </div>
     </section>
     {{-- Banner Section --}}

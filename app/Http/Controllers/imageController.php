@@ -8,6 +8,7 @@ use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Storage;
 use Psy\Readline\Hoa\Console;
 use App\Models\image;
+use App\Models\Product;
 
 class imageController extends Controller
 {
@@ -30,7 +31,8 @@ class imageController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         }
-        return view('Admin.image.index');
+        $products = Product::all();
+        return view('Admin.image.index', compact('products'));
     }
 
 
@@ -40,7 +42,8 @@ class imageController extends Controller
         'name' => 'required|string|max:255',
         'img_type' => 'required|string|max:255',
         'file_path' => 'required|image',
-        'caption' => 'nullable|string|max:255',
+        'product_item_id' => 'nullable|exists:product,id',
+        'title' => 'nullable|string|max:255',
         'description' => 'nullable|string|max:2025',
     ]);
 
@@ -49,13 +52,14 @@ class imageController extends Controller
         $relativePath = str_replace('public/', '', $path);
 
         Image::create([
-            'pr_item_id' => $request->input('pr_item_id'),
+            'product_item_id' => $request->product_item_id,
             'file_name' => $request->file('file_path')->getClientOriginalName(),
             'file_path' => $relativePath,
             'name' => $request->name,
             'img_type' => $request->img_type,
             'caption' => $request->title,
             'description' => $request->description,
+            'is_default' => $request->is_default ?? 0,
         ]);
 
         return response()->json([
@@ -64,7 +68,13 @@ class imageController extends Controller
             'paths' => [asset('storage/' . $relativePath)],
         ]);
     }
+
+    return response()->json([
+        'success' => false,
+        'message' => 'No image uploaded.',
+    ]);
 }
+
 
 
    public function delete($id){
@@ -81,7 +91,7 @@ class imageController extends Controller
         return response()->json(['success' => false, 'message' => 'Banner not found'], 404);
     }
 
-    $banner->is_default = $request->is_default; // can be 0 or 1
+    $banner->is_default = $request->is_default; 
     $banner->save();
 
     return response()->json(['success' => true]);
@@ -102,16 +112,18 @@ public function update(Request $request, $id)
         'name' => 'required|string|max:255',
         'img_type' => 'required|string|max:255',
         'file_path' => 'nullable|image',
-        'caption' => 'nullable|string|max:255',
+        'title' => 'nullable|string|max:255',
         'description' => 'nullable|string|max:2025',
+        'product_item_id' => 'nullable|exists:product,id',
     ]);
 
     $image->name = $request->name;
     $image->img_type = $request->img_type;
     $image->caption = $request->title;
     $image->description = $request->description;
+    $image->product_item_id = $request->product_item_id; 
 
-    if($request->hasFile('file_path')){
+    if($request->hasFile('file_path')) {
         $path = $request->file('file_path')->store('public/product_images');
         $relativePath = str_replace('public/', '', $path);
         $image->file_path = $relativePath;
@@ -121,11 +133,5 @@ public function update(Request $request, $id)
 
     return response()->json(['success' => true]);
 }
-
-
-
-
-
-
 
 }

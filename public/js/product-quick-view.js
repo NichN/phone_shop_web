@@ -229,18 +229,50 @@ function changeModalImage(thumbnail) {
 // Handle quantity buttons
 document.addEventListener('click', function(e) {
     const qtyInput = document.getElementById('modalProductQuantity');
-    if (!qtyInput) return;
-    
-    if (e.target.id === 'increaseQty') {
-        if (e.target.id === 'increaseQty') {
-    qtyInput.value = Math.min(parseInt(qtyInput.value) + 1, 999);
-}
+    const stockDisplay = document.getElementById('modalStockDisplay');
+    const addCartBtn = document.querySelector('.add-cart-modal');
+    const stockWarningMessage = document.getElementById('stockWarningMessage'); // Create this element in HTML
 
+    if (!qtyInput || !stockDisplay || !addCartBtn) return;
+
+    const maxStock = parseInt(stockDisplay.textContent) || 0;  // Get available stock for the selected variant
+
+    // Show the stock warning message if it doesn't exist
+    if (!stockWarningMessage) {
+        const warningMessage = document.createElement('div');
+        warningMessage.id = 'stockWarningMessage';
+        warningMessage.style.color = 'red';
+        warningMessage.style.fontSize = '14px';
+        warningMessage.style.marginTop = '5px';
+        warningMessage.textContent = `Only ${maxStock} items available in stock.`;
+        qtyInput.parentNode.appendChild(warningMessage);
     }
+
+    // Handle increase button
+    if (e.target.id === 'increaseQty') {
+        let currentQty = parseInt(qtyInput.value) || 1;
+        if (currentQty < maxStock) {
+            qtyInput.value = currentQty + 1;
+            if (stockWarningMessage) stockWarningMessage.style.display = 'none';
+        } else {
+           
+            if (stockWarningMessage) {
+                stockWarningMessage.style.display = 'block';
+                stockWarningMessage.textContent = `Only ${maxStock} items available in stock.`;
+            }
+        }
+    }
+
+    // Handle decrease button
     if (e.target.id === 'decreaseQty') {
-        qtyInput.value = Math.max(parseInt(qtyInput.value) - 1, 1);
+        let currentQty = parseInt(qtyInput.value) || 1;
+        if (currentQty > 1) {
+            qtyInput.value = currentQty - 1;
+            if (stockWarningMessage) stockWarningMessage.style.display = 'none'; 
+        }
     }
 });
+
 
 // Function to handle adding to cart
 function handleAddToCart(productItemId, size = null, color = null, quantity = 1) {
@@ -401,7 +433,7 @@ function checkModalCombinations(productData) {
         }
     });
     
-    // Check unavailable sizes
+    
     allSizes.forEach(size => {
         const hasAnyVariantForSize = productData.variants.some(v => 
             v.size.toLowerCase() === size.toLowerCase()
@@ -458,14 +490,17 @@ function updateModalVariant(productData) {
                 addCartBtn.style.cursor = 'pointer';
             }
 
-            // Enable quantity controls
+            // Enable quantity controls and set max quantity based on stock
             if (qtyInput && increaseBtn && decreaseBtn) {
                 qtyInput.disabled = false;
                 increaseBtn.disabled = false;
                 decreaseBtn.disabled = false;
+
+                // Set max quantity to stock available
+                qtyInput.max = variant.stock;
             }
 
-            // Remove N/A selection highlight, keep normal selection highlight
+            // Highlight selected color and size
             if (selectedColorLabel) {
                 selectedColorLabel.classList.remove('na-selection');
                 selectedColorLabel.classList.add('selected-color');

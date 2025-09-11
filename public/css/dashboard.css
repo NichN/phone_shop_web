@@ -233,6 +233,11 @@ width: 250px;
         border-collapse: collapse;
         table-layout: fixed;
     }
+    .carousel-item .text-container, 
+.carousel-item .text-container * {
+  pointer-events: auto;
+}
+
 
     .data-table th {
         /* background-color: #2e3b56  !important; */
