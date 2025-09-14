@@ -1,6 +1,5 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
 $(document).ready(function() {
@@ -26,13 +25,13 @@ $(document).ready(function() {
         columns: [
             {data: 'created_at', name: 'created_at',
                 render: function(data) {
-            return data ? new Date(data).toLocaleDateString('en-GB') : '';
-        }
+                    return data ? new Date(data).toLocaleDateString('en-GB') : '';
+                }
             },
             {data: 'order_num', name: 'order_num'},
             {data: 'guest_name', name: 'guest_name'},
             {data: 'phone_guest', name: 'phone_guest'},
-            {data: 'guest_address', name: 'guest_address'},
+            // {data: 'guest_address', name: 'guest_address'},
             {data: 'total_amount', name: 'total_amount',render: function(data) {
                 return data ? '$' + data : '$0';
             }},
@@ -55,16 +54,30 @@ $(document).ready(function() {
         ],
         error: function(xhr, error, thrown) {
             console.error('DataTables error:', xhr, error, thrown);
-            Swal.fire('Error', 'Failed to load data', 'error');
+            showBootstrapAlert('danger', 'Failed to load data');
         }
     });
 
     window.reloadTable = function() {
         table.ajax.reload();
     };
-    
 
-    
+    // Show bootstrap alert dynamically
+    function showBootstrapAlert(type = 'success', message = '') {
+        const alertHtml = `
+            <div class="alert alert-${type} alert-dismissible fade show mt-3" role="alert">
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>`;
+        
+        $('.container').prepend(alertHtml);
+
+        // Auto-dismiss after 4 seconds (optional)
+        setTimeout(() => {
+            $('.alert').alert('close');
+        }, 4000);
+    }
+
     // Handle filter form submission
     $('#filterForm').on('submit', function(e) {
         e.preventDefault();
@@ -76,13 +89,7 @@ $(document).ready(function() {
         $('#filterModal').modal('hide');
         
         // Show success message
-        Swal.fire({
-            icon: 'success',
-            title: 'Filter Applied!',
-            text: 'Orders have been filtered according to your criteria.',
-            timer: 1500,
-            showConfirmButton: false
-        });
+        showBootstrapAlert('success', 'Orders have been filtered according to your criteria.');
     });
     
     // Handle reset filter button
@@ -98,16 +105,8 @@ $(document).ready(function() {
         table.ajax.reload();
         
         // Show reset message
-        Swal.fire({
-            icon: 'info',
-            title: 'Filters Reset!',
-            text: 'All filters have been cleared and orders reloaded.',
-            timer: 1500,
-            showConfirmButton: false
-        });
+        showBootstrapAlert('info', 'All filters have been cleared and orders reloaded.');
     });
-    
-
 });
 
 function updateMonthLabel(month, year) {
@@ -146,4 +145,12 @@ function nextMonth() {
     updateMonthLabel(month, year);
     reloadTable();
 }
+
+setTimeout(function() {
+    let alert = document.querySelector('.alert');
+    if (alert) {
+        alert.classList.remove('show');
+        alert.classList.add('fade');
+    }
+}, 4000);
 </script>

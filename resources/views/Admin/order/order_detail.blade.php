@@ -78,6 +78,28 @@
                 @endif
             </div>
         </div>
+         <div class="d-flex gap-2">
+            @if ($order->status === 'pending' )
+            <form action="{{ route('checkout.accept', $order->id) }}" method="POST" onsubmit="return confirmAccept();">
+                @csrf
+                <div class="d-flex justify-content-start mt-4 gap-2 mb-4 no-print">
+                    <button type="submit" class="btn btn-success">
+                        Accept order
+                    </button>
+                </div>
+            </form>
+        @endif
+        @if ($order->status === 'pending')
+            <form action="{{ route('checkout.decline', $order->id) }}" method="POST" onsubmit="return confirmAccept();">
+                @csrf
+                <div class="d-flex justify-content-start mt-4 gap-2 mb-4 no-print">
+                    <button type="submit" class="btn btn-danger">
+                        Cancel Order
+                    </button>
+                </div>
+            </form>
+        @endif
+         </div>
     </div>
     </div>
 

@@ -12,42 +12,60 @@ use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
 class productAdminController extends Controller
 {
-    public function productindex(Request $request)
-    {
-        if ($request->ajax()) {
-            $data = DB::table('product')
-                ->join('brand', 'brand.id', '=', 'product.brand_id')
-                ->join('category', 'category.id', '=', 'product.cat_id')
-                ->select(
-                    'product.*',
-                    'brand.name as brandname',
-                    'category.name as categoryname'
-                )
-                ->orderBy('product.id', 'desc')
-                ->get();
+  
 
-            return DataTables::of($data)
-                ->addColumn('action', function ($row) {
-                    $btn = '<div>
-                                <button class="btn btn-light btn-sm viewProduct" data-id="' . $row->id . '" data-toggle="tooltip" title="View">
-                                    <i class="fas fa-eye" style="color: #17a2b8;"></i>
-                                </button>
-                                <button class="btn btn-light btn-sm editProduct" data-id="' . $row->id . '" data-toggle="tooltip" title="Edit">
-                                    <i class="fas fa-edit" style="color: #ffc107;"></i>
-                                </button>
-                                <button class="btn btn-light btn-sm deleteProduct" data-id="' . $row->id . '" data-toggle="tooltip" title="Delete">
-                                    <i class="fas fa-trash-alt" style="color: #dc3545;"></i>
-                                </button>
-                            </div>';
-                    return $btn;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
-        }
-        $brands = Brand::all();
-        $category = Category::all();
-       return view('Admin.product.listproduct', compact('brands', 'category'));
+public function productindex(Request $request)
+{
+    if ($request->ajax()) {
+        $query = DB::table('product')
+            ->join('brand', 'brand.id', '=', 'product.brand_id')
+            ->join('category', 'category.id', '=', 'product.cat_id')
+            ->leftJoin('product_item', 'product_item.pro_id', '=', 'product.id')
+            ->select(
+                'product.name',
+                DB::raw('MAX(product.id) as id'),
+                DB::raw('MAX(product.description) as description'),
+                DB::raw('MAX(brand.name) as brandname'),
+                DB::raw('MAX(category.name) as categoryname'),
+                DB::raw('MAX(product_item.images) as images'),
+                DB::raw('GROUP_CONCAT(DISTINCT product_item.color_code) as colors_code'),
+                DB::raw('GROUP_CONCAT(DISTINCT product_item.size) as sizes'),
+                DB::raw('SUM(product_item.stock) as stock')
+            )
+            ->groupBy('product.name')
+            ->orderBy('id', 'desc');
+
+        return DataTables::of($query)
+            ->editColumn('colors_code', function ($row) {
+                return $row->colors_code ? explode(',', $row->colors_code) : [];
+            })
+            ->editColumn('sizes', function ($row) {
+                return $row->sizes ? explode(',', $row->sizes) : [];
+            })
+            ->addColumn('action', function ($row) {
+                $invoiceUrl = route('products.productshow', $row->id);
+                return '
+                    <div>
+                        <button class="btn btn-light btn-sm viewProduct" data-url="' . $invoiceUrl . '" title="View">
+                            <i class="fas fa-eye" style="color: #17a2b8;"></i>
+                        </button>
+                        <button class="btn btn-light btn-sm editProduct" data-id="' . $row->id . '" title="Edit">
+                            <i class="fas fa-edit" style="color: #ffc107;"></i>
+                        </button>
+                        <button class="btn btn-light btn-sm deleteProduct" data-id="' . $row->id . '" title="Delete">
+                            <i class="fas fa-trash-alt" style="color: #dc3545;"></i>
+                        </button>
+                    </div>
+                ';
+            })
+            ->rawColumns(['action'])
+            ->make(true);
     }
+
+    $brands = Brand::all();
+    $category = Category::all();
+    return view('Admin.product.listproduct', compact('brands', 'category'));
+}
     public function productstore(Request $request)
     {
         $request->validate([
@@ -97,4 +115,31 @@ class productAdminController extends Controller
             'category' => $categoryName
         ]);
     }
+    public function productshow($id)
+{
+    $products = Product::findOrFail($id);
+    $brandName = Brand::find($products->brand_id)->name ?? 'No Brand';
+    $categoryName = Category::find($products->cat_id)->name ?? 'No Category';
+    $colors = Color::all();
+    $productDetails = ProductDetail::where('pro_id', $id)->first();
+    $total_stock = ProductDetail::where('pro_id', $id)->sum('stock');
+    $variants_count = ProductDetail::where('pro_id', $id)->count();
+    $variants = ProductDetail::where('pro_id', $id)->get();
+    $min_price = $variants->min('cost_price');
+    $max_price = $variants->max('cost_price');
+  
+    
+    $images = $variants->flatMap(function($variant) {
+    if (is_string($variant->images)) {
+        return json_decode($variant->images, true) ?? [];
+    } elseif (is_array($variant->images)) {
+        return $variant->images;
+    }
+    return [];
+});
+
+    
+
+    return view('Admin.product.show', compact('products', 'brandName', 'categoryName', 'colors', 'productDetails', 'images', 'total_stock', 'variants_count','variants','min_price','max_price'));
+}
 }

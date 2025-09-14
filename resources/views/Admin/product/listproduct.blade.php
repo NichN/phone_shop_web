@@ -22,7 +22,10 @@
                         <thead>
                             <tr>
                                 <th style="background-color: #2e3b56 !important; color: white !important;">No</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Image</th>
                                 <th style="background-color: #2e3b56 !important; color: white !important;">Name</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Color</th>
+                                <th style="background-color: #2e3b56 !important; color: white !important;">Size</th>
                                 <th style="background-color: #2e3b56 !important; color: white !important;">Brand</th>
                                 <th style="background-color: #2e3b56 !important; color: white !important;">Category</th>
                                 {{-- <th style="background-color: #2e3b56 !important; color: white !important;">Description</th> --}}

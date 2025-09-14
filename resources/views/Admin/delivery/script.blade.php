@@ -15,7 +15,7 @@ $(document).ready(function () {
             { data: 'order_num', name: 'order_num' },
             { data: 'guest_name', name: 'guest_name' },
             { data: 'phone_guest', name: 'phone_guest' },
-            { data: 'guest_address', name: 'guest_address' },
+            // { data: 'guest_address', name: 'guest_address' },
             { data: 'total_amount', name: 'total_amount' },
             {
                 data: 'status',

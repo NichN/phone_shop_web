@@ -7,17 +7,17 @@
 <div>
     <button class="w3-button w3-xlarge w3-hide-large" onclick="w3_open()">&#9776;</button>
     <div class="w3-main">
+            @if(session('message'))
+        <div class="container mt-3">
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('message') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    @endif
         <div class="flex items-center justify-between bg- px-4  rounded-md shadow-sm" style="background-color: aliceblue; padding: 10px;" >
             <div class="d-flex align-items-center justify-content-between w-100">
-                <h4 class="text-lg font-semibold text-gray-800 mb-0">Product Variant List</h4>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-outline-success bg-light" data-bs-toggle="modal" data-bs-target="#filterModal">
-                        <i class="fa fa-filter" aria-hidden="true"></i>
-                    </button>
-                    <button type="reset" id="resetFilter" class="btn btn-outline-danger bg-light">
-                        <i class="fa fa-refresh"></i>
-                    </button>
-                </div>
+                <h4 class="text-lg font-semibold text-gray-800 mb-0">Order List</h4>
             </div>
         </div>    
         <main style="padding:30px; gap:10px;" class="row">
@@ -28,6 +28,9 @@
                             text-align: center; font-size: 20px; background-color: white; color: black; padding: 10px; border-radius: 50%; width: 50px; height: 50px; line-height: 30px;">
                         {{$total_order ?? 0}}
                     </h2>
+                     <div style="text-align: center;">
+                        <span class="badge bg-light text-success small mt-1">Today</span>
+                    </div>
                     </div>
             </div> 
                <div style="background-color: #87ceeb; padding: 10px; border-radius: 8px; width: 185px;">
@@ -37,6 +40,9 @@
                             text-align: center; font-size: 20px; background-color: rgb(180, 180, 157) ; color: black; padding: 10px; border-radius: 50%; width: 50px; height: 50px; line-height: 30px;">
                         {{$total_pending ?? 0}}
                     </h2>
+                     <div style="text-align: center;">
+                        <span class="badge bg-light text-success small mt-1">Today</span>
+                    </div>
                     </div>
             </div>
             <div style="background-color: #87ceeb; padding: 10px; border-radius: 8px; width: 185px;">
@@ -46,6 +52,9 @@
                             text-align: center; font-size: 20px; background-color: #e65548; color: white; padding: 10px; border-radius: 50%; width: 50px; height: 50px; line-height: 30px;">
                         {{$total_canceled ?? 0}}
                     </h2>
+                     <div style="text-align: center;">
+                        <span class="badge bg-light text-success small mt-1">Today</span>
+                    </div>
                 </div>
             </div>
             <div style="background-color: #87ceeb; padding: 10px; border-radius: 8px; width: 185px;">
@@ -55,6 +64,9 @@
                             text-align: center; font-size: 20px; background-color: orange; color: white; padding: 10px; border-radius: 50%; width: 50px; height: 50px; line-height: 30px;">
                         {{$total_processing ?? 0}}
                     </h2>
+                     <div style="text-align: center;">
+                        <span class="badge bg-light text-success small mt-1">Today</span>
+                    </div>
                         {{-- {{$totalprincipal?? 0}} --}}
                     </div>
             </div>
@@ -65,6 +77,9 @@
                             text-align: center; font-size: 20px; background-color: green ; color: white; padding: 10px; border-radius: 50%; width: 50px; height: 50px; line-height: 30px;">
                         {{$total_completed ?? 0}}
                     </h2>
+                     <div style="text-align: center;">
+                        <span class="badge bg-light text-success small mt-1">Today</span>
+                    </div>
                     </div>
             </div>
             <div style="background-color: #87ceeb; padding: 10px; border-radius: 8px; width: 185px;">
@@ -74,6 +89,9 @@
                             text-align: center; font-size: 20px; color: black; padding: 10px;"> USD
                         {{$total_income ?? 0}}
                     </h2>
+                     <div style="text-align: center;">
+                        <span class="badge bg-light text-success small mt-1">Today</span>
+                    </div>
                         {{-- {{ $due_status->due_count ?? 0 }} --}}
                     </div>
             </div>
@@ -168,7 +186,15 @@
                 <button onclick="prevMonth()" style="border: none; border-radius: 20px; padding: 5px 10px;">&#8592;</button>
                 <span id="monthYearLabel" data-month="{{ now()->month }}" data-year="{{ now()->year }}">{{ now()->format('F Y') }}</span>
                 <button onclick="nextMonth()" style="border: none; border-radius: 20px; padding: 5px 10px;">&#8594;</button>
-            </div>            
+            </div> 
+            <div class="d-flex gap-2">
+                    <button class="btn btn-outline-success bg-light" data-bs-toggle="modal" data-bs-target="#filterModal">
+                        <i class="fa fa-filter" aria-hidden="true"></i>
+                    </button>
+                    <button type="reset" id="resetFilter" class="btn btn-outline-danger bg-light">
+                        <i class="fa fa-refresh"></i>
+                    </button>
+                </div>           
         </div>
         <div class="container no-print">
             <div class="card-body">                                 
@@ -180,7 +206,7 @@
                                 <th style="background-color: #2e3b56 !important; color: white !important;">Order</th>
                                 <th style="background-color: #2e3b56 !important; color: white !important;">Cutomer</th>
                                 <th style="background-color: #2e3b56 !important; color: white !important;">Phone</th>
-                                <th style="background-color: #2e3b56 !important; color: white !important;">Address</th>
+                                {{-- <th style="background-color: #2e3b56 !important; color: white !important;">Address</th> --}}
                                 <th style="background-color: #2e3b56 !important; color: white !important;">Amount</th>
                                 <th style="background-color: #2e3b56 !important; color: white !important;">Delivery</th>
                                 <th style="background-color: #2e3b56 !important; color: white !important;">Status</th>

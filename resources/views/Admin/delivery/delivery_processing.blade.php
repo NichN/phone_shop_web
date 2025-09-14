@@ -15,6 +15,9 @@
                             text-align: center; font-size: 20px; background-color: white; color: black; padding: 10px; border-radius: 50%; width: 50px; height: 50px; line-height: 30px;">
                         {{$total_order ?? 0}}
                     </h2>
+                     <div style="text-align: center;">
+                        <span class="badge bg-light text-success small mt-1">Today</span>
+                    </div>
                     </div>
             </div> 
             <div style="background-color: #f8e4a2; padding: 10px; border-radius: 8px; width: 180px;">
@@ -24,6 +27,9 @@
                             text-align: center; font-size: 20px; background-color: #e65548; color: white; padding: 10px; border-radius: 50%; width: 50px; height: 50px; line-height: 30px;">
                         {{$total_canceled ?? 0}}
                     </h2>
+                     <div style="text-align: center;">
+                        <span class="badge bg-light text-success small mt-1">Today</span>
+                    </div>
                 </div>
             </div>
             <div style="background-color: #f8e4a2; padding: 10px; border-radius: 8px; width: 180px;">
@@ -33,7 +39,9 @@
                             text-align: center; font-size: 20px; background-color: orange; color: white; padding: 10px; border-radius: 50%; width: 50px; height: 50px; line-height: 30px;">
                         {{$total_processing ?? 0}}
                     </h2>
-                        {{-- {{$totalprincipal?? 0}} --}}
+                         <div style="text-align: center;">
+                        <span class="badge bg-light text-success small mt-1">Today</span>
+                    </div>
                     </div>
             </div>
             <div style="background-color: #f8e4a2; padding: 10px; border-radius: 8px; width: 180px;">
@@ -43,6 +51,9 @@
                             text-align: center; font-size: 20px; background-color: green ; color: white; padding: 10px; border-radius: 50%; width: 50px; height: 50px; line-height: 30px;">
                         {{$total_completed ?? 0}}
                     </h2>
+                     <div style="text-align: center;">
+                        <span class="badge bg-light text-success small mt-1">Today</span>
+                    </div>
                     </div>
             </div>
             <div style="background-color: #f8e4a2; padding: 10px; border-radius: 8px; width: 180px;">
@@ -52,7 +63,9 @@
                             text-align: center; font-size: 20px; color: black; padding: 10px;"> USD
                         {{$total_feepending ?? 0}}
                     </h2>
-                        {{-- {{ $due_status->due_count ?? 0 }} --}}
+                         <div style="text-align: center;">
+                        <span class="badge bg-light text-success small mt-1">Today</span>
+                    </div>
                     </div>
             </div>
             <div style="background-color: #f8e4a2; padding: 10px; border-radius: 8px; width: 180px;">
@@ -62,7 +75,9 @@
                             text-align: center; font-size: 20px; color: black; padding: 10px;"> USD
                         {{$total_fee ?? 0}}
                     </h2>
-                        {{-- {{ $due_status->due_count ?? 0 }} --}}
+                        <div style="text-align: center;">
+                        <span class="badge bg-light text-success small mt-1">Today</span>
+                    </div>
                     </div>
             </div>
         </main>
@@ -76,7 +91,7 @@
                                 <th style="background-color: #2e3b56 !important; color: white !important;">Order</th>
                                 <th style="background-color: #2e3b56 !important; color: white !important;">Cutomer</th>
                                 <th style="background-color: #2e3b56 !important; color: white !important;">Phone</th>
-                                <th style="background-color: #2e3b56 !important; color: white !important;">Address</th>
+                                {{-- <th style="background-color: #2e3b56 !important; color: white !important;">Address</th> --}}
                                 <th style="background-color: #2e3b56 !important; color: white !important;">Amount</th>
                                 <th style="background-color: #2e3b56 !important; color: white !important;">Status</th>
                                 <th style="background-color: #2e3b56 !important; color: white !important;">Action</th>

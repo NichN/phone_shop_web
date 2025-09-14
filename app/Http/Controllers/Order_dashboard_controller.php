@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\Order;
+use Carbon\Carbon;
 
 
 class Order_dashboard_controller extends Controller
@@ -13,12 +14,26 @@ class Order_dashboard_controller extends Controller
 
 public function index()
     {
-        $totalOrder = Order::count();
-        $totalCanceled = Order::where('status', 'cancelled')->count();
-        $totalProcessing = Order::where('status', 'processing')->count();
-        $totalCompleted = Order::where('status', 'completed')->count();
-        $totalPending = Order::where('status', 'pending')->count();
-        $totalIncome = Order::where('status', 'completed')->sum('total_amount');
+        $totalOrder = Order::whereDate('created_at', Carbon::today())->count();
+       $totalCanceled = Order::where('status', 'cancelled')
+            ->whereDate('created_at', Carbon::today())
+            ->count();
+
+        $totalProcessing = Order::where('status', 'processing')
+            ->whereDate('created_at', Carbon::today())
+            ->count();
+
+        $totalCompleted = Order::where('status', 'completed')
+            ->whereDate('created_at', Carbon::today())
+            ->count();
+
+        $totalPending = Order::where('status', 'pending')
+            ->whereDate('created_at', Carbon::today())
+            ->count();
+
+        $totalIncome = Order::where('status', 'completed')
+            ->whereDate('created_at', Carbon::today())
+            ->sum('total_amount');
 
         $query = Order::query();
 

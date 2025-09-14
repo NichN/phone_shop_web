@@ -188,6 +188,7 @@ Route::prefix('dashboard')->middleware(['auth', 'twofactor'])->name('dashboard.'
 });
 Route::prefix('products')->name('products.')->group(function () {
     Route::get('/color', [productAdminController::class, 'index'])->name('colorlist');
+    Route::get('productshow/{id}',[productAdminController::class,'productshow'])->name('productshow');
     Route::post('/store', [productAdminController::class, 'storecolor'])->name('colorstore');
     Route::delete('/delete/{id}', [productAdminController ::class, 'delete'])->name('delete');
     Route::get('/edit/{id}', [productAdminController ::class, 'editcolor'])->name('editcolor');

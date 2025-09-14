@@ -8,7 +8,8 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Models\Order;
 use App\Models\Delivery;
 use App\Models\payment;
-use App\Models\deliveries; // Assuming you have a model named 'deliveries'
+use App\Models\deliveries; 
+use Carbon\Carbon;
 
 class delivery_dashboard_controller extends Controller
 {
@@ -16,27 +17,33 @@ class delivery_dashboard_controller extends Controller
    {
         $totalOrder = DB::table('orders')
             ->where('delivery_type', '=','delivery')
+            ->whereDate('created_at', Carbon::today())
             ->count();
 
         $totalCanceled = DB::table('orders')
         ->whereRaw("status = 'cancelled' AND delivery_type = 'delivery'")
+        ->whereDate('created_at', Carbon::today())
             ->count();
 
         // Total Processing Orders
         $totalProcessing = DB::table('orders')
             ->whereRaw("status = 'processing' AND delivery_type = 'delivery'")
+            ->whereDate('created_at', Carbon::today())
             ->count();
 
         // Total Completed Orders
         $totalCompleted = DB::table('orders')
              ->whereRaw("status = 'completed' AND delivery_type = 'delivery'")
+             ->whereDate('created_at', Carbon::today())
             ->count();
 
         $total_feeCompleted = DB::table('orders')
             ->where('status', 'Completed')
+            ->whereDate('created_at', Carbon::today())
             ->sum('delivery_fee');
         $total_feepending = DB::table('orders')
             ->where('status', 'processing')
+            ->whereDate('created_at', Carbon::today())
             ->sum('delivery_fee');
 
         return view('Admin.delivery.delivery_processing', [

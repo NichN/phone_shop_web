@@ -35,6 +35,11 @@ class Product extends Model
         ->where('stock', '>', 0)
         ->orderBy('id');
 }
+public function images()
+{
+    return $this->hasMany(Productdetail::class, 'pro_id', 'id');
+}
+
 
 
 }
