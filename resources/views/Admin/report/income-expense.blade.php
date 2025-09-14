@@ -11,20 +11,22 @@
     <div class="container mt-4">
         <div class="row g-3 mb-4">
             @foreach($cards as $card)
-                <div class="col-md-2">
-                    <div class="card text-center shadow-sm p-3">
-                        <div class="mb-2">
-                            <div class="bg-{{ $card['color'] }} text-white rounded-circle p-2 mx-auto" style="width: 40px;">
-                                <i class="bi {{ $card['icon'] }}"></i>
+                    <div class="col-md-2">
+                        <a href="{{ $card['route'] }}" class="text-decoration-none text-dark">
+                            <div class="card text-center shadow-sm p-3 hover-shadow">
+                                <div class="mb-2">
+                                    <div class="bg-{{ $card['color'] }} text-white rounded-circle p-2 mx-auto" style="width: 40px;">
+                                        <i class="bi {{ $card['icon'] }}"></i>
+                                    </div>
+                                </div>
+                                <p class="text-muted mb-0">Total</p>
+                                <h6 class="fw-bold text-primary">{{ $card['title'] }}</h6>
+                                <h4>{{ $card['count'] }}</h4>
+                                <span class="badge bg-light text-success small mt-1">This Month</span>
                             </div>
-                        </div>
-                        <p class="text-muted mb-0">Total</p>
-                        <h6 class="fw-bold text-primary">{{ $card['title'] }}</h6>
-                        <h4>{{ $card['count'] }}</h4>
+                        </a>
                     </div>
-                </div>
-            @endforeach
-
+                @endforeach
             <!-- Income vs Expense -->
             <div class="col-md-4">
                 <div class="card shadow-sm p-3">
@@ -71,31 +73,34 @@
                 </tr>
             </thead>
             <tbody>
-                @if ($recentOrders->isEmpty())
-                    <tr>
-                        <td colspan="5" class="text-center">No orders found.</td>
-                    </tr>
-                @else
-                    @foreach ($recentOrders as $order)
-                        <tr>
-                            <td style="text-align: center;">{{ $order->order_num }}</td>
-                            <td style="text-align: center;">{{ $order->guest_name }}</td>
-                            <td style="text-align: center;">{{ \Carbon\Carbon::parse($order->created_at)->format('M d, Y') }}</td>
-                            <td style="text-align: center;">${{ number_format($order->total_amount, 2) }}</td>
-                            <td style="text-align: center;">
-                            <span class="badge @if($order->status === 'approved') bg-success-light
-                                @elseif($order->status === 'processing') bg-info-light
-                                @elseif($order->status === 'completed') bg-teal-light
-                                @elseif($order->status === 'pending') bg-warning-light
-                                @elseif($order->status === 'cancelled') bg-danger-light
-                                @else bg-secondary-light @endif">
-                                {{ $order->status }}
-                            </span>
-                        </td>
-                        </tr>
-                    @endforeach
-                @endif
-            </tbody>
+        @if ($recentOrders->isEmpty())
+            <tr>
+                <td colspan="5" class="text-center">No orders found.</td>
+            </tr>
+        @else                                       
+            @foreach ($recentOrders as $order)
+            <tr onclick="window.location.href='{{ route('order_dashboard.order_detail', $order->id) }}'"
+                style="cursor: pointer;">
+                <td class="text-center">{{ $order->order_num }}</td>
+                <td class="text-center">{{ $order->guest_name }}</td>
+                <td class="text-center">{{ \Carbon\Carbon::parse($order->created_at)->format('M d, Y') }}</td>
+                <td class="text-center">${{ number_format($order->total_amount, 2) }}</td>
+                <td class="text-center">
+                    <span class="badge 
+                        @if($order->status === 'approved') bg-success-light
+                        @elseif($order->status === 'processing') bg-info-light
+                        @elseif($order->status === 'Completed') bg-teal-light
+                        @elseif($order->status === 'pending') bg-warning-light
+                        @elseif($order->status === 'cancelled') bg-danger-light
+                        @else bg-secondary-light @endif">
+                        {{ $order->status }}
+                    </span>
+                </td>
+            </tr>
+        @endforeach
+    @endif
+</tbody>
+
         </table>
             </div>
         </div>
@@ -119,21 +124,23 @@
                 <tbody>
                     @if ($recentBill->isEmpty())
                         <tr>
-                            <td colspan="5" class="text-center">No bills found.</td>
+                            <td colspan="6" class="text-center">No bills found.</td>
                         </tr>
                     @else
                         @foreach ($recentBill as $bill)
-                            <tr>
-                                <td style="text-align: center;">{{ $bill->reference_no }}</td>
-                                <td style="text-align: center;">{{ $bill->supplier_name }}</td>
-                                <td style="text-align: center;">{{ \Carbon\Carbon::parse($bill->created_at)->format('M d, Y') }}</td>
-                                <td style="text-align: center;">${{ number_format($bill->Grand_total, 2) }}</td>
-                                <td style="text-align: center;">${{ number_format($bill->paid, 2) }}</td>
-                                <td style="text-align: center;">
-                                    <span class="badge @if($bill->payment_statuse === 'Paid') bg-success-light
+                            <tr onclick="window.location.href='{{ route('purchase.purchase_invoice', $bill->id) }}'" style="cursor: pointer;">
+                                <td class="text-center">{{ $bill->reference_no }}</td>
+                                <td class="text-center">{{ $bill->supplier_name }}</td>
+                                <td class="text-center">{{ \Carbon\Carbon::parse($bill->created_at)->format('M d, Y') }}</td>
+                                <td class="text-center">${{ number_format($bill->Grand_total, 2) }}</td>
+                                <td class="text-center">${{ number_format($bill->paid, 2) }}</td>
+                                <td class="text-center">
+                                    <span class="badge 
+                                        @if($bill->payment_statuse === 'Paid') bg-success-light
                                         @elseif($bill->payment_statuse === 'Pending') bg-warning-light
                                         @elseif($bill->payment_statuse === 'Partially') bg-danger-light
-                                        @else bg-secondary-light @endif">
+                                        @else bg-secondary-light 
+                                        @endif">
                                         {{ $bill->payment_statuse }}
                                     </span>
                                 </td>
@@ -141,6 +148,7 @@
                         @endforeach
                     @endif
                 </tbody>
+
             </table>
         </div>
     </div>

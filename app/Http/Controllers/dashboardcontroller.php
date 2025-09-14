@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use Illuminate\Support\Facades\DB;
-
+use Carbon\Carbon;
     class dashboardcontroller extends Controller
     {
         public function index()
@@ -16,16 +16,26 @@ use Illuminate\Support\Facades\DB;
         public function show()
         {
             $totalProduct = DB::table('product_item')
+                ->where('is_featured', 1)
+                ->whereMonth('created_at', Carbon::now()->month)
+                ->whereYear('created_at', Carbon::now()->year)
                 ->select(DB::raw('COUNT(id) as total_product'))
                 ->first(); 
             $totalPurchase = DB::table('purchase')
                 ->select(DB::raw('SUM(Grand_total) as Grand_total'))
+                ->whereMonth('created_at', Carbon::now()->month)
+                ->whereYear('created_at', Carbon::now()->year)
                 ->first();
             $totalCustomer = DB::table('users')
-                ->where('role_id', '!=', 4) 
-                ->select(DB::raw('COUNT(id) as total_customer'))
-                ->first();
+            ->join('orders', 'users.id', '=', 'orders.user_id')
+            ->where('users.role_id', '!=', 4)
+            ->whereMonth('orders.created_at', Carbon::now()->month)
+            ->whereYear('orders.created_at', Carbon::now()->year)
+            ->select(DB::raw('COUNT(DISTINCT users.id) as total_customer'))
+            ->first();
             $totalOrder = DB ::table('orders')
+                ->whereMonth('orders.created_at', Carbon::now()->month)
+                ->whereYear('orders.created_at', Carbon::now()->year)
                 ->select(DB::raw('COUNT(id) as total_order'))->first();
             $recentOrders = DB::table('orders')
             ->join('users', 'orders.user_id', '=', 'users.id')
@@ -66,6 +76,9 @@ use Illuminate\Support\Facades\DB;
 
 
                 // dd($soldOutItems);
+                $pendingOrderCount = DB::table('orders')
+                ->where('status', 'pending') 
+                ->count();
             return view('Admin.dasboard.index', [
                 'total_product' => $totalProduct->total_product ?? 0,
                 'Grand_total' => $totalPurchase->Grand_total ?? 0,
@@ -75,7 +88,8 @@ use Illuminate\Support\Facades\DB;
                 'product_instock'=>$product_instock,
                 'soldOutItems' => $soldOutItems,
                 'order_monthly' => $order_monthly,
-                'order_monthly_pr' => $order_monthly_pr
+                'order_monthly_pr' => $order_monthly_pr,
+                'pendingOrderCount' => $pendingOrderCount
             ]);
         }
 

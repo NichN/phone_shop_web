@@ -20,7 +20,7 @@
                 { data: 'name', name: 'name' },
                 { data: 'brandname', name: 'brandname' },
                 { data: 'categoryname', name: 'categoryname' },
-                { data: 'description' , name:'description'},
+                // { data: 'description' , name:'description'},
                 { data: 'action', orderable: false, searchable: false }
             ]
         });

@@ -25,7 +25,7 @@
                                 <th style="background-color: #2e3b56 !important; color: white !important;">Name</th>
                                 <th style="background-color: #2e3b56 !important; color: white !important;">Brand</th>
                                 <th style="background-color: #2e3b56 !important; color: white !important;">Category</th>
-                                <th style="background-color: #2e3b56 !important; color: white !important;">Description</th>
+                                {{-- <th style="background-color: #2e3b56 !important; color: white !important;">Description</th> --}}
                                 <th style="background-color: #2e3b56 !important; color: white !important;">Action</th>
                             </tr>
                         </thead>                                

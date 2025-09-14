@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\productdetail;
 use Yajra\DataTables\Facades\DataTables;
-
+use Carbon\Carbon;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Termwind\Components\Raw;
 
@@ -274,7 +274,7 @@ public function product_chart(Request $request)
 }
 public function income_expense(Request $request)
 {
-    $currentDate = now(); // 2025-08-29 04:33 AM +07
+    $currentDate = now(); 
 $currentMonth = $currentDate->month;
 $deliveryExpenseToday = DB::table('orders')->where('delivery_type', 'on delivery')
     ->whereDate('created_at', $currentDate->toDateString()) // Today only
@@ -299,19 +299,28 @@ $expenseThisMonth = $deliveryExpenseMonth + $purchaseExpenseMonth;
 $formattedExpenseThisMonth = number_format($expenseThisMonth, 2, '.', '');
     $totalProduct = DB::table('product_item')
         ->select(DB::raw('COUNT(id) as total_product'))
+        ->where('is_featured', 1)
+        ->whereMonth('created_at', Carbon::now()->month)
+        ->whereYear('created_at', Carbon::now()->year)
         ->first();
 
     $totalSupplier = DB::table('supplier')
         ->select(DB::raw('COUNT(id) as total_supplier'))
+        ->whereMonth('created_at', Carbon::now()->month)
+        ->whereYear('created_at', Carbon::now()->year)
         ->first();
 
     $totalInvoice = DB::table('orders')
         ->where('status', '!=', 'pending')
         ->select(DB::raw('COUNT(id) as total_invoice'))
+        ->whereMonth('created_at', Carbon::now()->month)
+        ->whereYear('created_at', Carbon::now()->year)
         ->first();
 
     $totalBill = DB::table('purchase')
         ->select(DB::raw('COUNT(id) as total_bill'))
+        ->whereMonth('created_at', Carbon::now()->month)
+        ->whereYear('created_at', Carbon::now()->year)
         ->first();
     $totalIncome = DB::table('orders')
     ->select(
@@ -329,29 +338,13 @@ $formattedExpenseThisMonth = number_format($expenseThisMonth, 2, '.', '');
         $output = 0;
     }
 
-    // $monthlyIncome = DB::table('orders')
-    // ->select(DB::raw('SUM(total_amount) as total_income'))
-    // ->whereIn('status', ['accepted', 'processing', 'paid', 'completed','Confirmed'])
-    // ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
-    // ->get();
-
-    //     if ($monthlyIncome->isNotEmpty()) {
-    //         $monthlyOutput = $monthlyIncome->map(function($item) {
-    //         return [
-    //             'total_income' => $item->total_income
-    //         ];
-    //         });
-    //     } else {
-    //         $monthlyOutput = [];
-    //     }
-    // Dynamically set $targetWeek to the current week number within the month
         $firstDayOfMonth = now()->startOfMonth();
         $currentDate = now();
-        $targetWeek = floor((($currentDate->day - 1) / 7)) + 1; // Approximate week number within the month (e.g., 5 for Aug 29)
+        $targetWeek = floor((($currentDate->day - 1) / 7)) + 1;
 
-        // Calculate the base week number using PHP (approximate for the month start)
-        $baseWeek = date('W', strtotime($firstDayOfMonth)); // ISO week number for the first day of the month (e.g., 31 for Aug 1, 2025)
-        $dynamicWeekOffset = $baseWeek + ($targetWeek - 1); // Dynamic week (e.g., 31 + 4 = 35 for Aug 29, 2025)
+    
+        $baseWeek = date('W', strtotime($firstDayOfMonth));
+        $dynamicWeekOffset = $baseWeek + ($targetWeek - 1);
 
         // Debug: Log the dynamic week to check its value
         \Log::info('Dynamic Week: ' . $dynamicWeekOffset);
@@ -494,30 +487,6 @@ if ($total_bill_paid->isNotEmpty()) {
     $billOutputpaid = [];
 }
 
-// Query for Total Bill Cancelled/Unpaid
-// $total_bill_cancel = DB::table('purchase')
-//     ->select(
-//         DB::raw('WEEK(created_at, 1) as week_number'),
-//         DB::raw('SUM(Grand_total) as total')
-//     )
-//     ->whereIn('payment_statuse', ['Unpaid']) // Fixed typo: 'payment_statuse' to plural
-//     ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
-//     ->groupBy(DB::raw('WEEK(created_at, 1)'))
-//     ->having('week_number', '=', $currentWeek) // Filter for the current week
-//     ->orderBy('week_number', 'asc')
-//     ->get();
-
-// if ($total_bill_cancel->isNotEmpty()) {
-//     $billOutputcancel = $total_bill_cancel->map(function($item) {
-//         return [
-//             'week' => $item->week_number,
-//             'total' => number_format($item->total, 2)
-//         ];
-//     });
-// } else {
-//     $billOutputcancel = [];
-// }
-
 // Pass data to view
 
         // Get monthly unpaid bills for current year
@@ -542,10 +511,9 @@ if ($total_bill_paid->isNotEmpty()) {
             }),
             'total_sum' => number_format($monthlyUnpaidBills->sum('total_amount'), 2)
         ];
-    // Dynamically set the current month
-$currentMonth = now()->month; // e.g., 8 for August 2025
+   
+$currentMonth = now()->month;
 
-// Query for Monthly Paid (Completed status for the current month)
 $monthlyIncome_paid = DB::table('orders')
     ->select(
         DB::raw('MONTH(created_at) as month_number'),
@@ -707,32 +675,34 @@ if ($total_bill_cancel->isNotEmpty()) {
     $billOutputcancel = [];
 }
 
-
-    // Prepare cards array dynamically
     $cards = [
         [
-            'title' => 'Products',
+            'title' => 'Active Products',
             'count' => $totalProduct->total_product,
             'icon'  => 'bi-box-seam',
             'color' => 'success',
+            'route' => route('products.product_index')
         ],
         [
             'title' => 'Suppliers',
             'count' => $totalSupplier->total_supplier,
             'icon'  => 'bi-person',
             'color' => 'primary',
+             'route' => route('supplier.index')
         ],
         [
             'title' => 'Invoices',
             'count' => $totalInvoice->total_invoice,
             'icon'  => 'bi-file-earmark-text',
             'color' => 'warning',
+             'route' => route('order_dashboard.index')
         ],
         [
             'title' => 'Bills',
             'count' => $totalBill->total_bill,
             'icon'  => 'bi-file-earmark',
             'color' => 'danger',
+             'route' => route('purchase.add')
         ],
     ];
 

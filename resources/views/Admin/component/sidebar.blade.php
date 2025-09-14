@@ -58,7 +58,7 @@
        <div id="productDropdown" class="w3-dropdown-content" style="display: none; min-width: 220px;">
     <!-- Product List (top-level) -->
             <a href="{{ route('products.product_index') }}" class="w3-bar-item w3-button">
-                <i class="fa fa-boxes" style="width:20px;"></i> Product List
+                <i class="fa fa-boxes" style="width:20px;"></i> Product
             </a>
             
             <!-- Categories and Brand (also top-level classification) -->

@@ -29,6 +29,9 @@ class productAdminController extends Controller
             return DataTables::of($data)
                 ->addColumn('action', function ($row) {
                     $btn = '<div>
+                                <button class="btn btn-light btn-sm viewProduct" data-id="' . $row->id . '" data-toggle="tooltip" title="View">
+                                    <i class="fas fa-eye" style="color: #17a2b8;"></i>
+                                </button>
                                 <button class="btn btn-light btn-sm editProduct" data-id="' . $row->id . '" data-toggle="tooltip" title="Edit">
                                     <i class="fas fa-edit" style="color: #ffc107;"></i>
                                 </button>
