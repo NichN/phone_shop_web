@@ -138,7 +138,8 @@
             <div class="card mb-4">
                 <div class="card-heade d-flex justify-content-between align-items-center">
                     <strong>Product Variants</strong>
-                    <a href="{{ route('pr_detail.add') }}" class="btn btn-sm btn-light">+ Add Variant</a>
+                    <a href="{{ route('products.product_edit', ['id' => $products->id]) }}" class="btn btn-sm btn-light">+ Add Variant</a>
+
                 </div>
                 <div class="card-body p-0 table-responsive">
                     <table class="table mb-0 table-hover">

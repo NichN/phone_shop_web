@@ -88,16 +88,26 @@
 
                     {{-- Order Body --}}
                     <div class="order-body p-3 d-flex justify-content-between flex-wrap">
+                     <div class="order-product d-flex align-items-center gap-3">
+                @php
+                $images = $productImages[$order->id] ?? [];
+                $imgSrc = count($images) ? $images[0]->imgSrc : null;
+                $decodedImages = is_string($imgSrc) ? json_decode($imgSrc, true) : $imgSrc;
+                $firstImage = is_array($decodedImages) && !empty($decodedImages) ? $decodedImages[0] : null;
+            @endphp
 
-                        {{-- Product Info --}}
-                        <div class="order-product d-flex align-items-center gap-3">
-                            <img src="https://cdn-icons-png.flaticon.com/512/263/263142.png" alt="Shopping Icon" style="width: 75px; height: 75px;">
-                            <div>
-                                <p class="mb-1"><strong>Product</strong></p>
-                                <p class="mb-1">Total: ${{ number_format($order->total_amount, 2) }}</p>
-                                <p class="text-muted small">View product details in your order detail.</p>
-                            </div>
-                        </div>
+            <img 
+                src="{{ $firstImage ? asset('storage/' . $firstImage) : 'https://cdn-icons-png.flaticon.com/512/263/263142.png' }}" 
+                alt="Product Image" 
+                style="width: 75px; height: 75px; object-fit: cover; border-radius: 4px;"
+            >
+                <div>
+                    <p class="mb-1"><strong>Product</strong></p>
+                    <p class="mb-1">Total: ${{ number_format($order->total_amount, 2) }}</p>
+                    <p class="text-muted small">View product details in your order detail.</p>
+                </div>
+            </div>
+
 
                         {{-- Shipping Info --}}
                         <div>

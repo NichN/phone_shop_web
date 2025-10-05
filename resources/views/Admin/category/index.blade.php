@@ -21,7 +21,7 @@
                                     <th style="background-color: #2e3b56 !important; color: white !important;">No</th>
                                     <th style="background-color: #2e3b56 !important; color: white !important;">Picture</th>
                                     <th style="background-color: #2e3b56 !important; color: white !important;">Name</th>
-                                    <th style="background-color: #2e3b56 !important; color: white !important;">Description</th>
+                                    {{-- <th style="background-color: #2e3b56 !important; color: white !important;">Description</th> --}}
                                     <th style="background-color: #2e3b56 !important; color: white !important;">Created Date</th>
                                     <th style="background-color: #2e3b56 !important; color: white !important;">Action</th>
                                 </tr>
@@ -64,4 +64,37 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="viewModalLabel">Category Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Hidden ID if needed -->
+        <input type="hidden" id="viewCateId" name="id">
+
+        <div class="mb-3">
+          <label class="form-label"><strong>Name:</strong></label>
+          <p id="viewName" class="form-control-plaintext"></p>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label"><strong>Description:</strong></label>
+          <p id="viewDescription" class="form-control-plaintext"></p>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label"><strong>Photo:</strong></label><br>
+          <div id="viewPhotoContainer"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 @include('Admin.category.script')

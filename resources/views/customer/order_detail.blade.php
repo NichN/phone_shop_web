@@ -19,9 +19,25 @@
         <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
             <p class="mb-0">
                 <strong>Ordered On:</strong> {{ $order->created_at->format('d-m-Y') }}<br>
-                <strong>Order:</strong> #{{ $order->order_num }}
-            </p>
+                <strong>Order:</strong> #{{ $order->order_num }} <br>
+                @php
+                    $status = strtolower($order->status);
+                    $statusClasses = match ($status) {
+                        'cancelled', 'returned' => 'text-danger bg-light',
+                        'pending' => 'text-secondary bg-light',
+                        'accepted' => 'text-warning bg-light',
+                        'processing' => 'text-info bg-light',
+                        'completed' => 'text-success bg-light',
+                        default => 'text-dark bg-light',
+                    };
+                    $statusLabel = ucfirst($status) === 'Returned' ? 'Cancelled' : ucfirst($status);
+                @endphp
 
+                <strong>Order Status:</strong>
+                <span class="p-2 rounded {{ $statusClasses }}">
+                    {{ $statusLabel }}
+                </span>
+            </p>
             <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#invoiceModal">
                 View Invoice
             </button>

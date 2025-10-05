@@ -7,9 +7,14 @@ use App\Models\Color;
 use App\Models\Product;
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Size;
+use App\Models\suppiler;
 use App\Models\productdetail;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\Validator;
+
 class productAdminController extends Controller
 {
   
@@ -44,12 +49,13 @@ public function productindex(Request $request)
             })
             ->addColumn('action', function ($row) {
                 $invoiceUrl = route('products.productshow', $row->id);
+                $editUrl = route('products.product_edit', $row->id);
                 return '
                     <div>
                         <button class="btn btn-light btn-sm viewProduct" data-url="' . $invoiceUrl . '" title="View">
                             <i class="fas fa-eye" style="color: #17a2b8;"></i>
                         </button>
-                        <button class="btn btn-light btn-sm editProduct" data-id="' . $row->id . '" title="Edit">
+                        <button class="btn btn-light btn-sm editProduct" data-url="' . $editUrl . '" title="Edit">
                             <i class="fas fa-edit" style="color: #ffc107;"></i>
                         </button>
                         <button class="btn btn-light btn-sm deleteProduct" data-id="' . $row->id . '" title="Delete">
@@ -66,38 +72,224 @@ public function productindex(Request $request)
     $category = Category::all();
     return view('Admin.product.listproduct', compact('brands', 'category'));
 }
-    public function productstore(Request $request)
-    {
+    // public function productstore(Request $request)
+    // {
+    //     $request->validate([
+    //         'name' => 'required|string|max:255',
+    //     ]);
+
+    //     $data = [
+    //         'name' => $request->name,
+    //         'brand_id' => $request->brand_id,
+    //         'cat_id' => $request->cat_id,
+    //         'description' => $request->description,
+    //         'stock' => 0
+    //     ];
+
+    //     Product::create($data);
+    //     return response()->json(['success' => true, 'message' => 'Product added successfully!']);
+    // }
+   public function productstore(Request $request)
+{
+    DB::beginTransaction();
+
+    try {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name'        => 'required|string|max:255',
+            'brand_id'    => 'required|exists:brand,id',
+            'cat_id'      => 'required|exists:category,id',
+            'description' => 'nullable|string',
+            'variants'    => 'required|array|min:1',
+            'variants.*.cost_price' => 'required|numeric',
+            'variants.*.price'      => 'required|numeric',
+            'variants.*.size_id'    => 'required|exists:size,id',
+            'variants.*.color'     => 'required|string|exists:color,name',
+            'variants.*.type'       => 'nullable|string|in:new,refurbished',
+            'variants.*.warranty'   => 'nullable|integer|min:0',
+           'variants.*.is_featured' => 'nullable|boolean',
+            'images.*'       => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'variants.*.images.*'   => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+        
+        $product = Product::create([
+            'name'        => $request->name,
+            'brand_id'    => $request->brand_id,
+            'cat_id'      => $request->cat_id,
+            'description' => $request->description,
+            'stock'       => 0,
         ]);
 
-        $data = [
-            'name' => $request->name,
-            'brand_id' => $request->brand_id,
-            'cat_id' => $request->cat_id,
-            'description' => $request->description,
-            'stock' => 0
-        ];
+        $totalStock = 0;
+        foreach ($request->variants as $variant) {
+            $imagePaths = [];
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('public/product_images');
+                $imagePaths[] = str_replace('public/', '', $path);
+            }
+        }
 
-        Product::create($data);
-        return response()->json(['success' => true, 'message' => 'Product added successfully!']);
+           $color = \App\Models\Color::where('name', $variant['color'])->first();
+            $size = Size::find($variant['size_id']);
+
+            $variantData = [
+                'pro_id'        => $product->id,
+                'cost_price'    => $variant['cost_price'],
+                'price'         => $variant['price'],
+                'size_id'       => $variant['size_id'],
+                'color_id' => $color ? $color->id : null,
+                'stock'         => $variant['stock'] ?? 0,
+                'product_name'  => $product->name,
+                'color_code'    => $color->code,
+                'size'          => $size->size,
+                'images'        => $imagePaths,
+                'type'          => $variant['type'] ?? null,
+                'warranty'      => $variant['warranty'] ?? null,
+                'is_featured' => isset($variant['is_featured']) && $variant['is_featured'] ? 1 : 0,
+
+            ];
+
+            ProductDetail::create($variantData);
+
+            $totalStock += $variantData['stock'];
+        }
+
+        $product->update(['stock' => $totalStock]);
+
+        DB::commit();
+
+        return redirect()->route('products.product_index')
+                 ->with('success', 'Product created successfully!');
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to store product: ' . $e->getMessage()
+        ], 500);
     }
-    public function editproduct($id){
-        $product = Product::findOrFail($id);
-        return response()->json($product);
+}
+
+   public function edit($id)
+{
+    $product = Product::with('items')->findOrFail($id);
+    // dd($product);
+    $categories = Category::all();
+     $variantCount = $product->items->count();
+    $brands = Brand::all();
+    $colors = Color::all();
+    $sizes = Size::all();
+
+    return view('Admin.product.edit', [
+        'product' => $product,
+        'categories' => $categories,
+        'brands' => $brands,
+        'colors' => $colors,
+        'sizes' => $sizes,
+        'variantCount' => $variantCount,
+    ]);
+}
+   public function updateproduct(Request $request, $id)
+{
+    $validator = Validator::make($request->all(), [
+        'name' => 'required|string|max:255',
+        'cat_id' => 'required|exists:category,id',
+        'brand_id' => 'required|exists:brand,id',
+        'is_featured' => 'required|boolean',
+        'items' => 'required|array|min:1',
+        'items.*.id' => 'nullable|exists:product_item,id',
+        'items.*.color_id_select' => 'required|exists:color,id',
+        'items.*.size_id' => 'required|exists:size,id',
+        'items.*.type' => 'required|in:new,refurbished',
+        'items.*.warranty' => 'nullable|integer|min:0',
+        'items.*.cost_price' => 'required|numeric|min:0',
+        'items.*.price' => 'required|numeric|min:0',
+        'items.*.stock' => 'nullable|integer|min:0',
+        'items.*.images.*' => [
+            'nullable',
+            'image',
+            'mimes:jpeg,png,jpg',
+            'max:2048',
+            function ($attribute, $value, $fail) use ($request) {
+                $index = explode('.', $attribute)[1];
+                $hasExistingImages = !empty($request->input("items.$index.existing_images"));
+                $hasNewImages = !empty($request->file("items.$index.images"));
+                $deleteImages = $request->input("items.$index.delete_images", []);
+                $existingImages = $request->input("items.$index.existing_images", []);
+                $allDeleted = count(array_filter($deleteImages)) >= count($existingImages);
+                if (!$hasExistingImages && !$hasNewImages || ($hasExistingImages && $allDeleted && !$hasNewImages)) {
+                    $fail("At least one image is required for variant $index.");
+                }
+            }
+        ],
+        'items.*.delete_images.*' => 'nullable|string',
+        'items.*.existing_images.*' => 'nullable|string',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to update product',
+            'errors' => $validator->errors()->all()
+        ], 422);
     }
-    public function updateproduct(Request $request, $id){
-        $product = Product::findOrFail($id);
-        $product->update([
-            'pro_id' => $request->id,
-            'name' => $request->name,
-            'description' => $request->description,
-            'brand_id' => $request->brand_id,
-            'cat_id' => $request->cat_id
-        ]);
-        return response()->json(['success' => true]);
+
+    $product = Product::findOrFail($id);
+    $product->update([
+        'name' => $request->name,
+        'cat_id' => $request->cat_id,
+        'brand_id' => $request->brand_id,
+        'is_featured' => $request->is_featured,
+        'description' => $request->description,
+    ]);
+    $submittedVariantIds = array_filter(array_column($request->items, 'id'));
+
+    $product->items()->whereNotIn('id', $submittedVariantIds)->delete();
+
+    foreach ($request->items as $index => $item) {
+        $variant = $product->items()->updateOrCreate(
+            ['id' => $item['id'] ?? null],
+            [
+                'color_id' => $item['color_id_select'],
+                'size_id' => $item['size_id'],
+                'type' => $item['type'],
+                'warranty' => $item['warranty'] ?? null,
+                'cost_price' => $item['cost_price'],
+                'price' => $item['price'],
+                'stock' => $item['stock'] ?? 0,
+            ]
+        );
+
+    
+        $currentImages = $variant->images ?? [];
+
+        // Handle new image uploads
+        if (!empty($item['images'])) {
+            foreach ($item['images'] as $image) {
+                $path = $image->store('products', 'public');
+                $currentImages[] = $path;
+            }
+        }
+
+        // Handle image deletions
+        if (!empty($item['delete_images'])) {
+            $deleteImages = is_array($item['delete_images']) ? $item['delete_images'] : explode(',', $item['delete_images']);
+            foreach ($deleteImages as $path) {
+                if ($path && in_array($path, $currentImages)) {
+                    Storage::disk('public')->delete($path);
+                    $currentImages = array_filter($currentImages, fn($img) => $img !== $path);
+                }
+            }
+        }
+
+        // Save updated image list
+        $variant->images = array_values($currentImages);
+        $variant->save();
     }
+
+    return redirect()->route('products.product_index')->with('success', 'Product updated successfully');
+}
+
     public function deleteproduct($id){
         $product = Product::find($id);
         productdetail::where("pro_id",$id)->delete();
@@ -141,5 +333,15 @@ public function productindex(Request $request)
     
 
     return view('Admin.product.show', compact('products', 'brandName', 'categoryName', 'colors', 'productDetails', 'images', 'total_stock', 'variants_count','variants','min_price','max_price'));
+}
+public function add()
+{
+    $brands = Brand::all();
+    $categories = Category::all();
+    $colors = Color::all();
+    $product = Product::all();
+    $suppliers = suppiler::all();
+    $size = Size::all();
+    return view('Admin.product.addproduct', compact('brands', 'categories', 'colors','size','product','suppliers',));
 }
 }

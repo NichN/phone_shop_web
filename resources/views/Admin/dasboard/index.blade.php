@@ -200,7 +200,11 @@
                                     style="width: 50px; height: 50px; object-fit: cover;">
                                 <div class="ms-3 flex-grow-1">
                                     <div class="fw-semibold text-dark">{{ $order->guest_name }}</div>
-                                    <small class="text-muted">{{ \Carbon\Carbon::parse($order->created_at)->format('M d, Y') }}</small>
+                                    <small class="text-muted">
+                                        {{ \Carbon\Carbon::parse($order->created_at)->format('M d, Y') }}
+                                        &bull;
+                                        {{ \Carbon\Carbon::parse($order->created_at)->format('h:i A') }}
+                                    </small>
                                 </div>
                                 <div class="fw-bold text-dark">${{ number_format($order->total_amount, 2) }}</div>
                             </a>

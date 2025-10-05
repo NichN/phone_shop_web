@@ -12,72 +12,74 @@ class Order_dashboard_controller extends Controller
 {
     
 
-public function index()
-    {
-        $totalOrder = Order::whereDate('created_at', Carbon::today())->count();
-       $totalCanceled = Order::where('status', 'cancelled')
-            ->whereDate('created_at', Carbon::today())
-            ->count();
+public function index(Request $request)
+{
+    // Calculate statistics for today's orders (or default range if needed)
+    $todayQuery = Order::query()->whereDate('created_at', Carbon::today());
 
-        $totalProcessing = Order::where('status', 'processing')
-            ->whereDate('created_at', Carbon::today())
-            ->count();
+    $totalOrder = (clone $todayQuery)->count();
+    $totalCanceled = (clone $todayQuery)->where('status', 'cancelled')->count();
+    $totalProcessing = (clone $todayQuery)->where('status', 'processing')->count();
+    $totalCompleted = (clone $todayQuery)->where('status', 'completed')->count();
+    $totalPending = (clone $todayQuery)->where('status', 'pending')->count();
+    $totalIncome = (clone $todayQuery)->where('status', 'completed')->sum('total_amount');
 
-        $totalCompleted = Order::where('status', 'completed')
-            ->whereDate('created_at', Carbon::today())
-            ->count();
+    // Build the filtered query
+    $query = Order::query();
 
-        $totalPending = Order::where('status', 'pending')
-            ->whereDate('created_at', Carbon::today())
-            ->count();
-
-        $totalIncome = Order::where('status', 'completed')
-            ->whereDate('created_at', Carbon::today())
-            ->sum('total_amount');
-
-        $query = Order::query();
-
-        if (request()->input('date')) {
-            $query->whereDate('created_at', request()->input('date'));
-        }
-        if (request()->input('guest_name')) {
-            $query->where('guest_name', request()->input('guest_name'));
-        }
-        if (request()->input('order_id')) {
-            $query->where('order_num', request()->input('order_id'));
-        }
-        if (request()->input('delivery_method')) {
-            $query->where('delivery_type', request()->input('delivery_method'));
-        }
-        if (request()->input('status')) {
-            $query->where('status', request()->input('status'));
-        }
-
-        $filteredTotalOrder = (clone $query)->count();
-        $filteredTotalCanceled = (clone $query)->where('status', 'cancelled')->count();
-        $filteredTotalProcessing = (clone $query)->where('status', 'processing')->count();
-        $filteredTotalCompleted = (clone $query)->where('status', 'completed')->count();
-        $filteredTotalPending = (clone $query)->where('status', 'pending')->count();
-        $filteredTotalIncome = (clone $query)->where('status', 'completed')->sum('total_amount');
-
-        $orders = $query->get();
-
-        return view('Admin.order.index', [
-            'total_order' => $totalOrder,
-            'total_canceled' => $totalCanceled,
-            'total_processing' => $totalProcessing,
-            'total_completed' => $totalCompleted,
-            'total_income' => $totalIncome,
-            'total_pending' => $totalPending,
-            'filtered_total_order' => $filteredTotalOrder,
-            'filtered_total_canceled' => $filteredTotalCanceled,
-            'filtered_total_processing' => $filteredTotalProcessing,
-            'filtered_total_completed' => $filteredTotalCompleted,
-            'filtered_total_income' => $filteredTotalIncome,
-            'filtered_total_pending' => $filteredTotalPending,
-            'orders' => $orders,
+    // Filter by date range
+    if ($request->filled('from_date') && $request->filled('to_date')) {
+        $query->whereBetween('created_at', [
+            $request->from_date . ' 00:00:00',
+            $request->to_date . ' 23:59:59'
         ]);
+    } elseif ($request->filled('from_date')) {
+        $query->where('created_at', '>=', $request->from_date . ' 00:00:00');
+    } elseif ($request->filled('to_date')) {
+        $query->where('created_at', '<=', $request->to_date . ' 23:59:59');
     }
+
+    // Other filters
+    if ($request->filled('guest_name')) {
+        $query->where('guest_name', $request->guest_name);
+    }
+    if ($request->filled('order_id')) {
+        $query->where('order_num', $request->order_id);
+    }
+    if ($request->filled('delivery_method')) {
+        $query->where('delivery_type', $request->delivery_method);
+    }
+    if ($request->filled('status')) {
+        $query->where('status', $request->status);
+    }
+
+    // Calculate filtered statistics
+    $filteredTotalOrder = (clone $query)->count();
+    $filteredTotalCanceled = (clone $query)->where('status', 'cancelled')->count();
+    $filteredTotalProcessing = (clone $query)->where('status', 'processing')->count();
+    $filteredTotalCompleted = (clone $query)->where('status', 'completed')->count();
+    $filteredTotalPending = (clone $query)->where('status', 'pending')->count();
+    $filteredTotalIncome = (clone $query)->where('status', 'completed')->sum('total_amount');
+
+    // Retrieve orders with pagination (recommended to avoid performance issues)
+    $orders = $query->latest()->paginate(10);
+
+    return view('Admin.order.index', [
+        'total_order' => $totalOrder,
+        'total_canceled' => $totalCanceled,
+        'total_processing' => $totalProcessing,
+        'total_completed' => $totalCompleted,
+        'total_income' => $totalIncome,
+        'total_pending' => $totalPending,
+        'filtered_total_order' => $filteredTotalOrder,
+        'filtered_total_canceled' => $filteredTotalCanceled,
+        'filtered_total_processing' => $filteredTotalProcessing,
+        'filtered_total_completed' => $filteredTotalCompleted,
+        'filtered_total_income' => $filteredTotalIncome,
+        'filtered_total_pending' => $filteredTotalPending,
+        'orders' => $orders,
+    ]);
+}
 
     public function getData(Request $request)
     {

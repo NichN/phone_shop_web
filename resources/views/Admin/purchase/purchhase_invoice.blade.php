@@ -77,7 +77,8 @@
                             <strong style="color: #007bff;">Supplier:</strong> {{ $purchase->supplier_name }}
                         </div>
                         <div>
-                            <strong style="color: #007bff;">Status:</strong> {{ $purchase->payment_statuse }}
+                            <strong style="color: #007bff;">Status:</strong> {{ $purchase->payment_statuse }} <br>
+                            <strong style="margin-left: 20px; color: #007bff;">Remark:</strong> {{ $purchase->note }}
                         </div>
                     </div>
 

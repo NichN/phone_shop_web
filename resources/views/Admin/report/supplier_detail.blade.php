@@ -40,9 +40,9 @@
                                     <th><input type="text" placeholder="Search Phone"></th>
                                     <th><input type="text" placeholder="Search Email"></th>
                                     <th><input type="text" placeholder="Search Total Purchase"></th>
-                                    <th id="total-amount" style="background-color: #2e3b56; color: white;">Total Amount</th>
-                                    <th id="total-paid" style="background-color: #2e3b56; color: white;">Paid</th>
-                                    <th id="total-balance" style="background-color: #2e3b56; color: white;">Balance</th>
+                                    <th id="total-amount">Total Amount</th>
+                                    <th id="total-paid">Paid</th>
+                                    <th id="total-balance">Balance</th>
                                     <th></th> <!-- No search input for Action -->
                                 </tr>
                             </tfoot>

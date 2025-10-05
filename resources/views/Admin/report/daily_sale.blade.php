@@ -42,11 +42,11 @@
                             </div>
                             <div class="row mt-4">
                                 <div class="col-md-4">
-                                    <label for="payment_date">Order Date (Start)</label>
+                                    <label for="payment_date">From Date</label>
                                     <input type="date" class="form-control" id="payment_date">
                                 </div>
                                 <div class="col-md-4">
-                                    <label for="end_date">Order Date (End)</label>
+                                    <label for="end_date">To Date</label>
                                     <input type="date" class="form-control" id="end_date">
                                 </div>
                                 <div class="col-md-4">
@@ -81,20 +81,19 @@
                                         </tr>
                                     </thead>
                                     <tfoot>
-                                <tr>
-                                    <th></th>
-                                     <th></th>
-                                     <th></th>
-                                     <th></th>
-                                     <th></th>
-                                     <th></th>
-                                    <th id="total-balance" style="background-color: #2e3b56; color: white;">Balance</th>
-                                    <th></th>
-                                    <th></th>
-                                </tr>
-                            </tfoot>
-                                    <tbody>
-                                    </tbody>
+                                        <tr>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th id="total-balance" style="background-color: #2e3b56; color: white;">Balance</th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                    </tfoot>
+                                    <tbody></tbody>
                                 </table>
                             </div>
                         </div>
@@ -106,15 +105,27 @@
 </div>
 
 <style>
-    .card-header {
-        background-color: #2e3b56;
-    }
-    .btn-custom {
-        border-radius: 4px;
-        padding: 5px 10px;
-        font-size: 14px;
-    }
+.card-header {
+    background-color: #2e3b56;
+}
+.btn-custom {
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #28a745;
+    background-color: transparent;
+    color: #28a745;
+    transition: all 0.3s ease;
+}
+.btn-custom:hover {
+    background-color: #28a745;
+    color: white;
+}
+.data-table th, .data-table td {
+    vertical-align: middle;
+}
 </style>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
@@ -124,59 +135,85 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    $(document).ready(function(){
-        var table = $('.data-table').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: "{{ route('report.daily_sale') }}",
-                data: function (d) {
-                    d.guest_name = $('#customer_name').val();
-                    d.payment_type = $('#paid_by').val();
-                    d.order_num = $('#inv_number').val();
-                    d.order_date = $('#payment_date').val();
-                    d.end_date = $('#end_date').val();
-                    d.status = $('#status').val();
+$(document).ready(function(){
+    var table = $('.data-table').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: "{{ route('report.daily_sale') }}",
+            data: function (d) {
+                d.guest_name = $('#customer_name').val();
+                d.payment_type = $('#paid_by').val();
+                d.order_num = $('#inv_number').val();
+                d.order_date = $('#payment_date').val();
+                d.end_date = $('#end_date').val();
+                d.status = $('#status').val();
+            }
+        },
+        dom: "<'row'<'col-md-6'l><'col-md-6 d-flex justify-content-end gap-2'B>>" +
+             "<'row'<'col-sm-12'tr>>" +
+             "<'row'<'col-md-5'i><'col-md-7'p>>",
+        buttons: [
+            {
+                extend: 'excelHtml5',
+                text: '<i class="fa fa-file-excel me-2"></i>Export to Excel',
+                className: 'btn btn-outline-success btn-custom',
+                titleAttr: 'Export order report to Excel file',
+                title: 'Order Report - {{ now()->format("Y-m-d") }}'
+            }
+        ],
+        order: [[0, 'desc']],
+        columns: [
+            {
+                data: 'id',
+                name: 'id',
+                render: function (data, type, row, meta) {
+                    return meta.row + meta.settings._iDisplayStart + 1;
                 }
             },
-            dom: "<'row'<'col-md-6'l><'col-md-6 d-flex justify-content-end gap-2'B>>" +
-                 "<'row'<'col-sm-12'tr>>" +
-                 "<'row'<'col-md-5'i><'col-md-7'p>>",
-            buttons: [
-                {
-                    extend: 'print',
-                    text: '<i class="fa fa-print"></i>',
-                    className: 'btn btn-outline-dark btn-custom',
-                    titleAttr: 'Print'
-                },
-                {
-                    extend: 'excelHtml5',
-                    text: '<i class="fa fa-file-excel"></i>',
-                    className: 'btn btn-outline-success btn-custom',
-                    titleAttr: 'Export to Excel'
+            {data: 'order_num', name: 'order_num'},
+            {
+                data: 'created_at',
+                name: 'created_at',
+                render: function(data) {
+                    return data ? new Date(data).toLocaleDateString('en-GB') : '';
                 }
-            ],
-            order: [[0, 'desc']],
-            columns:[
-                {
-                    data: 'id',
-                    name: 'id',
-                    render: function (data, type, row, meta) {
-                        return meta.row + meta.settings._iDisplayStart + 1;
+            },
+            {data: 'guest_name', name: 'guest_name'},
+            {data: 'phone_guest', name: 'phone_guest'},
+            {data: 'guest_address', name: 'guest_address'},
+            {
+                data: 'total_amount',
+                name: 'total_amount',
+                render: function(data) {
+                    return data ? '$' + parseFloat(data).toFixed(2) : '$0.00';
+                }
+            },
+            {data: 'payment_type', name: 'payment_type'},
+            {
+                data: 'status',
+                name: 'status',
+                render: function(data) {
+                    let badgeClass = '';
+                    switch (data.toLowerCase()) {
+                        case 'canceled':
+                            badgeClass = 'bg-danger';
+                            break;
+                        case 'processing':
+                            badgeClass = 'bg-warning';
+                            break;
+                        case 'completed':
+                            badgeClass = 'bg-success';
+                            break;
+                        default:
+                            badgeClass = 'bg-secondary';
                     }
-                },
-                {data: 'order_num', name: 'order_num'},
-                {data: 'created_at', name: 'created_at'},
-                {data: 'guest_name', name: 'guest_name'},
-                {data: 'phone_guest', name: 'phone_guest'},
-                {data: 'guest_address', name: 'guest_address'},
-                {data: 'total_amount', name: 'total_amount'},
-                {data: 'payment_type', name: 'payment_type'},
-                {data: 'status', name: 'status'}
-            ],
-            drawCallback: function(settings) {
+                    return `<span class="badge ${badgeClass}">${data.charAt(0).toUpperCase() + data.slice(1) || 'Unknown'}</span>`;
+                }
+            }
+        ],
+        drawCallback: function(settings) {
             let api = this.api();
-
             const parseNumber = (val) => {
                 return typeof val === 'string' ? parseFloat(val.replace(/[^0-9.-]+/g, '')) : (parseFloat(val) || 0);
             };
@@ -195,14 +232,14 @@
                             if (column.search() !== this.value) {
                                 column.search(this.value).draw();
                             }
-                    });
+                        });
                 }
             });
         }
-        });
-
-        $('#submit_btn').on('click', function() {
-            table.ajax.reload();
-        });
     });
+
+    $('#submit_btn').on('click', function() {
+        table.ajax.reload();
+    });
+});
 </script>

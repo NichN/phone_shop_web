@@ -99,85 +99,88 @@
         <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
         <div class="modal-content p-3">
-            <div class="modal-heade">
-                <h5 class="modal-title text-dark" id="filterModalLabel">Filter Orders</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal-heade">
+        <h5 class="modal-title text-dark" id="filterModalLabel">Filter Orders</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <form id="filterForm" method="GET" action="{{ route('order_dashboard.index') }}">
+        <div class="modal-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">
+                        <i class="fa fa-calendar me-1"></i>From Date
+                    </label>
+                    <input type="date" name="from_date" id="filterFromDate" class="form-control" placeholder="Select start date" value="{{ request('from_date') }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">
+                        <i class="fa fa-calendar me-1"></i>To Date
+                    </label>
+                    <input type="date" name="to_date" id="filterToDate" class="form-control" placeholder="Select end date" value="{{ request('to_date') }}">
+                </div>
             </div>
-
-                        <form id="filterForm" method="GET">
-                <div class="modal-body">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">
-                                <i class="fa fa-calendar me-1"></i>Date
-                            </label>
-                            <input type="date" name="date" id="filterDate" class="form-control" placeholder="Select date">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">
-                                <i class="fa fa-user me-1"></i>Customer
-                            </label>
-                            <select name="guest_name" id="filterCustomer" class="form-select">
-                                <option value="">-- Select Customer --</option>
-                                @foreach($orders->unique('guest_name') as $order)
-                                    <option value="{{ $order->guest_name }}">{{ $order->guest_name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row g-3 mt-3">
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">
-                                <i class="fa fa-hashtag me-1"></i>Order Number
-                            </label>
-                            <select name="order_id" id="filterOrder" class="form-select">
-                                <option value="">-- Select Order --</option>
-                                @foreach($orders->unique('order_num') as $order)
-                                    <option value="{{ $order->order_num }}">{{ $order->order_num }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">
-                                <i class="fa fa-truck me-1"></i>Delivery Method
-                            </label>
-                            <select name="delivery_method" id="filterDeliveryMethod" class="form-select">
-                                <option value="">-- Select Delivery Method --</option>
-                                @foreach($orders->unique('delivery_type') as $order)
-                                    <option value="{{ $order->delivery_type }}">{{ $order->delivery_type }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row g-3 mt-3">
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">
-                                <i class="fa fa-info-circle me-1"></i>Status
-                            </label>
-                            <select name="status" id="filterStatus" class="form-select">
-                                <option value="">-- Select Status --</option>
-                                @foreach($orders->unique('status') as $order)
-                                    <option value="{{ $order->status }}">{{ ucfirst($order->status) }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-6 d-flex justify-content-start align-items-end">
-                            <button type="submit" class="btn btn-primary w-100">
-                                <i class="fa fa-search me-2"></i>Apply Filters
-                            </button>
-                        </div>
-                    </div>
+            <div class="row g-3 mt-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">
+                        <i class="fa fa-user me-1"></i>Customer
+                    </label>
+                    <select name="guest_name" id="filterCustomer" class="form-select">
+                        <option value="">-- Select Customer --</option>
+                        @foreach($orders->unique('guest_name') as $order)
+                            <option value="{{ $order->guest_name }}" {{ request('guest_name') == $order->guest_name ? 'selected' : '' }}>{{ $order->guest_name }}</option>
+                        @endforeach
+                    </select>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="fa fa-times me-2"></i>Cancel
-                    </button>
-                    <button type="button" id="clearFilters" class="btn btn-outline-secondary">
-                        <i class="fa fa-eraser me-2"></i>Clear All
-                    </button>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">
+                        <i class="fa fa-hashtag me-1"></i>Order Number
+                    </label>
+                    <select name="order_id" id="filterOrder" class="form-select">
+                        <option value="">-- Select Order --</option>
+                        @foreach($orders->unique('order_num') as $order)
+                            <option value="{{ $order->order_num }}" {{ request('order_id') == $order->order_num ? 'selected' : '' }}>{{ $order->order_num }}</option>
+                        @endforeach
+                    </select>
                 </div>
-            </form>
+            </div>
+            <div class="row g-3 mt-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">
+                        <i class="fa fa-truck me-1"></i>Delivery Method
+                    </label>
+                    <select name="delivery_method" id="filterDeliveryMethod" class="form-select">
+                        <option value="">-- Select Delivery Method --</option>
+                        @foreach($orders->unique('delivery_type') as $order)
+                            <option value="{{ $order->delivery_type }}" {{ request('delivery_method') == $order->delivery_type ? 'selected' : '' }}>{{ $order->delivery_type }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">
+                        <i class="fa fa-info-circle me-1"></i>Status
+                    </label>
+                    <select name="status" id="filterStatus" class="form-select">
+                        <option value="">-- Select Status --</option>
+                        @foreach($orders->unique('status') as $order)
+                            <option value="{{ $order->status }}" {{ request('status') == $order->status ? 'selected' : '' }}>{{ ucfirst($order->status) }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
         </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                <i class="fa fa-times me-2"></i>Cancel
+            </button>
+            <button type="button" id="clearFilters" class="btn btn-outline-secondary">
+                <i class="fa fa-eraser me-2"></i>Clear All
+            </button>
+            <button type="submit" class="btn btn-secondary">
+                <i class="fa fa-search me-2"></i>Apply Filters
+            </button>
+        </div>
+    </form>
+</div>
     </div>
         </div>
           <div style="display: flex; justify-content: space-between; align-items: center; background-color: aliceblue; padding: 10px;">

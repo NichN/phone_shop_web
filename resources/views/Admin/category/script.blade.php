@@ -17,7 +17,7 @@
                         return data ? `<img src="/storage/${data}" width="50">` : 'No Image';
                     }},
                     {data: 'name'},
-                    {data: 'description'},
+                    // {data: 'description'},
                     {
                         data: 'created_at',
                         name: 'created_at',
@@ -102,6 +102,33 @@
             $('#editModal').modal('show');
         });
     });
+    $('body').on('click', '.viewCate', function() {
+    let id = $(this).data('id');
+    let url = "{{ route('category.get_category', ':id') }}".replace(':id', id);
+    $.get(url, function(response) {
+    if (response.success) {
+        let data = response.data;
+
+        $('#viewCateId').val(data.id);
+        $('#viewName').text(data.name);
+        $('#viewDescription').text(data.description);
+
+        if (data.image && data.image.trim() !== '') {
+            $('#viewPhotoContainer').html(`<img src="/storage/${data.image}" style="max-width: 100%; height: auto;">`);
+        } else {
+            $('#viewPhotoContainer').html('No Image');
+        }
+
+        $('#viewModal').modal('show');
+    } else {
+        alert('Category not found!');
+    }
+});
+
+
+});
+
+    
 
     $('#editForm').on('submit', function(e) {
         e.preventDefault();

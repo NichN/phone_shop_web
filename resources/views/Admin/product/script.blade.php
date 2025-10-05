@@ -35,14 +35,25 @@ var table = $('.data-table').DataTable({
             data: 'images', 
             name: 'images',
             render: function(data, type, row) {
-                let decodedData = decodeHTML(data);
-                let images = JSON.parse(decodedData);
-                if (images && images.length > 0) {
-                    return `<img src="/storage/${images[0]}" alt="${row.product_name}" style="width: 50px; height: 50px; object-fit: cover;">`;
-                } else {
-                    return '<img src="/default-placeholder.jpg" alt="No Image" style="width: 50px; height: 50px; object-fit: cover;">';
-                }
+            if (!data) { 
+                return '<img src="/default-placeholder.jpg" alt="No Image" style="width: 50px; height: 50px; object-fit: cover;">';
             }
+            let decodedData = decodeHTML(data);
+            let images = [];
+            try {
+                images = JSON.parse(decodedData);
+            } catch (e) {
+                console.warn('Invalid JSON for images:', decodedData);
+                return '<img src="/default-placeholder.jpg" alt="No Image" style="width: 50px; height: 50px; object-fit: cover;">';
+            }
+
+            if (images.length > 0) {
+                return `<img src="/storage/${images[0]}" alt="${row.product_name}" style="width: 50px; height: 50px; object-fit: cover;">`;
+            } else {
+                return '<img src="/default-placeholder.jpg" alt="No Image" style="width: 50px; height: 50px; object-fit: cover;">';
+            }
+        }
+
         },
         { data: 'name', name: 'name' },
         {
@@ -144,6 +155,14 @@ var table = $('.data-table').DataTable({
 
     // View Product Redirect
     $(document).on('click', '.viewProduct', function() {
+        const url = $(this).data('url');
+        if (url) {
+            window.location.href = url;
+        } else {
+            alert('URL missing');
+        }
+    });
+    $(document).on('click', '.editProduct', function() {
         const url = $(this).data('url');
         if (url) {
             window.location.href = url;

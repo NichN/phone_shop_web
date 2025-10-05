@@ -18,7 +18,7 @@ $(document).ready(function(){
                         return data ? `<img src="/storage/${data}" width="50">` : 'No Image';
                     }},
             { data: 'name', name: 'name' },
-            { data: 'description', name: 'description' },
+            // { data: 'description', name: 'description' },
             {
                 data: 'created_at',
                 name: 'created_at',
@@ -104,6 +104,36 @@ $(document).ready(function(){
             $('#editModal').modal('show');
         });
     });
+    $('body').on('click', '.viewBrand', function () {
+    let id = $(this).data('id');
+    let url = "{{ route('brand.get_brand', ':id') }}".replace(':id', id);
+
+    $.get(url)
+        .done(function (response) {
+            if (response.success) {
+                let data = response.data;
+
+                $('#viewBrandId').val(data.id);
+                $('#viewBrandName').text(data.name);
+                $('#viewBrandDescription').text(data.description);
+
+                if (data.logo) {
+                    $('#viewBrandLogo').html(`<img src="/storage/${data.logo}" alt="Brand Logo" style="max-width: 100%; height: auto;">`);
+                } else {
+                    $('#viewBrandLogo').html('<p class="text-muted">No Logo Available</p>');
+                }
+
+                $('#viewModal').modal('show');
+            } else {
+                alert('Brand not found.');
+            }
+        })
+        .fail(function (xhr, status, error) {
+            console.error('AJAX Error:', error);
+            alert('Failed to fetch brand details');
+        });
+});
+
 
     $('#editForm').on('submit', function(e) {
         e.preventDefault();

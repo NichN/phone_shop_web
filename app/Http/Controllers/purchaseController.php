@@ -173,7 +173,8 @@ class purchaseController extends Controller
             'paid' => $request->paid,
             'balance' => $request->balance,
             'payment_statuse' => $status,
-            'supplier_id' => $request->supplier_id
+            'supplier_id' => $request->supplier_id,
+            'note' => $request->note
         ]);
 
         purchses_item::whereNull('purchase_id')->update(['purchase_id' => $purchase->id]);
@@ -280,7 +281,8 @@ public function addpayment($id)
             'id' => $id,
             'paid' => $newPaid,
             'balance' => $newBalance,
-            'payment_statuse' => $updateData['payment_statuse']
+            'payment_statuse' => $updateData['payment_statuse'],
+            'note' => $request->note
         ]);
 
         return response()->json([

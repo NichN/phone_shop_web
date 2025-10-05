@@ -66,13 +66,6 @@ Route::get('/product_category/{id}', [HomeController::class, 'getByCategory'])
     ->name('product_by_category');
 Route::get('/all_products', [HomeController::class, 'getAllProducts'])->name('product.all');
 Route::get('/product_brand/{id}', [ProductController::class, 'getByBrand'])->name('product_by_brand');
-
-
-// Route::prefix('history')->middleware(['auth', 'twofactor'])->controller(HistoryController::class)->group(function () {
-//     Route::get('/', 'index')->name('history'); 
-//     Route::delete('/{id}', 'destroy')->name('history.destroy');
-// });
-
 Route::get('/invoice', [InvoiceController::class, 'showStaticInvoice'])->name('invoice');
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register'])->name('register');
@@ -190,6 +183,7 @@ Route::prefix('products')->name('products.')->group(function () {
     Route::get('/color', [productAdminController::class, 'index'])->name('colorlist');
     Route::get('productshow/{id}',[productAdminController::class,'productshow'])->name('productshow');
     Route::post('/store', [productAdminController::class, 'storecolor'])->name('colorstore');
+    Route::get('/addproduct',[productAdminController::class,'add'])->name('add');
     Route::delete('/delete/{id}', [productAdminController ::class, 'delete'])->name('delete');
     Route::get('/edit/{id}', [productAdminController ::class, 'editcolor'])->name('editcolor');
     Route::post('/update/{id}', [productAdminController ::class, 'updatecolor'])->name('updatecolor');
@@ -197,14 +191,16 @@ Route::prefix('products')->name('products.')->group(function () {
     Route::get('/show',[productAdminController::class,'productshow'])->name('productlist');
     Route::post('/storeproduct',[productAdminController::class,'productstore'])->name('productstore');
     // Route::get('/showbrand/{id}', [productAdminController::class, 'getBrand'])->name('show');
-    Route::get('edit/{id}',[productAdminController::class,'editproduct'])->name('product_edit');
-    Route::get('update/{id}',[productAdminController::class,'updateproduct'])->name('product_update');
+    // Route::get('edit/{id}', [productAdminController::class,'edit])->name('product_edit');
+    Route::get('edit/{id}', [ProductAdminController::class, 'edit'])->name('product_edit');
+   Route::put('products/{id}', [ProductAdminController::class, 'updateproduct'])->name('product_update');
      Route::delete('/delete/{id}', [productAdminController ::class, 'deleteproduct'])->name('deleteproduct');
     //    Route::get('/show_product/{pro_id}',[productAdminController::class,'show_product'])->name('product_items');
 });
 Route::prefix('category')->name('category.')->group(function () {
     Route::get('/', [categoryController ::class, 'index'])->name('index');
     Route::get('/new', [categoryController ::class, 'show'])->name('new');
+    Route::get('/get-category/{id}', [categoryController ::class, 'getCategory'])->name('get_category');
     Route::post('/store', [categoryController ::class, 'store'])->name('store');
     Route::get('/edit/{id}', [categoryController ::class, 'edit'])->name('edit');
     Route::post('/update/{id}', [categoryController ::class, 'update'])->name('update');
@@ -221,6 +217,7 @@ Route::prefix('colors')->name('color.')->group(function () {
 Route::prefix('brand')->name('brand.')->group(function () {
     Route::get('/', [brandController::class, 'index'])->name('index');
     Route::get('/new', [brandController::class, 'show'])->name('new');
+    Route::get('/get-brand/{id}', [brandController::class, 'getBrand'])->name('get_brand');
     Route::post('/store', [brandController::class, 'store'])->name('store');
     Route::get('/edit/{id}', [brandController::class, 'edit'])->name('edit');
     Route::post('/update/{id}', [brandController::class, 'update'])->name('update');
@@ -228,6 +225,7 @@ Route::prefix('brand')->name('brand.')->group(function () {
 });
 Route::prefix('supplier')->name('supplier.')->group(function(){
     Route::get('/', [suppilerController::class, 'index'])->name('index');
+    Route::get('/get-supplier/{id}', [suppilerController::class, 'getSupplier'])->name('get_supplier');
     Route::post('/store', [suppilerController::class, 'store'])->name('store');
     Route::get('/edit/{id}', [suppilerController::class, 'edit'])->name('edit');
     Route::post('/update/{id}', [suppilerController::class, 'update'])->name('update');

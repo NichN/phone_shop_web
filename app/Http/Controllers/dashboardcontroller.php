@@ -17,20 +17,17 @@ use Carbon\Carbon;
         {
             $totalProduct = DB::table('product_item')
                 ->where('is_featured', 1)
-                ->whereMonth('created_at', Carbon::now()->month)
-                ->whereYear('created_at', Carbon::now()->year)
+                ->where('created_at', '>=', Carbon::now()->subDays(30))
                 ->select(DB::raw('COUNT(id) as total_product'))
-                ->first(); 
+                ->first();
             $totalPurchase = DB::table('purchase')
                 ->select(DB::raw('SUM(Grand_total) as Grand_total'))
-                ->whereMonth('created_at', Carbon::now()->month)
-                ->whereYear('created_at', Carbon::now()->year)
+                ->where('created_at', '>=', Carbon::now()->subDays(30))
                 ->first();
             $totalCustomer = DB::table('users')
             ->join('orders', 'users.id', '=', 'orders.user_id')
             ->where('users.role_id', '!=', 4)
-            ->whereMonth('orders.created_at', Carbon::now()->month)
-            ->whereYear('orders.created_at', Carbon::now()->year)
+            ->where('orders.created_at', '>=', Carbon::now()->subDays(30))
             ->select(DB::raw('COUNT(DISTINCT users.id) as total_customer'))
             ->first();
             $totalOrder = DB ::table('orders')

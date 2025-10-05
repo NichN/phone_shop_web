@@ -28,7 +28,7 @@
                     <div class="row mb-4">
                         <div class="col-md-5">
                             <label for="brandName" class="form-label fw-bold"> Grand total <span class="text-danger">*</span></label>
-                            <input class="form-control" id="grand_total" name="grand_total" placeholder="" required>
+                            <input class="form-control" id="grand_total" name="grand_total" placeholder="" required disabled>
                         </div>
                         <div class="col-md-5">
                             <label for="brandName" class="form-label fw-bold"> Paid <span class="text-danger">*</span></label>
@@ -38,7 +38,11 @@
                 <div class="row mb-4">
                     <div class="col-md-5">
                             <label for="brandName" class="form-label fw-bold"> Balance <span class="text-danger">*</span></label>
-                            <input class="form-control" id="balance" name="balance" placeholder="" required>
+                            <input class="form-control" id="balance" name="balance" placeholder="" required disabled>
+                        </div>
+                        <div class="col-md-5">
+                            <label for="brandName" class="form-label fw-bold"> Remark <span class="text-danger">*</span></label>
+                            <input class="form-control" name="note" id="note" placeholder="" required>
                         </div>
                 </div>
                 <input type="hidden" id="payment_st" name="payment_st">

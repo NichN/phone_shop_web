@@ -130,7 +130,7 @@
                 {{-- <a href="#" class="btn" style="background-color: #dbb3d9; padding: 10px 20px; color: white; text-decoration: none; border: none; border-radius: 4px; display: inline-block;">Continue to shopping</a> --}}
                   <div style="text-align: right; margin-top: 20px;">
                 <button type="submit" class="arrow-button" style="text-decoration: none;">
-                    Continue to shopping <i class="fas fa-arrow-right ms-2"></i>
+                    Confirm Order<i class="fas fa-arrow-right ms-2"></i>
                 </button>
 
             </div>

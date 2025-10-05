@@ -14,7 +14,9 @@
          <div class="flex items-center justify-between bg- px-4  rounded-md shadow-sm" style="background-color: aliceblue; padding: 10px;" >
             <div class="d-flex align-items-center justify-content-between w-100">
                 <h4 class="text-lg font-semibold text-gray-800 mb-0">Product Variant List</h4>
-                <div class="d-flex gap-2">
+            </div>
+        </div> 
+        <div class="d-flex gap-2 justify-content-end mt-3">
                     <a href="{{ route('pr_detail.add') }}">
                         <button class="btn btn-outline-primary bg-light">
                             <i class="fa fa-plus-circle" aria-hidden="true"></i>
@@ -26,9 +28,7 @@
                     <button type="reset" id="resetFilter" class="btn btn-outline-danger bg-light">
                         <i class="fa fa-refresh"></i>
                     </button>
-                </div>
-            </div>
-        </div>  
+    </div> 
          
         <!-- Filter Modal -->
         <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">

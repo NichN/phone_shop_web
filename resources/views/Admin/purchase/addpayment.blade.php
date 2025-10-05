@@ -44,6 +44,11 @@
                             <label for="brandName" class="form-label fw-bold"> Balance <span class="text-danger">*</span></label>
                             <input class="form-control" name="balance" id="balance" placeholder="" required>
                         </div>
+                        <div class="col-md-5">
+                            <label for="brandName" class="form-label fw-bold"> Remark <span class="text-danger">*</span></label>
+                            <input class="form-control" name="note" id="note" placeholder="" required>
+                        </div>
+
                         </div>
                         <input type="hidden" id="payment_st" name="payment_st">
                         <div class="d-flex justify-content-end pt-4">

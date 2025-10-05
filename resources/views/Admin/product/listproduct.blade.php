@@ -10,9 +10,11 @@
         </div>
 
         <div class="d-flex justify-content-end mt-3">
-            <button class="btn btn-outline-primary bg-light" data-bs-toggle="modal" data-bs-target="#addModal">
-                <i class="fas fa-plus me-2"></i>
-            </button> 
+            <a href="{{ route('products.add') }}">
+                        <button class="btn btn-outline-primary bg-light">
+                            <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                        </button>
+                </a>
         </div>   
 
         <div class="container no-print" style="z-index: 999999999999999 !important;">

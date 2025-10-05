@@ -10,7 +10,18 @@
         <div class="flex items-center justify-between bg- px-4  rounded-md shadow-sm" style="background-color: aliceblue; padding: 10px;" >
             <div class="d-flex align-items-center justify-content-between w-100">
                 <h4 class="text-lg font-semibold text-gray-800 mb-0">Payment List</h4>
-                <div class="d-flex gap-2">
+                {{-- <div class="d-flex gap-2">
+                    <button class="btn btn-outline-success bg-light" data-bs-toggle="modal" data-bs-target="#filterModal">
+                        <i class="fa fa-filter" aria-hidden="true"></i>
+                    </button>
+                    <button type="reset" id="resetFilter" class="btn btn-outline-danger bg-light">
+                        <i class="fa fa-refresh"></i>
+                    </button>
+                </div> --}}
+            </div>
+        </div> 
+        <div class="d-flex gap-2 justify-content-end mt-3">
+            <div class="d-flex gap-2">
                     <button class="btn btn-outline-success bg-light" data-bs-toggle="modal" data-bs-target="#filterModal">
                         <i class="fa fa-filter" aria-hidden="true"></i>
                     </button>
@@ -18,8 +29,7 @@
                         <i class="fa fa-refresh"></i>
                     </button>
                 </div>
-            </div>
-        </div>    
+        </div>   
             <div class="card-body">                                 
                 <div class="table-responsive"> 
                     <table class="table data-table mt-3">

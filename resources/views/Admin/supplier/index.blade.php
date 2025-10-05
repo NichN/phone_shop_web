@@ -23,7 +23,7 @@
                             <tr>
                                 <th style="background-color: #2e3b56 !important; color: white !important;">No</th>
                                 <th style="background-color: #2e3b56 !important; color: white !important;">Name</th>
-                                <th style="background-color: #2e3b56 !important; color: white !important;">Address</Address></th>
+                                {{-- <th style="background-color: #2e3b56 !important; color: white !important;">Address</Address></th> --}}
                                 <th style="background-color: #2e3b56 !important; color: white !important;">Phone</th>
                                 <th style="background-color: #2e3b56 !important; color: white !important;">Email</th>
                                 <th style="background-color: #2e3b56 !important; color: white !important;">Action</th>
@@ -121,4 +121,47 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="viewSupplierModal" tabindex="-1" aria-labelledby="viewSupplierModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewSupplierModalLabel">Supplier Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <input type="hidden" id="viewSupplierId">
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Supplier Name:</label>
+                        <p id="viewSupplierName" class="form-control-plaintext"></p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Address:</label>
+                        <p id="viewSupplierAddress" class="form-control-plaintext"></p>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Phone:</label>
+                        <p id="viewSupplierPhone" class="form-control-plaintext"></p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Email:</label>
+                        <p id="viewSupplierEmail" class="form-control-plaintext"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @include('Admin.supplier.script')

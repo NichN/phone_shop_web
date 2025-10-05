@@ -1,5 +1,6 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
 $(document).ready(function() {
@@ -77,36 +78,6 @@ $(document).ready(function() {
             $('.alert').alert('close');
         }, 4000);
     }
-
-    // Handle filter form submission
-    $('#filterForm').on('submit', function(e) {
-        e.preventDefault();
-        
-        // Reload the table with new filter parameters
-        table.ajax.reload();
-        
-        // Close the modal
-        $('#filterModal').modal('hide');
-        
-        // Show success message
-        showBootstrapAlert('success', 'Orders have been filtered according to your criteria.');
-    });
-    
-    // Handle reset filter button
-    $('#resetFilter').on('click', function() {
-        // Clear all filter fields
-        $('#filterDate').val('');
-        $('#filterCustomer').val('');
-        $('#filterOrder').val('');
-        $('#filterDeliveryMethod').val('');
-        $('#filterStatus').val('');
-        
-        // Reload the table without filters
-        table.ajax.reload();
-        
-        // Show reset message
-        showBootstrapAlert('info', 'All filters have been cleared and orders reloaded.');
-    });
 });
 
 function updateMonthLabel(month, year) {

@@ -349,10 +349,22 @@ class CheckoutController extends Controller
     }
 
     $orders = $query->orderBy('created_at', 'desc')->get();
+    $orderIds = $orders->pluck('id');
+
+$productImages = DB::table('order_item')
+    ->join('product_item', 'order_item.product_item_id', '=', 'product_item.id')
+    ->whereIn('order_item.order_id', $orderIds)
+    ->select('order_item.order_id', 'product_item.images as imgSrc')
+    ->get()
+    ->groupBy('order_id');
+
+    
+
 
     return view('customer.history', [
         'orders' => $orders,
-        'isGuest' => !auth()->check()
+        'isGuest' => !auth()->check(),
+        'productImages' => $productImages
     ]);
 }
 

@@ -42,11 +42,11 @@
                             </div>
                             <div class="row mt-4">
                                 <div class="col-md-4">
-                                    <label for="payment_date">Order Date (Start)</label>
+                                    <label for="payment_date">From Date</label>
                                     <input type="date" class="form-control" id="payment_date">
                                 </div>
                                 <div class="col-md-4">
-                                    <label for="end_date">Order Date (End)</label>
+                                    <label for="end_date">To Date</label>
                                     <input type="date" class="form-control" id="end_date">
                                 </div>
                             </div>
@@ -78,7 +78,7 @@
                                      <th></th>
                                      <th></th>
                                      <th></th>
-                                    <th id="total-balance" style="background-color: #2e3b56; color: white;">Balance</th>
+                                    <th id="total-balance">Balance</th>
                                     <th></th>
                                     <th></th>
                                 </tr>

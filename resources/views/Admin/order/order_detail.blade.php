@@ -89,16 +89,33 @@
                 </div>
             </form>
         @endif
-        @if ($order->status === 'pending')
-            <form action="{{ route('checkout.decline', $order->id) }}" method="POST" onsubmit="return confirmAccept();">
-                @csrf
-                <div class="d-flex justify-content-start mt-4 gap-2 mb-4 no-print">
-                    <button type="submit" class="btn btn-danger">
-                        Cancel Order
-                    </button>
-                </div>
-            </form>
-        @endif
+            @if ($order->status === 'pending')
+                <form action="{{ route('checkout.decline', $order->id) }}" method="POST" onsubmit="return confirmAccept();">
+                    @csrf
+                    <div class="d-flex justify-content-start mt-4 gap-2 mb-4 no-print">
+                        <button type="submit" class="btn btn-danger">
+                            Cancel Order
+                        </button>
+                    </div>
+                </form>
+            @endif
+                @if ($order->status === 'processing' && $order->delivery_type === 'pick up')
+                    <form id="paymentForm" action="{{ route('checkout.confirm',$order->id) }}" method="POST">
+                        @csrf
+
+                        <!-- Use the correct name expected by your controller -->
+                        <input type="hidden" id="payment_type" name="payment_type" value="">
+                        <input type="hidden" name="order_id" value="{{ $order->id }}">
+
+                        <div class="d-flex justify-content-start mt-4 gap-2 mb-4 no-print">
+                            <!-- Call JS function to show SweetAlert -->
+                            <button type="button" class="btn btn-warning">
+                                Finish Order
+                            </button>
+                        </div>
+                    </form>
+                @endif
+
          </div>
     </div>
     </div>
@@ -190,4 +207,5 @@
     </div>
   </div>
 </div>
+@include('Admin.order.script')
 

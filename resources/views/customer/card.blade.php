@@ -80,9 +80,9 @@
                 <div class="payment-methods-container">
                 <h5 class="fw-bold mb-3">Payment Method</h5>
                 <div class="payment-options">
-                    @if($deliveryType === 'pick up')
+                    
                         {{-- Only KH QR Payment --}}
-                        <div class="payment-option">
+                        {{-- <div class="payment-option">
                             <input class="form-check-input" type="radio" name="payment_type" id="kh_qr" value="online_payment" checked>
                             <label class="payment-label" for="kh_qr">
                                 <div class="payment-content d-flex align-items-center">
@@ -93,7 +93,8 @@
                                     </div>
                                 </div>
                             </label>
-                        </div>
+                        </div> --}}
+                        @if($deliveryType === 'pick up')
                         <div class="payment-option">
                             <input class="form-check-input" type="radio" name="payment_type" id="take_sh" value="Cash at Pickup" checked>
                             <label class="payment-label" for="take_sh">
@@ -144,7 +145,7 @@
                 <input type="hidden" name="order_id" value="{{ $orderItems[0]->order_id ?? '' }}">
 
                 <div class="center-container mt-4">
-                    <button type="submit" id="confirmOrderBtn">Let's Pay</button>
+                    <button type="submit" id="confirmOrderBtn">Confirm My Order</button>
                 </div>
             </div>
         </div>

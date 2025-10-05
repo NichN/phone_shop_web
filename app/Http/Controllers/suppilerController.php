@@ -16,7 +16,11 @@ class suppilerController extends Controller
         $data = suppiler:: select(['id', 'name','address','phone','email']);
         return DataTables::of($data)
         ->addColumn('action', function($row){
-            return ' <button class="btn btn-sm editSupplier" data-id="' . $row->id . '" data-toggle="tooltip" title="Edit" style="background-color: #fffde7; border: 1px solid #ffe082; color: #fbc02d; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;">
+            return ' 
+            <button class="btn btn-sm viewSupplier" data-id="'. $row->id .'" data-toggle="tooltip" title="View" style="background-color: #e3f2fd; border: 1px solid #90caf9; color: #1976d2; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;">
+                                <i class="fas fa-eye"></i>
+                            </button>
+            <button class="btn btn-sm editSupplier" data-id="' . $row->id . '" data-toggle="tooltip" title="Edit" style="background-color: #fffde7; border: 1px solid #ffe082; color: #fbc02d; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;">
                         Edit
                     </button>
                     <button data-id="'.$row->id.'" class="btn btn-sm deleteSupplier" data-toggle="tooltip" title="Delete" style="background-color: #ffebee; border: 1px solid #ef9a9a; color: #c62828; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;">Delete</button>';
@@ -73,5 +77,21 @@ class suppilerController extends Controller
         $supplier = suppiler::findOrFail($request->id);
         $supplier->delete();
         return response()->json(['success' => true, 'message' => 'Supplier deleted successfully!']);
+    }
+    public function getSupplier($id)
+    {
+        $supplier = suppiler::find($id);
+
+        if ($supplier) {
+            return response()->json([
+                'success' => true,
+                'data' => $supplier
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Supplier not found'
+            ], 404);
+        }
     }
 }

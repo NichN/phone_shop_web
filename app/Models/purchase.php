@@ -16,7 +16,8 @@ class purchase extends Model
         'balance',
         'payment_statuse',
         'reference_no',
-        'supplier_id'
+        'supplier_id',
+        'note'
     ];
      protected $dates = [
         'created_at',

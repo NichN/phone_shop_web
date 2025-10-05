@@ -15,10 +15,15 @@ class categoryController extends Controller
             return DataTables::of($category)
             ->addColumn('action', function ($row) {
                 $btn = '<div>
+                            <button class="btn btn-sm viewCate" data-id="'. $row->id .'" data-toggle="tooltip" title="View" style="background-color: #e3f2fd; border: 1px solid #90caf9; color: #1976d2; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;">
+                                <i class="fas fa-eye"></i>
+                            </button>
                             <button class="btn btn-sm editCate" data-id="'. $row->id .'" data-toggle="tooltip" title="Edit" style="background-color: #fffde7; border: 1px solid #ffe082; color: #fbc02d; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button data-id="'.$row->id.'" class="btn btn-sm deleteCate" style="background-color: #ffebee; border: 1px solid #ef9a9a; color: #c62828; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;"><i class="fas fa-trash-alt"></i></button>
+                            <button data-id="'.$row->id.'" class="btn btn-sm deleteCate" style="background-color: #ffebee; border: 1px solid #ef9a9a; color: #c62828; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem;">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
                         </div>';
                 return $btn;
             })
@@ -63,6 +68,15 @@ class categoryController extends Controller
         }
     public function show(){
         return view('Admin.category.addCat');
+    }
+    public function getCategory($id)
+    {
+        $category = Category::find($id);
+        if ($category) {
+            return response()->json(['success' => true, 'data' => $category]);
+        } else {
+            return response()->json(['success' => false, 'message' => 'Category not found'], 404);
+        }
     }
     public function delete($id)
     {
