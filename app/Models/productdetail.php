@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\purchses_item;
 
 class productdetail extends Model
 {
@@ -46,5 +47,10 @@ class productdetail extends Model
     {
         return $this->belongsTo(Size::class, 'size_id', 'id');
     }
+    public function purchaseItems()
+        {
+            return $this->hasMany(purchses_item::class, 'pr_item_id', 'id');
+        }
+
     
 }

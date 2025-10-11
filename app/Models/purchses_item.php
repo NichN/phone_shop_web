@@ -23,4 +23,15 @@ class purchses_item extends Model
         'created_at',
         'updated_at',
     ];
+     public function productDetail()
+    {
+        return $this->belongsTo(ProductDetail::class, 'pr_item_id', 'id');
+    }
+
+    public function purchase()
+    {
+        return $this->belongsTo(Purchase::class, 'purchase_id', 'id');
+    }
+    
 }
+

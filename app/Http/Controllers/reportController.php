@@ -7,6 +7,7 @@ use App\Models\refund;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\productdetail;
+use App\Models\suppiler;
 use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -45,30 +46,128 @@ class reportController extends Controller
         }
      return view('Admin.report.product');
     }
-    public function purchase_report(Request $request) {
-        $productSummary = DB::table('product')
-            ->Join('product_item', 'product.id', '=', 'product_item.pro_id')
-            ->leftJoin('purchase_item', 'product_item.id', '=', 'purchase_item.pr_item_id')
-            ->leftJoin('purchase', 'purchase.id', '=', 'purchase_item.purchase_id')
-            ->join('supplier','supplier.id','=','purchase.supplier_id')
-            ->select(
-                'product.*',
-                'purchase.reference_no as reference_no',
-                'supplier.name as supplier_name',
-                'purchase_item.quantity as quantity',
-                'purchase.Grand_total as total',
-                'purchase.paid as paid',
-                'purchase.balance as balance',
-                'purchase.created_at as date',
-                'purchase.payment_statuse as payment_statuse'
-            )
-            ->get();
-            if ($request->ajax()) {
-                return Datatables::of($productSummary)->make(true);
-            }
-        return view('Admin.report.purchase');
-}
+    public function purchase_report(Request $request)
+{
+    if ($request->ajax()) {
+        $query = Purchase::with('supplier');
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $query->whereBetween('created_at', [
+                $request->start_date . ' 00:00:00',
+                $request->end_date . ' 23:59:59'
+            ]);
+        }
 
+        if ($request->filled('reference_no')) {
+            $query->where('reference_no', 'like', '%' . $request->reference_no . '%');
+        }
+
+        if ($request->filled('supplier_id')) {
+            $query->where('supplier_id', $request->supplier_id);
+        }
+
+        if ($request->filled('payment_status')) {
+            $query->where('payment_statuse', $request->payment_status);
+        }
+
+        return DataTables::of($query)
+            ->addColumn('supplier_name', function ($purchase) {
+                return $purchase->supplier->name ?? 'N/A';
+            })
+            ->addColumn('date', function ($purchase) {
+                return $purchase->created_at->format('Y-m-d');
+            })
+            ->addColumn('total', fn($purchase) => $purchase->Grand_total)
+            ->addColumn('paid', fn($purchase) => $purchase->paid)
+            ->addColumn('balance', fn($purchase) => $purchase->balance)
+            ->addColumn('payment_status', fn($purchase) => $purchase->payment_statuse)
+            ->addColumn('action', function ($purchase) {
+                return '<a href="' . route('report.purchase_report', $purchase->id) . '" class="btn btn-sm btn-info">View</a>';
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+    }
+    $suppliers = suppiler::all();
+    return view('Admin.report.purchase', compact('suppliers'));
+}
+public function exportExcel()
+{
+    $fileName = 'purchases_' . date('Ymd_His') . '.csv';
+
+    $response = new StreamedResponse(function() {
+        $handle = fopen('php://output', 'w');
+        fputcsv($handle, [
+            'ID', 'Reference No', 'Supplier', 'Date', 'Grand Total', 'Paid', 'Balance', 'Payment Status'
+        ]);
+
+        $query = Purchase::with('supplier');
+
+        if (!empty(request('start_date')) && !empty(request('end_date'))) {
+            $query->whereBetween('created_at', [
+                request('start_date') . ' 00:00:00',
+                request('end_date') . ' 23:59:59'
+            ]);
+        }
+
+        if (!empty(request('reference_no'))) {
+            $query->where('reference_no', 'like', '%' . request('reference_no') . '%');
+        }
+
+        if (!empty(request('supplier_id'))) {
+            $query->where('supplier_id', request('supplier_id'));
+        }
+
+        if (!empty(request('payment_status'))) {
+            $query->where('payment_statuse', request('payment_status'));
+        }
+
+        $purchases = $query->get();
+
+        foreach ($purchases as $purchase) {
+            fputcsv($handle, [
+                $purchase->id,
+                $purchase->reference_no,
+                $purchase->supplier->name ?? 'N/A',
+                $purchase->created_at->format('Y-m-d'),
+                $purchase->Grand_total,
+                $purchase->paid,
+                $purchase->balance,
+                $purchase->payment_statuse
+            ]);
+        }
+
+        fclose($handle);
+    });
+
+
+    $response->headers->set('Content-Type', 'text/csv');
+    $response->headers->set('Content-Disposition', 'attachment; filename="' . $fileName . '"');
+
+    return $response;
+}
+public function Purchase_show($id)
+{
+    $purchase = Purchase::with(['supplier', 'purchaseItems.productDetail.color', 'purchaseItems.productDetail.size'])
+        ->where('id', $id)
+        ->first();
+
+    if (!$purchase) {
+        return redirect()->back()->with('error', 'Purchase not found.');
+    }
+
+    $items = $purchase->purchaseItems->map(function ($item) {
+    return (object) [
+        'name'       => $item->productDetail->product->name ?? '',
+        'size'       => $item->productDetail->size ?? '',
+        'color_name' => $item->productDetail->color->name ?? '',
+        'quantity'   => $item->quantity,
+        'unit_price' => $item->productDetail->cost_price,
+        'subtotal'   => $item->subtotal,
+    ];
+});
+
+
+    return view('Admin.report.purchase_view', compact('purchase', 'items'));
+}
 
 public function daily_sale(Request $request)
 {
@@ -759,6 +858,56 @@ public function delivery_detail(Request $request, $status)
     }
 
     return view('Admin.report.delivery_detail', compact('status'));
+}
+public function exportExcelProduct()
+{
+    $fileName = 'products_' . date('Ymd_His') . '.csv';
+
+    $response = new StreamedResponse(function () {
+        $handle = fopen('php://output', 'w');
+
+        // CSV header
+        fputcsv($handle, [
+            'ID',
+            'Product Name',
+            'Stock',
+            'Sold',
+            'Total Purchased',
+            'Colors',
+            'Sizes',
+        ]);
+
+        // Query
+        $query = Product::query();
+
+        // Optional filters
+        if (!empty(request('name'))) {
+            $query->where('name', 'like', '%' . request('name') . '%');
+        }
+
+        // You can add more filters for color, size, etc.
+
+        $products = $query->get();
+
+        foreach ($products as $product) {
+            fputcsv($handle, [
+                $product->id,
+                $product->name,
+                $product->stock,
+                $product->sold,
+                $product->Grand_total,
+                is_array($product->colors_code) ? implode(', ', $product->colors_code) : $product->colors_code,
+                is_array($product->sizes) ? implode(', ', $product->sizes) : $product->sizes,
+            ]);
+        }
+
+        fclose($handle);
+    });
+
+    $response->headers->set('Content-Type', 'text/csv');
+    $response->headers->set('Content-Disposition', 'attachment; filename="' . $fileName . '"');
+
+    return $response;
 }
 
 }

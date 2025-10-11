@@ -282,6 +282,7 @@ Route::prefix('purchase')->name('purchase.')->group(function(){
     Route::delete('/deletepurchase/{id}',[purchaseController::class,'delete_purchases'])->name('delete_purchases');
     Route::get('/addpayment/{id}',[purchaseController::class,'addpayment'])->name('addpayment');
     Route::get('/purchase_invoice/{id}',[purchaseController::class,'purchase_invoice'])->name('purchase_invoice');
+
 });
 Route::prefix('user')->name('user.')->group(function(){
     Route::get('/',[Admin_user_controller::class,'index'])->name('index');
@@ -290,6 +291,7 @@ Route::prefix('user')->name('user.')->group(function(){
 Route::prefix('report')->name('report.')->group(function(){
     Route::get('/',[reportController::class,'product_report'])->name('product_report');
     Route::get('/purchase',[reportController::class,'purchase_report'])->name('purchase_report');
+    Route::get('/purchase/view/{id}', [reportController::class, 'Purchase_show'])->name('purchase_view');
     Route::get('/sale',[reportController::class,'daily_sale'])->name('daily_sale');
     Route::get('/supplier',[reportController::class,'supplier'])->name('supplier');
     Route::get('/supplier/{id}',[reportController::class,'supplier_view'])->name('supplier_view');
@@ -299,6 +301,9 @@ Route::prefix('report')->name('report.')->group(function(){
     Route::get('/income-expense',[reportController::class,'income_expense'])->name('income_expense');
     Route::get('/delivery',[reportController::class,'delivery'])->name('delivery');
     Route::get('/delivery/detail/{status}',[reportController::class,'delivery_detail'])->name('delivery.detail');
+     Route::get('/purchases/export', [reportController::class, 'exportExcel'])->name('export_excel');
+    Route::get('/product/export', [reportController::class, 'exportExcelProduct'])->name('export_excel_product');
+
     // Route::get('/')
     // Route::get('/')
 });

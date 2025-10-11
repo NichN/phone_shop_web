@@ -10,14 +10,6 @@
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<!-- DataTables Buttons + Export dependencies -->
-<script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-
 <div class="w3-main">
     <div class="container">
         <div class="card">
@@ -28,6 +20,11 @@
                     </h4>
                 </div>
                 <div class="card-body">
+                    <div class="mb-3 d-flex justify-content-end gap-2">
+                        <a href="{{ route('report.export_excel_product') }}" class="btn btn-sm" style="background-color: #e966d7; color: white;" title="Export to Excel">
+                            <i class="fas fa-file-excel"></i>
+                        </a>
+                    </div>
                     <div style="overflow-x: auto; max-height: auto;">
                         <table class="table table-bordered data-table text-center">
                             <thead>
@@ -70,14 +67,6 @@
             ajax: {
                 url: "{{ route('report.product_report') }}"
             },
-            dom: '<"d-flex justify-content-between"fB>rtip',
-            buttons: [
-                {
-                    extend: 'csvHtml5',
-                    text: '📁',
-                    className: 'btn btn-export float-right'
-                }
-            ],
             order: [[0, 'desc']],
             columns: [
                 {

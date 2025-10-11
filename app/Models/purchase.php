@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\purchses_item;
+use App\Models\suppiler;
 
 class purchase extends Model
 {
@@ -23,4 +25,13 @@ class purchase extends Model
         'created_at',
         'updated_at',
     ];
+    public function supplier()
+    {
+        return $this->belongsTo(suppiler::class, 'supplier_id', 'id');
+    }
+
+    public function purchaseItems()
+    {
+        return $this->hasMany(purchses_item::class, 'purchase_id', 'id');
+    }
 }
