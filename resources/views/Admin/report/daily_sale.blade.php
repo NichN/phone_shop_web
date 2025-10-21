@@ -1,35 +1,48 @@
 @include('Admin.component.sidebar')
 
-<!-- CSS -->
+<!-- Styles -->
 <link href="{{ asset('css/dashboard.css') }}" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@100;300;400;700;900&display=swap" rel="stylesheet">
 
+<!-- Content -->
 <div class="w3-main">
     <div class="container mt-5">
         <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
             <div class="container" style="z-index: 999999999999999 !important;">
                 <div class="card">
                     <div class="card-body">
-                        <div class="card-header d-flex rounded justify-content-between align-items-center" style="background-color: #2e3b56;">
-                            <h4 style="font-size: 1.2rem; font-weight: bold;">
-                                <i class="fa fa-credit-card" aria-hidden="true"></i> Order Report
+                        <!-- Header -->
+                        <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #2e3b56;">
+                            <h4 class="text-white mb-0">
+                                <i class="fa fa-credit-card"></i> Order Report
                             </h4>
                         </div>
-                        <br>
-                        <div class="felter" id="felter-report">
-                            <div class="row">
+
+                        <!-- Actions -->
+                        <div class="d-flex justify-content-end gap-2 my-3">
+                            <button id="toggleFilter" class="btn btn-sm" style="background-color: #3adb83; color: white;">
+                                <i class="fas fa-filter"></i>
+                            </button>
+                            <a href="{{ route('report.export_excel_dailysales', request()->query()) }}" 
+                            class="btn btn-sm" 
+                            style="background-color: #e966d7; color: white;" 
+                            title="Export to Excel">
+                                <i class="fas fa-file-excel"></i>
+                            </a>
+
+                        </div>
+                        <div id="filterSection" class="mb-3" style="display: none;">
+                            <form id="filterForm" class="row g-2">
                                 <div class="col-md-4">
                                     <label for="customer_name">Customer Name</label>
-                                    <input type="text" class="form-control" id="customer_name" placeholder="Enter Customer Name">
+                                    <input type="text" class="form-control" id="customer_name" name="customer_name" placeholder="Enter Customer Name">
                                 </div>
                                 <div class="col-md-4">
                                     <label for="paid_by">Paid By</label>
-                                    <select class="form-select" id="paid_by">
+                                    <select class="form-select" id="paid_by" name="paid_by">
                                         <option value="">Select Payment Type</option>
                                         <option value="cash">Cash on Delivery</option>
                                         <option value="aba">Upload Screenshot Payment</option>
@@ -37,21 +50,20 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label for="inv_number">Order Number</label>
-                                    <input type="text" class="form-control" id="inv_number" placeholder="Enter Invoice Number">
+                                    <input type="text" class="form-control" id="inv_number" name="inv_number" placeholder="Enter Invoice Number">
                                 </div>
-                            </div>
-                            <div class="row mt-4">
+
                                 <div class="col-md-4">
                                     <label for="payment_date">From Date</label>
-                                    <input type="date" class="form-control" id="payment_date">
+                                    <input type="date" class="form-control" id="payment_date" name="payment_date">
                                 </div>
                                 <div class="col-md-4">
                                     <label for="end_date">To Date</label>
-                                    <input type="date" class="form-control" id="end_date">
+                                    <input type="date" class="form-control" id="end_date" name="end_date">
                                 </div>
                                 <div class="col-md-4">
                                     <label for="status">Order Status</label>
-                                    <select class="form-select" id="status">
+                                    <select class="form-select" id="status" name="status">
                                         <option value="">All Statuses</option>
                                         <option value="pending">Pending</option>
                                         <option value="processing">Processing</option>
@@ -59,51 +71,62 @@
                                         <option value="canceled">Canceled</option>
                                     </select>
                                 </div>
-                            </div>
-                            <br>
-                            <button class="btn btn-primary" id="submit_btn">Submit</button>
+
+                                <div class="col-md-4 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-sm btn-primary w-100">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                    <button type="button" id="resetFilters" class="btn btn-sm btn-danger w-100 ms-2">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </button>
+                                </div>
+                            </form>
                         </div>
-                        <br>
-                        <div class="card-body">
-                            <div style="overflow: auto;">
-                                <table class="table table-bordered data-table" style="min-width: auto !important;">
-                                    <thead>
-                                        <tr>
-                                            <th style="background-color: #2e3b56 !important; color: white !important;">No</th>
-                                            <th style="background-color: #2e3b56 !important; color: white !important;">Order</th>
-                                            <th style="background-color: #2e3b56 !important; color: white !important;">Date</th>
-                                            <th style="background-color: #2e3b56 !important; color: white !important;">Customer</th>
-                                            <th style="background-color: #2e3b56 !important; color: white !important;">Phone</th>
-                                            <th style="background-color: #2e3b56 !important; color: white !important;">Location</th>
-                                            <th style="background-color: #2e3b56 !important; color: white !important;">Amount</th>
-                                            <th style="background-color: #2e3b56 !important; color: white !important;">Paid by</th>
-                                            <th style="background-color: #2e3b56 !important; color: white !important;">Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tfoot>
-                                        <tr>
-                                            <th></th>
-                                            <th></th>
-                                            <th></th>
-                                            <th></th>
-                                            <th></th>
-                                            <th></th>
-                                            <th id="total-balance" style="background-color: #2e3b56; color: white;">Balance</th>
-                                            <th></th>
-                                            <th></th>
-                                        </tr>
-                                    </tfoot>
-                                    <tbody></tbody>
-                                </table>
-                            </div>
+
+                        <!-- Table -->
+                        <div class="table-responsive">
+                            <table class="table table-bordered data-table">
+                                <thead>
+                                    <tr>
+                                        <th style="background-color: #2e3b56; color: white;">No</th>
+                                        <th style="background-color: #2e3b56; color: white;">Order</th>
+                                        <th style="background-color: #2e3b56; color: white;">Date</th>
+                                        <th style="background-color: #2e3b56; color: white;">Customer</th>
+                                        <th style="background-color: #2e3b56; color: white;">Phone</th>
+                                        <th style="background-color: #2e3b56; color: white;">Location</th>
+                                        <th style="background-color: #2e3b56; color: white;">Amount</th>
+                                        <th style="background-color: #2e3b56; color: white;">Paid by</th>
+                                        <th style="background-color: #2e3b56; color: white;">Status</th>
+                                    </tr>
+                                </thead>
+                                <tfoot>
+                                    <tr>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th id="total-balance" style="background-color: #2e3b56; color: white;">Balance</th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                </tfoot>
+                                <tbody></tbody>
+                            </table>
                         </div>
+
                     </div>
                 </div>
             </div>
         </main>
     </div>
 </div>
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <style>
 .card-header {
     background-color: #2e3b56;
@@ -125,17 +148,11 @@
     vertical-align: middle;
 }
 </style>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <script>
-$(document).ready(function(){
+$(document).ready(function () {
+    $('#toggleFilter').on('click', function () {
+        $('#filterSection').slideToggle();
+    });
     var table = $('.data-table').DataTable({
         processing: true,
         serverSide: true,
@@ -150,18 +167,6 @@ $(document).ready(function(){
                 d.status = $('#status').val();
             }
         },
-        dom: "<'row'<'col-md-6'l><'col-md-6 d-flex justify-content-end gap-2'B>>" +
-             "<'row'<'col-sm-12'tr>>" +
-             "<'row'<'col-md-5'i><'col-md-7'p>>",
-        buttons: [
-            {
-                extend: 'excelHtml5',
-                text: '<i class="fa fa-file-excel me-2"></i>Export to Excel',
-                className: 'btn btn-outline-success btn-custom',
-                titleAttr: 'Export order report to Excel file',
-                title: 'Order Report - {{ now()->format("Y-m-d") }}'
-            }
-        ],
         order: [[0, 'desc']],
         columns: [
             {
@@ -171,53 +176,46 @@ $(document).ready(function(){
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
             },
-            {data: 'order_num', name: 'order_num'},
+            { data: 'order_num', name: 'order_num' },
             {
                 data: 'created_at',
                 name: 'created_at',
-                render: function(data) {
+                render: function (data) {
                     return data ? new Date(data).toLocaleDateString('en-GB') : '';
                 }
             },
-            {data: 'guest_name', name: 'guest_name'},
-            {data: 'phone_guest', name: 'phone_guest'},
-            {data: 'guest_address', name: 'guest_address'},
+            { data: 'guest_name', name: 'guest_name' },
+            { data: 'phone_guest', name: 'phone_guest' },
+            { data: 'guest_address', name: 'guest_address' },
             {
                 data: 'total_amount',
                 name: 'total_amount',
-                render: function(data) {
+                render: function (data) {
                     return data ? '$' + parseFloat(data).toFixed(2) : '$0.00';
                 }
             },
-            {data: 'payment_type', name: 'payment_type'},
+            { data: 'payment_type', name: 'payment_type' },
             {
                 data: 'status',
                 name: 'status',
-                render: function(data) {
+                render: function (data) {
                     let badgeClass = '';
                     switch (data.toLowerCase()) {
-                        case 'canceled':
-                            badgeClass = 'bg-danger';
-                            break;
-                        case 'processing':
-                            badgeClass = 'bg-warning';
-                            break;
-                        case 'completed':
-                            badgeClass = 'bg-success';
-                            break;
-                        default:
-                            badgeClass = 'bg-secondary';
+                        case 'canceled': badgeClass = 'bg-danger'; break;
+                        case 'processing': badgeClass = 'bg-warning'; break;
+                        case 'completed': badgeClass = 'bg-success'; break;
+                        default: badgeClass = 'bg-secondary';
                     }
-                    return `<span class="badge ${badgeClass}">${data.charAt(0).toUpperCase() + data.slice(1) || 'Unknown'}</span>`;
+                    return `<span class="badge ${badgeClass}">${data.charAt(0).toUpperCase() + data.slice(1)}</span>`;
                 }
             }
         ],
-        drawCallback: function(settings) {
+        drawCallback: function (settings) {
             let api = this.api();
-            const parseNumber = (val) => {
-                return typeof val === 'string' ? parseFloat(val.replace(/[^0-9.-]+/g, '')) : (parseFloat(val) || 0);
-            };
-            let totalBalance = api.column(6, { page: 'current' }).data().reduce((a, b) => a + parseNumber(b), 0);
+            let totalBalance = api.column(6, { page: 'current' }).data().reduce(function (a, b) {
+                let val = typeof b === 'string' ? parseFloat(b.replace(/[^0-9.-]+/g, '')) : b;
+                return a + (val || 0);
+            }, 0);
             $('#total-balance').html('$' + totalBalance.toFixed(2));
         },
         initComplete: function () {
@@ -225,8 +223,7 @@ $(document).ready(function(){
             api.columns().every(function (index) {
                 if (index < 6) {
                     var column = this;
-                    var title = $(column.header()).text();
-                    var input = $('<input type="text" placeholder="' + title + '" style="width: 100%; border: none;" />')
+                    $('<input type="text" placeholder="' + $(column.header()).text() + '" style="width: 100%; border: none;" />')
                         .appendTo($(column.footer()).empty())
                         .on('keyup change clear', function () {
                             if (column.search() !== this.value) {
@@ -237,8 +234,12 @@ $(document).ready(function(){
             });
         }
     });
-
-    $('#submit_btn').on('click', function() {
+    $('#filterForm').on('submit', function (e) {
+        e.preventDefault();
+        table.ajax.reload();
+    });
+    $('#resetFilters').on('click', function () {
+        $('#filterForm')[0].reset();
         table.ajax.reload();
     });
 });

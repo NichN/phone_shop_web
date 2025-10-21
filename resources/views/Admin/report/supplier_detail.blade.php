@@ -1,14 +1,11 @@
 @include('Admin.component.sidebar')
-
-<!-- DataTables CSS -->
 <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
 <link href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css" rel="stylesheet">
-
-<!-- Font Awesome (for icons) -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-<!-- Custom CSS (Optional) -->
 <link href="{{ asset('css/dashboard.css') }}" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <div class="w3-main">
     <a href="/report/supplier" class="btn btn-secondary btn-sm">
@@ -20,6 +17,57 @@
                 <h6>Supplier Purchase Detail</h6> 
             </div>
             <div class="card-body">
+                <div class="mb-3 d-flex justify-content-end gap-2">
+                        <button id="toggleFilter" class="btn btn-sm" style="background-color: #3adb83; color: white;">
+                            <i class="fas fa-filter"></i>
+                        </button>
+                        <a href="{{ route('report.export_excel_supplier', ['id' => $supplier->id]) }}" class="btn btn-sm" style="background-color: #e966d7; color: white;" title="Export to Excel">
+                            <i class="fas fa-file-excel"></i>
+                        </a>
+
+                    </div>
+                    <div id="filterSection" class="justify-content-end" style="display: none;">
+                       <form id="filterForm" class="row mb-3 g-2" action="{{ route('report.supplier_view', ['id' => $supplier->id]) }}" method="GET">
+                        <!-- Start Date -->
+                        <div class="col-md-2">
+                            <label for="start_date">From Date</label>
+                            <input type="date" name="start_date" class="form-control">
+                        </div>
+
+                        <!-- End Date -->
+                        <div class="col-md-2">
+                            <label for="end_date">To Date</label>
+                            <input type="date" name="end_date" class="form-control">
+                        </div>
+
+                        <!-- Reference Number -->
+                        <div class="col-md-2">
+                            <label for="reference_no">Reference No</label>
+                            <input type="text" name="reference_no" class="form-control" placeholder="e.g. PURCH001">
+                        </div>
+                        <!-- Payment Status -->
+                        <div class="col-md-2">
+                            <label for="payment_status">Payment Status</label>
+                            <select name="payment_status" class="form-select">
+                                <option value="">All</option>
+                                <option value="Paid">Paid</option>
+                                <option value="Partial">Partial</option>
+                                <option value="Unpaid">Unpaid</option>
+                            </select>
+                        </div>
+
+                        <!-- Search Button -->
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-sm btn-primary w-100">
+                                <i class="fas fa-search"></i>
+                            </button>
+                            <button type="button" id="resetFilters" class="btn btn-sm btn-danger w-100" title="Reset Filters" style="margin-left: 5px;">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+
+                        </div>
+                    </form>
+                    </div>
                 <div style="overflow-x:auto;">
                     <table class="table table-bordered data-table text-center">
                         <thead>
@@ -52,48 +100,38 @@
         </div>
     </div>
 </div>
-
-<!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<!-- DataTables JS -->
-<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-
-<!-- DataTables Buttons JS -->
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
-
-<!-- JSZip for Excel Export -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-
-<!-- SweetAlert2 (optional) -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <script>
 $(document).ready(function () {
-    var table = $('.data-table').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: "{{ route('report.supplier_view', ['id' => $supplier->id]) }}",
-        order: [[0, 'desc']],
-        dom: "<'row'<'col-md-6'l><'col-md-6 d-flex justify-content-end gap-2'B>>" +
-             "<'row'<'col-sm-12'tr>>" +
-             "<'row'<'col-md-5'i><'col-md-7'p>>",
-        buttons: [
-            {
-                extend: 'print',
-                text: '<i class="fa fa-print"></i>',
-                className: 'btn btn-custom',
-                titleAttr: 'Print'
-            },
-            {
-                extend: 'excelHtml5',
-                text: '<i class="fa fa-file-excel"></i>',
-                className: 'btn btn-custom',
-                titleAttr: 'Export to Excel'
+    $('#toggleFilter').on('click', function () {
+            $('#filterSection').slideToggle();
+        });
+
+        // Reload DataTable on filter submit
+        $('#filterForm').on('submit', function (e) {
+            e.preventDefault();
+            table.ajax.reload();
+        });
+
+        // Reset filters
+        $('#resetFilters').on('click', function () {
+            $('#filterForm')[0].reset();
+            table.ajax.reload();
+        });
+            var table = $('.data-table').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+            url: "{{ route('report.supplier_view', ['id' => $supplier->id]) }}",
+            data: function (d) {
+                d.start_date = $('input[name=start_date]').val();
+                d.end_date = $('input[name=end_date]').val();
+                d.reference_no = $('input[name=reference_no]').val();
+                d.payment_status = $('select[name=payment_status]').val();
+                d.supplier_id = $('select[name=supplier_id]').val();
             }
-        ],
+        },
+
+        order: [[0, 'desc']],
         columns: [
             {data:'purchase_date', name:'purchase_date'},
             {data:'reference_no', name:'reference_no'},

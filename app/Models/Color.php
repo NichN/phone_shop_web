@@ -14,4 +14,10 @@ class Color extends Model
         'created_at',
         'updated_at',
     ];
+    // Optional reverse relation
+public function productDetails()
+{
+    return $this->hasMany(ProductDetail::class, 'color_code', 'color_code');
+}
+
 }

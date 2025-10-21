@@ -303,9 +303,8 @@ Route::prefix('report')->name('report.')->group(function(){
     Route::get('/delivery/detail/{status}',[reportController::class,'delivery_detail'])->name('delivery.detail');
      Route::get('/purchases/export', [reportController::class, 'exportExcel'])->name('export_excel');
     Route::get('/product/export', [reportController::class, 'exportExcelProduct'])->name('export_excel_product');
-
-    // Route::get('/')
-    // Route::get('/')
+     Route::get('/daily/export', [reportController::class, 'exportDailySalesExcel'])->name('export_excel_dailysales');
+    Route::get('/supplier/export//{id}', [reportController::class, 'exportExcelSupplier'])->name('export_excel_supplier');
 });
 
 //homepage

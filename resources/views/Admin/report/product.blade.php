@@ -9,6 +9,10 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{{-- In your blade file head section --}}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 
 <div class="w3-main">
     <div class="container">
@@ -21,9 +25,59 @@
                 </div>
                 <div class="card-body">
                     <div class="mb-3 d-flex justify-content-end gap-2">
+                        <button id="toggleFilter" class="btn btn-sm" style="background-color: #3adb83; color: white;">
+                            <i class="fas fa-filter"></i>
+                        </button>
                         <a href="{{ route('report.export_excel_product') }}" class="btn btn-sm" style="background-color: #e966d7; color: white;" title="Export to Excel">
                             <i class="fas fa-file-excel"></i>
                         </a>
+                    </div>
+                    <div id="filterSection" class="justify-content-end" style="display: none;">
+                       <form id="filterForm" class="row mb-3 g-2" action="{{ route('report.product_report') }}" method="GET">
+                    <!-- Product Name -->
+                    <div class="col-md-3">
+                        <label for="product_name">Product Name</label>
+                        <select name="product_name" class="form-select select2 custom-select-lg">
+                            <option value="">All</option>
+                        @foreach ($productNames as $id => $name)
+                            <option value="{{ $name }}">{{ $name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                    <!-- Size -->
+                    <div class="col-md-3">
+                        <label for="size">Size</label>
+                        <select name="size" class="form-select select2 custom-select-lg">
+                            <option value="">All</option>
+                            @foreach ($sizes as $size)
+                                <option value="{{ $size }}">{{ $size }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Color -->
+                    <div class="col-md-3">
+                        <label for="color_code">Color</label>
+                        <select name="color_code" class="form-select select2 custom-select-lg">
+                            <option value="">All</option>
+                            @foreach ($colors as $color)
+                                <option value="{{ $color->code }}">{{ $color->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button type="submit" class="btn btn-sm btn-primary w-100">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        <button type="button" id="resetFilters" class="btn btn-sm btn-danger w-100 ms-2" title="Reset Filters">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                </form>
+
                     </div>
                     <div style="overflow-x: auto; max-height: auto;">
                         <table class="table table-bordered data-table text-center">
@@ -61,11 +115,24 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
+        $('.select2').select2({
+            width: '100%',
+            placeholder: "Select an option",
+            allowClear: true
+        });
+        $('#toggleFilter').on('click', function () {
+            $('#filterSection').slideToggle();
+        });
         var table = $('.data-table').DataTable({
             processing: true,
             serverSide: true,
             ajax: {
-                url: "{{ route('report.product_report') }}"
+                url: "{{ route('report.product_report') }}",
+                data: function (d) {
+                    d.product_name = $('select[name=product_name]').val();
+                    d.size = $('select[name=size]').val();
+                    d.color_code = $('select[name=color_code]').val();
+                }
             },
             order: [[0, 'desc']],
             columns: [
@@ -96,14 +163,14 @@
                 { data: 'stock', name: 'stock' },
                 {
                     data: 'sold', name: 'sold',
-                   render: function (data) {
-                        return data ? `$${parseFloat(data)}` : '$0.00';
+                    render: function (data) {
+                        return data ? `$${parseFloat(data).toFixed(2)}` : '$0.00';
                     }
                 },
                 {
                     data: 'Grand_total', name: 'Grand_total',
                     render: function (data) {
-                        return data ? `$${parseFloat(data)}` : '$0.00';
+                        return data ? `$${parseFloat(data).toFixed(2)}` : '$0.00';
                     }
                 }
             ],
@@ -115,19 +182,16 @@
                     return a + (parseFloat(value) || 0);
                 }, 0);
                 $('#totalStockFooter').html('Total: ' + totalStock.toFixed(2));
-
-                api.columns().every(function () {
-                    var column = this;
-                    var title = $(column.header()).text();
-                    var input = $('<input type="text" placeholder="' + title + '" style="width: 100%; border: none;" />')
-                        .appendTo($(column.footer()).empty())
-                        .on('keyup change clear', function () {
-                            if (column.search() !== this.value) {
-                                column.search(this.value).draw();
-                            }
-                        });
-                });
             }
+        });
+        $('#filterForm').on('submit', function (e) {
+            e.preventDefault();
+            table.ajax.reload();
+        });
+        $('#resetFilters').on('click', function () {
+            $('#filterForm')[0].reset();
+            $('.select2').val(null).trigger('change');
+            table.ajax.reload();
         });
     });
 </script>
@@ -143,6 +207,22 @@
     transition: 0.3s;
     float: right !important;
     margin-left: auto;
-}
+} .custom-select-lg + .select2-container .select2-selection--single {
+        height: 48px !important;
+        font-size: 1rem;
+        padding: 8px 12px;
+    }
+
+    .custom-select-lg + .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 36px !important;
+    }
+
+    .custom-select-lg + .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 46px !important;
+        top: 1px !important;
+    }
+    .select2-container {
+        width: 100% !important;
+    }
 </style>
 

@@ -8,8 +8,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\productdetail;
 use App\Models\suppiler;
+use App\Models\Product;
+use App\Models\Color;
 use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
+use App\Models\Order;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Termwind\Components\Raw;
 
@@ -17,35 +20,61 @@ use function Laravel\Prompts\select;
 
 class reportController extends Controller
 {
-    public function product_report(Request $request) {
-        $productSummary = DB::table('product')
-            ->leftJoin('product_item', 'product.id', '=', 'product_item.pro_id')
-            ->leftJoin('purchase_item', 'product_item.id', '=', 'purchase_item.pr_item_id')
-            ->leftJoin('purchase', 'purchase.id', '=', 'purchase_item.purchase_id')
-            ->leftJoin('order_item', 'order_item.product_item_id', '=', 'product_item.id')
-            ->select(
-                'product.id',
-                'product.name',
-                DB::raw('GROUP_CONCAT(DISTINCT product_item.color_code) as colors_code'),
-                DB::raw('GROUP_CONCAT(DISTINCT product_item.size) as sizes'),
-                DB::raw('SUM(product_item.stock) as stock'),
-                DB::raw('SUM(purchase.Grand_total) as Grand_total'),
-                DB::raw('SUM(order_item.price) as sold')
-            )
-            ->groupBy('product.id', 'product.name')
-            ->get()
-            ->map(function ($item) {
-                $item->colors_code = explode(',', $item->colors_code);
-                $item->sizes = explode(',', $item->sizes);
-                $item->sold = $item->sold ?? 0;
-                return $item;
-            });
+    public function product_report(Request $request)
+{
+    $query = DB::table('product')
+        ->leftJoin('product_item', 'product.id', '=', 'product_item.pro_id')
+        ->leftJoin('purchase_item', 'product_item.id', '=', 'purchase_item.pr_item_id')
+        ->leftJoin('purchase', 'purchase.id', '=', 'purchase_item.purchase_id')
+        ->leftJoin('order_item', 'order_item.product_item_id', '=', 'product_item.id')
+        ->select(
+            'product.id',
+            'product.name',
+            DB::raw('GROUP_CONCAT(DISTINCT product_item.color_code) as colors_code'),
+            DB::raw('GROUP_CONCAT(DISTINCT product_item.size) as sizes'),
+            DB::raw('SUM(product_item.stock) as stock'),
+            DB::raw('SUM(purchase.Grand_total) as Grand_total'),
+            DB::raw('SUM(order_item.price) as sold')
+        );
 
-        if ($request->ajax()) {
-            return Datatables::of($productSummary)->make(true);
-        }
-     return view('Admin.report.product');
+    // Apply filters
+    if ($request->filled('product_name')) {
+        $query->where('product.name', $request->input('product_name'));
     }
+
+    if ($request->filled('size')) {
+        $query->where('product_item.size', $request->input('size'));
+    }
+
+    if ($request->filled('color_code')) {
+        $query->where('product_item.color_code', $request->input('color_code'));
+    }
+
+    $productSummary = $query
+        ->groupBy('product.id', 'product.name')
+        ->get()
+        ->map(function ($item) {
+            $item->colors_code = explode(',', $item->colors_code);
+            $item->sizes = explode(',', $item->sizes);
+            $item->sold = $item->sold ?? 0;
+            return $item;
+        });
+
+    // Dropdown data
+    $productNames = Product::pluck('name', 'id');
+    $sizes = productdetail::distinct()->pluck('size');
+    $colorCodes = ProductDetail::distinct()->pluck('color_code');
+    $colors = Color::whereIn('code', $colorCodes)->get(['code', 'name']);
+
+    // AJAX request
+    if ($request->ajax()) {
+        return Datatables::of($productSummary)->make(true);
+    }
+
+    return view('Admin.report.product', compact('productNames', 'sizes', 'colors'));
+}
+
+
     public function purchase_report(Request $request)
 {
     if ($request->ajax()) {
@@ -81,7 +110,7 @@ class reportController extends Controller
             ->addColumn('balance', fn($purchase) => $purchase->balance)
             ->addColumn('payment_status', fn($purchase) => $purchase->payment_statuse)
             ->addColumn('action', function ($purchase) {
-                return '<a href="' . route('report.purchase_report', $purchase->id) . '" class="btn btn-sm btn-info">View</a>';
+                return '<a href="' . route('report.purchase_view', $purchase->id) . '" class="btn btn-sm btn-info">View</a>';
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -250,30 +279,54 @@ public function supplier(Request $request)
 }
     public function supplier_view(Request $request, $id)
 {
-    $supplier = DB::table('supplier')
-        ->where('id', $id)
-        ->first();
+    $supplier = DB::table('supplier')->where('id', $id)->first();
+
     if ($request->ajax()) {
         $query = DB::table('supplier')
-    ->leftJoin('purchase', 'purchase.supplier_id', '=', 'supplier.id')
-    ->join('purchase_item', 'purchase.id', '=', 'purchase_item.purchase_id')
-    ->join('product_item', 'purchase_item.pr_item_id', '=', 'product_item.id')
-    ->where('supplier.id', $id)
-    ->groupBy('purchase.reference_no', 'purchase.created_at', 'purchase.payment_statuse','supplier.name')
-    ->select([
-        'supplier.name as name',
-        'purchase.reference_no',
-        'purchase.created_at as purchase_date',
-        'purchase.payment_statuse',
-        DB::raw('GROUP_CONCAT(product_item.product_name SEPARATOR ", ") as products'),
-        DB::raw('SUM(purchase.Grand_total) as Grand_total'),
-        DB::raw('SUM(purchase.paid) as paid'),
-        DB::raw('SUM(purchase.balance) as balance'),
-    ]);
+            ->leftJoin('purchase', 'purchase.supplier_id', '=', 'supplier.id')
+            ->join('purchase_item', 'purchase.id', '=', 'purchase_item.purchase_id')
+            ->join('product_item', 'purchase_item.pr_item_id', '=', 'product_item.id')
+            ->where('supplier.id', $id)
+            ->groupBy('purchase.reference_no', 'purchase.created_at', 'purchase.payment_statuse', 'supplier.name')
+            ->select([
+                'supplier.name as name',
+                'purchase.reference_no',
+                'purchase.created_at as purchase_date',
+                'purchase.payment_statuse',
+                DB::raw('GROUP_CONCAT(product_item.product_name SEPARATOR ", ") as products'),
+                DB::raw('SUM(purchase.Grand_total) as Grand_total'),
+                DB::raw('SUM(purchase.paid) as paid'),
+                DB::raw('SUM(purchase.balance) as balance'),
+            ]);
+
+        // 🔍 Apply filters
+        if ($request->filled('start_date')) {
+            $query->whereDate('purchase.created_at', '>=', $request->start_date);
+        }
+
+        if ($request->filled('end_date')) {
+            $query->whereDate('purchase.created_at', '<=', $request->end_date);
+        }
+
+        if ($request->filled('reference_no')) {
+            $query->where('purchase.reference_no', 'like', '%' . $request->reference_no . '%');
+        }
+
+        if ($request->filled('payment_status')) {
+            $query->where('purchase.payment_statuse', $request->payment_status);
+        }
+
+        if ($request->filled('supplier_id')) {
+            $query->where('supplier.id', $request->supplier_id);
+        }
+
         return DataTables::of($query)->make(true);
     }
-    return view('Admin.report.supplier_detail', compact('supplier'));
+    $statuses = DB::table('supplier')->select('id', 'name')->get();
+
+    return view('Admin.report.supplier_detail', compact('supplier', 'statuses'));
 }
+
 public function sale_completed(Request $request){
     if ($request->ajax()) {
         $query = DB::table('orders')
@@ -718,8 +771,6 @@ if ($monthly_bill_paid->isNotEmpty()) {
     $billOutput_partially_paid = [];
 }
 
-// Assuming $total_bill_paid is meant to be a total (e.g., sum of all paid amounts for the month)
-// If this is a scalar value from a previous query, adjust accordingly
 $total_bill_paid = DB::table('purchase')
     ->whereIn('payment_statuse', ['Paid', 'Partially'])
     ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
@@ -749,8 +800,6 @@ if ($total_bill_balance->isNotEmpty()) {
 } else {
     $billOutputbalance = [];
 }
-
-// Query for Total Bill Cancelled/Unpaid (weekly data for current week)
 $total_bill_cancel = DB::table('purchase')
     ->select(
         DB::raw('WEEK(created_at, 1) as week_number'),
@@ -876,16 +925,10 @@ public function exportExcelProduct()
             'Colors',
             'Sizes',
         ]);
-
-        // Query
         $query = Product::query();
-
-        // Optional filters
         if (!empty(request('name'))) {
             $query->where('name', 'like', '%' . request('name') . '%');
         }
-
-        // You can add more filters for color, size, etc.
 
         $products = $query->get();
 
@@ -898,6 +941,142 @@ public function exportExcelProduct()
                 $product->Grand_total,
                 is_array($product->colors_code) ? implode(', ', $product->colors_code) : $product->colors_code,
                 is_array($product->sizes) ? implode(', ', $product->sizes) : $product->sizes,
+            ]);
+        }
+
+        fclose($handle);
+    });
+
+    $response->headers->set('Content-Type', 'text/csv');
+    $response->headers->set('Content-Disposition', 'attachment; filename="' . $fileName . '"');
+
+    return $response;
+}
+public function exportExcelSupplier(Request $request, $id)
+{
+    $fileName = 'supplier_purchases_' . date('Ymd_His') . '.csv';
+
+    $response = new StreamedResponse(function () use ($request, $id) {
+        $handle = fopen('php://output', 'w');
+
+        // CSV headers
+        fputcsv($handle, [
+            'Date',
+            'Reference No',
+            'Supplier',
+            'Products',
+            'Grand Total',
+            'Paid',
+            'Balance',
+            'Status',
+        ]);
+
+        // Build the query with filters
+        $query = DB::table('supplier')
+            ->leftJoin('purchase', 'purchase.supplier_id', '=', 'supplier.id')
+            ->join('purchase_item', 'purchase.id', '=', 'purchase_item.purchase_id')
+            ->join('product_item', 'purchase_item.pr_item_id', '=', 'product_item.id')
+            ->where('supplier.id', $id)
+            ->groupBy('purchase.reference_no', 'purchase.created_at', 'purchase.payment_statuse', 'supplier.name')
+            ->select([
+                'supplier.name as name',
+                'purchase.reference_no',
+                'purchase.created_at as purchase_date',
+                'purchase.payment_statuse',
+                DB::raw('GROUP_CONCAT(product_item.product_name SEPARATOR ", ") as products'),
+                DB::raw('SUM(purchase.Grand_total) as Grand_total'),
+                DB::raw('SUM(purchase.paid) as paid'),
+                DB::raw('SUM(purchase.balance) as balance'),
+            ]);
+
+        // Apply filters from request (same as your DataTable filters)
+        if ($request->filled('start_date')) {
+            $query->whereDate('purchase.created_at', '>=', $request->start_date);
+        }
+
+        if ($request->filled('end_date')) {
+            $query->whereDate('purchase.created_at', '<=', $request->end_date);
+        }
+
+        if ($request->filled('reference_no')) {
+            $query->where('purchase.reference_no', 'like', '%' . $request->reference_no . '%');
+        }
+
+        if ($request->filled('payment_status')) {
+            $query->where('purchase.payment_statuse', $request->payment_status);
+        }
+
+        $purchases = $query->get();
+
+        foreach ($purchases as $row) {
+            fputcsv($handle, [
+                $row->purchase_date,
+                $row->reference_no,
+                $row->name,
+                $row->products,
+                $row->Grand_total,
+                $row->paid,
+                $row->balance,
+                $row->payment_statuse,
+            ]);
+        }
+
+        fclose($handle);
+    });
+
+    $response->headers->set('Content-Type', 'text/csv');
+    $response->headers->set('Content-Disposition', 'attachment; filename="' . $fileName . '"');
+
+    return $response;
+}
+public function exportDailySalesExcel()
+{
+    $fileName = 'daily_sales_' . date('Ymd_His') . '.csv';
+
+    $response = new StreamedResponse(function() {
+        $handle = fopen('php://output', 'w');
+        fputcsv($handle, [
+            'ID', 'Order Number', 'Customer', 'Phone', 'Address',
+            'Date', 'Amount', 'Paid By', 'Status'
+        ]);
+
+        $query = Order::query();
+        if (!empty(request('start_date')) && !empty(request('end_date'))) {
+            $query->whereBetween('created_at', [
+                request('start_date') . ' 00:00:00',
+                request('end_date') . ' 23:59:59'
+            ]);
+        }
+
+        if (!empty(request('customer_name'))) {
+            $query->where('guest_name', 'like', '%' . request('customer_name') . '%');
+        }
+
+        if (!empty(request('inv_number'))) {
+            $query->where('order_num', 'like', '%' . request('inv_number') . '%');
+        }
+
+        if (!empty(request('paid_by'))) {
+            $query->where('payment_type', request('paid_by'));
+        }
+
+        if (!empty(request('status'))) {
+            $query->where('status', request('status'));
+        }
+
+        $orders = $query->get();
+
+        foreach ($orders as $order) {
+            fputcsv($handle, [
+                $order->id,
+                $order->order_num,
+                $order->guest_name,
+                $order->phone_guest,
+                $order->guest_address,
+                $order->created_at->format('Y-m-d'),
+                number_format($order->total_amount, 2),
+                ucfirst($order->payment_type),
+                ucfirst($order->status),
             ]);
         }
 

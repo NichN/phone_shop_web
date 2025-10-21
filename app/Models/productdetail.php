@@ -52,5 +52,9 @@ class productdetail extends Model
             return $this->hasMany(purchses_item::class, 'pr_item_id', 'id');
         }
 
+public function orderItems() {
+    return $this->hasMany(OrderItem::class, 'product_item_id');
+}
+
     
 }
